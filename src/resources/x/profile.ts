@@ -1,0 +1,116 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+import { APIResource } from '../../core/resource';
+import { APIPromise } from '../../core/api-promise';
+import { type Uploadable } from '../../core/uploads';
+import { RequestOptions } from '../../internal/request-options';
+import { multipartFormRequestOptions } from '../../internal/uploads';
+
+/**
+ * X write actions (tweets, likes, follows, DMs)
+ */
+export class Profile extends APIResource {
+  /**
+   * Update X profile
+   */
+  patchAll(body: ProfilePatchAllParams, options?: RequestOptions): APIPromise<ProfilePatchAllResponse> {
+    return this._client.patch('/x/profile', { body, ...options });
+  }
+
+  /**
+   * Update profile avatar
+   */
+  updateAvatar(
+    body: ProfileUpdateAvatarParams,
+    options?: RequestOptions,
+  ): APIPromise<ProfileUpdateAvatarResponse> {
+    return this._client.patch(
+      '/x/profile/avatar',
+      multipartFormRequestOptions({ body, ...options }, this._client),
+    );
+  }
+
+  /**
+   * Update profile banner
+   */
+  updateBanner(
+    body: ProfileUpdateBannerParams,
+    options?: RequestOptions,
+  ): APIPromise<ProfileUpdateBannerResponse> {
+    return this._client.patch(
+      '/x/profile/banner',
+      multipartFormRequestOptions({ body, ...options }, this._client),
+    );
+  }
+}
+
+export interface ProfilePatchAllResponse {
+  success: true;
+}
+
+export interface ProfileUpdateAvatarResponse {
+  success: true;
+}
+
+export interface ProfileUpdateBannerResponse {
+  success: true;
+}
+
+export interface ProfilePatchAllParams {
+  /**
+   * X account (@username or account ID)
+   */
+  account: string;
+
+  /**
+   * Bio description
+   */
+  description?: string;
+
+  location?: string;
+
+  /**
+   * Display name
+   */
+  name?: string;
+
+  /**
+   * Website URL
+   */
+  url?: string;
+}
+
+export interface ProfileUpdateAvatarParams {
+  /**
+   * X account (@username or account ID)
+   */
+  account: string;
+
+  /**
+   * Avatar image (max 716KB)
+   */
+  file: Uploadable;
+}
+
+export interface ProfileUpdateBannerParams {
+  /**
+   * X account (@username or account ID)
+   */
+  account: string;
+
+  /**
+   * Banner image (max 2MB)
+   */
+  file: Uploadable;
+}
+
+export declare namespace Profile {
+  export {
+    type ProfilePatchAllResponse as ProfilePatchAllResponse,
+    type ProfileUpdateAvatarResponse as ProfileUpdateAvatarResponse,
+    type ProfileUpdateBannerResponse as ProfileUpdateBannerResponse,
+    type ProfilePatchAllParams as ProfilePatchAllParams,
+    type ProfileUpdateAvatarParams as ProfileUpdateAvatarParams,
+    type ProfileUpdateBannerParams as ProfileUpdateBannerParams,
+  };
+}
