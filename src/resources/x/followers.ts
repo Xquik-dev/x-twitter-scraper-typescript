@@ -11,15 +11,12 @@ export class Followers extends APIResource {
   /**
    * Check follow relationship
    */
-  retrieveCheck(
-    query: FollowerRetrieveCheckParams,
-    options?: RequestOptions,
-  ): APIPromise<FollowerRetrieveCheckResponse> {
+  check(query: FollowerCheckParams, options?: RequestOptions): APIPromise<FollowerCheckResponse> {
     return this._client.get('/x/followers/check', { query, ...options });
   }
 }
 
-export interface FollowerRetrieveCheckResponse {
+export interface FollowerCheckResponse {
   isFollowedBy: boolean;
 
   isFollowing: boolean;
@@ -29,7 +26,7 @@ export interface FollowerRetrieveCheckResponse {
   targetUsername: string;
 }
 
-export interface FollowerRetrieveCheckParams {
+export interface FollowerCheckParams {
   /**
    * Username to check (without @)
    */
@@ -43,7 +40,7 @@ export interface FollowerRetrieveCheckParams {
 
 export declare namespace Followers {
   export {
-    type FollowerRetrieveCheckResponse as FollowerRetrieveCheckResponse,
-    type FollowerRetrieveCheckParams as FollowerRetrieveCheckParams,
+    type FollowerCheckResponse as FollowerCheckResponse,
+    type FollowerCheckParams as FollowerCheckParams,
   };
 }

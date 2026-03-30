@@ -51,78 +51,74 @@ export class Draws extends APIResource {
   }
 }
 
-export interface DrawRetrieveResponse {
-  draw: DrawRetrieveResponse.Draw;
+export interface DrawDetail {
+  id: string;
 
-  winners: Array<DrawRetrieveResponse.Winner>;
+  createdAt: string;
+
+  status: string;
+
+  totalEntries: number;
+
+  tweetAuthorUsername: string;
+
+  tweetId: string;
+
+  tweetLikeCount: number;
+
+  tweetQuoteCount: number;
+
+  tweetReplyCount: number;
+
+  tweetRetweetCount: number;
+
+  tweetText: string;
+
+  tweetUrl: string;
+
+  validEntries: number;
+
+  drawnAt?: string;
 }
 
-export namespace DrawRetrieveResponse {
-  export interface Draw {
-    id: string;
+export interface DrawListItem {
+  id: string;
 
-    createdAt: string;
+  createdAt: string;
 
-    status: string;
+  status: string;
 
-    totalEntries: number;
+  totalEntries: number;
 
-    tweetAuthorUsername: string;
+  tweetUrl: string;
 
-    tweetId: string;
+  validEntries: number;
 
-    tweetLikeCount: number;
+  drawnAt?: string;
+}
 
-    tweetQuoteCount: number;
+export interface Winner {
+  authorUsername: string;
 
-    tweetReplyCount: number;
+  isBackup: boolean;
 
-    tweetRetweetCount: number;
+  position: number;
 
-    tweetText: string;
+  tweetId: string;
+}
 
-    tweetUrl: string;
+export interface DrawRetrieveResponse {
+  draw: DrawDetail;
 
-    validEntries: number;
-
-    drawnAt?: string;
-  }
-
-  export interface Winner {
-    authorUsername: string;
-
-    isBackup: boolean;
-
-    position: number;
-
-    tweetId: string;
-  }
+  winners: Array<Winner>;
 }
 
 export interface DrawListResponse {
-  draws: Array<DrawListResponse.Draw>;
+  draws: Array<DrawListItem>;
 
   hasMore: boolean;
 
   nextCursor?: string;
-}
-
-export namespace DrawListResponse {
-  export interface Draw {
-    id: string;
-
-    createdAt: string;
-
-    status: string;
-
-    totalEntries: number;
-
-    tweetUrl: string;
-
-    validEntries: number;
-
-    drawnAt?: string;
-  }
 }
 
 export interface DrawRunResponse {
@@ -134,19 +130,7 @@ export interface DrawRunResponse {
 
   validEntries: number;
 
-  winners: Array<DrawRunResponse.Winner>;
-}
-
-export namespace DrawRunResponse {
-  export interface Winner {
-    authorUsername: string;
-
-    isBackup: boolean;
-
-    position: number;
-
-    tweetId: string;
-  }
+  winners: Array<Winner>;
 }
 
 export interface DrawListParams {
@@ -195,6 +179,9 @@ export interface DrawRunParams {
 
 export declare namespace Draws {
   export {
+    type DrawDetail as DrawDetail,
+    type DrawListItem as DrawListItem,
+    type Winner as Winner,
     type DrawRetrieveResponse as DrawRetrieveResponse,
     type DrawListResponse as DrawListResponse,
     type DrawRunResponse as DrawRunResponse,

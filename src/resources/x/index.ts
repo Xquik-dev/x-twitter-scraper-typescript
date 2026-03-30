@@ -2,22 +2,19 @@
 
 export {
   Accounts,
+  type XAccount,
+  type XAccountDetail,
   type AccountCreateResponse,
-  type AccountRetrieveResponse,
   type AccountListResponse,
   type AccountDeleteResponse,
   type AccountReauthResponse,
   type AccountCreateParams,
   type AccountReauthParams,
 } from './accounts';
-export {
-  Bookmarks,
-  type BookmarkListResponse,
-  type BookmarkRetrieveFoldersResponse,
-  type BookmarkListParams,
-} from './bookmarks';
+export { Bookmarks, type BookmarkRetrieveFoldersResponse, type BookmarkListParams } from './bookmarks';
 export {
   Communities,
+  type CommunityActionResult,
   type CommunityCreateResponse,
   type CommunityDeleteResponse,
   type CommunityRetrieveInfoResponse,
@@ -29,12 +26,12 @@ export {
 } from './communities/index';
 export {
   Dm,
-  type DmUpdateResponse,
   type DmRetrieveHistoryResponse,
-  type DmUpdateParams,
+  type DmSendResponse,
   type DmRetrieveHistoryParams,
+  type DmSendParams,
 } from './dm';
-export { Followers, type FollowerRetrieveCheckResponse, type FollowerRetrieveCheckParams } from './followers';
+export { Followers, type FollowerCheckResponse, type FollowerCheckParams } from './followers';
 export {
   Lists,
   type ListRetrieveFollowersParams,
@@ -43,31 +40,28 @@ export {
 } from './lists';
 export {
   Media,
-  type MediaCreateResponse,
   type MediaDownloadResponse,
-  type MediaCreateParams,
+  type MediaUploadResponse,
   type MediaDownloadParams,
+  type MediaUploadParams,
 } from './media';
 export {
   Profile,
-  type ProfilePatchAllResponse,
+  type ProfileUpdateResponse,
   type ProfileUpdateAvatarResponse,
   type ProfileUpdateBannerResponse,
-  type ProfilePatchAllParams,
+  type ProfileUpdateParams,
   type ProfileUpdateAvatarParams,
   type ProfileUpdateBannerParams,
 } from './profile';
 export {
   Tweets,
+  type SearchTweet,
+  type TweetAuthor,
+  type TweetDetail,
   type TweetCreateResponse,
   type TweetRetrieveResponse,
   type TweetDeleteResponse,
-  type TweetGetFavoritersResponse,
-  type TweetGetQuotesResponse,
-  type TweetGetRepliesResponse,
-  type TweetGetRetweetersResponse,
-  type TweetGetThreadResponse,
-  type TweetSearchResponse,
   type TweetCreateParams,
   type TweetListParams,
   type TweetDeleteParams,
@@ -80,11 +74,7 @@ export {
 } from './tweets/index';
 export {
   Users,
-  type UserRetrieveResponse,
-  type UserRetrieveFollowersYouKnowResponse,
-  type UserRetrieveLikesResponse,
-  type UserRetrieveMediaResponse,
-  type UserRetrieveTweetsResponse,
+  type UserProfile,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,
@@ -99,7 +89,6 @@ export {
 export {
   X,
   type XGetArticleResponse,
-  type XGetHomeTimelineResponse,
   type XGetNotificationsResponse,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,

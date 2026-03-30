@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -12,7 +13,7 @@ export class Events extends APIResource {
   /**
    * Get event
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<EventRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<EventDetail> {
     return this._client.get(path`/events/${id}`, options);
   }
 
@@ -27,7 +28,7 @@ export class Events extends APIResource {
   }
 }
 
-export interface EventRetrieveResponse {
+export interface Event {
   id: string;
 
   data: { [key: string]: unknown };
@@ -36,7 +37,21 @@ export interface EventRetrieveResponse {
 
   occurredAt: string;
 
-  type: 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost';
+  type: Shared.EventType;
+
+  username: string;
+}
+
+export interface EventDetail {
+  id: string;
+
+  data: { [key: string]: unknown };
+
+  monitorId: string;
+
+  occurredAt: string;
+
+  type: Shared.EventType;
 
   username: string;
 
@@ -44,27 +59,11 @@ export interface EventRetrieveResponse {
 }
 
 export interface EventListResponse {
-  events: Array<EventListResponse.Event>;
+  events: Array<Event>;
 
   hasMore: boolean;
 
   nextCursor?: string;
-}
-
-export namespace EventListResponse {
-  export interface Event {
-    id: string;
-
-    data: { [key: string]: unknown };
-
-    monitorId: string;
-
-    occurredAt: string;
-
-    type: 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost';
-
-    username: string;
-  }
 }
 
 export interface EventListParams {
@@ -73,13 +72,7 @@ export interface EventListParams {
    */
   after?: string;
 
-  eventType?:
-    | 'tweet.new'
-    | 'tweet.reply'
-    | 'tweet.retweet'
-    | 'tweet.quote'
-    | 'follower.gained'
-    | 'follower.lost';
+  eventType?: Shared.EventType;
 
   limit?: number;
 
@@ -88,7 +81,8 @@ export interface EventListParams {
 
 export declare namespace Events {
   export {
-    type EventRetrieveResponse as EventRetrieveResponse,
+    type Event as Event,
+    type EventDetail as EventDetail,
     type EventListResponse as EventListResponse,
     type EventListParams as EventListParams,
   };

@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -12,25 +13,21 @@ export class Integrations extends APIResource {
   /**
    * Create integration
    */
-  create(body: IntegrationCreateParams, options?: RequestOptions): APIPromise<IntegrationCreateResponse> {
+  create(body: IntegrationCreateParams, options?: RequestOptions): APIPromise<Integration> {
     return this._client.post('/integrations', { body, ...options });
   }
 
   /**
    * Get integration details
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<IntegrationRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<Integration> {
     return this._client.get(path`/integrations/${id}`, options);
   }
 
   /**
    * Update integration
    */
-  update(
-    id: string,
-    body: IntegrationUpdateParams,
-    options?: RequestOptions,
-  ): APIPromise<IntegrationUpdateResponse> {
+  update(id: string, body: IntegrationUpdateParams, options?: RequestOptions): APIPromise<Integration> {
     return this._client.patch(path`/integrations/${id}`, { body, ...options });
   }
 
@@ -67,16 +64,14 @@ export class Integrations extends APIResource {
   }
 }
 
-export interface IntegrationCreateResponse {
+export interface Integration {
   id: string;
 
   config: { [key: string]: unknown };
 
   createdAt: string;
 
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   isActive: boolean;
 
@@ -93,88 +88,30 @@ export interface IntegrationCreateResponse {
   silentPush?: boolean;
 }
 
-export interface IntegrationRetrieveResponse {
+export interface IntegrationDelivery {
   id: string;
 
-  config: { [key: string]: unknown };
+  attempts: number;
 
   createdAt: string;
 
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventType: string;
 
-  isActive: boolean;
+  status: string;
 
-  name: string;
+  deliveredAt?: string;
 
-  type: 'telegram';
+  lastError?: string;
 
-  filters?: { [key: string]: unknown };
+  lastStatusCode?: number;
 
-  messageTemplate?: string;
+  sourceId?: string;
 
-  scopeAllMonitors?: boolean;
-
-  silentPush?: boolean;
-}
-
-export interface IntegrationUpdateResponse {
-  id: string;
-
-  config: { [key: string]: unknown };
-
-  createdAt: string;
-
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
-
-  name: string;
-
-  type: 'telegram';
-
-  filters?: { [key: string]: unknown };
-
-  messageTemplate?: string;
-
-  scopeAllMonitors?: boolean;
-
-  silentPush?: boolean;
+  sourceType?: string;
 }
 
 export interface IntegrationListResponse {
-  integrations: Array<IntegrationListResponse.Integration>;
-}
-
-export namespace IntegrationListResponse {
-  export interface Integration {
-    id: string;
-
-    config: { [key: string]: unknown };
-
-    createdAt: string;
-
-    eventTypes: Array<
-      'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-    >;
-
-    isActive: boolean;
-
-    name: string;
-
-    type: 'telegram';
-
-    filters?: { [key: string]: unknown };
-
-    messageTemplate?: string;
-
-    scopeAllMonitors?: boolean;
-
-    silentPush?: boolean;
-  }
+  integrations: Array<Integration>;
 }
 
 export interface IntegrationDeleteResponse {
@@ -182,31 +119,7 @@ export interface IntegrationDeleteResponse {
 }
 
 export interface IntegrationListDeliveriesResponse {
-  deliveries: Array<IntegrationListDeliveriesResponse.Delivery>;
-}
-
-export namespace IntegrationListDeliveriesResponse {
-  export interface Delivery {
-    id: string;
-
-    attempts: number;
-
-    createdAt: string;
-
-    eventType: string;
-
-    status: string;
-
-    deliveredAt?: string;
-
-    lastError?: string;
-
-    lastStatusCode?: number;
-
-    sourceId?: string;
-
-    sourceType?: string;
-  }
+  deliveries: Array<IntegrationDelivery>;
 }
 
 export interface IntegrationSendTestResponse {
@@ -219,9 +132,7 @@ export interface IntegrationCreateParams {
    */
   config: IntegrationCreateParams.Config;
 
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   name: string;
 
@@ -238,9 +149,7 @@ export namespace IntegrationCreateParams {
 }
 
 export interface IntegrationUpdateParams {
-  eventTypes?: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes?: Array<Shared.EventType>;
 
   filters?: { [key: string]: unknown };
 
@@ -261,9 +170,8 @@ export interface IntegrationListDeliveriesParams {
 
 export declare namespace Integrations {
   export {
-    type IntegrationCreateResponse as IntegrationCreateResponse,
-    type IntegrationRetrieveResponse as IntegrationRetrieveResponse,
-    type IntegrationUpdateResponse as IntegrationUpdateResponse,
+    type Integration as Integration,
+    type IntegrationDelivery as IntegrationDelivery,
     type IntegrationListResponse as IntegrationListResponse,
     type IntegrationDeleteResponse as IntegrationDeleteResponse,
     type IntegrationListDeliveriesResponse as IntegrationListDeliveriesResponse,

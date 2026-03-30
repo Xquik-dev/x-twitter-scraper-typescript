@@ -19,32 +19,30 @@ export class Radar extends APIResource {
   }
 }
 
-export interface RadarRetrieveTrendingTopicsResponse {
-  items: Array<RadarRetrieveTrendingTopicsResponse.Item>;
+export interface RadarItem {
+  category: string;
 
-  total: number;
+  publishedAt: string;
+
+  region: string;
+
+  score: number;
+
+  source: string;
+
+  title: string;
+
+  description?: string;
+
+  imageUrl?: string;
+
+  url?: string;
 }
 
-export namespace RadarRetrieveTrendingTopicsResponse {
-  export interface Item {
-    category: string;
+export interface RadarRetrieveTrendingTopicsResponse {
+  items: Array<RadarItem>;
 
-    publishedAt: string;
-
-    region: string;
-
-    score: number;
-
-    source: string;
-
-    title: string;
-
-    description?: string;
-
-    imageUrl?: string;
-
-    url?: string;
-  }
+  total: number;
 }
 
 export interface RadarRetrieveTrendingTopicsParams {
@@ -77,6 +75,7 @@ export interface RadarRetrieveTrendingTopicsParams {
 
 export declare namespace Radar {
   export {
+    type RadarItem as RadarItem,
     type RadarRetrieveTrendingTopicsResponse as RadarRetrieveTrendingTopicsResponse,
     type RadarRetrieveTrendingTopicsParams as RadarRetrieveTrendingTopicsParams,
   };

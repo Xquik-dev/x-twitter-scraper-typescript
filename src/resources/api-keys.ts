@@ -31,6 +31,20 @@ export class APIKeys extends APIResource {
   }
 }
 
+export interface APIKey {
+  id: string;
+
+  createdAt: string;
+
+  isActive: boolean;
+
+  name: string;
+
+  prefix: string;
+
+  lastUsedAt?: string;
+}
+
 export interface APIKeyCreateResponse {
   id: string;
 
@@ -44,23 +58,7 @@ export interface APIKeyCreateResponse {
 }
 
 export interface APIKeyListResponse {
-  keys: Array<APIKeyListResponse.Key>;
-}
-
-export namespace APIKeyListResponse {
-  export interface Key {
-    id: string;
-
-    createdAt: string;
-
-    isActive: boolean;
-
-    name: string;
-
-    prefix: string;
-
-    lastUsedAt?: string;
-  }
+  keys: Array<APIKey>;
 }
 
 export interface APIKeyRevokeResponse {
@@ -73,6 +71,7 @@ export interface APIKeyCreateParams {
 
 export declare namespace APIKeys {
   export {
+    type APIKey as APIKey,
     type APIKeyCreateResponse as APIKeyCreateResponse,
     type APIKeyListResponse as APIKeyListResponse,
     type APIKeyRevokeResponse as APIKeyRevokeResponse,

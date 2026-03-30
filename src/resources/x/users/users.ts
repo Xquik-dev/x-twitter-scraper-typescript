@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../../core/resource';
+import * as Shared from '../../shared';
 import * as FollowAPI from './follow';
 import {
   Follow,
@@ -23,7 +24,7 @@ export class Users extends APIResource {
   /**
    * Look up X user
    */
-  retrieve(username: string, options?: RequestOptions): APIPromise<UserRetrieveResponse> {
+  retrieve(username: string, options?: RequestOptions): APIPromise<UserProfile> {
     return this._client.get(path`/x/users/${username}`, options);
   }
 
@@ -60,7 +61,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveFollowersYouKnowParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveFollowersYouKnowResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/followers-you-know`, { query, ...options });
   }
 
@@ -86,7 +87,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveLikesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveLikesResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/likes`, { query, ...options });
   }
 
@@ -97,7 +98,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveMediaParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveMediaResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/media`, { query, ...options });
   }
 
@@ -134,7 +135,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveTweetsResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/tweets`, { query, ...options });
   }
 
@@ -154,7 +155,7 @@ export class Users extends APIResource {
   }
 }
 
-export interface UserRetrieveResponse {
+export interface UserProfile {
   id: string;
 
   name: string;
@@ -176,146 +177,6 @@ export interface UserRetrieveResponse {
   statusesCount?: number;
 
   verified?: boolean;
-}
-
-export interface UserRetrieveFollowersYouKnowResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<unknown>;
-}
-
-export interface UserRetrieveLikesResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<UserRetrieveLikesResponse.Tweet>;
-}
-
-export namespace UserRetrieveLikesResponse {
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-export interface UserRetrieveMediaResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<UserRetrieveMediaResponse.Tweet>;
-}
-
-export namespace UserRetrieveMediaResponse {
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-export interface UserRetrieveTweetsResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<UserRetrieveTweetsResponse.Tweet>;
-}
-
-export namespace UserRetrieveTweetsResponse {
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
 }
 
 export interface UserRetrieveBatchParams {
@@ -427,11 +288,7 @@ Users.Follow = Follow;
 
 export declare namespace Users {
   export {
-    type UserRetrieveResponse as UserRetrieveResponse,
-    type UserRetrieveFollowersYouKnowResponse as UserRetrieveFollowersYouKnowResponse,
-    type UserRetrieveLikesResponse as UserRetrieveLikesResponse,
-    type UserRetrieveMediaResponse as UserRetrieveMediaResponse,
-    type UserRetrieveTweetsResponse as UserRetrieveTweetsResponse,
+    type UserProfile as UserProfile,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,

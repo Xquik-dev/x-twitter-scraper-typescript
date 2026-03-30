@@ -29,9 +29,9 @@ const client = new XTwitterScraper({
   apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
 });
 
-const account = await client.account.retrieve();
+const paginatedTweets = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
 
-console.log(account.monitorsAllowed);
+console.log(paginatedTweets.has_next_page);
 ```
 
 ### Request & Response types
@@ -46,7 +46,8 @@ const client = new XTwitterScraper({
   apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
 });
 
-const account: XTwitterScraper.AccountRetrieveResponse = await client.account.retrieve();
+const params: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit: 10 };
+const paginatedTweets: XTwitterScraper.PaginatedTweets = await client.x.tweets.search(params);
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -67,20 +68,20 @@ import XTwitterScraper, { toFile } from 'x-twitter-scraper';
 const client = new XTwitterScraper();
 
 // If you have access to Node `fs` we recommend using `fs.createReadStream()`:
-await client.x.media.create({ account: 'account', file: fs.createReadStream('/path/to/file') });
+await client.x.media.upload({ account: 'account', file: fs.createReadStream('/path/to/file') });
 
 // Or if you have the web `File` API you can pass a `File` instance:
-await client.x.media.create({ account: 'account', file: new File(['my bytes'], 'file') });
+await client.x.media.upload({ account: 'account', file: new File(['my bytes'], 'file') });
 
 // You can also pass a `fetch` `Response`:
-await client.x.media.create({ account: 'account', file: await fetch('https://somesite/file') });
+await client.x.media.upload({ account: 'account', file: await fetch('https://somesite/file') });
 
 // Finally, if none of the above are convenient, you can use our `toFile` helper:
-await client.x.media.create({
+await client.x.media.upload({
   account: 'account',
   file: await toFile(Buffer.from('my bytes'), 'file'),
 });
-await client.x.media.create({
+await client.x.media.upload({
   account: 'account',
   file: await toFile(new Uint8Array([0, 1, 2]), 'file'),
 });
@@ -94,15 +95,17 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const account = await client.account.retrieve().catch(async (err) => {
-  if (err instanceof XTwitterScraper.APIError) {
-    console.log(err.status); // 400
-    console.log(err.name); // BadRequestError
-    console.log(err.headers); // {server: 'nginx', ...}
-  } else {
-    throw err;
-  }
-});
+const paginatedTweets = await client.x.tweets
+  .search({ q: 'from:elonmusk', limit: 10 })
+  .catch(async (err) => {
+    if (err instanceof XTwitterScraper.APIError) {
+      console.log(err.status); // 400
+      console.log(err.name); // BadRequestError
+      console.log(err.headers); // {server: 'nginx', ...}
+    } else {
+      throw err;
+    }
+  });
 ```
 
 Error codes are as follows:
@@ -134,7 +137,7 @@ const client = new XTwitterScraper({
 });
 
 // Or, configure per-request:
-await client.account.retrieve({
+await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
   maxRetries: 5,
 });
 ```
@@ -151,7 +154,7 @@ const client = new XTwitterScraper({
 });
 
 // Override per-request:
-await client.account.retrieve({
+await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
   timeout: 5 * 1000,
 });
 ```
@@ -174,13 +177,15 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 ```ts
 const client = new XTwitterScraper();
 
-const response = await client.account.retrieve().asResponse();
+const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }).asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: account, response: raw } = await client.account.retrieve().withResponse();
+const { data: paginatedTweets, response: raw } = await client.x.tweets
+  .search({ q: 'from:elonmusk', limit: 10 })
+  .withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(account.monitorsAllowed);
+console.log(paginatedTweets.has_next_page);
 ```
 
 ### Logging
@@ -260,7 +265,7 @@ parameter. This library doesn't validate at runtime that the request matches the
 send will be sent as-is.
 
 ```ts
-client.account.retrieve({
+client.x.tweets.search({
   // ...
   // @ts-expect-error baz is not yet public
   baz: 'undocumented option',

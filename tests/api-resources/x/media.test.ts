@@ -10,30 +10,6 @@ const client = new XTwitterScraper({
 
 describe('resource media', () => {
   // Mock server tests are disabled
-  test.skip('create: only required params', async () => {
-    const responsePromise = client.x.media.create({
-      account: 'account',
-      file: await toFile(Buffer.from('Example data'), 'README.md'),
-    });
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('create: required and optional params', async () => {
-    const response = await client.x.media.create({
-      account: 'account',
-      file: await toFile(Buffer.from('Example data'), 'README.md'),
-      is_long_video: true,
-    });
-  });
-
-  // Mock server tests are disabled
   test.skip('download', async () => {
     const responsePromise = client.x.media.download({});
     const rawResponse = await responsePromise.asResponse();
@@ -43,5 +19,29 @@ describe('resource media', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('upload: only required params', async () => {
+    const responsePromise = client.x.media.upload({
+      account: 'account',
+      file: await toFile(Buffer.from('Example data'), 'README.md'),
+    });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('upload: required and optional params', async () => {
+    const response = await client.x.media.upload({
+      account: 'account',
+      file: await toFile(Buffer.from('Example data'), 'README.md'),
+      is_long_video: true,
+    });
   });
 });

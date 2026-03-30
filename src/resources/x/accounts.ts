@@ -19,7 +19,7 @@ export class Accounts extends APIResource {
   /**
    * Get X account details
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<XAccountDetail> {
     return this._client.get(path`/x/accounts/${id}`, { ...options, __security: {} });
   }
 
@@ -45,8 +45,10 @@ export class Accounts extends APIResource {
   }
 }
 
-export interface AccountCreateResponse {
+export interface XAccount {
   id: string;
+
+  createdAt: string;
 
   status: string;
 
@@ -55,7 +57,7 @@ export interface AccountCreateResponse {
   xUsername: string;
 }
 
-export interface AccountRetrieveResponse {
+export interface XAccountDetail {
   id: string;
 
   createdAt: string;
@@ -73,22 +75,18 @@ export interface AccountRetrieveResponse {
   updatedAt?: string;
 }
 
-export interface AccountListResponse {
-  accounts: Array<AccountListResponse.Account>;
+export interface AccountCreateResponse {
+  id: string;
+
+  status: string;
+
+  xUserId: string;
+
+  xUsername: string;
 }
 
-export namespace AccountListResponse {
-  export interface Account {
-    id: string;
-
-    createdAt: string;
-
-    status: string;
-
-    xUserId: string;
-
-    xUsername: string;
-  }
+export interface AccountListResponse {
+  accounts: Array<XAccount>;
 }
 
 export interface AccountDeleteResponse {
@@ -144,8 +142,9 @@ export interface AccountReauthParams {
 
 export declare namespace Accounts {
   export {
+    type XAccount as XAccount,
+    type XAccountDetail as XAccountDetail,
     type AccountCreateResponse as AccountCreateResponse,
-    type AccountRetrieveResponse as AccountRetrieveResponse,
     type AccountListResponse as AccountListResponse,
     type AccountDeleteResponse as AccountDeleteResponse,
     type AccountReauthResponse as AccountReauthResponse,

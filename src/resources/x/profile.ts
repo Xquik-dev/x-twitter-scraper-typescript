@@ -13,7 +13,7 @@ export class Profile extends APIResource {
   /**
    * Update X profile
    */
-  patchAll(body: ProfilePatchAllParams, options?: RequestOptions): APIPromise<ProfilePatchAllResponse> {
+  update(body: ProfileUpdateParams, options?: RequestOptions): APIPromise<ProfileUpdateResponse> {
     return this._client.patch('/x/profile', { body, ...options });
   }
 
@@ -44,7 +44,7 @@ export class Profile extends APIResource {
   }
 }
 
-export interface ProfilePatchAllResponse {
+export interface ProfileUpdateResponse {
   success: true;
 }
 
@@ -56,7 +56,7 @@ export interface ProfileUpdateBannerResponse {
   success: true;
 }
 
-export interface ProfilePatchAllParams {
+export interface ProfileUpdateParams {
   /**
    * X account (@username or account ID)
    */
@@ -106,10 +106,10 @@ export interface ProfileUpdateBannerParams {
 
 export declare namespace Profile {
   export {
-    type ProfilePatchAllResponse as ProfilePatchAllResponse,
+    type ProfileUpdateResponse as ProfileUpdateResponse,
     type ProfileUpdateAvatarResponse as ProfileUpdateAvatarResponse,
     type ProfileUpdateBannerResponse as ProfileUpdateBannerResponse,
-    type ProfilePatchAllParams as ProfilePatchAllParams,
+    type ProfileUpdateParams as ProfileUpdateParams,
     type ProfileUpdateAvatarParams as ProfileUpdateAvatarParams,
     type ProfileUpdateBannerParams as ProfileUpdateBannerParams,
   };
