@@ -10,28 +10,6 @@ const client = new XTwitterScraper({
 
 describe('resource dm', () => {
   // Mock server tests are disabled
-  test.skip('update: only required params', async () => {
-    const responsePromise = client.x.dm.update('userId', { account: 'account', text: 'text' });
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('update: required and optional params', async () => {
-    const response = await client.x.dm.update('userId', {
-      account: 'account',
-      text: 'text',
-      media_ids: ['string'],
-      reply_to_message_id: 'reply_to_message_id',
-    });
-  });
-
-  // Mock server tests are disabled
   test.skip('retrieveHistory', async () => {
     const responsePromise = client.x.dm.retrieveHistory('userId');
     const rawResponse = await responsePromise.asResponse();
@@ -53,5 +31,27 @@ describe('resource dm', () => {
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
+  // Mock server tests are disabled
+  test.skip('send: only required params', async () => {
+    const responsePromise = client.x.dm.send('userId', { account: 'account', text: 'text' });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('send: required and optional params', async () => {
+    const response = await client.x.dm.send('userId', {
+      account: 'account',
+      text: 'text',
+      media_ids: ['string'],
+      reply_to_message_id: 'reply_to_message_id',
+    });
   });
 });

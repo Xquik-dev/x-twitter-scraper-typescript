@@ -26,6 +26,7 @@ import {
   AccountUpdateLocaleResponse,
 } from './resources/account';
 import {
+  APIKey,
   APIKeyCreateParams,
   APIKeyCreateResponse,
   APIKeyListResponse,
@@ -40,27 +41,31 @@ import {
   Credits,
 } from './resources/credits';
 import {
+  Draft,
   DraftCreateParams,
-  DraftCreateResponse,
+  DraftDetail,
   DraftListParams,
   DraftListResponse,
-  DraftRetrieveResponse,
   Drafts,
 } from './resources/drafts';
 import {
+  DrawDetail,
   DrawExportParams,
+  DrawListItem,
   DrawListParams,
   DrawListResponse,
   DrawRetrieveResponse,
   DrawRunParams,
   DrawRunResponse,
   Draws,
+  Winner,
 } from './resources/draws';
-import { EventListParams, EventListResponse, EventRetrieveResponse, Events } from './resources/events';
+import { Event, EventDetail, EventListParams, EventListResponse, Events } from './resources/events';
 import {
   ExtractionEstimateCostParams,
   ExtractionEstimateCostResponse,
   ExtractionExportResultsParams,
+  ExtractionJob,
   ExtractionListParams,
   ExtractionListResponse,
   ExtractionRetrieveParams,
@@ -70,48 +75,48 @@ import {
   Extractions,
 } from './resources/extractions';
 import {
+  Integration,
   IntegrationCreateParams,
-  IntegrationCreateResponse,
   IntegrationDeleteResponse,
+  IntegrationDelivery,
   IntegrationListDeliveriesParams,
   IntegrationListDeliveriesResponse,
   IntegrationListResponse,
-  IntegrationRetrieveResponse,
   IntegrationSendTestResponse,
   IntegrationUpdateParams,
-  IntegrationUpdateResponse,
   Integrations,
 } from './resources/integrations';
 import {
+  Monitor,
   MonitorCreateParams,
   MonitorCreateResponse,
   MonitorDeactivateResponse,
   MonitorListResponse,
-  MonitorRetrieveResponse,
   MonitorUpdateParams,
-  MonitorUpdateResponse,
   Monitors,
 } from './resources/monitors';
 import {
   Radar,
+  RadarItem,
   RadarRetrieveTrendingTopicsParams,
   RadarRetrieveTrendingTopicsResponse,
 } from './resources/radar';
 import {
   StyleAnalyzeParams,
-  StyleAnalyzeResponse,
   StyleCompareParams,
   StyleCompareResponse,
   StyleGetPerformanceResponse,
   StyleListResponse,
-  StyleRetrieveResponse,
+  StyleProfile,
+  StyleProfileSummary,
   StyleUpdateParams,
-  StyleUpdateResponse,
   Styles,
 } from './resources/styles';
 import { Subscribe, SubscribeCreateResponse } from './resources/subscribe';
 import { TrendListParams, TrendListResponse, Trends } from './resources/trends';
 import {
+  Delivery,
+  Webhook,
   WebhookCreateParams,
   WebhookCreateResponse,
   WebhookDeactivateResponse,
@@ -119,16 +124,14 @@ import {
   WebhookListResponse,
   WebhookTestResponse,
   WebhookUpdateParams,
-  WebhookUpdateResponse,
   Webhooks,
 } from './resources/webhooks';
-import { Bot, BotTrackUsageParams, BotTrackUsageResponse } from './resources/bot/bot';
+import { Bot } from './resources/bot/bot';
 import { Support } from './resources/support/support';
 import {
   X,
   XGetArticleResponse,
   XGetHomeTimelineParams,
-  XGetHomeTimelineResponse,
   XGetNotificationsParams,
   XGetNotificationsResponse,
 } from './resources/x/x';
@@ -933,9 +936,6 @@ export class XTwitterScraper {
    * Trending topics by region
    */
   trends: API.Trends = new API.Trends(this);
-  /**
-   * Telegram bot service endpoints
-   */
   bot: API.Bot = new API.Bot(this);
   support: API.Support = new API.Support(this);
   /**
@@ -977,6 +977,7 @@ export declare namespace XTwitterScraper {
 
   export {
     APIKeys as APIKeys,
+    type APIKey as APIKey,
     type APIKeyCreateResponse as APIKeyCreateResponse,
     type APIKeyListResponse as APIKeyListResponse,
     type APIKeyRevokeResponse as APIKeyRevokeResponse,
@@ -993,8 +994,8 @@ export declare namespace XTwitterScraper {
 
   export {
     Drafts as Drafts,
-    type DraftCreateResponse as DraftCreateResponse,
-    type DraftRetrieveResponse as DraftRetrieveResponse,
+    type Draft as Draft,
+    type DraftDetail as DraftDetail,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
     type DraftListParams as DraftListParams,
@@ -1002,10 +1003,9 @@ export declare namespace XTwitterScraper {
 
   export {
     Styles as Styles,
-    type StyleRetrieveResponse as StyleRetrieveResponse,
-    type StyleUpdateResponse as StyleUpdateResponse,
+    type StyleProfile as StyleProfile,
+    type StyleProfileSummary as StyleProfileSummary,
     type StyleListResponse as StyleListResponse,
-    type StyleAnalyzeResponse as StyleAnalyzeResponse,
     type StyleCompareResponse as StyleCompareResponse,
     type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
     type StyleUpdateParams as StyleUpdateParams,
@@ -1015,15 +1015,15 @@ export declare namespace XTwitterScraper {
 
   export {
     Radar as Radar,
+    type RadarItem as RadarItem,
     type RadarRetrieveTrendingTopicsResponse as RadarRetrieveTrendingTopicsResponse,
     type RadarRetrieveTrendingTopicsParams as RadarRetrieveTrendingTopicsParams,
   };
 
   export {
     Monitors as Monitors,
+    type Monitor as Monitor,
     type MonitorCreateResponse as MonitorCreateResponse,
-    type MonitorRetrieveResponse as MonitorRetrieveResponse,
-    type MonitorUpdateResponse as MonitorUpdateResponse,
     type MonitorListResponse as MonitorListResponse,
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
     type MonitorCreateParams as MonitorCreateParams,
@@ -1032,13 +1032,15 @@ export declare namespace XTwitterScraper {
 
   export {
     Events as Events,
-    type EventRetrieveResponse as EventRetrieveResponse,
+    type Event as Event,
+    type EventDetail as EventDetail,
     type EventListResponse as EventListResponse,
     type EventListParams as EventListParams,
   };
 
   export {
     Extractions as Extractions,
+    type ExtractionJob as ExtractionJob,
     type ExtractionRetrieveResponse as ExtractionRetrieveResponse,
     type ExtractionListResponse as ExtractionListResponse,
     type ExtractionEstimateCostResponse as ExtractionEstimateCostResponse,
@@ -1052,6 +1054,9 @@ export declare namespace XTwitterScraper {
 
   export {
     Draws as Draws,
+    type DrawDetail as DrawDetail,
+    type DrawListItem as DrawListItem,
+    type Winner as Winner,
     type DrawRetrieveResponse as DrawRetrieveResponse,
     type DrawListResponse as DrawListResponse,
     type DrawRunResponse as DrawRunResponse,
@@ -1062,8 +1067,9 @@ export declare namespace XTwitterScraper {
 
   export {
     Webhooks as Webhooks,
+    type Delivery as Delivery,
+    type Webhook as Webhook,
     type WebhookCreateResponse as WebhookCreateResponse,
-    type WebhookUpdateResponse as WebhookUpdateResponse,
     type WebhookListResponse as WebhookListResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
@@ -1074,9 +1080,8 @@ export declare namespace XTwitterScraper {
 
   export {
     Integrations as Integrations,
-    type IntegrationCreateResponse as IntegrationCreateResponse,
-    type IntegrationRetrieveResponse as IntegrationRetrieveResponse,
-    type IntegrationUpdateResponse as IntegrationUpdateResponse,
+    type Integration as Integration,
+    type IntegrationDelivery as IntegrationDelivery,
     type IntegrationListResponse as IntegrationListResponse,
     type IntegrationDeleteResponse as IntegrationDeleteResponse,
     type IntegrationListDeliveriesResponse as IntegrationListDeliveriesResponse,
@@ -1089,7 +1094,6 @@ export declare namespace XTwitterScraper {
   export {
     X as X,
     type XGetArticleResponse as XGetArticleResponse,
-    type XGetHomeTimelineResponse as XGetHomeTimelineResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
@@ -1101,11 +1105,7 @@ export declare namespace XTwitterScraper {
     type TrendListParams as TrendListParams,
   };
 
-  export {
-    Bot as Bot,
-    type BotTrackUsageResponse as BotTrackUsageResponse,
-    type BotTrackUsageParams as BotTrackUsageParams,
-  };
+  export { Bot as Bot };
 
   export { Support as Support };
 
@@ -1115,4 +1115,9 @@ export declare namespace XTwitterScraper {
     type CreditTopupBalanceResponse as CreditTopupBalanceResponse,
     type CreditTopupBalanceParams as CreditTopupBalanceParams,
   };
+
+  export type Error = API.Error;
+  export type EventType = API.EventType;
+  export type PaginatedTweets = API.PaginatedTweets;
+  export type PaginatedUsers = API.PaginatedUsers;
 }

@@ -7,13 +7,6 @@ import { path } from '../../internal/utils/path';
 
 export class Dm extends APIResource {
   /**
-   * Send direct message
-   */
-  update(userID: string, body: DmUpdateParams, options?: RequestOptions): APIPromise<DmUpdateResponse> {
-    return this._client.post(path`/x/dm/${userID}`, { body, ...options });
-  }
-
-  /**
    * Get DM conversation history
    */
   retrieveHistory(
@@ -23,12 +16,13 @@ export class Dm extends APIResource {
   ): APIPromise<DmRetrieveHistoryResponse> {
     return this._client.get(path`/x/dm/${userID}/history`, { query, ...options });
   }
-}
 
-export interface DmUpdateResponse {
-  messageId: string;
-
-  success: true;
+  /**
+   * Send direct message
+   */
+  send(userID: string, body: DmSendParams, options?: RequestOptions): APIPromise<DmSendResponse> {
+    return this._client.post(path`/x/dm/${userID}`, { body, ...options });
+  }
 }
 
 export interface DmRetrieveHistoryResponse {
@@ -53,17 +47,10 @@ export namespace DmRetrieveHistoryResponse {
   }
 }
 
-export interface DmUpdateParams {
-  /**
-   * X account (@username or account ID)
-   */
-  account: string;
+export interface DmSendResponse {
+  messageId: string;
 
-  text: string;
-
-  media_ids?: Array<string>;
-
-  reply_to_message_id?: string;
+  success: true;
 }
 
 export interface DmRetrieveHistoryParams {
@@ -78,11 +65,24 @@ export interface DmRetrieveHistoryParams {
   maxId?: string;
 }
 
+export interface DmSendParams {
+  /**
+   * X account (@username or account ID)
+   */
+  account: string;
+
+  text: string;
+
+  media_ids?: Array<string>;
+
+  reply_to_message_id?: string;
+}
+
 export declare namespace Dm {
   export {
-    type DmUpdateResponse as DmUpdateResponse,
     type DmRetrieveHistoryResponse as DmRetrieveHistoryResponse,
-    type DmUpdateParams as DmUpdateParams,
+    type DmSendResponse as DmSendResponse,
     type DmRetrieveHistoryParams as DmRetrieveHistoryParams,
+    type DmSendParams as DmSendParams,
   };
 }

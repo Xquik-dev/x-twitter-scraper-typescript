@@ -2,7 +2,7 @@
   "name": "x-twitter-scraper",
   "version": "0.0.1",
   "description": "The official TypeScript library for the X Twitter Scraper API",
-  "author": "X Twitter Scraper <>",
+  "author": "X Twitter Scraper <support@xquik.com>",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "type": "commonjs",

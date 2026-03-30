@@ -10,8 +10,8 @@ const client = new XTwitterScraper({
 
 describe('resource followers', () => {
   // Mock server tests are disabled
-  test.skip('retrieveCheck: only required params', async () => {
-    const responsePromise = client.x.followers.retrieveCheck({ source: 'source', target: 'target' });
+  test.skip('check: only required params', async () => {
+    const responsePromise = client.x.followers.check({ source: 'source', target: 'target' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -22,7 +22,7 @@ describe('resource followers', () => {
   });
 
   // Mock server tests are disabled
-  test.skip('retrieveCheck: required and optional params', async () => {
-    const response = await client.x.followers.retrieveCheck({ source: 'source', target: 'target' });
+  test.skip('check: required and optional params', async () => {
+    const response = await client.x.followers.check({ source: 'source', target: 'target' });
   });
 });

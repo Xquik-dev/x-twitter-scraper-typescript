@@ -10,8 +10,8 @@ const client = new XTwitterScraper({
 
 describe('resource profile', () => {
   // Mock server tests are disabled
-  test.skip('patchAll: only required params', async () => {
-    const responsePromise = client.x.profile.patchAll({ account: 'account' });
+  test.skip('update: only required params', async () => {
+    const responsePromise = client.x.profile.update({ account: 'account' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -22,8 +22,8 @@ describe('resource profile', () => {
   });
 
   // Mock server tests are disabled
-  test.skip('patchAll: required and optional params', async () => {
-    const response = await client.x.profile.patchAll({
+  test.skip('update: required and optional params', async () => {
+    const response = await client.x.profile.update({
       account: 'account',
       description: 'description',
       location: 'location',

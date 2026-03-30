@@ -9,11 +9,7 @@ export {
 } from './follow';
 export {
   Users,
-  type UserRetrieveResponse,
-  type UserRetrieveFollowersYouKnowResponse,
-  type UserRetrieveLikesResponse,
-  type UserRetrieveMediaResponse,
-  type UserRetrieveTweetsResponse,
+  type UserProfile,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,

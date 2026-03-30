@@ -1,7 +1,9 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
+export * from './shared';
 export {
   APIKeys,
+  type APIKey,
   type APIKeyCreateResponse,
   type APIKeyListResponse,
   type APIKeyRevokeResponse,
@@ -15,7 +17,7 @@ export {
   type AccountSetXUsernameParams,
   type AccountUpdateLocaleParams,
 } from './account';
-export { Bot, type BotTrackUsageResponse, type BotTrackUsageParams } from './bot/bot';
+export { Bot } from './bot/bot';
 export { Compose, type ComposeCreateResponse, type ComposeCreateParams } from './compose';
 export {
   Credits,
@@ -25,14 +27,17 @@ export {
 } from './credits';
 export {
   Drafts,
-  type DraftCreateResponse,
-  type DraftRetrieveResponse,
+  type Draft,
+  type DraftDetail,
   type DraftListResponse,
   type DraftCreateParams,
   type DraftListParams,
 } from './drafts';
 export {
   Draws,
+  type DrawDetail,
+  type DrawListItem,
+  type Winner,
   type DrawRetrieveResponse,
   type DrawListResponse,
   type DrawRunResponse,
@@ -40,9 +45,10 @@ export {
   type DrawExportParams,
   type DrawRunParams,
 } from './draws';
-export { Events, type EventRetrieveResponse, type EventListResponse, type EventListParams } from './events';
+export { Events, type Event, type EventDetail, type EventListResponse, type EventListParams } from './events';
 export {
   Extractions,
+  type ExtractionJob,
   type ExtractionRetrieveResponse,
   type ExtractionListResponse,
   type ExtractionEstimateCostResponse,
@@ -55,9 +61,8 @@ export {
 } from './extractions';
 export {
   Integrations,
-  type IntegrationCreateResponse,
-  type IntegrationRetrieveResponse,
-  type IntegrationUpdateResponse,
+  type Integration,
+  type IntegrationDelivery,
   type IntegrationListResponse,
   type IntegrationDeleteResponse,
   type IntegrationListDeliveriesResponse,
@@ -68,9 +73,8 @@ export {
 } from './integrations';
 export {
   Monitors,
+  type Monitor,
   type MonitorCreateResponse,
-  type MonitorRetrieveResponse,
-  type MonitorUpdateResponse,
   type MonitorListResponse,
   type MonitorDeactivateResponse,
   type MonitorCreateParams,
@@ -78,15 +82,15 @@ export {
 } from './monitors';
 export {
   Radar,
+  type RadarItem,
   type RadarRetrieveTrendingTopicsResponse,
   type RadarRetrieveTrendingTopicsParams,
 } from './radar';
 export {
   Styles,
-  type StyleRetrieveResponse,
-  type StyleUpdateResponse,
+  type StyleProfile,
+  type StyleProfileSummary,
   type StyleListResponse,
-  type StyleAnalyzeResponse,
   type StyleCompareResponse,
   type StyleGetPerformanceResponse,
   type StyleUpdateParams,
@@ -98,8 +102,9 @@ export { Support } from './support/support';
 export { Trends, type TrendListResponse, type TrendListParams } from './trends';
 export {
   Webhooks,
+  type Delivery,
+  type Webhook,
   type WebhookCreateResponse,
-  type WebhookUpdateResponse,
   type WebhookListResponse,
   type WebhookDeactivateResponse,
   type WebhookListDeliveriesResponse,
@@ -110,7 +115,6 @@ export {
 export {
   X,
   type XGetArticleResponse,
-  type XGetHomeTimelineResponse,
   type XGetNotificationsResponse,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,

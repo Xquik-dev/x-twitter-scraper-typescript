@@ -16,15 +16,12 @@ export {
 } from './retweet';
 export {
   Tweets,
+  type SearchTweet,
+  type TweetAuthor,
+  type TweetDetail,
   type TweetCreateResponse,
   type TweetRetrieveResponse,
   type TweetDeleteResponse,
-  type TweetGetFavoritersResponse,
-  type TweetGetQuotesResponse,
-  type TweetGetRepliesResponse,
-  type TweetGetRetweetersResponse,
-  type TweetGetThreadResponse,
-  type TweetSearchResponse,
   type TweetCreateParams,
   type TweetListParams,
   type TweetDeleteParams,

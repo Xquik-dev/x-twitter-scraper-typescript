@@ -65,6 +65,40 @@ export class Extractions extends APIResource {
   }
 }
 
+export interface ExtractionJob {
+  id: string;
+
+  createdAt: string;
+
+  status: 'running' | 'completed' | 'failed';
+
+  toolType:
+    | 'article_extractor'
+    | 'community_extractor'
+    | 'community_moderator_explorer'
+    | 'community_post_extractor'
+    | 'community_search'
+    | 'follower_explorer'
+    | 'following_explorer'
+    | 'list_follower_explorer'
+    | 'list_member_extractor'
+    | 'list_post_extractor'
+    | 'mention_extractor'
+    | 'people_search'
+    | 'post_extractor'
+    | 'quote_extractor'
+    | 'reply_extractor'
+    | 'repost_extractor'
+    | 'space_explorer'
+    | 'thread_extractor'
+    | 'tweet_search_extractor'
+    | 'verified_follower_explorer';
+
+  totalResults: number;
+
+  completedAt?: string;
+}
+
 export interface ExtractionRetrieveResponse {
   hasMore: boolean;
 
@@ -76,47 +110,11 @@ export interface ExtractionRetrieveResponse {
 }
 
 export interface ExtractionListResponse {
-  extractions: Array<ExtractionListResponse.Extraction>;
+  extractions: Array<ExtractionJob>;
 
   hasMore: boolean;
 
   nextCursor?: string;
-}
-
-export namespace ExtractionListResponse {
-  export interface Extraction {
-    id: string;
-
-    createdAt: string;
-
-    status: 'running' | 'completed' | 'failed';
-
-    toolType:
-      | 'article_extractor'
-      | 'community_extractor'
-      | 'community_moderator_explorer'
-      | 'community_post_extractor'
-      | 'community_search'
-      | 'follower_explorer'
-      | 'following_explorer'
-      | 'list_follower_explorer'
-      | 'list_member_extractor'
-      | 'list_post_extractor'
-      | 'mention_extractor'
-      | 'people_search'
-      | 'post_extractor'
-      | 'quote_extractor'
-      | 'reply_extractor'
-      | 'repost_extractor'
-      | 'space_explorer'
-      | 'thread_extractor'
-      | 'tweet_search_extractor'
-      | 'verified_follower_explorer';
-
-    totalResults: number;
-
-    completedAt?: string;
-  }
 }
 
 export interface ExtractionEstimateCostResponse {
@@ -309,6 +307,7 @@ export interface ExtractionRunParams {
 
 export declare namespace Extractions {
   export {
+    type ExtractionJob as ExtractionJob,
     type ExtractionRetrieveResponse as ExtractionRetrieveResponse,
     type ExtractionListResponse as ExtractionListResponse,
     type ExtractionEstimateCostResponse as ExtractionEstimateCostResponse,

@@ -11,24 +11,18 @@ import { multipartFormRequestOptions } from '../../internal/uploads';
  */
 export class Media extends APIResource {
   /**
-   * Upload media
-   */
-  create(body: MediaCreateParams, options?: RequestOptions): APIPromise<MediaCreateResponse> {
-    return this._client.post('/x/media', multipartFormRequestOptions({ body, ...options }, this._client));
-  }
-
-  /**
    * Download tweet media
    */
   download(body: MediaDownloadParams, options?: RequestOptions): APIPromise<MediaDownloadResponse> {
     return this._client.post('/x/media/download', { body, ...options });
   }
-}
 
-export interface MediaCreateResponse {
-  mediaId: string;
-
-  success: true;
+  /**
+   * Upload media
+   */
+  upload(body: MediaUploadParams, options?: RequestOptions): APIPromise<MediaUploadResponse> {
+    return this._client.post('/x/media', multipartFormRequestOptions({ body, ...options }, this._client));
+  }
 }
 
 export interface MediaDownloadResponse {
@@ -43,18 +37,10 @@ export interface MediaDownloadResponse {
   tweetId?: string;
 }
 
-export interface MediaCreateParams {
-  /**
-   * X account (@username or account ID)
-   */
-  account: string;
+export interface MediaUploadResponse {
+  mediaId: string;
 
-  /**
-   * Media file to upload
-   */
-  file: Uploadable;
-
-  is_long_video?: boolean;
+  success: true;
 }
 
 export interface MediaDownloadParams {
@@ -69,11 +55,25 @@ export interface MediaDownloadParams {
   tweetInput?: string;
 }
 
+export interface MediaUploadParams {
+  /**
+   * X account (@username or account ID)
+   */
+  account: string;
+
+  /**
+   * Media file to upload
+   */
+  file: Uploadable;
+
+  is_long_video?: boolean;
+}
+
 export declare namespace Media {
   export {
-    type MediaCreateResponse as MediaCreateResponse,
     type MediaDownloadResponse as MediaDownloadResponse,
-    type MediaCreateParams as MediaCreateParams,
+    type MediaUploadResponse as MediaUploadResponse,
     type MediaDownloadParams as MediaDownloadParams,
+    type MediaUploadParams as MediaUploadParams,
   };
 }

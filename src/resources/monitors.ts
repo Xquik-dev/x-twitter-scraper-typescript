@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -19,14 +20,14 @@ export class Monitors extends APIResource {
   /**
    * Get monitor
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<MonitorRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<Monitor> {
     return this._client.get(path`/monitors/${id}`, options);
   }
 
   /**
    * Update monitor
    */
-  update(id: string, body: MonitorUpdateParams, options?: RequestOptions): APIPromise<MonitorUpdateResponse> {
+  update(id: string, body: MonitorUpdateParams, options?: RequestOptions): APIPromise<Monitor> {
     return this._client.patch(path`/monitors/${id}`, { body, ...options });
   }
 
@@ -45,46 +46,26 @@ export class Monitors extends APIResource {
   }
 }
 
+export interface Monitor {
+  id: string;
+
+  createdAt: string;
+
+  eventTypes: Array<Shared.EventType>;
+
+  isActive: boolean;
+
+  username: string;
+
+  xUserId: string;
+}
+
 export interface MonitorCreateResponse {
   id: string;
 
   createdAt: string;
 
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  username: string;
-
-  xUserId: string;
-}
-
-export interface MonitorRetrieveResponse {
-  id: string;
-
-  createdAt: string;
-
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
-
-  username: string;
-
-  xUserId: string;
-}
-
-export interface MonitorUpdateResponse {
-  id: string;
-
-  createdAt: string;
-
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
+  eventTypes: Array<Shared.EventType>;
 
   username: string;
 
@@ -92,27 +73,9 @@ export interface MonitorUpdateResponse {
 }
 
 export interface MonitorListResponse {
-  monitors: Array<MonitorListResponse.Monitor>;
+  monitors: Array<Monitor>;
 
   total: number;
-}
-
-export namespace MonitorListResponse {
-  export interface Monitor {
-    id: string;
-
-    createdAt: string;
-
-    eventTypes: Array<
-      'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-    >;
-
-    isActive: boolean;
-
-    username: string;
-
-    xUserId: string;
-  }
 }
 
 export interface MonitorDeactivateResponse {
@@ -120,9 +83,7 @@ export interface MonitorDeactivateResponse {
 }
 
 export interface MonitorCreateParams {
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   /**
    * X username (without @)
@@ -131,18 +92,15 @@ export interface MonitorCreateParams {
 }
 
 export interface MonitorUpdateParams {
-  eventTypes?: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes?: Array<Shared.EventType>;
 
   isActive?: boolean;
 }
 
 export declare namespace Monitors {
   export {
+    type Monitor as Monitor,
     type MonitorCreateResponse as MonitorCreateResponse,
-    type MonitorRetrieveResponse as MonitorRetrieveResponse,
-    type MonitorUpdateResponse as MonitorUpdateResponse,
     type MonitorListResponse as MonitorListResponse,
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
     type MonitorCreateParams as MonitorCreateParams,

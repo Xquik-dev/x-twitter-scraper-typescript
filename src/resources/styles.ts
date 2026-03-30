@@ -13,18 +13,14 @@ export class Styles extends APIResource {
   /**
    * Get cached style profile
    */
-  retrieve(username: string, options?: RequestOptions): APIPromise<StyleRetrieveResponse> {
+  retrieve(username: string, options?: RequestOptions): APIPromise<StyleProfile> {
     return this._client.get(path`/styles/${username}`, options);
   }
 
   /**
    * Save style profile with custom tweets
    */
-  update(
-    username: string,
-    body: StyleUpdateParams,
-    options?: RequestOptions,
-  ): APIPromise<StyleUpdateResponse> {
+  update(username: string, body: StyleUpdateParams, options?: RequestOptions): APIPromise<StyleProfile> {
     return this._client.put(path`/styles/${username}`, { body, ...options });
   }
 
@@ -48,7 +44,7 @@ export class Styles extends APIResource {
   /**
    * Analyze writing style from recent tweets
    */
-  analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleAnalyzeResponse> {
+  analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleProfile> {
     return this._client.post('/styles', { body, ...options });
   }
 
@@ -67,19 +63,19 @@ export class Styles extends APIResource {
   }
 }
 
-export interface StyleRetrieveResponse {
+export interface StyleProfile {
   fetchedAt: string;
 
   isOwnAccount: boolean;
 
   tweetCount: number;
 
-  tweets: Array<StyleRetrieveResponse.Tweet>;
+  tweets: Array<StyleProfile.Tweet>;
 
   xUsername: string;
 }
 
-export namespace StyleRetrieveResponse {
+export namespace StyleProfile {
   export interface Tweet {
     id: string;
 
@@ -91,124 +87,24 @@ export namespace StyleRetrieveResponse {
   }
 }
 
-export interface StyleUpdateResponse {
+export interface StyleProfileSummary {
   fetchedAt: string;
 
   isOwnAccount: boolean;
 
   tweetCount: number;
 
-  tweets: Array<StyleUpdateResponse.Tweet>;
-
   xUsername: string;
-}
-
-export namespace StyleUpdateResponse {
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    authorUsername?: string;
-
-    createdAt?: string;
-  }
 }
 
 export interface StyleListResponse {
-  styles: Array<StyleListResponse.Style>;
-}
-
-export namespace StyleListResponse {
-  export interface Style {
-    fetchedAt: string;
-
-    isOwnAccount: boolean;
-
-    tweetCount: number;
-
-    xUsername: string;
-  }
-}
-
-export interface StyleAnalyzeResponse {
-  fetchedAt: string;
-
-  isOwnAccount: boolean;
-
-  tweetCount: number;
-
-  tweets: Array<StyleAnalyzeResponse.Tweet>;
-
-  xUsername: string;
-}
-
-export namespace StyleAnalyzeResponse {
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    authorUsername?: string;
-
-    createdAt?: string;
-  }
+  styles: Array<StyleProfileSummary>;
 }
 
 export interface StyleCompareResponse {
-  style1: StyleCompareResponse.Style1;
+  style1: StyleProfile;
 
-  style2: StyleCompareResponse.Style2;
-}
-
-export namespace StyleCompareResponse {
-  export interface Style1 {
-    fetchedAt: string;
-
-    isOwnAccount: boolean;
-
-    tweetCount: number;
-
-    tweets: Array<Style1.Tweet>;
-
-    xUsername: string;
-  }
-
-  export namespace Style1 {
-    export interface Tweet {
-      id: string;
-
-      text: string;
-
-      authorUsername?: string;
-
-      createdAt?: string;
-    }
-  }
-
-  export interface Style2 {
-    fetchedAt: string;
-
-    isOwnAccount: boolean;
-
-    tweetCount: number;
-
-    tweets: Array<Style2.Tweet>;
-
-    xUsername: string;
-  }
-
-  export namespace Style2 {
-    export interface Tweet {
-      id: string;
-
-      text: string;
-
-      authorUsername?: string;
-
-      createdAt?: string;
-    }
-  }
+  style2: StyleProfile;
 }
 
 export interface StyleGetPerformanceResponse {
@@ -276,10 +172,9 @@ export interface StyleCompareParams {
 
 export declare namespace Styles {
   export {
-    type StyleRetrieveResponse as StyleRetrieveResponse,
-    type StyleUpdateResponse as StyleUpdateResponse,
+    type StyleProfile as StyleProfile,
+    type StyleProfileSummary as StyleProfileSummary,
     type StyleListResponse as StyleListResponse,
-    type StyleAnalyzeResponse as StyleAnalyzeResponse,
     type StyleCompareResponse as StyleCompareResponse,
     type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
     type StyleUpdateParams as StyleUpdateParams,
