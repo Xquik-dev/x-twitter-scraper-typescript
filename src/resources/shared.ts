@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import * as TweetsAPI from './x/tweets/tweets';
+import * as UsersAPI from './x/users/users';
 
 export interface Error {
   error:
@@ -52,5 +53,5 @@ export interface PaginatedUsers {
 
   next_cursor: string;
 
-  users: Array<unknown>;
+  users: Array<UsersAPI.UserProfile>;
 }
