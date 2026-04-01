@@ -32,7 +32,7 @@ export class Account extends APIResource {
     body: AccountUpdateLocaleParams,
     options?: RequestOptions,
   ): APIPromise<AccountUpdateLocaleResponse> {
-    return this._client.patch('/account', { body, ...options, __security: {} });
+    return this._client.patch('/account', { body, ...options, __security: { apiKeyAuth: true } });
   }
 }
 

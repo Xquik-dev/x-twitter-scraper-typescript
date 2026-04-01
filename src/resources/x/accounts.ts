@@ -13,35 +13,39 @@ export class Accounts extends APIResource {
    * Connect X account
    */
   create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
-    return this._client.post('/x/accounts', { body, ...options, __security: {} });
+    return this._client.post('/x/accounts', { body, ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Get X account details
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
-    return this._client.get(path`/x/accounts/${id}`, { ...options, __security: {} });
+    return this._client.get(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * List connected X accounts
    */
   list(options?: RequestOptions): APIPromise<AccountListResponse> {
-    return this._client.get('/x/accounts', { ...options, __security: {} });
+    return this._client.get('/x/accounts', { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Disconnect X account
    */
   delete(id: string, options?: RequestOptions): APIPromise<AccountDeleteResponse> {
-    return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: {} });
+    return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Re-authenticate X account
    */
   reauth(id: string, body: AccountReauthParams, options?: RequestOptions): APIPromise<AccountReauthResponse> {
-    return this._client.post(path`/x/accounts/${id}/reauth`, { body, ...options, __security: {} });
+    return this._client.post(path`/x/accounts/${id}/reauth`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true },
+    });
   }
 }
 

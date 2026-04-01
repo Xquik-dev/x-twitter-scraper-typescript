@@ -44,6 +44,9 @@ export interface Event {
 export interface EventDetail {
   id: string;
 
+  /**
+   * Event payload — shape varies by event type (JSON)
+   */
   data: { [key: string]: unknown };
 
   monitorId: string;
@@ -60,6 +63,9 @@ export interface EventDetail {
 export interface EventRetrieveResponse {
   id: string;
 
+  /**
+   * Event payload — shape varies by event type (JSON)
+   */
   data: { [key: string]: unknown };
 
   monitorId: string;

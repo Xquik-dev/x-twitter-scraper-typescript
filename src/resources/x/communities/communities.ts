@@ -111,7 +111,83 @@ export interface CommunityRetrieveInfoResponse {
   /**
    * Community info object
    */
-  community: unknown;
+  community: CommunityRetrieveInfoResponse.Community;
+}
+
+export namespace CommunityRetrieveInfoResponse {
+  /**
+   * Community info object
+   */
+  export interface Community {
+    /**
+     * Community ID
+     */
+    id: string;
+
+    /**
+     * Community banner image URL
+     */
+    banner_url?: string;
+
+    /**
+     * Community creation timestamp
+     */
+    created_at?: string;
+
+    /**
+     * Community description
+     */
+    description?: string;
+
+    /**
+     * Join policy (open or restricted)
+     */
+    join_policy?: string;
+
+    /**
+     * Total member count
+     */
+    member_count?: number;
+
+    /**
+     * Total moderator count
+     */
+    moderator_count?: number;
+
+    /**
+     * Community name
+     */
+    name?: string;
+
+    /**
+     * Primary topic
+     */
+    primary_topic?: Community.PrimaryTopic;
+
+    /**
+     * Community rules
+     */
+    rules?: Array<Community.Rule>;
+  }
+
+  export namespace Community {
+    /**
+     * Primary topic
+     */
+    export interface PrimaryTopic {
+      id?: string;
+
+      name?: string;
+    }
+
+    export interface Rule {
+      id?: string;
+
+      description?: string;
+
+      name?: string;
+    }
+  }
 }
 
 export interface CommunityCreateParams {

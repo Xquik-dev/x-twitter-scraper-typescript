@@ -70,6 +70,9 @@ export class Integrations extends APIResource {
 export interface Integration {
   id: string;
 
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
   config: { [key: string]: unknown };
 
   createdAt: string;
@@ -84,6 +87,9 @@ export interface Integration {
 
   type: 'telegram';
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   messageTemplate?: string;
@@ -118,6 +124,9 @@ export interface IntegrationDelivery {
 export interface IntegrationCreateResponse {
   id: string;
 
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
   config: { [key: string]: unknown };
 
   createdAt: string;
@@ -132,6 +141,9 @@ export interface IntegrationCreateResponse {
 
   type: 'telegram';
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   messageTemplate?: string;
@@ -144,6 +156,9 @@ export interface IntegrationCreateResponse {
 export interface IntegrationRetrieveResponse {
   id: string;
 
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
   config: { [key: string]: unknown };
 
   createdAt: string;
@@ -158,6 +173,9 @@ export interface IntegrationRetrieveResponse {
 
   type: 'telegram';
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   messageTemplate?: string;
@@ -170,6 +188,9 @@ export interface IntegrationRetrieveResponse {
 export interface IntegrationUpdateResponse {
   id: string;
 
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
   config: { [key: string]: unknown };
 
   createdAt: string;
@@ -184,6 +205,9 @@ export interface IntegrationUpdateResponse {
 
   type: 'telegram';
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   messageTemplate?: string;
@@ -201,6 +225,9 @@ export namespace IntegrationListResponse {
   export interface Integration {
     id: string;
 
+    /**
+     * Integration config — shape varies by type (JSON)
+     */
     config: { [key: string]: unknown };
 
     createdAt: string;
@@ -215,6 +242,9 @@ export namespace IntegrationListResponse {
 
     type: 'telegram';
 
+    /**
+     * Event filter rules (JSON)
+     */
     filters?: { [key: string]: unknown };
 
     messageTemplate?: string;
@@ -290,10 +320,16 @@ export interface IntegrationUpdateParams {
     'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
   >;
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   isActive?: boolean;
 
+  /**
+   * Custom message template (JSON)
+   */
   messageTemplate?: { [key: string]: unknown };
 
   name?: string;

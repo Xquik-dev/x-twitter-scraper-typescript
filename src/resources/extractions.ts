@@ -102,6 +102,9 @@ export interface ExtractionJob {
 export interface ExtractionRetrieveResponse {
   hasMore: boolean;
 
+  /**
+   * Extraction job metadata — shape varies by tool type (JSON)
+   */
   job: { [key: string]: unknown };
 
   results: Array<{ [key: string]: unknown }>;
