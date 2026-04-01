@@ -2,7 +2,13 @@
 
 import { APIResource } from '../../../core/resource';
 import * as JoinAPI from './join';
-import { Join, JoinCreateParams, JoinDeleteAllParams } from './join';
+import {
+  Join,
+  JoinCreateParams,
+  JoinCreateResponse,
+  JoinDeleteAllParams,
+  JoinDeleteAllResponse,
+} from './join';
 import * as TweetsAPI from './tweets';
 import { TweetListParams, Tweets } from './tweets';
 import { APIPromise } from '../../../core/api-promise';
@@ -186,6 +192,8 @@ export declare namespace Communities {
 
   export {
     Join as Join,
+    type JoinCreateResponse as JoinCreateResponse,
+    type JoinDeleteAllResponse as JoinDeleteAllResponse,
     type JoinCreateParams as JoinCreateParams,
     type JoinDeleteAllParams as JoinDeleteAllParams,
   };

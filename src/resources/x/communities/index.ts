@@ -12,5 +12,11 @@ export {
   type CommunityRetrieveModeratorsParams,
   type CommunityRetrieveSearchParams,
 } from './communities';
-export { Join, type JoinCreateParams, type JoinDeleteAllParams } from './join';
+export {
+  Join,
+  type JoinCreateResponse,
+  type JoinDeleteAllResponse,
+  type JoinCreateParams,
+  type JoinDeleteAllParams,
+} from './join';
 export { Tweets, type TweetListParams } from './tweets';

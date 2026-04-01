@@ -13,14 +13,14 @@ export class Drafts extends APIResource {
   /**
    * Save a tweet draft
    */
-  create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftDetail> {
+  create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftCreateResponse> {
     return this._client.post('/drafts', { body, ...options });
   }
 
   /**
    * Get draft by ID
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<DraftDetail> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<DraftRetrieveResponse> {
     return this._client.get(path`/drafts/${id}`, options);
   }
 
@@ -71,12 +71,54 @@ export interface DraftDetail {
   topic?: string;
 }
 
+export interface DraftCreateResponse {
+  id: string;
+
+  createdAt: string;
+
+  text: string;
+
+  updatedAt: string;
+
+  goal?: string;
+
+  topic?: string;
+}
+
+export interface DraftRetrieveResponse {
+  id: string;
+
+  createdAt: string;
+
+  text: string;
+
+  updatedAt: string;
+
+  goal?: string;
+
+  topic?: string;
+}
+
 export interface DraftListResponse {
-  drafts: Array<Draft>;
+  drafts: Array<DraftListResponse.Draft>;
 
   hasMore: boolean;
 
   nextCursor?: string;
+}
+
+export namespace DraftListResponse {
+  export interface Draft {
+    id: string;
+
+    createdAt: string;
+
+    text: string;
+
+    goal?: string;
+
+    topic?: string;
+  }
 }
 
 export interface DraftCreateParams {
@@ -100,6 +142,8 @@ export declare namespace Drafts {
   export {
     type Draft as Draft,
     type DraftDetail as DraftDetail,
+    type DraftCreateResponse as DraftCreateResponse,
+    type DraftRetrieveResponse as DraftRetrieveResponse,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
     type DraftListParams as DraftListParams,

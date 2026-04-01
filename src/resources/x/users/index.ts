@@ -10,6 +10,11 @@ export {
 export {
   Users,
   type UserProfile,
+  type UserRetrieveResponse,
+  type UserRetrieveFollowersYouKnowResponse,
+  type UserRetrieveLikesResponse,
+  type UserRetrieveMediaResponse,
+  type UserRetrieveTweetsResponse,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,
