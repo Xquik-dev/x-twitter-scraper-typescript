@@ -1,7 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../../core/resource';
-import * as Shared from '../../shared';
 import * as LikeAPI from './like';
 import { Like, LikeCreateParams, LikeCreateResponse, LikeDeleteParams, LikeDeleteResponse } from './like';
 import * as RetweetAPI from './retweet';
@@ -64,7 +63,7 @@ export class Tweets extends APIResource {
     id: string,
     query: TweetGetFavoritersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  ): APIPromise<TweetGetFavoritersResponse> {
     return this._client.get(path`/x/tweets/${id}/favoriters`, { query, ...options });
   }
 
@@ -75,7 +74,7 @@ export class Tweets extends APIResource {
     id: string,
     query: TweetGetQuotesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<TweetGetQuotesResponse> {
     return this._client.get(path`/x/tweets/${id}/quotes`, { query, ...options });
   }
 
@@ -86,7 +85,7 @@ export class Tweets extends APIResource {
     id: string,
     query: TweetGetRepliesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<TweetGetRepliesResponse> {
     return this._client.get(path`/x/tweets/${id}/replies`, { query, ...options });
   }
 
@@ -97,7 +96,7 @@ export class Tweets extends APIResource {
     id: string,
     query: TweetGetRetweetersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  ): APIPromise<TweetGetRetweetersResponse> {
     return this._client.get(path`/x/tweets/${id}/retweeters`, { query, ...options });
   }
 
@@ -108,14 +107,14 @@ export class Tweets extends APIResource {
     id: string,
     query: TweetGetThreadParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<TweetGetThreadResponse> {
     return this._client.get(path`/x/tweets/${id}/thread`, { query, ...options });
   }
 
   /**
    * Search tweets
    */
-  search(query: TweetSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+  search(query: TweetSearchParams, options?: RequestOptions): APIPromise<TweetSearchResponse> {
     return this._client.get('/x/tweets/search', { query, ...options });
   }
 }
@@ -193,13 +192,291 @@ export interface TweetCreateResponse {
 }
 
 export interface TweetRetrieveResponse {
-  tweet: TweetDetail;
+  tweet: TweetRetrieveResponse.Tweet;
 
-  author?: TweetAuthor;
+  author?: TweetRetrieveResponse.Author;
+}
+
+export namespace TweetRetrieveResponse {
+  export interface Tweet {
+    id: string;
+
+    bookmarkCount: number;
+
+    likeCount: number;
+
+    quoteCount: number;
+
+    replyCount: number;
+
+    retweetCount: number;
+
+    text: string;
+
+    viewCount: number;
+
+    createdAt?: string;
+  }
+
+  export interface Author {
+    id: string;
+
+    followers: number;
+
+    username: string;
+
+    verified: boolean;
+
+    profilePicture?: string;
+  }
 }
 
 export interface TweetDeleteResponse {
   success: true;
+}
+
+export interface TweetGetFavoritersResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  users: Array<TweetGetFavoritersResponse.User>;
+}
+
+export namespace TweetGetFavoritersResponse {
+  export interface User {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    createdAt?: string;
+
+    description?: string;
+
+    followers?: number;
+
+    following?: number;
+
+    location?: string;
+
+    profilePicture?: string;
+
+    statusesCount?: number;
+
+    verified?: boolean;
+  }
+}
+
+export interface TweetGetQuotesResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<TweetGetQuotesResponse.Tweet>;
+}
+
+export namespace TweetGetQuotesResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
+}
+
+export interface TweetGetRepliesResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<TweetGetRepliesResponse.Tweet>;
+}
+
+export namespace TweetGetRepliesResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
+}
+
+export interface TweetGetRetweetersResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  users: Array<TweetGetRetweetersResponse.User>;
+}
+
+export namespace TweetGetRetweetersResponse {
+  export interface User {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    createdAt?: string;
+
+    description?: string;
+
+    followers?: number;
+
+    following?: number;
+
+    location?: string;
+
+    profilePicture?: string;
+
+    statusesCount?: number;
+
+    verified?: boolean;
+  }
+}
+
+export interface TweetGetThreadResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<TweetGetThreadResponse.Tweet>;
+}
+
+export namespace TweetGetThreadResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
+}
+
+export interface TweetSearchResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<TweetSearchResponse.Tweet>;
+}
+
+export namespace TweetSearchResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
 }
 
 export interface TweetCreateParams {
@@ -338,6 +615,12 @@ export declare namespace Tweets {
     type TweetCreateResponse as TweetCreateResponse,
     type TweetRetrieveResponse as TweetRetrieveResponse,
     type TweetDeleteResponse as TweetDeleteResponse,
+    type TweetGetFavoritersResponse as TweetGetFavoritersResponse,
+    type TweetGetQuotesResponse as TweetGetQuotesResponse,
+    type TweetGetRepliesResponse as TweetGetRepliesResponse,
+    type TweetGetRetweetersResponse as TweetGetRetweetersResponse,
+    type TweetGetThreadResponse as TweetGetThreadResponse,
+    type TweetSearchResponse as TweetSearchResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
     type TweetDeleteParams as TweetDeleteParams,

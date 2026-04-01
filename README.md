@@ -29,9 +29,9 @@ const client = new XTwitterScraper({
   apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
 });
 
-const paginatedTweets = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
+const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
 
-console.log(paginatedTweets.has_next_page);
+console.log(response.has_next_page);
 ```
 
 ### Request & Response types
@@ -47,7 +47,7 @@ const client = new XTwitterScraper({
 });
 
 const params: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit: 10 };
-const paginatedTweets: XTwitterScraper.PaginatedTweets = await client.x.tweets.search(params);
+const response: XTwitterScraper.X.TweetSearchResponse = await client.x.tweets.search(params);
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -95,7 +95,7 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const paginatedTweets = await client.x.tweets
+const response = await client.x.tweets
   .search({ q: 'from:elonmusk', limit: 10 })
   .catch(async (err) => {
     if (err instanceof XTwitterScraper.APIError) {
@@ -181,11 +181,11 @@ const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 })
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: paginatedTweets, response: raw } = await client.x.tweets
+const { data: response, response: raw } = await client.x.tweets
   .search({ q: 'from:elonmusk', limit: 10 })
   .withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(paginatedTweets.has_next_page);
+console.log(response.has_next_page);
 ```
 
 ### Logging

@@ -40,9 +40,31 @@ export interface RadarItem {
 }
 
 export interface RadarRetrieveTrendingTopicsResponse {
-  items: Array<RadarItem>;
+  items: Array<RadarRetrieveTrendingTopicsResponse.Item>;
 
   total: number;
+}
+
+export namespace RadarRetrieveTrendingTopicsResponse {
+  export interface Item {
+    category: string;
+
+    publishedAt: string;
+
+    region: string;
+
+    score: number;
+
+    source: string;
+
+    title: string;
+
+    description?: string;
+
+    imageUrl?: string;
+
+    url?: string;
+  }
 }
 
 export interface RadarRetrieveTrendingTopicsParams {

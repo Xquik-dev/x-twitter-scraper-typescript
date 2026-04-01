@@ -58,7 +58,23 @@ export interface APIKeyCreateResponse {
 }
 
 export interface APIKeyListResponse {
-  keys: Array<APIKey>;
+  keys: Array<APIKeyListResponse.Key>;
+}
+
+export namespace APIKeyListResponse {
+  export interface Key {
+    id: string;
+
+    createdAt: string;
+
+    isActive: boolean;
+
+    name: string;
+
+    prefix: string;
+
+    lastUsedAt?: string;
+  }
 }
 
 export interface APIKeyRevokeResponse {
