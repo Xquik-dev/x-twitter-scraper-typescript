@@ -16,7 +16,29 @@ export class Compose extends APIResource {
   }
 }
 
-export type ComposeCreateResponse = { [key: string]: unknown };
+export interface ComposeCreateResponse {
+  /**
+   * AI feedback on the draft
+   */
+  feedback?: string;
+
+  /**
+   * Engagement score (0-100)
+   */
+  score?: number;
+
+  /**
+   * Improvement suggestions
+   */
+  suggestions?: Array<string>;
+
+  /**
+   * Generated or refined tweet text
+   */
+  text?: string;
+
+  [k: string]: unknown;
+}
 
 export interface ComposeCreateParams {
   /**
