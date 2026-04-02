@@ -92,7 +92,7 @@ export interface RadarRetrieveTrendingTopicsParams {
    * Source filter. One of: github, google_trends, hacker_news, polymarket, reddit,
    * trustmrr, wikipedia
    */
-  source?: string;
+  source?: 'github' | 'google_trends' | 'hacker_news' | 'polymarket' | 'reddit' | 'trustmrr' | 'wikipedia';
 }
 
 export declare namespace Radar {

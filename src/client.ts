@@ -120,13 +120,9 @@ import {
   StyleAnalyzeResponse,
   StyleCompareParams,
   StyleCompareResponse,
-  StyleGetPerformanceResponse,
   StyleListResponse,
   StyleProfile,
   StyleProfileSummary,
-  StyleRetrieveResponse,
-  StyleUpdateParams,
-  StyleUpdateResponse,
   Styles,
 } from './resources/styles';
 import { Subscribe, SubscribeCreateResponse } from './resources/subscribe';
@@ -1026,13 +1022,9 @@ export declare namespace XTwitterScraper {
     Styles as Styles,
     type StyleProfile as StyleProfile,
     type StyleProfileSummary as StyleProfileSummary,
-    type StyleRetrieveResponse as StyleRetrieveResponse,
-    type StyleUpdateResponse as StyleUpdateResponse,
     type StyleListResponse as StyleListResponse,
     type StyleAnalyzeResponse as StyleAnalyzeResponse,
     type StyleCompareResponse as StyleCompareResponse,
-    type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
-    type StyleUpdateParams as StyleUpdateParams,
     type StyleAnalyzeParams as StyleAnalyzeParams,
     type StyleCompareParams as StyleCompareParams,
   };

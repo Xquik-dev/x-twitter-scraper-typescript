@@ -104,13 +104,9 @@ export {
   Styles,
   type StyleProfile,
   type StyleProfileSummary,
-  type StyleRetrieveResponse,
-  type StyleUpdateResponse,
   type StyleListResponse,
   type StyleAnalyzeResponse,
   type StyleCompareResponse,
-  type StyleGetPerformanceResponse,
-  type StyleUpdateParams,
   type StyleAnalyzeParams,
   type StyleCompareParams,
 } from './styles';

@@ -2,15 +2,9 @@
 
 import { APIResource } from '../../../core/resource';
 import * as LikeAPI from './like';
-import { Like, LikeCreateParams, LikeCreateResponse, LikeDeleteParams, LikeDeleteResponse } from './like';
+import { Like } from './like';
 import * as RetweetAPI from './retweet';
-import {
-  Retweet,
-  RetweetCreateParams,
-  RetweetCreateResponse,
-  RetweetDeleteParams,
-  RetweetDeleteResponse,
-} from './retweet';
+import { Retweet } from './retweet';
 import { APIPromise } from '../../../core/api-promise';
 import { buildHeaders } from '../../../internal/headers';
 import { RequestOptions } from '../../../internal/request-options';
@@ -28,13 +22,6 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Look up tweet
-   */
-  retrieve(tweetID: string, options?: RequestOptions): APIPromise<TweetRetrieveResponse> {
-    return this._client.get(path`/x/tweets/${tweetID}`, options);
-  }
-
-  /**
    * Get multiple tweets by IDs
    */
   list(query: TweetListParams, options?: RequestOptions): APIPromise<void> {
@@ -43,17 +30,6 @@ export class Tweets extends APIResource {
       ...options,
       headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
     });
-  }
-
-  /**
-   * Delete tweet
-   */
-  delete(
-    tweetID: string,
-    body: TweetDeleteParams,
-    options?: RequestOptions,
-  ): APIPromise<TweetDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${tweetID}`, { body, ...options });
   }
 
   /**
@@ -189,50 +165,6 @@ export interface TweetCreateResponse {
   success: true;
 
   tweetId: string;
-}
-
-export interface TweetRetrieveResponse {
-  tweet: TweetRetrieveResponse.Tweet;
-
-  author?: TweetRetrieveResponse.Author;
-}
-
-export namespace TweetRetrieveResponse {
-  export interface Tweet {
-    id: string;
-
-    bookmarkCount: number;
-
-    likeCount: number;
-
-    quoteCount: number;
-
-    replyCount: number;
-
-    retweetCount: number;
-
-    text: string;
-
-    viewCount: number;
-
-    createdAt?: string;
-  }
-
-  export interface Author {
-    id: string;
-
-    followers: number;
-
-    username: string;
-
-    verified: boolean;
-
-    profilePicture?: string;
-  }
-}
-
-export interface TweetDeleteResponse {
-  success: true;
 }
 
 export interface TweetGetFavoritersResponse {
@@ -505,13 +437,6 @@ export interface TweetListParams {
   ids: string;
 }
 
-export interface TweetDeleteParams {
-  /**
-   * X account (@username or account ID)
-   */
-  account: string;
-}
-
 export interface TweetGetFavoritersParams {
   /**
    * Pagination cursor from previous response
@@ -613,8 +538,6 @@ export declare namespace Tweets {
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
-    type TweetRetrieveResponse as TweetRetrieveResponse,
-    type TweetDeleteResponse as TweetDeleteResponse,
     type TweetGetFavoritersResponse as TweetGetFavoritersResponse,
     type TweetGetQuotesResponse as TweetGetQuotesResponse,
     type TweetGetRepliesResponse as TweetGetRepliesResponse,
@@ -623,7 +546,6 @@ export declare namespace Tweets {
     type TweetSearchResponse as TweetSearchResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
-    type TweetDeleteParams as TweetDeleteParams,
     type TweetGetFavoritersParams as TweetGetFavoritersParams,
     type TweetGetQuotesParams as TweetGetQuotesParams,
     type TweetGetRepliesParams as TweetGetRepliesParams,
@@ -632,19 +554,7 @@ export declare namespace Tweets {
     type TweetSearchParams as TweetSearchParams,
   };
 
-  export {
-    Like as Like,
-    type LikeCreateResponse as LikeCreateResponse,
-    type LikeDeleteResponse as LikeDeleteResponse,
-    type LikeCreateParams as LikeCreateParams,
-    type LikeDeleteParams as LikeDeleteParams,
-  };
+  export { Like as Like };
 
-  export {
-    Retweet as Retweet,
-    type RetweetCreateResponse as RetweetCreateResponse,
-    type RetweetDeleteResponse as RetweetDeleteResponse,
-    type RetweetCreateParams as RetweetCreateParams,
-    type RetweetDeleteParams as RetweetDeleteParams,
-  };
+  export { Retweet as Retweet };
 }

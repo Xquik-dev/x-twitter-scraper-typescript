@@ -79,22 +79,15 @@ Types:
 
 - <code><a href="./src/resources/styles.ts">StyleProfile</a></code>
 - <code><a href="./src/resources/styles.ts">StyleProfileSummary</a></code>
-- <code><a href="./src/resources/styles.ts">StyleRetrieveResponse</a></code>
-- <code><a href="./src/resources/styles.ts">StyleUpdateResponse</a></code>
 - <code><a href="./src/resources/styles.ts">StyleListResponse</a></code>
 - <code><a href="./src/resources/styles.ts">StyleAnalyzeResponse</a></code>
 - <code><a href="./src/resources/styles.ts">StyleCompareResponse</a></code>
-- <code><a href="./src/resources/styles.ts">StyleGetPerformanceResponse</a></code>
 
 Methods:
 
-- <code title="get /styles/{username}">client.styles.<a href="./src/resources/styles.ts">retrieve</a>(username) -> StyleRetrieveResponse</code>
-- <code title="put /styles/{username}">client.styles.<a href="./src/resources/styles.ts">update</a>(username, { ...params }) -> StyleUpdateResponse</code>
 - <code title="get /styles">client.styles.<a href="./src/resources/styles.ts">list</a>() -> StyleListResponse</code>
-- <code title="delete /styles/{username}">client.styles.<a href="./src/resources/styles.ts">delete</a>(username) -> void</code>
 - <code title="post /styles">client.styles.<a href="./src/resources/styles.ts">analyze</a>({ ...params }) -> StyleAnalyzeResponse</code>
 - <code title="get /styles/compare">client.styles.<a href="./src/resources/styles.ts">compare</a>({ ...params }) -> StyleCompareResponse</code>
-- <code title="get /styles/{username}/performance">client.styles.<a href="./src/resources/styles.ts">getPerformance</a>(username) -> StyleGetPerformanceResponse</code>
 
 # Radar
 
@@ -245,8 +238,6 @@ Types:
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetAuthor</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetDetail</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetCreateResponse</a></code>
-- <code><a href="./src/resources/x/tweets/tweets.ts">TweetRetrieveResponse</a></code>
-- <code><a href="./src/resources/x/tweets/tweets.ts">TweetDeleteResponse</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetGetFavoritersResponse</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetGetQuotesResponse</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetGetRepliesResponse</a></code>
@@ -257,9 +248,7 @@ Types:
 Methods:
 
 - <code title="post /x/tweets">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">create</a>({ ...params }) -> TweetCreateResponse</code>
-- <code title="get /x/tweets/{tweetId}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">retrieve</a>(tweetID) -> TweetRetrieveResponse</code>
 - <code title="get /x/tweets">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">list</a>({ ...params }) -> void</code>
-- <code title="delete /x/tweets/{tweetId}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">delete</a>(tweetID, { ...params }) -> TweetDeleteResponse</code>
 - <code title="get /x/tweets/{id}/favoriters">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getFavoriters</a>(id, { ...params }) -> TweetGetFavoritersResponse</code>
 - <code title="get /x/tweets/{id}/quotes">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getQuotes</a>(id, { ...params }) -> TweetGetQuotesResponse</code>
 - <code title="get /x/tweets/{id}/replies">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getReplies</a>(id, { ...params }) -> TweetGetRepliesResponse</code>
@@ -269,34 +258,13 @@ Methods:
 
 ### Like
 
-Types:
-
-- <code><a href="./src/resources/x/tweets/like.ts">LikeCreateResponse</a></code>
-- <code><a href="./src/resources/x/tweets/like.ts">LikeDeleteResponse</a></code>
-
-Methods:
-
-- <code title="post /x/tweets/{tweetId}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">create</a>(tweetID, { ...params }) -> LikeCreateResponse</code>
-- <code title="delete /x/tweets/{tweetId}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">delete</a>(tweetID, { ...params }) -> LikeDeleteResponse</code>
-
 ### Retweet
-
-Types:
-
-- <code><a href="./src/resources/x/tweets/retweet.ts">RetweetCreateResponse</a></code>
-- <code><a href="./src/resources/x/tweets/retweet.ts">RetweetDeleteResponse</a></code>
-
-Methods:
-
-- <code title="post /x/tweets/{tweetId}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">create</a>(tweetID, { ...params }) -> RetweetCreateResponse</code>
-- <code title="delete /x/tweets/{tweetId}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">delete</a>(tweetID, { ...params }) -> RetweetDeleteResponse</code>
 
 ## Users
 
 Types:
 
 - <code><a href="./src/resources/x/users/users.ts">UserProfile</a></code>
-- <code><a href="./src/resources/x/users/users.ts">UserRetrieveResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveFollowersYouKnowResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveLikesResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveMediaResponse</a></code>
@@ -304,7 +272,6 @@ Types:
 
 Methods:
 
-- <code title="get /x/users/{username}">client.x.users.<a href="./src/resources/x/users/users.ts">retrieve</a>(username) -> UserRetrieveResponse</code>
 - <code title="get /x/users/batch">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveBatch</a>({ ...params }) -> void</code>
 - <code title="get /x/users/{id}/followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowers</a>(id, { ...params }) -> void</code>
 - <code title="get /x/users/{id}/followers-you-know">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowersYouKnow</a>(id, { ...params }) -> UserRetrieveFollowersYouKnowResponse</code>
@@ -317,16 +284,6 @@ Methods:
 - <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveVerifiedFollowers</a>(id, { ...params }) -> void</code>
 
 ### Follow
-
-Types:
-
-- <code><a href="./src/resources/x/users/follow.ts">FollowCreateResponse</a></code>
-- <code><a href="./src/resources/x/users/follow.ts">FollowDeleteAllResponse</a></code>
-
-Methods:
-
-- <code title="post /x/users/{userId}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">create</a>(userID, { ...params }) -> FollowCreateResponse</code>
-- <code title="delete /x/users/{userId}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">deleteAll</a>(userID, { ...params }) -> FollowDeleteAllResponse</code>
 
 ## Followers
 
