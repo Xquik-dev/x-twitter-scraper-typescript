@@ -1,16 +1,9 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-export {
-  Follow,
-  type FollowCreateResponse,
-  type FollowDeleteAllResponse,
-  type FollowCreateParams,
-  type FollowDeleteAllParams,
-} from './follow';
+export { Follow } from './follow';
 export {
   Users,
   type UserProfile,
-  type UserRetrieveResponse,
   type UserRetrieveFollowersYouKnowResponse,
   type UserRetrieveLikesResponse,
   type UserRetrieveMediaResponse,

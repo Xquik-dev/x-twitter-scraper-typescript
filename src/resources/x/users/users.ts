@@ -2,13 +2,7 @@
 
 import { APIResource } from '../../../core/resource';
 import * as FollowAPI from './follow';
-import {
-  Follow,
-  FollowCreateParams,
-  FollowCreateResponse,
-  FollowDeleteAllParams,
-  FollowDeleteAllResponse,
-} from './follow';
+import { Follow } from './follow';
 import { APIPromise } from '../../../core/api-promise';
 import { buildHeaders } from '../../../internal/headers';
 import { RequestOptions } from '../../../internal/request-options';
@@ -19,13 +13,6 @@ import { path } from '../../../internal/utils/path';
  */
 export class Users extends APIResource {
   follow: FollowAPI.Follow = new FollowAPI.Follow(this._client);
-
-  /**
-   * Look up X user
-   */
-  retrieve(username: string, options?: RequestOptions): APIPromise<UserRetrieveResponse> {
-    return this._client.get(path`/x/users/${username}`, options);
-  }
 
   /**
    * Get multiple users by IDs
@@ -155,30 +142,6 @@ export class Users extends APIResource {
 }
 
 export interface UserProfile {
-  id: string;
-
-  name: string;
-
-  username: string;
-
-  createdAt?: string;
-
-  description?: string;
-
-  followers?: number;
-
-  following?: number;
-
-  location?: string;
-
-  profilePicture?: string;
-
-  statusesCount?: number;
-
-  verified?: boolean;
-}
-
-export interface UserRetrieveResponse {
   id: string;
 
   name: string;
@@ -478,7 +441,6 @@ Users.Follow = Follow;
 export declare namespace Users {
   export {
     type UserProfile as UserProfile,
-    type UserRetrieveResponse as UserRetrieveResponse,
     type UserRetrieveFollowersYouKnowResponse as UserRetrieveFollowersYouKnowResponse,
     type UserRetrieveLikesResponse as UserRetrieveLikesResponse,
     type UserRetrieveMediaResponse as UserRetrieveMediaResponse,
@@ -495,11 +457,5 @@ export declare namespace Users {
     type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams,
   };
 
-  export {
-    Follow as Follow,
-    type FollowCreateResponse as FollowCreateResponse,
-    type FollowDeleteAllResponse as FollowDeleteAllResponse,
-    type FollowCreateParams as FollowCreateParams,
-    type FollowDeleteAllParams as FollowDeleteAllParams,
-  };
+  export { Follow as Follow };
 }
