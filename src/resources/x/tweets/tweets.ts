@@ -509,7 +509,7 @@ export interface TweetSearchParams {
   cursor?: string;
 
   /**
-   * Deprecated — use cursor-based pagination instead
+   * Max tweets to return (server paginates internally). Omit for single page (~20).
    */
   limit?: number;
 
