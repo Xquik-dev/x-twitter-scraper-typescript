@@ -1,15 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../../core/resource';
-import * as Shared from '../../shared';
 import * as FollowAPI from './follow';
-import {
-  Follow,
-  FollowCreateParams,
-  FollowCreateResponse,
-  FollowDeleteAllParams,
-  FollowDeleteAllResponse,
-} from './follow';
+import { Follow } from './follow';
 import { APIPromise } from '../../../core/api-promise';
 import { buildHeaders } from '../../../internal/headers';
 import { RequestOptions } from '../../../internal/request-options';
@@ -20,13 +13,6 @@ import { path } from '../../../internal/utils/path';
  */
 export class Users extends APIResource {
   follow: FollowAPI.Follow = new FollowAPI.Follow(this._client);
-
-  /**
-   * Look up X user
-   */
-  retrieve(username: string, options?: RequestOptions): APIPromise<UserProfile> {
-    return this._client.get(path`/x/users/${username}`, options);
-  }
 
   /**
    * Get multiple users by IDs
@@ -61,7 +47,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveFollowersYouKnowParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  ): APIPromise<UserRetrieveFollowersYouKnowResponse> {
     return this._client.get(path`/x/users/${id}/followers-you-know`, { query, ...options });
   }
 
@@ -87,7 +73,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveLikesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<UserRetrieveLikesResponse> {
     return this._client.get(path`/x/users/${id}/likes`, { query, ...options });
   }
 
@@ -98,7 +84,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveMediaParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<UserRetrieveMediaResponse> {
     return this._client.get(path`/x/users/${id}/media`, { query, ...options });
   }
 
@@ -135,7 +121,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<UserRetrieveTweetsResponse> {
     return this._client.get(path`/x/users/${id}/tweets`, { query, ...options });
   }
 
@@ -177,6 +163,172 @@ export interface UserProfile {
   statusesCount?: number;
 
   verified?: boolean;
+}
+
+export interface UserRetrieveFollowersYouKnowResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  users: Array<UserRetrieveFollowersYouKnowResponse.User>;
+}
+
+export namespace UserRetrieveFollowersYouKnowResponse {
+  export interface User {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    createdAt?: string;
+
+    description?: string;
+
+    followers?: number;
+
+    following?: number;
+
+    location?: string;
+
+    profilePicture?: string;
+
+    statusesCount?: number;
+
+    verified?: boolean;
+  }
+}
+
+export interface UserRetrieveLikesResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<UserRetrieveLikesResponse.Tweet>;
+}
+
+export namespace UserRetrieveLikesResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
+}
+
+export interface UserRetrieveMediaResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<UserRetrieveMediaResponse.Tweet>;
+}
+
+export namespace UserRetrieveMediaResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
+}
+
+export interface UserRetrieveTweetsResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<UserRetrieveTweetsResponse.Tweet>;
+}
+
+export namespace UserRetrieveTweetsResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
 }
 
 export interface UserRetrieveBatchParams {
@@ -289,6 +441,10 @@ Users.Follow = Follow;
 export declare namespace Users {
   export {
     type UserProfile as UserProfile,
+    type UserRetrieveFollowersYouKnowResponse as UserRetrieveFollowersYouKnowResponse,
+    type UserRetrieveLikesResponse as UserRetrieveLikesResponse,
+    type UserRetrieveMediaResponse as UserRetrieveMediaResponse,
+    type UserRetrieveTweetsResponse as UserRetrieveTweetsResponse,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,
@@ -301,11 +457,5 @@ export declare namespace Users {
     type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams,
   };
 
-  export {
-    Follow as Follow,
-    type FollowCreateResponse as FollowCreateResponse,
-    type FollowDeleteAllResponse as FollowDeleteAllResponse,
-    type FollowCreateParams as FollowCreateParams,
-    type FollowDeleteAllParams as FollowDeleteAllParams,
-  };
+  export { Follow as Follow };
 }

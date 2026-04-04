@@ -5,13 +5,19 @@ export {
   type XAccount,
   type XAccountDetail,
   type AccountCreateResponse,
+  type AccountRetrieveResponse,
   type AccountListResponse,
   type AccountDeleteResponse,
   type AccountReauthResponse,
   type AccountCreateParams,
   type AccountReauthParams,
 } from './accounts';
-export { Bookmarks, type BookmarkRetrieveFoldersResponse, type BookmarkListParams } from './bookmarks';
+export {
+  Bookmarks,
+  type BookmarkListResponse,
+  type BookmarkRetrieveFoldersResponse,
+  type BookmarkListParams,
+} from './bookmarks';
 export {
   Communities,
   type CommunityActionResult,
@@ -60,11 +66,14 @@ export {
   type TweetAuthor,
   type TweetDetail,
   type TweetCreateResponse,
-  type TweetRetrieveResponse,
-  type TweetDeleteResponse,
+  type TweetGetFavoritersResponse,
+  type TweetGetQuotesResponse,
+  type TweetGetRepliesResponse,
+  type TweetGetRetweetersResponse,
+  type TweetGetThreadResponse,
+  type TweetSearchResponse,
   type TweetCreateParams,
   type TweetListParams,
-  type TweetDeleteParams,
   type TweetGetFavoritersParams,
   type TweetGetQuotesParams,
   type TweetGetRepliesParams,
@@ -75,6 +84,10 @@ export {
 export {
   Users,
   type UserProfile,
+  type UserRetrieveFollowersYouKnowResponse,
+  type UserRetrieveLikesResponse,
+  type UserRetrieveMediaResponse,
+  type UserRetrieveTweetsResponse,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,
@@ -89,6 +102,7 @@ export {
 export {
   X,
   type XGetArticleResponse,
+  type XGetHomeTimelineResponse,
   type XGetNotificationsResponse,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,

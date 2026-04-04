@@ -1,7 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
-import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -13,21 +12,25 @@ export class Integrations extends APIResource {
   /**
    * Create integration
    */
-  create(body: IntegrationCreateParams, options?: RequestOptions): APIPromise<Integration> {
+  create(body: IntegrationCreateParams, options?: RequestOptions): APIPromise<IntegrationCreateResponse> {
     return this._client.post('/integrations', { body, ...options });
   }
 
   /**
    * Get integration details
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<Integration> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<IntegrationRetrieveResponse> {
     return this._client.get(path`/integrations/${id}`, options);
   }
 
   /**
    * Update integration
    */
-  update(id: string, body: IntegrationUpdateParams, options?: RequestOptions): APIPromise<Integration> {
+  update(
+    id: string,
+    body: IntegrationUpdateParams,
+    options?: RequestOptions,
+  ): APIPromise<IntegrationUpdateResponse> {
     return this._client.patch(path`/integrations/${id}`, { body, ...options });
   }
 
@@ -67,11 +70,16 @@ export class Integrations extends APIResource {
 export interface Integration {
   id: string;
 
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
   config: { [key: string]: unknown };
 
   createdAt: string;
 
-  eventTypes: Array<Shared.EventType>;
+  eventTypes: Array<
+    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
+  >;
 
   isActive: boolean;
 
@@ -79,6 +87,9 @@ export interface Integration {
 
   type: 'telegram';
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   messageTemplate?: string;
@@ -110,8 +121,138 @@ export interface IntegrationDelivery {
   sourceType?: string;
 }
 
+export interface IntegrationCreateResponse {
+  id: string;
+
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
+  config: { [key: string]: unknown };
+
+  createdAt: string;
+
+  eventTypes: Array<
+    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
+  >;
+
+  isActive: boolean;
+
+  name: string;
+
+  type: 'telegram';
+
+  /**
+   * Event filter rules (JSON)
+   */
+  filters?: { [key: string]: unknown };
+
+  messageTemplate?: string;
+
+  scopeAllMonitors?: boolean;
+
+  silentPush?: boolean;
+}
+
+export interface IntegrationRetrieveResponse {
+  id: string;
+
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
+  config: { [key: string]: unknown };
+
+  createdAt: string;
+
+  eventTypes: Array<
+    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
+  >;
+
+  isActive: boolean;
+
+  name: string;
+
+  type: 'telegram';
+
+  /**
+   * Event filter rules (JSON)
+   */
+  filters?: { [key: string]: unknown };
+
+  messageTemplate?: string;
+
+  scopeAllMonitors?: boolean;
+
+  silentPush?: boolean;
+}
+
+export interface IntegrationUpdateResponse {
+  id: string;
+
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
+  config: { [key: string]: unknown };
+
+  createdAt: string;
+
+  eventTypes: Array<
+    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
+  >;
+
+  isActive: boolean;
+
+  name: string;
+
+  type: 'telegram';
+
+  /**
+   * Event filter rules (JSON)
+   */
+  filters?: { [key: string]: unknown };
+
+  messageTemplate?: string;
+
+  scopeAllMonitors?: boolean;
+
+  silentPush?: boolean;
+}
+
 export interface IntegrationListResponse {
-  integrations: Array<Integration>;
+  integrations: Array<IntegrationListResponse.Integration>;
+}
+
+export namespace IntegrationListResponse {
+  export interface Integration {
+    id: string;
+
+    /**
+     * Integration config — shape varies by type (JSON)
+     */
+    config: { [key: string]: unknown };
+
+    createdAt: string;
+
+    eventTypes: Array<
+      'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
+    >;
+
+    isActive: boolean;
+
+    name: string;
+
+    type: 'telegram';
+
+    /**
+     * Event filter rules (JSON)
+     */
+    filters?: { [key: string]: unknown };
+
+    messageTemplate?: string;
+
+    scopeAllMonitors?: boolean;
+
+    silentPush?: boolean;
+  }
 }
 
 export interface IntegrationDeleteResponse {
@@ -119,7 +260,31 @@ export interface IntegrationDeleteResponse {
 }
 
 export interface IntegrationListDeliveriesResponse {
-  deliveries: Array<IntegrationDelivery>;
+  deliveries: Array<IntegrationListDeliveriesResponse.Delivery>;
+}
+
+export namespace IntegrationListDeliveriesResponse {
+  export interface Delivery {
+    id: string;
+
+    attempts: number;
+
+    createdAt: string;
+
+    eventType: string;
+
+    status: string;
+
+    deliveredAt?: string;
+
+    lastError?: string;
+
+    lastStatusCode?: number;
+
+    sourceId?: string;
+
+    sourceType?: string;
+  }
 }
 
 export interface IntegrationSendTestResponse {
@@ -132,7 +297,9 @@ export interface IntegrationCreateParams {
    */
   config: IntegrationCreateParams.Config;
 
-  eventTypes: Array<Shared.EventType>;
+  eventTypes: Array<
+    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
+  >;
 
   name: string;
 
@@ -149,12 +316,20 @@ export namespace IntegrationCreateParams {
 }
 
 export interface IntegrationUpdateParams {
-  eventTypes?: Array<Shared.EventType>;
+  eventTypes?: Array<
+    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
+  >;
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   isActive?: boolean;
 
+  /**
+   * Custom message template (JSON)
+   */
   messageTemplate?: { [key: string]: unknown };
 
   name?: string;
@@ -172,6 +347,9 @@ export declare namespace Integrations {
   export {
     type Integration as Integration,
     type IntegrationDelivery as IntegrationDelivery,
+    type IntegrationCreateResponse as IntegrationCreateResponse,
+    type IntegrationRetrieveResponse as IntegrationRetrieveResponse,
+    type IntegrationUpdateResponse as IntegrationUpdateResponse,
     type IntegrationListResponse as IntegrationListResponse,
     type IntegrationDeleteResponse as IntegrationDeleteResponse,
     type IntegrationListDeliveriesResponse as IntegrationListDeliveriesResponse,

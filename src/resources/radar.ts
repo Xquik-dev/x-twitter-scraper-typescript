@@ -40,9 +40,31 @@ export interface RadarItem {
 }
 
 export interface RadarRetrieveTrendingTopicsResponse {
-  items: Array<RadarItem>;
+  items: Array<RadarRetrieveTrendingTopicsResponse.Item>;
 
   total: number;
+}
+
+export namespace RadarRetrieveTrendingTopicsResponse {
+  export interface Item {
+    category: string;
+
+    publishedAt: string;
+
+    region: string;
+
+    score: number;
+
+    source: string;
+
+    title: string;
+
+    description?: string;
+
+    imageUrl?: string;
+
+    url?: string;
+  }
 }
 
 export interface RadarRetrieveTrendingTopicsParams {
@@ -70,7 +92,7 @@ export interface RadarRetrieveTrendingTopicsParams {
    * Source filter. One of: github, google_trends, hacker_news, polymarket, reddit,
    * trustmrr, wikipedia
    */
-  source?: string;
+  source?: 'github' | 'google_trends' | 'hacker_news' | 'polymarket' | 'reddit' | 'trustmrr' | 'wikipedia';
 }
 
 export declare namespace Radar {

@@ -2,28 +2,12 @@
 
 import { APIResource } from '../core/resource';
 import { APIPromise } from '../core/api-promise';
-import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
-import { path } from '../internal/utils/path';
 
 /**
  * Tweet composition, drafts, writing styles & radar
  */
 export class Styles extends APIResource {
-  /**
-   * Get cached style profile
-   */
-  retrieve(username: string, options?: RequestOptions): APIPromise<StyleProfile> {
-    return this._client.get(path`/styles/${username}`, options);
-  }
-
-  /**
-   * Save style profile with custom tweets
-   */
-  update(username: string, body: StyleUpdateParams, options?: RequestOptions): APIPromise<StyleProfile> {
-    return this._client.put(path`/styles/${username}`, { body, ...options });
-  }
-
   /**
    * List cached style profiles
    */
@@ -32,19 +16,9 @@ export class Styles extends APIResource {
   }
 
   /**
-   * Delete a style profile
-   */
-  delete(username: string, options?: RequestOptions): APIPromise<void> {
-    return this._client.delete(path`/styles/${username}`, {
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
-  }
-
-  /**
    * Analyze writing style from recent tweets
    */
-  analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleProfile> {
+  analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleAnalyzeResponse> {
     return this._client.post('/styles', { body, ...options });
   }
 
@@ -53,13 +27,6 @@ export class Styles extends APIResource {
    */
   compare(query: StyleCompareParams, options?: RequestOptions): APIPromise<StyleCompareResponse> {
     return this._client.get('/styles/compare', { query, ...options });
-  }
-
-  /**
-   * Get engagement metrics for style tweets
-   */
-  getPerformance(username: string, options?: RequestOptions): APIPromise<StyleGetPerformanceResponse> {
-    return this._client.get(path`/styles/${username}/performance`, options);
   }
 }
 
@@ -98,56 +65,98 @@ export interface StyleProfileSummary {
 }
 
 export interface StyleListResponse {
-  styles: Array<StyleProfileSummary>;
+  styles: Array<StyleListResponse.Style>;
 }
 
-export interface StyleCompareResponse {
-  style1: StyleProfile;
+export namespace StyleListResponse {
+  export interface Style {
+    fetchedAt: string;
 
-  style2: StyleProfile;
+    isOwnAccount: boolean;
+
+    tweetCount: number;
+
+    xUsername: string;
+  }
 }
 
-export interface StyleGetPerformanceResponse {
+export interface StyleAnalyzeResponse {
+  fetchedAt: string;
+
+  isOwnAccount: boolean;
+
   tweetCount: number;
 
-  tweets: Array<StyleGetPerformanceResponse.Tweet>;
+  tweets: Array<StyleAnalyzeResponse.Tweet>;
 
   xUsername: string;
 }
 
-export namespace StyleGetPerformanceResponse {
+export namespace StyleAnalyzeResponse {
   export interface Tweet {
     id: string;
 
     text: string;
 
+    authorUsername?: string;
+
     createdAt?: string;
-
-    likeCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
   }
 }
 
-export interface StyleUpdateParams {
-  /**
-   * Display label for the style
-   */
-  label: string;
+export interface StyleCompareResponse {
+  style1: StyleCompareResponse.Style1;
 
-  /**
-   * Array of tweet objects
-   */
-  tweets: Array<StyleUpdateParams.Tweet>;
+  style2: StyleCompareResponse.Style2;
 }
 
-export namespace StyleUpdateParams {
-  export interface Tweet {
-    text: string;
+export namespace StyleCompareResponse {
+  export interface Style1 {
+    fetchedAt: string;
+
+    isOwnAccount: boolean;
+
+    tweetCount: number;
+
+    tweets: Array<Style1.Tweet>;
+
+    xUsername: string;
+  }
+
+  export namespace Style1 {
+    export interface Tweet {
+      id: string;
+
+      text: string;
+
+      authorUsername?: string;
+
+      createdAt?: string;
+    }
+  }
+
+  export interface Style2 {
+    fetchedAt: string;
+
+    isOwnAccount: boolean;
+
+    tweetCount: number;
+
+    tweets: Array<Style2.Tweet>;
+
+    xUsername: string;
+  }
+
+  export namespace Style2 {
+    export interface Tweet {
+      id: string;
+
+      text: string;
+
+      authorUsername?: string;
+
+      createdAt?: string;
+    }
   }
 }
 
@@ -175,9 +184,8 @@ export declare namespace Styles {
     type StyleProfile as StyleProfile,
     type StyleProfileSummary as StyleProfileSummary,
     type StyleListResponse as StyleListResponse,
+    type StyleAnalyzeResponse as StyleAnalyzeResponse,
     type StyleCompareResponse as StyleCompareResponse,
-    type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
-    type StyleUpdateParams as StyleUpdateParams,
     type StyleAnalyzeParams as StyleAnalyzeParams,
     type StyleCompareParams as StyleCompareParams,
   };

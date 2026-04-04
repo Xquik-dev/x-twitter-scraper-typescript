@@ -13,35 +13,39 @@ export class Accounts extends APIResource {
    * Connect X account
    */
   create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
-    return this._client.post('/x/accounts', { body, ...options, __security: {} });
+    return this._client.post('/x/accounts', { body, ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Get X account details
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<XAccountDetail> {
-    return this._client.get(path`/x/accounts/${id}`, { ...options, __security: {} });
+  retrieve(id: string, options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
+    return this._client.get(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * List connected X accounts
    */
   list(options?: RequestOptions): APIPromise<AccountListResponse> {
-    return this._client.get('/x/accounts', { ...options, __security: {} });
+    return this._client.get('/x/accounts', { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Disconnect X account
    */
   delete(id: string, options?: RequestOptions): APIPromise<AccountDeleteResponse> {
-    return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: {} });
+    return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Re-authenticate X account
    */
   reauth(id: string, body: AccountReauthParams, options?: RequestOptions): APIPromise<AccountReauthResponse> {
-    return this._client.post(path`/x/accounts/${id}/reauth`, { body, ...options, __security: {} });
+    return this._client.post(path`/x/accounts/${id}/reauth`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true },
+    });
   }
 }
 
@@ -85,8 +89,40 @@ export interface AccountCreateResponse {
   xUsername: string;
 }
 
+export interface AccountRetrieveResponse {
+  id: string;
+
+  createdAt: string;
+
+  status: string;
+
+  xUserId: string;
+
+  xUsername: string;
+
+  cookiesObtainedAt?: string;
+
+  proxyCountry?: string;
+
+  updatedAt?: string;
+}
+
 export interface AccountListResponse {
-  accounts: Array<XAccount>;
+  accounts: Array<AccountListResponse.Account>;
+}
+
+export namespace AccountListResponse {
+  export interface Account {
+    id: string;
+
+    createdAt: string;
+
+    status: string;
+
+    xUserId: string;
+
+    xUsername: string;
+  }
 }
 
 export interface AccountDeleteResponse {
@@ -145,6 +181,7 @@ export declare namespace Accounts {
     type XAccount as XAccount,
     type XAccountDetail as XAccountDetail,
     type AccountCreateResponse as AccountCreateResponse,
+    type AccountRetrieveResponse as AccountRetrieveResponse,
     type AccountListResponse as AccountListResponse,
     type AccountDeleteResponse as AccountDeleteResponse,
     type AccountReauthResponse as AccountReauthResponse,

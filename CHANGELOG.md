@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.2.0 (2026-04-04)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* **api:** api update ([2412960](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/24129601f912008c3651fdbd0a34e5ae507f2eeb))
+* **api:** api update ([bfb0ba8](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/bfb0ba8dbc1d7dbbf57b481ad7d767bec1ef5e58))
+* **api:** api update ([f352b9b](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/f352b9b61d6685347ce8fb4603f1ee1bddedbb00))
+* **api:** api update ([e37efbb](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/e37efbb9bb2c86ba898f6bbcdb97c769d3ae5272))
+* **api:** api update ([659d54c](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/659d54c17641ac59f4fd5e456a1cb38618344076))
+
+
+### Chores
+
+* update SDK settings ([b9324fd](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/b9324fd6b20e25d1cc7df53abda2f076ba99718b))
+
 ## 0.1.0 (2026-03-30)
 
 Full Changelog: [v0.0.1...v0.1.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.0.1...v0.1.0)

@@ -13,21 +13,21 @@ export class APIKeys extends APIResource {
    * Create API key
    */
   create(body: APIKeyCreateParams, options?: RequestOptions): APIPromise<APIKeyCreateResponse> {
-    return this._client.post('/api-keys', { body, ...options, __security: {} });
+    return this._client.post('/api-keys', { body, ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * List API keys
    */
   list(options?: RequestOptions): APIPromise<APIKeyListResponse> {
-    return this._client.get('/api-keys', { ...options, __security: {} });
+    return this._client.get('/api-keys', { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Revoke API key
    */
   revoke(id: string, options?: RequestOptions): APIPromise<APIKeyRevokeResponse> {
-    return this._client.delete(path`/api-keys/${id}`, { ...options, __security: {} });
+    return this._client.delete(path`/api-keys/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 }
 
@@ -58,7 +58,23 @@ export interface APIKeyCreateResponse {
 }
 
 export interface APIKeyListResponse {
-  keys: Array<APIKey>;
+  keys: Array<APIKeyListResponse.Key>;
+}
+
+export namespace APIKeyListResponse {
+  export interface Key {
+    id: string;
+
+    createdAt: string;
+
+    isActive: boolean;
+
+    name: string;
+
+    prefix: string;
+
+    lastUsedAt?: string;
+  }
 }
 
 export interface APIKeyRevokeResponse {

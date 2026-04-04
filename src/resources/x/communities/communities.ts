@@ -2,7 +2,13 @@
 
 import { APIResource } from '../../../core/resource';
 import * as JoinAPI from './join';
-import { Join, JoinCreateParams, JoinDeleteAllParams } from './join';
+import {
+  Join,
+  JoinCreateParams,
+  JoinCreateResponse,
+  JoinDeleteAllParams,
+  JoinDeleteAllResponse,
+} from './join';
 import * as TweetsAPI from './tweets';
 import { TweetListParams, Tweets } from './tweets';
 import { APIPromise } from '../../../core/api-promise';
@@ -105,7 +111,83 @@ export interface CommunityRetrieveInfoResponse {
   /**
    * Community info object
    */
-  community: unknown;
+  community: CommunityRetrieveInfoResponse.Community;
+}
+
+export namespace CommunityRetrieveInfoResponse {
+  /**
+   * Community info object
+   */
+  export interface Community {
+    /**
+     * Community ID
+     */
+    id: string;
+
+    /**
+     * Community banner image URL
+     */
+    banner_url?: string;
+
+    /**
+     * Community creation timestamp
+     */
+    created_at?: string;
+
+    /**
+     * Community description
+     */
+    description?: string;
+
+    /**
+     * Join policy (open or restricted)
+     */
+    join_policy?: string;
+
+    /**
+     * Total member count
+     */
+    member_count?: number;
+
+    /**
+     * Total moderator count
+     */
+    moderator_count?: number;
+
+    /**
+     * Community name
+     */
+    name?: string;
+
+    /**
+     * Primary topic
+     */
+    primary_topic?: Community.PrimaryTopic;
+
+    /**
+     * Community rules
+     */
+    rules?: Array<Community.Rule>;
+  }
+
+  export namespace Community {
+    /**
+     * Primary topic
+     */
+    export interface PrimaryTopic {
+      id?: string;
+
+      name?: string;
+    }
+
+    export interface Rule {
+      id?: string;
+
+      description?: string;
+
+      name?: string;
+    }
+  }
 }
 
 export interface CommunityCreateParams {
@@ -186,6 +268,8 @@ export declare namespace Communities {
 
   export {
     Join as Join,
+    type JoinCreateResponse as JoinCreateResponse,
+    type JoinDeleteAllResponse as JoinDeleteAllResponse,
     type JoinCreateParams as JoinCreateParams,
     type JoinDeleteAllParams as JoinDeleteAllParams,
   };

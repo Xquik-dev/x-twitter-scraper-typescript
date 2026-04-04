@@ -1,7 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../core/resource';
-import * as Shared from '../shared';
 import * as AccountsAPI from './accounts';
 import {
   AccountCreateParams,
@@ -10,12 +9,18 @@ import {
   AccountListResponse,
   AccountReauthParams,
   AccountReauthResponse,
+  AccountRetrieveResponse,
   Accounts,
   XAccount,
   XAccountDetail,
 } from './accounts';
 import * as BookmarksAPI from './bookmarks';
-import { BookmarkListParams, BookmarkRetrieveFoldersResponse, Bookmarks } from './bookmarks';
+import {
+  BookmarkListParams,
+  BookmarkListResponse,
+  BookmarkRetrieveFoldersResponse,
+  Bookmarks,
+} from './bookmarks';
 import * as DmAPI from './dm';
 import { Dm, DmRetrieveHistoryParams, DmRetrieveHistoryResponse, DmSendParams, DmSendResponse } from './dm';
 import * as FollowersAPI from './followers';
@@ -64,17 +69,20 @@ import {
   TweetAuthor,
   TweetCreateParams,
   TweetCreateResponse,
-  TweetDeleteParams,
-  TweetDeleteResponse,
   TweetDetail,
   TweetGetFavoritersParams,
+  TweetGetFavoritersResponse,
   TweetGetQuotesParams,
+  TweetGetQuotesResponse,
   TweetGetRepliesParams,
+  TweetGetRepliesResponse,
   TweetGetRetweetersParams,
+  TweetGetRetweetersResponse,
   TweetGetThreadParams,
+  TweetGetThreadResponse,
   TweetListParams,
-  TweetRetrieveResponse,
   TweetSearchParams,
+  TweetSearchResponse,
   Tweets,
 } from './tweets/tweets';
 import * as UsersAPI from './users/users';
@@ -83,12 +91,16 @@ import {
   UserRetrieveBatchParams,
   UserRetrieveFollowersParams,
   UserRetrieveFollowersYouKnowParams,
+  UserRetrieveFollowersYouKnowResponse,
   UserRetrieveFollowingParams,
   UserRetrieveLikesParams,
+  UserRetrieveLikesResponse,
   UserRetrieveMediaParams,
+  UserRetrieveMediaResponse,
   UserRetrieveMentionsParams,
   UserRetrieveSearchParams,
   UserRetrieveTweetsParams,
+  UserRetrieveTweetsResponse,
   UserRetrieveVerifiedFollowersParams,
   Users,
 } from './users/users';
@@ -125,7 +137,7 @@ export class X extends APIResource {
   getHomeTimeline(
     query: XGetHomeTimelineParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<XGetHomeTimelineResponse> {
     return this._client.get('/x/timeline', { query, ...options });
   }
 
@@ -153,7 +165,7 @@ export class X extends APIResource {
 export interface XGetArticleResponse {
   article: XGetArticleResponse.Article;
 
-  author?: TweetsAPI.TweetAuthor;
+  author?: XGetArticleResponse.Author;
 }
 
 export namespace XGetArticleResponse {
@@ -195,6 +207,62 @@ export namespace XGetArticleResponse {
       url?: string;
 
       width?: number;
+    }
+  }
+
+  export interface Author {
+    id: string;
+
+    followers: number;
+
+    username: string;
+
+    verified: boolean;
+
+    profilePicture?: string;
+  }
+}
+
+export interface XGetHomeTimelineResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<XGetHomeTimelineResponse.Tweet>;
+}
+
+export namespace XGetHomeTimelineResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
     }
   }
 }
@@ -257,6 +325,7 @@ X.Lists = Lists;
 export declare namespace X {
   export {
     type XGetArticleResponse as XGetArticleResponse,
+    type XGetHomeTimelineResponse as XGetHomeTimelineResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
@@ -268,11 +337,14 @@ export declare namespace X {
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
-    type TweetRetrieveResponse as TweetRetrieveResponse,
-    type TweetDeleteResponse as TweetDeleteResponse,
+    type TweetGetFavoritersResponse as TweetGetFavoritersResponse,
+    type TweetGetQuotesResponse as TweetGetQuotesResponse,
+    type TweetGetRepliesResponse as TweetGetRepliesResponse,
+    type TweetGetRetweetersResponse as TweetGetRetweetersResponse,
+    type TweetGetThreadResponse as TweetGetThreadResponse,
+    type TweetSearchResponse as TweetSearchResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
-    type TweetDeleteParams as TweetDeleteParams,
     type TweetGetFavoritersParams as TweetGetFavoritersParams,
     type TweetGetQuotesParams as TweetGetQuotesParams,
     type TweetGetRepliesParams as TweetGetRepliesParams,
@@ -284,6 +356,10 @@ export declare namespace X {
   export {
     Users as Users,
     type UserProfile as UserProfile,
+    type UserRetrieveFollowersYouKnowResponse as UserRetrieveFollowersYouKnowResponse,
+    type UserRetrieveLikesResponse as UserRetrieveLikesResponse,
+    type UserRetrieveMediaResponse as UserRetrieveMediaResponse,
+    type UserRetrieveTweetsResponse as UserRetrieveTweetsResponse,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,
@@ -346,6 +422,7 @@ export declare namespace X {
     type XAccount as XAccount,
     type XAccountDetail as XAccountDetail,
     type AccountCreateResponse as AccountCreateResponse,
+    type AccountRetrieveResponse as AccountRetrieveResponse,
     type AccountListResponse as AccountListResponse,
     type AccountDeleteResponse as AccountDeleteResponse,
     type AccountReauthResponse as AccountReauthResponse,
@@ -355,6 +432,7 @@ export declare namespace X {
 
   export {
     Bookmarks as Bookmarks,
+    type BookmarkListResponse as BookmarkListResponse,
     type BookmarkRetrieveFoldersResponse as BookmarkRetrieveFoldersResponse,
     type BookmarkListParams as BookmarkListParams,
   };

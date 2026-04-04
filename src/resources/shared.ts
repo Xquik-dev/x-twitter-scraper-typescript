@@ -1,8 +1,5 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import * as TweetsAPI from './x/tweets/tweets';
-import * as UsersAPI from './x/users/users';
-
 export interface Error {
   error:
     | 'internal_error'
@@ -45,7 +42,43 @@ export interface PaginatedTweets {
 
   next_cursor: string;
 
-  tweets: Array<TweetsAPI.SearchTweet>;
+  tweets: Array<PaginatedTweets.Tweet>;
+}
+
+export namespace PaginatedTweets {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
 }
 
 export interface PaginatedUsers {
@@ -53,5 +86,31 @@ export interface PaginatedUsers {
 
   next_cursor: string;
 
-  users: Array<UsersAPI.UserProfile>;
+  users: Array<PaginatedUsers.User>;
+}
+
+export namespace PaginatedUsers {
+  export interface User {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    createdAt?: string;
+
+    description?: string;
+
+    followers?: number;
+
+    following?: number;
+
+    location?: string;
+
+    profilePicture?: string;
+
+    statusesCount?: number;
+
+    verified?: boolean;
+  }
 }
