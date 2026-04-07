@@ -106,6 +106,11 @@ export interface SearchTweet {
 
   createdAt?: string;
 
+  /**
+   * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+   */
+  isNoteTweet?: boolean;
+
   likeCount?: number;
 
   quoteCount?: number;
@@ -158,7 +163,57 @@ export interface TweetDetail {
 
   viewCount: number;
 
+  /**
+   * ID of the root tweet in the conversation thread
+   */
+  conversationId?: string;
+
   createdAt?: string;
+
+  /**
+   * Parsed entities from the tweet text (URLs, mentions, hashtags, media)
+   */
+  entities?: unknown;
+
+  /**
+   * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+   */
+  isNoteTweet?: boolean;
+
+  /**
+   * Whether this tweet quotes another tweet
+   */
+  isQuoteStatus?: boolean;
+
+  /**
+   * Whether this tweet is a reply to another tweet
+   */
+  isReply?: boolean;
+
+  /**
+   * Attached media items, omitted when the tweet has no media
+   */
+  media?: Array<TweetDetail.Media>;
+
+  /**
+   * The quoted tweet object, present when isQuoteStatus is true
+   */
+  quoted_tweet?: unknown;
+
+  /**
+   * Client application used to post this tweet
+   */
+  source?: string;
+}
+
+export namespace TweetDetail {
+  export interface Media {
+    mediaUrl?: string;
+
+    type?: 'photo' | 'video' | 'animated_gif';
+
+    url?: string;
+  }
 }
 
 export interface TweetCreateResponse {
@@ -221,6 +276,11 @@ export namespace TweetGetQuotesResponse {
 
     createdAt?: string;
 
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
+
     likeCount?: number;
 
     quoteCount?: number;
@@ -264,6 +324,11 @@ export namespace TweetGetRepliesResponse {
     bookmarkCount?: number;
 
     createdAt?: string;
+
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
 
     likeCount?: number;
 
@@ -343,6 +408,11 @@ export namespace TweetGetThreadResponse {
 
     createdAt?: string;
 
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
+
     likeCount?: number;
 
     quoteCount?: number;
@@ -386,6 +456,11 @@ export namespace TweetSearchResponse {
     bookmarkCount?: number;
 
     createdAt?: string;
+
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
 
     likeCount?: number;
 

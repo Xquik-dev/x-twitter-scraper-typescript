@@ -219,6 +219,11 @@ export namespace UserRetrieveLikesResponse {
 
     createdAt?: string;
 
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
+
     likeCount?: number;
 
     quoteCount?: number;
@@ -263,6 +268,11 @@ export namespace UserRetrieveMediaResponse {
 
     createdAt?: string;
 
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
+
     likeCount?: number;
 
     quoteCount?: number;
@@ -306,6 +316,11 @@ export namespace UserRetrieveTweetsResponse {
     bookmarkCount?: number;
 
     createdAt?: string;
+
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
 
     likeCount?: number;
 
