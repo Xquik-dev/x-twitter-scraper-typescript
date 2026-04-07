@@ -46,6 +46,11 @@ export namespace BookmarkListResponse {
 
     createdAt?: string;
 
+    /**
+     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
+
     likeCount?: number;
 
     quoteCount?: number;
