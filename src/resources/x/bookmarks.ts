@@ -1,7 +1,10 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../core/resource';
+import * as Shared from '../shared';
+import { PaginatedTweetsCursorPage } from '../shared';
 import { APIPromise } from '../../core/api-promise';
+import { CursorPage, type CursorPageParams, PagePromise } from '../../core/pagination';
 import { RequestOptions } from '../../internal/request-options';
 
 /**
@@ -13,14 +16,17 @@ export class Bookmarks extends APIResource {
    *
    * @example
    * ```ts
-   * const bookmarks = await client.x.bookmarks.list();
+   * // Automatically fetches more pages as needed.
+   * for await (const paginatedTweets of client.x.bookmarks.list()) {
+   *   // ...
+   * }
    * ```
    */
   list(
     query: BookmarkListParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<BookmarkListResponse> {
-    return this._client.get('/x/bookmarks', { query, ...options });
+  ): PagePromise<PaginatedTweetsCursorPage, Shared.PaginatedTweets> {
+    return this._client.getAPIList('/x/bookmarks', CursorPage<Shared.PaginatedTweets>, { query, ...options });
   }
 
   /**
@@ -33,61 +39,6 @@ export class Bookmarks extends APIResource {
    */
   retrieveFolders(options?: RequestOptions): APIPromise<BookmarkRetrieveFoldersResponse> {
     return this._client.get('/x/bookmarks/folders', options);
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface BookmarkListResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<BookmarkListResponse.Tweet>;
-}
-
-export namespace BookmarkListResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
   }
 }
 
@@ -107,12 +58,7 @@ export namespace BookmarkRetrieveFoldersResponse {
   }
 }
 
-export interface BookmarkListParams {
-  /**
-   * Pagination cursor for bookmarks
-   */
-  cursor?: string;
-
+export interface BookmarkListParams extends CursorPageParams {
   /**
    * Optional bookmark folder ID
    */
@@ -121,8 +67,9 @@ export interface BookmarkListParams {
 
 export declare namespace Bookmarks {
   export {
-    type BookmarkListResponse as BookmarkListResponse,
     type BookmarkRetrieveFoldersResponse as BookmarkRetrieveFoldersResponse,
     type BookmarkListParams as BookmarkListParams,
   };
 }
+
+export { type PaginatedTweetsCursorPage };

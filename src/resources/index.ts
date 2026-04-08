@@ -29,8 +29,6 @@ export {
   Drafts,
   type Draft,
   type DraftDetail,
-  type DraftCreateResponse,
-  type DraftRetrieveResponse,
   type DraftListResponse,
   type DraftCreateParams,
   type DraftListParams,
@@ -47,14 +45,7 @@ export {
   type DrawExportParams,
   type DrawRunParams,
 } from './draws';
-export {
-  Events,
-  type Event,
-  type EventDetail,
-  type EventRetrieveResponse,
-  type EventListResponse,
-  type EventListParams,
-} from './events';
+export { Events, type Event, type EventDetail, type EventListResponse, type EventListParams } from './events';
 export {
   Extractions,
   type ExtractionJob,
@@ -72,9 +63,6 @@ export {
   Integrations,
   type Integration,
   type IntegrationDelivery,
-  type IntegrationCreateResponse,
-  type IntegrationRetrieveResponse,
-  type IntegrationUpdateResponse,
   type IntegrationListResponse,
   type IntegrationDeleteResponse,
   type IntegrationListDeliveriesResponse,
@@ -87,8 +75,6 @@ export {
   Monitors,
   type Monitor,
   type MonitorCreateResponse,
-  type MonitorRetrieveResponse,
-  type MonitorUpdateResponse,
   type MonitorListResponse,
   type MonitorDeactivateResponse,
   type MonitorCreateParams,
@@ -105,8 +91,9 @@ export {
   type StyleProfile,
   type StyleProfileSummary,
   type StyleListResponse,
-  type StyleAnalyzeResponse,
   type StyleCompareResponse,
+  type StyleGetPerformanceResponse,
+  type StyleUpdateParams,
   type StyleAnalyzeParams,
   type StyleCompareParams,
 } from './styles';
@@ -118,7 +105,6 @@ export {
   type Delivery,
   type Webhook,
   type WebhookCreateResponse,
-  type WebhookUpdateResponse,
   type WebhookListResponse,
   type WebhookDeactivateResponse,
   type WebhookListDeliveriesResponse,
@@ -129,7 +115,6 @@ export {
 export {
   X,
   type XGetArticleResponse,
-  type XGetHomeTimelineResponse,
   type XGetNotificationsResponse,
   type XGetTrendsResponse,
   type XGetHomeTimelineParams,

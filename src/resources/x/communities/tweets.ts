@@ -1,8 +1,11 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../../core/resource';
-import { APIPromise } from '../../../core/api-promise';
+import * as Shared from '../../shared';
+import { PaginatedTweetsCursorPage } from '../../shared';
+import { CursorPage, type CursorPageParams, PagePromise } from '../../../core/pagination';
 import { RequestOptions } from '../../../internal/request-options';
+import { path } from '../../../internal/utils/path';
 
 /**
  * X data lookups (subscription required)
@@ -13,81 +16,54 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * const tweets = await client.x.communities.tweets.list({
-   *   q: 'q',
-   * });
+   * // Automatically fetches more pages as needed.
+   * for await (const paginatedTweets of client.x.communities.tweets.list(
+   *   { q: 'q' },
+   * )) {
+   *   // ...
+   * }
    * ```
    */
-  list(query: TweetListParams, options?: RequestOptions): APIPromise<TweetListResponse> {
-    return this._client.get('/x/communities/tweets', { query, ...options });
+  list(
+    query: TweetListParams,
+    options?: RequestOptions,
+  ): PagePromise<PaginatedTweetsCursorPage, Shared.PaginatedTweets> {
+    return this._client.getAPIList('/x/communities/tweets', CursorPage<Shared.PaginatedTweets>, {
+      query,
+      ...options,
+    });
   }
-}
 
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface TweetListResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<TweetListResponse.Tweet>;
-}
-
-export namespace TweetListResponse {
   /**
-   * Tweet returned from search results with inline author info.
+   * Get community tweets
+   *
+   * @example
+   * ```ts
+   * // Automatically fetches more pages as needed.
+   * for await (const paginatedTweets of client.x.communities.tweets.listByCommunity(
+   *   'id',
+   * )) {
+   *   // ...
+   * }
+   * ```
    */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
+  listByCommunity(
+    id: string,
+    query: TweetListByCommunityParams | null | undefined = {},
+    options?: RequestOptions,
+  ): PagePromise<PaginatedTweetsCursorPage, Shared.PaginatedTweets> {
+    return this._client.getAPIList(path`/x/communities/${id}/tweets`, CursorPage<Shared.PaginatedTweets>, {
+      query,
+      ...options,
+    });
   }
 }
 
-export interface TweetListParams {
+export interface TweetListParams extends CursorPageParams {
   /**
    * Search query for cross-community tweets
    */
   q: string;
-
-  /**
-   * Pagination cursor for cross-community results
-   */
-  cursor?: string;
 
   /**
    * Sort order for cross-community results (Latest or Top)
@@ -95,6 +71,13 @@ export interface TweetListParams {
   queryType?: string;
 }
 
+export interface TweetListByCommunityParams extends CursorPageParams {}
+
 export declare namespace Tweets {
-  export { type TweetListResponse as TweetListResponse, type TweetListParams as TweetListParams };
+  export {
+    type TweetListParams as TweetListParams,
+    type TweetListByCommunityParams as TweetListByCommunityParams,
+  };
 }
+
+export { type PaginatedTweetsCursorPage };

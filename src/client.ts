@@ -14,6 +14,8 @@ import * as Opts from './internal/request-options';
 import { stringifyQuery } from './internal/utils/query';
 import { VERSION } from './version';
 import * as Errors from './core/error';
+import * as Pagination from './core/pagination';
+import { AbstractPage, type CursorPageParams, CursorPageResponse } from './core/pagination';
 import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
@@ -43,11 +45,9 @@ import {
 import {
   Draft,
   DraftCreateParams,
-  DraftCreateResponse,
   DraftDetail,
   DraftListParams,
   DraftListResponse,
-  DraftRetrieveResponse,
   Drafts,
 } from './resources/drafts';
 import {
@@ -62,14 +62,7 @@ import {
   Draws,
   Winner,
 } from './resources/draws';
-import {
-  Event,
-  EventDetail,
-  EventListParams,
-  EventListResponse,
-  EventRetrieveResponse,
-  Events,
-} from './resources/events';
+import { Event, EventDetail, EventListParams, EventListResponse, Events } from './resources/events';
 import {
   ExtractionEstimateCostParams,
   ExtractionEstimateCostResponse,
@@ -86,16 +79,13 @@ import {
 import {
   Integration,
   IntegrationCreateParams,
-  IntegrationCreateResponse,
   IntegrationDeleteResponse,
   IntegrationDelivery,
   IntegrationListDeliveriesParams,
   IntegrationListDeliveriesResponse,
   IntegrationListResponse,
-  IntegrationRetrieveResponse,
   IntegrationSendTestResponse,
   IntegrationUpdateParams,
-  IntegrationUpdateResponse,
   Integrations,
 } from './resources/integrations';
 import {
@@ -104,9 +94,7 @@ import {
   MonitorCreateResponse,
   MonitorDeactivateResponse,
   MonitorListResponse,
-  MonitorRetrieveResponse,
   MonitorUpdateParams,
-  MonitorUpdateResponse,
   Monitors,
 } from './resources/monitors';
 import {
@@ -117,12 +105,13 @@ import {
 } from './resources/radar';
 import {
   StyleAnalyzeParams,
-  StyleAnalyzeResponse,
   StyleCompareParams,
   StyleCompareResponse,
+  StyleGetPerformanceResponse,
   StyleListResponse,
   StyleProfile,
   StyleProfileSummary,
+  StyleUpdateParams,
   Styles,
 } from './resources/styles';
 import { Subscribe, SubscribeCreateResponse } from './resources/subscribe';
@@ -137,7 +126,6 @@ import {
   WebhookListResponse,
   WebhookTestResponse,
   WebhookUpdateParams,
-  WebhookUpdateResponse,
   Webhooks,
 } from './resources/webhooks';
 import { Bot } from './resources/bot/bot';
@@ -146,7 +134,6 @@ import {
   X,
   XGetArticleResponse,
   XGetHomeTimelineParams,
-  XGetHomeTimelineResponse,
   XGetNotificationsParams,
   XGetNotificationsResponse,
   XGetTrendsResponse,
@@ -645,6 +632,30 @@ export class XTwitterScraper {
     return { response, options, controller, requestLogID, retryOfRequestLogID, startTime };
   }
 
+  getAPIList<Item, PageClass extends Pagination.AbstractPage<Item> = Pagination.AbstractPage<Item>>(
+    path: string,
+    Page: new (...args: any[]) => PageClass,
+    opts?: PromiseOrValue<RequestOptions>,
+  ): Pagination.PagePromise<PageClass, Item> {
+    return this.requestAPIList(
+      Page,
+      opts && 'then' in opts ?
+        opts.then((opts) => ({ method: 'get', path, ...opts }))
+      : { method: 'get', path, ...opts },
+    );
+  }
+
+  requestAPIList<
+    Item = unknown,
+    PageClass extends Pagination.AbstractPage<Item> = Pagination.AbstractPage<Item>,
+  >(
+    Page: new (...args: ConstructorParameters<typeof Pagination.AbstractPage>) => PageClass,
+    options: PromiseOrValue<FinalRequestOptions>,
+  ): Pagination.PagePromise<PageClass, Item> {
+    const request = this.makeRequest(options, null, undefined);
+    return new Pagination.PagePromise<PageClass, Item>(this as any as XTwitterScraper, request, Page);
+  }
+
   async fetchWithTimeout(
     url: RequestInfo,
     init: RequestInit | undefined,
@@ -982,6 +993,9 @@ XTwitterScraper.Credits = Credits;
 export declare namespace XTwitterScraper {
   export type RequestOptions = Opts.RequestOptions;
 
+  export import CursorPage = Pagination.CursorPage;
+  export { type CursorPageParams as CursorPageParams, type CursorPageResponse as CursorPageResponse };
+
   export {
     Account as Account,
     type AccountRetrieveResponse as AccountRetrieveResponse,
@@ -1012,8 +1026,6 @@ export declare namespace XTwitterScraper {
     Drafts as Drafts,
     type Draft as Draft,
     type DraftDetail as DraftDetail,
-    type DraftCreateResponse as DraftCreateResponse,
-    type DraftRetrieveResponse as DraftRetrieveResponse,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
     type DraftListParams as DraftListParams,
@@ -1024,8 +1036,9 @@ export declare namespace XTwitterScraper {
     type StyleProfile as StyleProfile,
     type StyleProfileSummary as StyleProfileSummary,
     type StyleListResponse as StyleListResponse,
-    type StyleAnalyzeResponse as StyleAnalyzeResponse,
     type StyleCompareResponse as StyleCompareResponse,
+    type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
+    type StyleUpdateParams as StyleUpdateParams,
     type StyleAnalyzeParams as StyleAnalyzeParams,
     type StyleCompareParams as StyleCompareParams,
   };
@@ -1041,8 +1054,6 @@ export declare namespace XTwitterScraper {
     Monitors as Monitors,
     type Monitor as Monitor,
     type MonitorCreateResponse as MonitorCreateResponse,
-    type MonitorRetrieveResponse as MonitorRetrieveResponse,
-    type MonitorUpdateResponse as MonitorUpdateResponse,
     type MonitorListResponse as MonitorListResponse,
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
     type MonitorCreateParams as MonitorCreateParams,
@@ -1053,7 +1064,6 @@ export declare namespace XTwitterScraper {
     Events as Events,
     type Event as Event,
     type EventDetail as EventDetail,
-    type EventRetrieveResponse as EventRetrieveResponse,
     type EventListResponse as EventListResponse,
     type EventListParams as EventListParams,
   };
@@ -1090,7 +1100,6 @@ export declare namespace XTwitterScraper {
     type Delivery as Delivery,
     type Webhook as Webhook,
     type WebhookCreateResponse as WebhookCreateResponse,
-    type WebhookUpdateResponse as WebhookUpdateResponse,
     type WebhookListResponse as WebhookListResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
@@ -1103,9 +1112,6 @@ export declare namespace XTwitterScraper {
     Integrations as Integrations,
     type Integration as Integration,
     type IntegrationDelivery as IntegrationDelivery,
-    type IntegrationCreateResponse as IntegrationCreateResponse,
-    type IntegrationRetrieveResponse as IntegrationRetrieveResponse,
-    type IntegrationUpdateResponse as IntegrationUpdateResponse,
     type IntegrationListResponse as IntegrationListResponse,
     type IntegrationDeleteResponse as IntegrationDeleteResponse,
     type IntegrationListDeliveriesResponse as IntegrationListDeliveriesResponse,
@@ -1118,7 +1124,6 @@ export declare namespace XTwitterScraper {
   export {
     X as X,
     type XGetArticleResponse as XGetArticleResponse,
-    type XGetHomeTimelineResponse as XGetHomeTimelineResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
     type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,

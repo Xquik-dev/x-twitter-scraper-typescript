@@ -11,8 +11,11 @@ It is generated with [Stainless](https://www.stainless.com/).
 ## Installation
 
 ```sh
-npm install x-twitter-scraper
+npm install git+ssh://git@github.com:stainless-sdks/x-twitter-scraper-typescript.git
 ```
+
+> [!NOTE]
+> Once this package is [published to npm](https://www.stainless.com/docs/guides/publish), this will become: `npm install x-twitter-scraper`
 
 ## Usage
 
@@ -26,9 +29,9 @@ const client = new XTwitterScraper({
   apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
 });
 
-const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
+const paginatedTweets = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
 
-console.log(response.has_next_page);
+console.log(paginatedTweets.has_next_page);
 ```
 
 ### Request & Response types
@@ -44,7 +47,7 @@ const client = new XTwitterScraper({
 });
 
 const params: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit: 10 };
-const response: XTwitterScraper.X.TweetSearchResponse = await client.x.tweets.search(params);
+const paginatedTweets: XTwitterScraper.PaginatedTweets = await client.x.tweets.search(params);
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -92,7 +95,7 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const response = await client.x.tweets
+const paginatedTweets = await client.x.tweets
   .search({ q: 'from:elonmusk', limit: 10 })
   .catch(async (err) => {
     if (err instanceof XTwitterScraper.APIError) {
@@ -160,6 +163,37 @@ On timeout, an `APIConnectionTimeoutError` is thrown.
 
 Note that requests which time out will be [retried twice by default](#retries).
 
+## Auto-pagination
+
+List methods in the XTwitterScraper API are paginated.
+You can use the `for await … of` syntax to iterate through items across all pages:
+
+```ts
+async function fetchAllPaginatedTweets(params) {
+  const allPaginatedTweets = [];
+  // Automatically fetches more pages as needed.
+  for await (const paginatedTweets of client.x.communities.tweets.list({ q: 'q' })) {
+    allPaginatedTweets.push(paginatedTweets);
+  }
+  return allPaginatedTweets;
+}
+```
+
+Alternatively, you can request a single page at a time:
+
+```ts
+let page = await client.x.communities.tweets.list({ q: 'q' });
+for (const paginatedTweets of page.data) {
+  console.log(paginatedTweets);
+}
+
+// Convenience methods are provided for manually paginating:
+while (page.hasNextPage()) {
+  page = await page.getNextPage();
+  // ...
+}
+```
+
 ## Advanced Usage
 
 ### Accessing raw Response data (e.g., headers)
@@ -178,11 +212,11 @@ const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 })
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: response, response: raw } = await client.x.tweets
+const { data: paginatedTweets, response: raw } = await client.x.tweets
   .search({ q: 'from:elonmusk', limit: 10 })
   .withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(response.has_next_page);
+console.log(paginatedTweets.has_next_page);
 ```
 
 ### Logging
@@ -372,7 +406,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-typescript/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/x-twitter-scraper-typescript/issues) with questions, bugs, or suggestions.
 
 ## Requirements
 

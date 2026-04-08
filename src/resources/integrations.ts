@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -22,7 +23,7 @@ export class Integrations extends APIResource {
    * });
    * ```
    */
-  create(body: IntegrationCreateParams, options?: RequestOptions): APIPromise<IntegrationCreateResponse> {
+  create(body: IntegrationCreateParams, options?: RequestOptions): APIPromise<Integration> {
     return this._client.post('/integrations', { body, ...options });
   }
 
@@ -36,7 +37,7 @@ export class Integrations extends APIResource {
    * );
    * ```
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<IntegrationRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<Integration> {
     return this._client.get(path`/integrations/${id}`, options);
   }
 
@@ -51,11 +52,7 @@ export class Integrations extends APIResource {
    * });
    * ```
    */
-  update(
-    id: string,
-    body: IntegrationUpdateParams,
-    options?: RequestOptions,
-  ): APIPromise<IntegrationUpdateResponse> {
+  update(id: string, body: IntegrationUpdateParams, options?: RequestOptions): APIPromise<Integration> {
     return this._client.patch(path`/integrations/${id}`, { body, ...options });
   }
 
@@ -130,9 +127,7 @@ export interface Integration {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   isActive: boolean;
 
@@ -177,162 +172,8 @@ export interface IntegrationDelivery {
   sourceType?: string;
 }
 
-/**
- * Third-party integration (e.g. Telegram) subscribed to monitor events.
- */
-export interface IntegrationCreateResponse {
-  id: string;
-
-  /**
-   * Integration config — shape varies by type (JSON)
-   */
-  config: { [key: string]: unknown };
-
-  createdAt: string;
-
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
-
-  name: string;
-
-  type: 'telegram';
-
-  /**
-   * Event filter rules (JSON)
-   */
-  filters?: { [key: string]: unknown };
-
-  messageTemplate?: string;
-
-  scopeAllMonitors?: boolean;
-
-  silentPush?: boolean;
-}
-
-/**
- * Third-party integration (e.g. Telegram) subscribed to monitor events.
- */
-export interface IntegrationRetrieveResponse {
-  id: string;
-
-  /**
-   * Integration config — shape varies by type (JSON)
-   */
-  config: { [key: string]: unknown };
-
-  createdAt: string;
-
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
-
-  name: string;
-
-  type: 'telegram';
-
-  /**
-   * Event filter rules (JSON)
-   */
-  filters?: { [key: string]: unknown };
-
-  messageTemplate?: string;
-
-  scopeAllMonitors?: boolean;
-
-  silentPush?: boolean;
-}
-
-/**
- * Third-party integration (e.g. Telegram) subscribed to monitor events.
- */
-export interface IntegrationUpdateResponse {
-  id: string;
-
-  /**
-   * Integration config — shape varies by type (JSON)
-   */
-  config: { [key: string]: unknown };
-
-  createdAt: string;
-
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
-
-  name: string;
-
-  type: 'telegram';
-
-  /**
-   * Event filter rules (JSON)
-   */
-  filters?: { [key: string]: unknown };
-
-  messageTemplate?: string;
-
-  scopeAllMonitors?: boolean;
-
-  silentPush?: boolean;
-}
-
 export interface IntegrationListResponse {
-  integrations: Array<IntegrationListResponse.Integration>;
-}
-
-export namespace IntegrationListResponse {
-  /**
-   * Third-party integration (e.g. Telegram) subscribed to monitor events.
-   */
-  export interface Integration {
-    id: string;
-
-    /**
-     * Integration config — shape varies by type (JSON)
-     */
-    config: { [key: string]: unknown };
-
-    createdAt: string;
-
-    /**
-     * Array of event types to subscribe to.
-     */
-    eventTypes: Array<
-      'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-    >;
-
-    isActive: boolean;
-
-    name: string;
-
-    type: 'telegram';
-
-    /**
-     * Event filter rules (JSON)
-     */
-    filters?: { [key: string]: unknown };
-
-    messageTemplate?: string;
-
-    scopeAllMonitors?: boolean;
-
-    silentPush?: boolean;
-  }
+  integrations: Array<Integration>;
 }
 
 export interface IntegrationDeleteResponse {
@@ -340,34 +181,7 @@ export interface IntegrationDeleteResponse {
 }
 
 export interface IntegrationListDeliveriesResponse {
-  deliveries: Array<IntegrationListDeliveriesResponse.Delivery>;
-}
-
-export namespace IntegrationListDeliveriesResponse {
-  /**
-   * Integration delivery attempt record with status and retry count.
-   */
-  export interface Delivery {
-    id: string;
-
-    attempts: number;
-
-    createdAt: string;
-
-    eventType: string;
-
-    status: string;
-
-    deliveredAt?: string;
-
-    lastError?: string;
-
-    lastStatusCode?: number;
-
-    sourceId?: string;
-
-    sourceType?: string;
-  }
+  deliveries: Array<IntegrationDelivery>;
 }
 
 export interface IntegrationSendTestResponse {
@@ -383,9 +197,7 @@ export interface IntegrationCreateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   name: string;
 
@@ -405,9 +217,7 @@ export interface IntegrationUpdateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes?: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes?: Array<Shared.EventType>;
 
   /**
    * Event filter rules (JSON)
@@ -439,9 +249,6 @@ export declare namespace Integrations {
   export {
     type Integration as Integration,
     type IntegrationDelivery as IntegrationDelivery,
-    type IntegrationCreateResponse as IntegrationCreateResponse,
-    type IntegrationRetrieveResponse as IntegrationRetrieveResponse,
-    type IntegrationUpdateResponse as IntegrationUpdateResponse,
     type IntegrationListResponse as IntegrationListResponse,
     type IntegrationDeleteResponse as IntegrationDeleteResponse,
     type IntegrationListDeliveriesResponse as IntegrationListDeliveriesResponse,

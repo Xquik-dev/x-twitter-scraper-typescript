@@ -1,8 +1,15 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../../core/resource';
+import * as Shared from '../../shared';
 import * as FollowAPI from './follow';
-import { Follow } from './follow';
+import {
+  Follow,
+  FollowCreateParams,
+  FollowCreateResponse,
+  FollowDeleteAllParams,
+  FollowDeleteAllResponse,
+} from './follow';
 import { APIPromise } from '../../../core/api-promise';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
@@ -14,19 +21,28 @@ export class Users extends APIResource {
   follow: FollowAPI.Follow = new FollowAPI.Follow(this._client);
 
   /**
+   * Look up X user
+   *
+   * @example
+   * ```ts
+   * const userProfile = await client.x.users.retrieve('id');
+   * ```
+   */
+  retrieve(id: string, options?: RequestOptions): APIPromise<UserProfile> {
+    return this._client.get(path`/x/users/${id}`, options);
+  }
+
+  /**
    * Get multiple users by IDs
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveBatch({
+   * const paginatedUsers = await client.x.users.retrieveBatch({
    *   ids: 'ids',
    * });
    * ```
    */
-  retrieveBatch(
-    query: UserRetrieveBatchParams,
-    options?: RequestOptions,
-  ): APIPromise<UserRetrieveBatchResponse> {
+  retrieveBatch(query: UserRetrieveBatchParams, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get('/x/users/batch', { query, ...options });
   }
 
@@ -35,16 +51,15 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveFollowers(
-   *   'id',
-   * );
+   * const paginatedUsers =
+   *   await client.x.users.retrieveFollowers('id');
    * ```
    */
   retrieveFollowers(
     id: string,
     query: UserRetrieveFollowersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveFollowersResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/followers`, { query, ...options });
   }
 
@@ -53,7 +68,7 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response =
+   * const paginatedUsers =
    *   await client.x.users.retrieveFollowersYouKnow('id');
    * ```
    */
@@ -61,7 +76,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveFollowersYouKnowParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveFollowersYouKnowResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/followers-you-know`, { query, ...options });
   }
 
@@ -70,16 +85,15 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveFollowing(
-   *   'id',
-   * );
+   * const paginatedUsers =
+   *   await client.x.users.retrieveFollowing('id');
    * ```
    */
   retrieveFollowing(
     id: string,
     query: UserRetrieveFollowingParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveFollowingResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/following`, { query, ...options });
   }
 
@@ -88,14 +102,16 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveLikes('id');
+   * const paginatedTweets = await client.x.users.retrieveLikes(
+   *   'id',
+   * );
    * ```
    */
   retrieveLikes(
     id: string,
     query: UserRetrieveLikesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveLikesResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/likes`, { query, ...options });
   }
 
@@ -104,14 +120,16 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveMedia('id');
+   * const paginatedTweets = await client.x.users.retrieveMedia(
+   *   'id',
+   * );
    * ```
    */
   retrieveMedia(
     id: string,
     query: UserRetrieveMediaParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveMediaResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/media`, { query, ...options });
   }
 
@@ -120,16 +138,15 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveMentions(
-   *   'id',
-   * );
+   * const paginatedTweets =
+   *   await client.x.users.retrieveMentions('id');
    * ```
    */
   retrieveMentions(
     id: string,
     query: UserRetrieveMentionsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveMentionsResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/mentions`, { query, ...options });
   }
 
@@ -138,7 +155,7 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveSearch({
+   * const paginatedUsers = await client.x.users.retrieveSearch({
    *   q: 'q',
    * });
    * ```
@@ -146,7 +163,7 @@ export class Users extends APIResource {
   retrieveSearch(
     query: UserRetrieveSearchParams,
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveSearchResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get('/x/users/search', { query, ...options });
   }
 
@@ -155,14 +172,16 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.users.retrieveTweets('id');
+   * const paginatedTweets = await client.x.users.retrieveTweets(
+   *   'id',
+   * );
    * ```
    */
   retrieveTweets(
     id: string,
     query: UserRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveTweetsResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/tweets`, { query, ...options });
   }
 
@@ -171,7 +190,7 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const response =
+   * const paginatedUsers =
    *   await client.x.users.retrieveVerifiedFollowers('id');
    * ```
    */
@@ -179,7 +198,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveVerifiedFollowersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<UserRetrieveVerifiedFollowersResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/verified-followers`, { query, ...options });
   }
 }
@@ -209,466 +228,6 @@ export interface UserProfile {
   statusesCount?: number;
 
   verified?: boolean;
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface UserRetrieveBatchResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<UserRetrieveBatchResponse.User>;
-}
-
-export namespace UserRetrieveBatchResponse {
-  /**
-   * X user profile with bio, follower counts, and verification status.
-   */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface UserRetrieveFollowersResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<UserRetrieveFollowersResponse.User>;
-}
-
-export namespace UserRetrieveFollowersResponse {
-  /**
-   * X user profile with bio, follower counts, and verification status.
-   */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface UserRetrieveFollowersYouKnowResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<UserRetrieveFollowersYouKnowResponse.User>;
-}
-
-export namespace UserRetrieveFollowersYouKnowResponse {
-  /**
-   * X user profile with bio, follower counts, and verification status.
-   */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface UserRetrieveFollowingResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<UserRetrieveFollowingResponse.User>;
-}
-
-export namespace UserRetrieveFollowingResponse {
-  /**
-   * X user profile with bio, follower counts, and verification status.
-   */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface UserRetrieveLikesResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<UserRetrieveLikesResponse.Tweet>;
-}
-
-export namespace UserRetrieveLikesResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface UserRetrieveMediaResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<UserRetrieveMediaResponse.Tweet>;
-}
-
-export namespace UserRetrieveMediaResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface UserRetrieveMentionsResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<UserRetrieveMentionsResponse.Tweet>;
-}
-
-export namespace UserRetrieveMentionsResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface UserRetrieveSearchResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<UserRetrieveSearchResponse.User>;
-}
-
-export namespace UserRetrieveSearchResponse {
-  /**
-   * X user profile with bio, follower counts, and verification status.
-   */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface UserRetrieveTweetsResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<UserRetrieveTweetsResponse.Tweet>;
-}
-
-export namespace UserRetrieveTweetsResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface UserRetrieveVerifiedFollowersResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<UserRetrieveVerifiedFollowersResponse.User>;
-}
-
-export namespace UserRetrieveVerifiedFollowersResponse {
-  /**
-   * X user profile with bio, follower counts, and verification status.
-   */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
 }
 
 export interface UserRetrieveBatchParams {
@@ -781,16 +340,6 @@ Users.Follow = Follow;
 export declare namespace Users {
   export {
     type UserProfile as UserProfile,
-    type UserRetrieveBatchResponse as UserRetrieveBatchResponse,
-    type UserRetrieveFollowersResponse as UserRetrieveFollowersResponse,
-    type UserRetrieveFollowersYouKnowResponse as UserRetrieveFollowersYouKnowResponse,
-    type UserRetrieveFollowingResponse as UserRetrieveFollowingResponse,
-    type UserRetrieveLikesResponse as UserRetrieveLikesResponse,
-    type UserRetrieveMediaResponse as UserRetrieveMediaResponse,
-    type UserRetrieveMentionsResponse as UserRetrieveMentionsResponse,
-    type UserRetrieveSearchResponse as UserRetrieveSearchResponse,
-    type UserRetrieveTweetsResponse as UserRetrieveTweetsResponse,
-    type UserRetrieveVerifiedFollowersResponse as UserRetrieveVerifiedFollowersResponse,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,
@@ -803,5 +352,11 @@ export declare namespace Users {
     type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams,
   };
 
-  export { Follow as Follow };
+  export {
+    Follow as Follow,
+    type FollowCreateResponse as FollowCreateResponse,
+    type FollowDeleteAllResponse as FollowDeleteAllResponse,
+    type FollowCreateParams as FollowCreateParams,
+    type FollowDeleteAllParams as FollowDeleteAllParams,
+  };
 }

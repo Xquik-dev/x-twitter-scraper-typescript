@@ -1,10 +1,17 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../../core/resource';
+import * as Shared from '../../shared';
 import * as LikeAPI from './like';
-import { Like } from './like';
+import { Like, LikeCreateParams, LikeCreateResponse, LikeDeleteParams, LikeDeleteResponse } from './like';
 import * as RetweetAPI from './retweet';
-import { Retweet } from './retweet';
+import {
+  Retweet,
+  RetweetCreateParams,
+  RetweetCreateResponse,
+  RetweetDeleteParams,
+  RetweetDeleteResponse,
+} from './retweet';
 import { APIPromise } from '../../../core/api-promise';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
@@ -29,15 +36,43 @@ export class Tweets extends APIResource {
   }
 
   /**
+   * Look up tweet
+   *
+   * @example
+   * ```ts
+   * const tweet = await client.x.tweets.retrieve('id');
+   * ```
+   */
+  retrieve(id: string, options?: RequestOptions): APIPromise<TweetRetrieveResponse> {
+    return this._client.get(path`/x/tweets/${id}`, options);
+  }
+
+  /**
    * Get multiple tweets by IDs
    *
    * @example
    * ```ts
-   * const tweets = await client.x.tweets.list({ ids: 'ids' });
+   * const paginatedTweets = await client.x.tweets.list({
+   *   ids: 'ids',
+   * });
    * ```
    */
-  list(query: TweetListParams, options?: RequestOptions): APIPromise<TweetListResponse> {
+  list(query: TweetListParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/tweets', { query, ...options });
+  }
+
+  /**
+   * Delete tweet
+   *
+   * @example
+   * ```ts
+   * const tweet = await client.x.tweets.delete('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
+   */
+  delete(id: string, body: TweetDeleteParams, options?: RequestOptions): APIPromise<TweetDeleteResponse> {
+    return this._client.delete(path`/x/tweets/${id}`, { body, ...options });
   }
 
   /**
@@ -45,14 +80,16 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.tweets.getFavoriters('id');
+   * const paginatedUsers = await client.x.tweets.getFavoriters(
+   *   'id',
+   * );
    * ```
    */
   getFavoriters(
     id: string,
     query: TweetGetFavoritersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<TweetGetFavoritersResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/tweets/${id}/favoriters`, { query, ...options });
   }
 
@@ -61,14 +98,16 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.tweets.getQuotes('id');
+   * const paginatedTweets = await client.x.tweets.getQuotes(
+   *   'id',
+   * );
    * ```
    */
   getQuotes(
     id: string,
     query: TweetGetQuotesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<TweetGetQuotesResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/tweets/${id}/quotes`, { query, ...options });
   }
 
@@ -77,14 +116,16 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.tweets.getReplies('id');
+   * const paginatedTweets = await client.x.tweets.getReplies(
+   *   'id',
+   * );
    * ```
    */
   getReplies(
     id: string,
     query: TweetGetRepliesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<TweetGetRepliesResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/tweets/${id}/replies`, { query, ...options });
   }
 
@@ -93,14 +134,16 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.tweets.getRetweeters('id');
+   * const paginatedUsers = await client.x.tweets.getRetweeters(
+   *   'id',
+   * );
    * ```
    */
   getRetweeters(
     id: string,
     query: TweetGetRetweetersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<TweetGetRetweetersResponse> {
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/tweets/${id}/retweeters`, { query, ...options });
   }
 
@@ -109,14 +152,16 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.tweets.getThread('id');
+   * const paginatedTweets = await client.x.tweets.getThread(
+   *   'id',
+   * );
    * ```
    */
   getThread(
     id: string,
     query: TweetGetThreadParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<TweetGetThreadResponse> {
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/tweets/${id}/thread`, { query, ...options });
   }
 
@@ -125,10 +170,12 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.x.tweets.search({ q: 'q' });
+   * const paginatedTweets = await client.x.tweets.search({
+   *   q: 'q',
+   * });
    * ```
    */
-  search(query: TweetSearchParams, options?: RequestOptions): APIPromise<TweetSearchResponse> {
+  search(query: TweetSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/tweets/search', { query, ...options });
   }
 }
@@ -269,359 +316,20 @@ export interface TweetCreateResponse {
   tweetId: string;
 }
 
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface TweetListResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<TweetListResponse.Tweet>;
-}
-
-export namespace TweetListResponse {
+export interface TweetRetrieveResponse {
   /**
-   * Tweet returned from search results with inline author info.
+   * Full tweet with text, engagement metrics, media, and metadata.
    */
-  export interface Tweet {
-    id: string;
+  tweet: TweetDetail;
 
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface TweetGetFavoritersResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<TweetGetFavoritersResponse.User>;
-}
-
-export namespace TweetGetFavoritersResponse {
   /**
-   * X user profile with bio, follower counts, and verification status.
+   * Author of a tweet with follower count and verification status.
    */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
+  author?: TweetAuthor;
 }
 
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface TweetGetQuotesResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<TweetGetQuotesResponse.Tweet>;
-}
-
-export namespace TweetGetQuotesResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface TweetGetRepliesResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<TweetGetRepliesResponse.Tweet>;
-}
-
-export namespace TweetGetRepliesResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of user profiles with cursor-based navigation.
- */
-export interface TweetGetRetweetersResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  users: Array<TweetGetRetweetersResponse.User>;
-}
-
-export namespace TweetGetRetweetersResponse {
-  /**
-   * X user profile with bio, follower counts, and verification status.
-   */
-  export interface User {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    createdAt?: string;
-
-    description?: string;
-
-    followers?: number;
-
-    following?: number;
-
-    location?: string;
-
-    profilePicture?: string;
-
-    statusesCount?: number;
-
-    verified?: boolean;
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface TweetGetThreadResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<TweetGetThreadResponse.Tweet>;
-}
-
-export namespace TweetGetThreadResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
-}
-
-/**
- * Paginated list of tweets with cursor-based navigation.
- */
-export interface TweetSearchResponse {
-  has_next_page: boolean;
-
-  next_cursor: string;
-
-  tweets: Array<TweetSearchResponse.Tweet>;
-}
-
-export namespace TweetSearchResponse {
-  /**
-   * Tweet returned from search results with inline author info.
-   */
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    author?: Tweet.Author;
-
-    bookmarkCount?: number;
-
-    createdAt?: string;
-
-    /**
-     * True for Note Tweets (long-form content, up to 25,000 characters)
-     */
-    isNoteTweet?: boolean;
-
-    likeCount?: number;
-
-    quoteCount?: number;
-
-    replyCount?: number;
-
-    retweetCount?: number;
-
-    viewCount?: number;
-  }
-
-  export namespace Tweet {
-    export interface Author {
-      id: string;
-
-      name: string;
-
-      username: string;
-
-      verified?: boolean;
-    }
-  }
+export interface TweetDeleteResponse {
+  success: true;
 }
 
 export interface TweetCreateParams {
@@ -648,6 +356,13 @@ export interface TweetListParams {
    * Comma-separated tweet IDs (max 100)
    */
   ids: string;
+}
+
+export interface TweetDeleteParams {
+  /**
+   * X account identifier (@username or account ID)
+   */
+  account: string;
 }
 
 export interface TweetGetFavoritersParams {
@@ -751,15 +466,11 @@ export declare namespace Tweets {
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
-    type TweetListResponse as TweetListResponse,
-    type TweetGetFavoritersResponse as TweetGetFavoritersResponse,
-    type TweetGetQuotesResponse as TweetGetQuotesResponse,
-    type TweetGetRepliesResponse as TweetGetRepliesResponse,
-    type TweetGetRetweetersResponse as TweetGetRetweetersResponse,
-    type TweetGetThreadResponse as TweetGetThreadResponse,
-    type TweetSearchResponse as TweetSearchResponse,
+    type TweetRetrieveResponse as TweetRetrieveResponse,
+    type TweetDeleteResponse as TweetDeleteResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
+    type TweetDeleteParams as TweetDeleteParams,
     type TweetGetFavoritersParams as TweetGetFavoritersParams,
     type TweetGetQuotesParams as TweetGetQuotesParams,
     type TweetGetRepliesParams as TweetGetRepliesParams,
@@ -768,7 +479,19 @@ export declare namespace Tweets {
     type TweetSearchParams as TweetSearchParams,
   };
 
-  export { Like as Like };
+  export {
+    Like as Like,
+    type LikeCreateResponse as LikeCreateResponse,
+    type LikeDeleteResponse as LikeDeleteResponse,
+    type LikeCreateParams as LikeCreateParams,
+    type LikeDeleteParams as LikeDeleteParams,
+  };
 
-  export { Retweet as Retweet };
+  export {
+    Retweet as Retweet,
+    type RetweetCreateResponse as RetweetCreateResponse,
+    type RetweetDeleteResponse as RetweetDeleteResponse,
+    type RetweetCreateParams as RetweetCreateParams,
+    type RetweetDeleteParams as RetweetDeleteParams,
+  };
 }

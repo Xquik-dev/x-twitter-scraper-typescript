@@ -43,34 +43,9 @@ export interface RadarItem {
 }
 
 export interface RadarRetrieveTrendingTopicsResponse {
-  items: Array<RadarRetrieveTrendingTopicsResponse.Item>;
+  items: Array<RadarItem>;
 
   total: number;
-}
-
-export namespace RadarRetrieveTrendingTopicsResponse {
-  /**
-   * Trending topic with score, category, source, and region.
-   */
-  export interface Item {
-    category: string;
-
-    publishedAt: string;
-
-    region: string;
-
-    score: number;
-
-    source: string;
-
-    title: string;
-
-    description?: string;
-
-    imageUrl?: string;
-
-    url?: string;
-  }
 }
 
 export interface RadarRetrieveTrendingTopicsParams {

@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -32,7 +33,7 @@ export class Monitors extends APIResource {
    * const monitor = await client.monitors.retrieve('id');
    * ```
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<MonitorRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<Monitor> {
     return this._client.get(path`/monitors/${id}`, options);
   }
 
@@ -47,7 +48,7 @@ export class Monitors extends APIResource {
    * });
    * ```
    */
-  update(id: string, body: MonitorUpdateParams, options?: RequestOptions): APIPromise<MonitorUpdateResponse> {
+  update(id: string, body: MonitorUpdateParams, options?: RequestOptions): APIPromise<Monitor> {
     return this._client.patch(path`/monitors/${id}`, { body, ...options });
   }
 
@@ -87,9 +88,7 @@ export interface Monitor {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   isActive: boolean;
 
@@ -106,53 +105,7 @@ export interface MonitorCreateResponse {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  username: string;
-
-  xUserId: string;
-}
-
-/**
- * Account monitor that tracks activity for a given X user.
- */
-export interface MonitorRetrieveResponse {
-  id: string;
-
-  createdAt: string;
-
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
-
-  username: string;
-
-  xUserId: string;
-}
-
-/**
- * Account monitor that tracks activity for a given X user.
- */
-export interface MonitorUpdateResponse {
-  id: string;
-
-  createdAt: string;
-
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
+  eventTypes: Array<Shared.EventType>;
 
   username: string;
 
@@ -160,33 +113,9 @@ export interface MonitorUpdateResponse {
 }
 
 export interface MonitorListResponse {
-  monitors: Array<MonitorListResponse.Monitor>;
+  monitors: Array<Monitor>;
 
   total: number;
-}
-
-export namespace MonitorListResponse {
-  /**
-   * Account monitor that tracks activity for a given X user.
-   */
-  export interface Monitor {
-    id: string;
-
-    createdAt: string;
-
-    /**
-     * Array of event types to subscribe to.
-     */
-    eventTypes: Array<
-      'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-    >;
-
-    isActive: boolean;
-
-    username: string;
-
-    xUserId: string;
-  }
 }
 
 export interface MonitorDeactivateResponse {
@@ -197,9 +126,7 @@ export interface MonitorCreateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   /**
    * X username (without @)
@@ -211,9 +138,7 @@ export interface MonitorUpdateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes?: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes?: Array<Shared.EventType>;
 
   isActive?: boolean;
 }
@@ -222,8 +147,6 @@ export declare namespace Monitors {
   export {
     type Monitor as Monitor,
     type MonitorCreateResponse as MonitorCreateResponse,
-    type MonitorRetrieveResponse as MonitorRetrieveResponse,
-    type MonitorUpdateResponse as MonitorUpdateResponse,
     type MonitorListResponse as MonitorListResponse,
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
     type MonitorCreateParams as MonitorCreateParams,

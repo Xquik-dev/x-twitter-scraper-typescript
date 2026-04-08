@@ -2,12 +2,45 @@
 
 import { APIResource } from '../core/resource';
 import { APIPromise } from '../core/api-promise';
+import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
+import { path } from '../internal/utils/path';
 
 /**
  * Tweet composition, drafts, writing styles & radar
  */
 export class Styles extends APIResource {
+  /**
+   * Get cached style profile
+   *
+   * @example
+   * ```ts
+   * const styleProfile = await client.styles.retrieve('id');
+   * ```
+   */
+  retrieve(id: string, options?: RequestOptions): APIPromise<StyleProfile> {
+    return this._client.get(path`/styles/${id}`, options);
+  }
+
+  /**
+   * Save style profile with custom tweets
+   *
+   * @example
+   * ```ts
+   * const styleProfile = await client.styles.update('id', {
+   *   label: 'Professional Voice',
+   *   tweets: [
+   *     {
+   *       text: 'Excited to share our latest research findings.',
+   *     },
+   *   ],
+   * });
+   * ```
+   */
+  update(id: string, body: StyleUpdateParams, options?: RequestOptions): APIPromise<StyleProfile> {
+    return this._client.put(path`/styles/${id}`, { body, ...options });
+  }
+
   /**
    * List cached style profiles
    *
@@ -21,16 +54,31 @@ export class Styles extends APIResource {
   }
 
   /**
+   * Delete a style profile
+   *
+   * @example
+   * ```ts
+   * await client.styles.delete('id');
+   * ```
+   */
+  delete(id: string, options?: RequestOptions): APIPromise<void> {
+    return this._client.delete(path`/styles/${id}`, {
+      ...options,
+      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
+    });
+  }
+
+  /**
    * Analyze writing style from recent tweets
    *
    * @example
    * ```ts
-   * const response = await client.styles.analyze({
+   * const styleProfile = await client.styles.analyze({
    *   username: 'elonmusk',
    * });
    * ```
    */
-  analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleAnalyzeResponse> {
+  analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleProfile> {
     return this._client.post('/styles', { body, ...options });
   }
 
@@ -47,6 +95,18 @@ export class Styles extends APIResource {
    */
   compare(query: StyleCompareParams, options?: RequestOptions): APIPromise<StyleCompareResponse> {
     return this._client.get('/styles/compare', { query, ...options });
+  }
+
+  /**
+   * Get engagement metrics for style tweets
+   *
+   * @example
+   * ```ts
+   * const response = await client.styles.getPerformance('id');
+   * ```
+   */
+  getPerformance(id: string, options?: RequestOptions): APIPromise<StyleGetPerformanceResponse> {
+    return this._client.get(path`/styles/${id}/performance`, options);
   }
 }
 
@@ -91,116 +151,62 @@ export interface StyleProfileSummary {
 }
 
 export interface StyleListResponse {
-  styles: Array<StyleListResponse.Style>;
-}
-
-export namespace StyleListResponse {
-  /**
-   * Style profile summary with tweet count and ownership flag.
-   */
-  export interface Style {
-    fetchedAt: string;
-
-    isOwnAccount: boolean;
-
-    tweetCount: number;
-
-    xUsername: string;
-  }
-}
-
-/**
- * Full style profile with sampled tweets used for tone analysis.
- */
-export interface StyleAnalyzeResponse {
-  fetchedAt: string;
-
-  isOwnAccount: boolean;
-
-  tweetCount: number;
-
-  tweets: Array<StyleAnalyzeResponse.Tweet>;
-
-  xUsername: string;
-}
-
-export namespace StyleAnalyzeResponse {
-  export interface Tweet {
-    id: string;
-
-    text: string;
-
-    authorUsername?: string;
-
-    createdAt?: string;
-  }
+  styles: Array<StyleProfileSummary>;
 }
 
 export interface StyleCompareResponse {
   /**
    * Full style profile with sampled tweets used for tone analysis.
    */
-  style1: StyleCompareResponse.Style1;
+  style1: StyleProfile;
 
   /**
    * Full style profile with sampled tweets used for tone analysis.
    */
-  style2: StyleCompareResponse.Style2;
+  style2: StyleProfile;
 }
 
-export namespace StyleCompareResponse {
+export interface StyleGetPerformanceResponse {
+  tweetCount: number;
+
+  tweets: Array<StyleGetPerformanceResponse.Tweet>;
+
+  xUsername: string;
+}
+
+export namespace StyleGetPerformanceResponse {
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    createdAt?: string;
+
+    likeCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+}
+
+export interface StyleUpdateParams {
   /**
-   * Full style profile with sampled tweets used for tone analysis.
+   * Display label for the style
    */
-  export interface Style1 {
-    fetchedAt: string;
-
-    isOwnAccount: boolean;
-
-    tweetCount: number;
-
-    tweets: Array<Style1.Tweet>;
-
-    xUsername: string;
-  }
-
-  export namespace Style1 {
-    export interface Tweet {
-      id: string;
-
-      text: string;
-
-      authorUsername?: string;
-
-      createdAt?: string;
-    }
-  }
+  label: string;
 
   /**
-   * Full style profile with sampled tweets used for tone analysis.
+   * Array of tweet objects
    */
-  export interface Style2 {
-    fetchedAt: string;
+  tweets: Array<StyleUpdateParams.Tweet>;
+}
 
-    isOwnAccount: boolean;
-
-    tweetCount: number;
-
-    tweets: Array<Style2.Tweet>;
-
-    xUsername: string;
-  }
-
-  export namespace Style2 {
-    export interface Tweet {
-      id: string;
-
-      text: string;
-
-      authorUsername?: string;
-
-      createdAt?: string;
-    }
+export namespace StyleUpdateParams {
+  export interface Tweet {
+    text: string;
   }
 }
 
@@ -228,8 +234,9 @@ export declare namespace Styles {
     type StyleProfile as StyleProfile,
     type StyleProfileSummary as StyleProfileSummary,
     type StyleListResponse as StyleListResponse,
-    type StyleAnalyzeResponse as StyleAnalyzeResponse,
     type StyleCompareResponse as StyleCompareResponse,
+    type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
+    type StyleUpdateParams as StyleUpdateParams,
     type StyleAnalyzeParams as StyleAnalyzeParams,
     type StyleCompareParams as StyleCompareParams,
   };

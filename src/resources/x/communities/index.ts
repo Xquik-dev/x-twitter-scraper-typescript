@@ -6,20 +6,11 @@ export {
   type CommunityCreateResponse,
   type CommunityDeleteResponse,
   type CommunityRetrieveInfoResponse,
-  type CommunityRetrieveMembersResponse,
-  type CommunityRetrieveModeratorsResponse,
-  type CommunityRetrieveSearchResponse,
   type CommunityCreateParams,
   type CommunityDeleteParams,
   type CommunityRetrieveMembersParams,
   type CommunityRetrieveModeratorsParams,
   type CommunityRetrieveSearchParams,
 } from './communities';
-export {
-  Join,
-  type JoinCreateResponse,
-  type JoinDeleteAllResponse,
-  type JoinCreateParams,
-  type JoinDeleteAllParams,
-} from './join';
-export { Tweets, type TweetListResponse, type TweetListParams } from './tweets';
+export { Join, type JoinCreateParams, type JoinDeleteAllParams } from './join';
+export { Tweets, type TweetListParams, type TweetListByCommunityParams } from './tweets';
