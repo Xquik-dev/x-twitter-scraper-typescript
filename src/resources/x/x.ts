@@ -28,8 +28,11 @@ import { FollowerCheckParams, FollowerCheckResponse, Followers } from './followe
 import * as ListsAPI from './lists';
 import {
   ListRetrieveFollowersParams,
+  ListRetrieveFollowersResponse,
   ListRetrieveMembersParams,
+  ListRetrieveMembersResponse,
   ListRetrieveTweetsParams,
+  ListRetrieveTweetsResponse,
   Lists,
 } from './lists';
 import * as MediaAPI from './media';
@@ -60,8 +63,11 @@ import {
   CommunityDeleteResponse,
   CommunityRetrieveInfoResponse,
   CommunityRetrieveMembersParams,
+  CommunityRetrieveMembersResponse,
   CommunityRetrieveModeratorsParams,
+  CommunityRetrieveModeratorsResponse,
   CommunityRetrieveSearchParams,
+  CommunityRetrieveSearchResponse,
 } from './communities/communities';
 import * as TweetsAPI from './tweets/tweets';
 import {
@@ -81,6 +87,7 @@ import {
   TweetGetThreadParams,
   TweetGetThreadResponse,
   TweetListParams,
+  TweetListResponse,
   TweetSearchParams,
   TweetSearchResponse,
   Tweets,
@@ -89,23 +96,28 @@ import * as UsersAPI from './users/users';
 import {
   UserProfile,
   UserRetrieveBatchParams,
+  UserRetrieveBatchResponse,
   UserRetrieveFollowersParams,
+  UserRetrieveFollowersResponse,
   UserRetrieveFollowersYouKnowParams,
   UserRetrieveFollowersYouKnowResponse,
   UserRetrieveFollowingParams,
+  UserRetrieveFollowingResponse,
   UserRetrieveLikesParams,
   UserRetrieveLikesResponse,
   UserRetrieveMediaParams,
   UserRetrieveMediaResponse,
   UserRetrieveMentionsParams,
+  UserRetrieveMentionsResponse,
   UserRetrieveSearchParams,
+  UserRetrieveSearchResponse,
   UserRetrieveTweetsParams,
   UserRetrieveTweetsResponse,
   UserRetrieveVerifiedFollowersParams,
+  UserRetrieveVerifiedFollowersResponse,
   Users,
 } from './users/users';
 import { APIPromise } from '../../core/api-promise';
-import { buildHeaders } from '../../internal/headers';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
@@ -126,6 +138,11 @@ export class X extends APIResource {
 
   /**
    * Retrieve the full content of an X Article (long-form post) by tweet ID.
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getArticle('tweetId');
+   * ```
    */
   getArticle(tweetID: string, options?: RequestOptions): APIPromise<XGetArticleResponse> {
     return this._client.get(path`/x/articles/${tweetID}`, options);
@@ -133,6 +150,11 @@ export class X extends APIResource {
 
   /**
    * Get home timeline
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getHomeTimeline();
+   * ```
    */
   getHomeTimeline(
     query: XGetHomeTimelineParams | null | undefined = {},
@@ -143,6 +165,11 @@ export class X extends APIResource {
 
   /**
    * Get notifications
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getNotifications();
+   * ```
    */
   getNotifications(
     query: XGetNotificationsParams | null | undefined = {},
@@ -153,18 +180,23 @@ export class X extends APIResource {
 
   /**
    * Get trending topics
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getTrends();
+   * ```
    */
-  getTrends(options?: RequestOptions): APIPromise<void> {
-    return this._client.get('/x/trends', {
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  getTrends(options?: RequestOptions): APIPromise<XGetTrendsResponse> {
+    return this._client.get('/x/trends', options);
   }
 }
 
 export interface XGetArticleResponse {
   article: XGetArticleResponse.Article;
 
+  /**
+   * Author of a tweet with follower count and verification status.
+   */
   author?: XGetArticleResponse.Author;
 }
 
@@ -210,6 +242,9 @@ export namespace XGetArticleResponse {
     }
   }
 
+  /**
+   * Author of a tweet with follower count and verification status.
+   */
   export interface Author {
     id: string;
 
@@ -223,6 +258,9 @@ export namespace XGetArticleResponse {
   }
 }
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface XGetHomeTimelineResponse {
   has_next_page: boolean;
 
@@ -232,6 +270,9 @@ export interface XGetHomeTimelineResponse {
 }
 
 export namespace XGetHomeTimelineResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
   export interface Tweet {
     id: string;
 
@@ -244,7 +285,7 @@ export namespace XGetHomeTimelineResponse {
     createdAt?: string;
 
     /**
-     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     * True for Note Tweets (long-form content, up to 25,000 characters)
      */
     isNoteTweet?: boolean;
 
@@ -292,9 +333,29 @@ export namespace XGetNotificationsResponse {
   }
 }
 
+export interface XGetTrendsResponse {
+  count: number;
+
+  trends: Array<XGetTrendsResponse.Trend>;
+
+  woeid: number;
+}
+
+export namespace XGetTrendsResponse {
+  export interface Trend {
+    name: string;
+
+    description?: string;
+
+    query?: string;
+
+    rank?: number;
+  }
+}
+
 export interface XGetHomeTimelineParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for timeline
    */
   cursor?: string;
 
@@ -306,7 +367,7 @@ export interface XGetHomeTimelineParams {
 
 export interface XGetNotificationsParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for notifications
    */
   cursor?: string;
 
@@ -332,6 +393,7 @@ export declare namespace X {
     type XGetArticleResponse as XGetArticleResponse,
     type XGetHomeTimelineResponse as XGetHomeTimelineResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
+    type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
   };
@@ -342,6 +404,7 @@ export declare namespace X {
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
+    type TweetListResponse as TweetListResponse,
     type TweetGetFavoritersResponse as TweetGetFavoritersResponse,
     type TweetGetQuotesResponse as TweetGetQuotesResponse,
     type TweetGetRepliesResponse as TweetGetRepliesResponse,
@@ -361,10 +424,16 @@ export declare namespace X {
   export {
     Users as Users,
     type UserProfile as UserProfile,
+    type UserRetrieveBatchResponse as UserRetrieveBatchResponse,
+    type UserRetrieveFollowersResponse as UserRetrieveFollowersResponse,
     type UserRetrieveFollowersYouKnowResponse as UserRetrieveFollowersYouKnowResponse,
+    type UserRetrieveFollowingResponse as UserRetrieveFollowingResponse,
     type UserRetrieveLikesResponse as UserRetrieveLikesResponse,
     type UserRetrieveMediaResponse as UserRetrieveMediaResponse,
+    type UserRetrieveMentionsResponse as UserRetrieveMentionsResponse,
+    type UserRetrieveSearchResponse as UserRetrieveSearchResponse,
     type UserRetrieveTweetsResponse as UserRetrieveTweetsResponse,
+    type UserRetrieveVerifiedFollowersResponse as UserRetrieveVerifiedFollowersResponse,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,
@@ -415,6 +484,9 @@ export declare namespace X {
     type CommunityCreateResponse as CommunityCreateResponse,
     type CommunityDeleteResponse as CommunityDeleteResponse,
     type CommunityRetrieveInfoResponse as CommunityRetrieveInfoResponse,
+    type CommunityRetrieveMembersResponse as CommunityRetrieveMembersResponse,
+    type CommunityRetrieveModeratorsResponse as CommunityRetrieveModeratorsResponse,
+    type CommunityRetrieveSearchResponse as CommunityRetrieveSearchResponse,
     type CommunityCreateParams as CommunityCreateParams,
     type CommunityDeleteParams as CommunityDeleteParams,
     type CommunityRetrieveMembersParams as CommunityRetrieveMembersParams,
@@ -444,6 +516,9 @@ export declare namespace X {
 
   export {
     Lists as Lists,
+    type ListRetrieveFollowersResponse as ListRetrieveFollowersResponse,
+    type ListRetrieveMembersResponse as ListRetrieveMembersResponse,
+    type ListRetrieveTweetsResponse as ListRetrieveTweetsResponse,
     type ListRetrieveFollowersParams as ListRetrieveFollowersParams,
     type ListRetrieveMembersParams as ListRetrieveMembersParams,
     type ListRetrieveTweetsParams as ListRetrieveTweetsParams,

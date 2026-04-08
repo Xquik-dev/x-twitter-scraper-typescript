@@ -10,6 +10,11 @@ import { RequestOptions } from '../internal/request-options';
 export class Credits extends APIResource {
   /**
    * Get credits balance
+   *
+   * @example
+   * ```ts
+   * const response = await client.credits.retrieveBalance();
+   * ```
    */
   retrieveBalance(options?: RequestOptions): APIPromise<CreditRetrieveBalanceResponse> {
     return this._client.get('/credits', options);
@@ -17,6 +22,13 @@ export class Credits extends APIResource {
 
   /**
    * Top up credits balance
+   *
+   * @example
+   * ```ts
+   * const response = await client.credits.topupBalance({
+   *   amount: 10000,
+   * });
+   * ```
    */
   topupBalance(
     body: CreditTopupBalanceParams,

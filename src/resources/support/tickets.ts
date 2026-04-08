@@ -11,6 +11,14 @@ import { path } from '../../internal/utils/path';
 export class Tickets extends APIResource {
   /**
    * Create a support ticket
+   *
+   * @example
+   * ```ts
+   * const ticket = await client.support.tickets.create({
+   *   body: 'I am unable to connect my X account. Please help.',
+   *   subject: 'Cannot connect X account',
+   * });
+   * ```
    */
   create(body: TicketCreateParams, options?: RequestOptions): APIPromise<TicketCreateResponse> {
     return this._client.post('/support/tickets', { body, ...options });
@@ -18,6 +26,13 @@ export class Tickets extends APIResource {
 
   /**
    * Get ticket with all messages
+   *
+   * @example
+   * ```ts
+   * const ticket = await client.support.tickets.retrieve(
+   *   'messages_value',
+   * );
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<TicketRetrieveResponse> {
     return this._client.get(path`/support/tickets/${id}`, options);
@@ -25,6 +40,13 @@ export class Tickets extends APIResource {
 
   /**
    * Update ticket status
+   *
+   * @example
+   * ```ts
+   * const ticket = await client.support.tickets.update('id', {
+   *   status: 'resolved',
+   * });
+   * ```
    */
   update(id: string, body: TicketUpdateParams, options?: RequestOptions): APIPromise<TicketUpdateResponse> {
     return this._client.patch(path`/support/tickets/${id}`, { body, ...options });
@@ -32,6 +54,11 @@ export class Tickets extends APIResource {
 
   /**
    * List user's support tickets
+   *
+   * @example
+   * ```ts
+   * const tickets = await client.support.tickets.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<TicketListResponse> {
     return this._client.get('/support/tickets', options);
@@ -39,6 +66,13 @@ export class Tickets extends APIResource {
 
   /**
    * Reply to a support ticket
+   *
+   * @example
+   * ```ts
+   * const response = await client.support.tickets.reply('id', {
+   *   body: 'Thank you for the update.',
+   * });
+   * ```
    */
   reply(id: string, body: TicketReplyParams, options?: RequestOptions): APIPromise<TicketReplyResponse> {
     return this._client.post(path`/support/tickets/${id}/messages`, { body, ...options });

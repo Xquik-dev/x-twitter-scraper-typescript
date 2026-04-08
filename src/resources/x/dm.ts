@@ -8,6 +8,13 @@ import { path } from '../../internal/utils/path';
 export class Dm extends APIResource {
   /**
    * Get DM conversation history
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.dm.retrieveHistory(
+   *   'userId',
+   * );
+   * ```
    */
   retrieveHistory(
     userID: string,
@@ -19,6 +26,16 @@ export class Dm extends APIResource {
 
   /**
    * Send direct message
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.dm.send('userId', {
+   *   account: '@elonmusk',
+   *   text: 'Example text content',
+   *   media_ids: ['1234567890123456789'],
+   *   reply_to_message_id: '1234567890123456789',
+   * });
+   * ```
    */
   send(userID: string, body: DmSendParams, options?: RequestOptions): APIPromise<DmSendResponse> {
     return this._client.post(path`/x/dm/${userID}`, { body, ...options });
@@ -55,7 +72,7 @@ export interface DmSendResponse {
 
 export interface DmRetrieveHistoryParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for DM history
    */
   cursor?: string;
 
@@ -67,7 +84,7 @@ export interface DmRetrieveHistoryParams {
 
 export interface DmSendParams {
   /**
-   * X account (@username or account ID)
+   * X account (@username or ID) sending the DM
    */
   account: string;
 

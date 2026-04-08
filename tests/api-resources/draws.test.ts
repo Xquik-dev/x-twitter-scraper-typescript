@@ -51,7 +51,7 @@ describe('resource draws', () => {
 
   // Mock server tests are disabled
   test.skip('run: only required params', async () => {
-    const responsePromise = client.draws.run({ tweetUrl: 'https://example.com' });
+    const responsePromise = client.draws.run({ tweetUrl: 'https://x.com/elonmusk/status/1234567890' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -64,18 +64,18 @@ describe('resource draws', () => {
   // Mock server tests are disabled
   test.skip('run: required and optional params', async () => {
     const response = await client.draws.run({
-      tweetUrl: 'https://example.com',
-      backupCount: 0,
-      filterAccountAgeDays: 0,
-      filterLanguage: 'filterLanguage',
-      filterMinFollowers: 0,
-      mustFollowUsername: 'mustFollowUsername',
+      tweetUrl: 'https://x.com/elonmusk/status/1234567890',
+      backupCount: 2,
+      filterAccountAgeDays: 30,
+      filterLanguage: 'en',
+      filterMinFollowers: 50,
+      mustFollowUsername: 'elonmusk',
       mustRetweet: true,
-      requiredHashtags: ['string'],
-      requiredKeywords: ['string'],
-      requiredMentions: ['string'],
+      requiredHashtags: ['#giveaway'],
+      requiredKeywords: ['entered'],
+      requiredMentions: ['@elonmusk'],
       uniqueAuthorsOnly: true,
-      winnerCount: 0,
+      winnerCount: 3,
     });
   });
 });

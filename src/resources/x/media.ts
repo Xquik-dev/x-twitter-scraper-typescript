@@ -12,6 +12,13 @@ import { multipartFormRequestOptions } from '../../internal/uploads';
 export class Media extends APIResource {
   /**
    * Download tweet media
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.media.download({
+   *   tweetInput: 'https://x.com/elonmusk/status/1234567890',
+   * });
+   * ```
    */
   download(body: MediaDownloadParams, options?: RequestOptions): APIPromise<MediaDownloadResponse> {
     return this._client.post('/x/media/download', { body, ...options });
@@ -19,6 +26,15 @@ export class Media extends APIResource {
 
   /**
    * Upload media
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.media.upload({
+   *   account: '@elonmusk',
+   *   file: fs.createReadStream('path/to/file'),
+   *   is_long_video: true,
+   * });
+   * ```
    */
   upload(body: MediaUploadParams, options?: RequestOptions): APIPromise<MediaUploadResponse> {
     return this._client.post('/x/media', multipartFormRequestOptions({ body, ...options }, this._client));
@@ -57,7 +73,7 @@ export interface MediaDownloadParams {
 
 export interface MediaUploadParams {
   /**
-   * X account (@username or account ID)
+   * X account (@username or ID) uploading media
    */
   account: string;
 

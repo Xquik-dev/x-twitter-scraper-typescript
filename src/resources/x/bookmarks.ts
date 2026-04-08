@@ -10,6 +10,11 @@ import { RequestOptions } from '../../internal/request-options';
 export class Bookmarks extends APIResource {
   /**
    * Get bookmarked tweets
+   *
+   * @example
+   * ```ts
+   * const bookmarks = await client.x.bookmarks.list();
+   * ```
    */
   list(
     query: BookmarkListParams | null | undefined = {},
@@ -20,12 +25,20 @@ export class Bookmarks extends APIResource {
 
   /**
    * Get bookmark folders
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.bookmarks.retrieveFolders();
+   * ```
    */
   retrieveFolders(options?: RequestOptions): APIPromise<BookmarkRetrieveFoldersResponse> {
     return this._client.get('/x/bookmarks/folders', options);
   }
 }
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface BookmarkListResponse {
   has_next_page: boolean;
 
@@ -35,6 +48,9 @@ export interface BookmarkListResponse {
 }
 
 export namespace BookmarkListResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
   export interface Tweet {
     id: string;
 
@@ -47,7 +63,7 @@ export namespace BookmarkListResponse {
     createdAt?: string;
 
     /**
-     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     * True for Note Tweets (long-form content, up to 25,000 characters)
      */
     isNoteTweet?: boolean;
 
@@ -93,7 +109,7 @@ export namespace BookmarkRetrieveFoldersResponse {
 
 export interface BookmarkListParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for bookmarks
    */
   cursor?: string;
 

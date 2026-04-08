@@ -23,7 +23,7 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('analyze: only required params', async () => {
-    const responsePromise = client.styles.analyze({ username: 'username' });
+    const responsePromise = client.styles.analyze({ username: 'elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -35,7 +35,7 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('analyze: required and optional params', async () => {
-    const response = await client.styles.analyze({ username: 'username' });
+    const response = await client.styles.analyze({ username: 'elonmusk' });
   });
 
   // Mock server tests are disabled

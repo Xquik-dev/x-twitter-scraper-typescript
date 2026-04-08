@@ -1,5 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
+/**
+ * Error response containing a machine-readable error code.
+ */
 export interface Error {
   error:
     | 'internal_error'
@@ -29,6 +32,9 @@ export interface Error {
     | 'x_api_unauthorized';
 }
 
+/**
+ * Type of monitor event fired when account activity occurs.
+ */
 export type EventType =
   | 'tweet.new'
   | 'tweet.reply'
@@ -37,6 +43,9 @@ export type EventType =
   | 'follower.gained'
   | 'follower.lost';
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface PaginatedTweets {
   has_next_page: boolean;
 
@@ -46,6 +55,9 @@ export interface PaginatedTweets {
 }
 
 export namespace PaginatedTweets {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
   export interface Tweet {
     id: string;
 
@@ -58,7 +70,7 @@ export namespace PaginatedTweets {
     createdAt?: string;
 
     /**
-     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     * True for Note Tweets (long-form content, up to 25,000 characters)
      */
     isNoteTweet?: boolean;
 
@@ -86,6 +98,9 @@ export namespace PaginatedTweets {
   }
 }
 
+/**
+ * Paginated list of user profiles with cursor-based navigation.
+ */
 export interface PaginatedUsers {
   has_next_page: boolean;
 
@@ -95,6 +110,9 @@ export interface PaginatedUsers {
 }
 
 export namespace PaginatedUsers {
+  /**
+   * X user profile with bio, follower counts, and verification status.
+   */
   export interface User {
     id: string;
 
