@@ -11,7 +11,7 @@ const client = new XTwitterScraper({
 describe('resource profile', () => {
   // Mock server tests are disabled
   test.skip('update: only required params', async () => {
-    const responsePromise = client.x.profile.update({ account: 'account' });
+    const responsePromise = client.x.profile.update({ account: '@elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -24,18 +24,18 @@ describe('resource profile', () => {
   // Mock server tests are disabled
   test.skip('update: required and optional params', async () => {
     const response = await client.x.profile.update({
-      account: 'account',
-      description: 'description',
-      location: 'location',
-      name: 'name',
-      url: 'url',
+      account: '@elonmusk',
+      description: 'description_value',
+      location: 'location_value',
+      name: 'Example Name',
+      url: 'https://xquik.com/example',
     });
   });
 
   // Mock server tests are disabled
   test.skip('updateAvatar: only required params', async () => {
     const responsePromise = client.x.profile.updateAvatar({
-      account: 'account',
+      account: '@elonmusk',
       file: await toFile(Buffer.from('Example data'), 'README.md'),
     });
     const rawResponse = await responsePromise.asResponse();
@@ -50,7 +50,7 @@ describe('resource profile', () => {
   // Mock server tests are disabled
   test.skip('updateAvatar: required and optional params', async () => {
     const response = await client.x.profile.updateAvatar({
-      account: 'account',
+      account: '@elonmusk',
       file: await toFile(Buffer.from('Example data'), 'README.md'),
     });
   });
@@ -58,7 +58,7 @@ describe('resource profile', () => {
   // Mock server tests are disabled
   test.skip('updateBanner: only required params', async () => {
     const responsePromise = client.x.profile.updateBanner({
-      account: 'account',
+      account: '@elonmusk',
       file: await toFile(Buffer.from('Example data'), 'README.md'),
     });
     const rawResponse = await responsePromise.asResponse();
@@ -73,7 +73,7 @@ describe('resource profile', () => {
   // Mock server tests are disabled
   test.skip('updateBanner: required and optional params', async () => {
     const response = await client.x.profile.updateBanner({
-      account: 'account',
+      account: '@elonmusk',
       file: await toFile(Buffer.from('Example data'), 'README.md'),
     });
   });

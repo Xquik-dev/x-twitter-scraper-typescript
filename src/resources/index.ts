@@ -131,6 +131,7 @@ export {
   type XGetArticleResponse,
   type XGetHomeTimelineResponse,
   type XGetNotificationsResponse,
+  type XGetTrendsResponse,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,
 } from './x/x';

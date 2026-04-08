@@ -11,6 +11,13 @@ import { path } from '../../../internal/utils/path';
 export class Join extends APIResource {
   /**
    * Join community
+   *
+   * @example
+   * ```ts
+   * const join = await client.x.communities.join.create('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
    */
   create(id: string, body: JoinCreateParams, options?: RequestOptions): APIPromise<JoinCreateResponse> {
     return this._client.post(path`/x/communities/${id}/join`, { body, ...options });
@@ -18,6 +25,14 @@ export class Join extends APIResource {
 
   /**
    * Leave community
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.communities.join.deleteAll(
+   *   'id',
+   *   { account: '@elonmusk' },
+   * );
+   * ```
    */
   deleteAll(
     id: string,
@@ -28,6 +43,9 @@ export class Join extends APIResource {
   }
 }
 
+/**
+ * Result of a community join or leave action.
+ */
 export interface JoinCreateResponse {
   communityId: string;
 
@@ -36,6 +54,9 @@ export interface JoinCreateResponse {
   success: true;
 }
 
+/**
+ * Result of a community join or leave action.
+ */
 export interface JoinDeleteAllResponse {
   communityId: string;
 
@@ -46,14 +67,14 @@ export interface JoinDeleteAllResponse {
 
 export interface JoinCreateParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }
 
 export interface JoinDeleteAllParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }

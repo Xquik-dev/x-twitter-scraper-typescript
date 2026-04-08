@@ -6,7 +6,6 @@ import { Like } from './like';
 import * as RetweetAPI from './retweet';
 import { Retweet } from './retweet';
 import { APIPromise } from '../../../core/api-promise';
-import { buildHeaders } from '../../../internal/headers';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
@@ -16,6 +15,14 @@ export class Tweets extends APIResource {
 
   /**
    * Create tweet
+   *
+   * @example
+   * ```ts
+   * const tweet = await client.x.tweets.create({
+   *   account: '@elonmusk',
+   *   text: 'Just launched our new feature!',
+   * });
+   * ```
    */
   create(body: TweetCreateParams, options?: RequestOptions): APIPromise<TweetCreateResponse> {
     return this._client.post('/x/tweets', { body, ...options });
@@ -23,17 +30,23 @@ export class Tweets extends APIResource {
 
   /**
    * Get multiple tweets by IDs
+   *
+   * @example
+   * ```ts
+   * const tweets = await client.x.tweets.list({ ids: 'ids' });
+   * ```
    */
-  list(query: TweetListParams, options?: RequestOptions): APIPromise<void> {
-    return this._client.get('/x/tweets', {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  list(query: TweetListParams, options?: RequestOptions): APIPromise<TweetListResponse> {
+    return this._client.get('/x/tweets', { query, ...options });
   }
 
   /**
    * Get users who liked a tweet
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.tweets.getFavoriters('id');
+   * ```
    */
   getFavoriters(
     id: string,
@@ -45,6 +58,11 @@ export class Tweets extends APIResource {
 
   /**
    * Get quote tweets of a tweet
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.tweets.getQuotes('id');
+   * ```
    */
   getQuotes(
     id: string,
@@ -56,6 +74,11 @@ export class Tweets extends APIResource {
 
   /**
    * Get replies to a tweet
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.tweets.getReplies('id');
+   * ```
    */
   getReplies(
     id: string,
@@ -67,6 +90,11 @@ export class Tweets extends APIResource {
 
   /**
    * Get users who retweeted a tweet
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.tweets.getRetweeters('id');
+   * ```
    */
   getRetweeters(
     id: string,
@@ -78,6 +106,11 @@ export class Tweets extends APIResource {
 
   /**
    * Get thread context for a tweet
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.tweets.getThread('id');
+   * ```
    */
   getThread(
     id: string,
@@ -89,12 +122,20 @@ export class Tweets extends APIResource {
 
   /**
    * Search tweets
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.tweets.search({ q: 'q' });
+   * ```
    */
   search(query: TweetSearchParams, options?: RequestOptions): APIPromise<TweetSearchResponse> {
     return this._client.get('/x/tweets/search', { query, ...options });
   }
 }
 
+/**
+ * Tweet returned from search results with inline author info.
+ */
 export interface SearchTweet {
   id: string;
 
@@ -107,7 +148,7 @@ export interface SearchTweet {
   createdAt?: string;
 
   /**
-   * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+   * True for Note Tweets (long-form content, up to 25,000 characters)
    */
   isNoteTweet?: boolean;
 
@@ -134,6 +175,9 @@ export namespace SearchTweet {
   }
 }
 
+/**
+ * Author of a tweet with follower count and verification status.
+ */
 export interface TweetAuthor {
   id: string;
 
@@ -146,6 +190,9 @@ export interface TweetAuthor {
   profilePicture?: string;
 }
 
+/**
+ * Full tweet with text, engagement metrics, media, and metadata.
+ */
 export interface TweetDetail {
   id: string;
 
@@ -173,7 +220,7 @@ export interface TweetDetail {
   /**
    * Parsed entities from the tweet text (URLs, mentions, hashtags, media)
    */
-  entities?: unknown;
+  entities?: { [key: string]: unknown };
 
   /**
    * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
@@ -198,7 +245,7 @@ export interface TweetDetail {
   /**
    * The quoted tweet object, present when isQuoteStatus is true
    */
-  quoted_tweet?: unknown;
+  quoted_tweet?: { [key: string]: unknown };
 
   /**
    * Client application used to post this tweet
@@ -222,6 +269,64 @@ export interface TweetCreateResponse {
   tweetId: string;
 }
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
+export interface TweetListResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<TweetListResponse.Tweet>;
+}
+
+export namespace TweetListResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    /**
+     * True for Note Tweets (long-form content, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
+}
+
+/**
+ * Paginated list of user profiles with cursor-based navigation.
+ */
 export interface TweetGetFavoritersResponse {
   has_next_page: boolean;
 
@@ -231,6 +336,9 @@ export interface TweetGetFavoritersResponse {
 }
 
 export namespace TweetGetFavoritersResponse {
+  /**
+   * X user profile with bio, follower counts, and verification status.
+   */
   export interface User {
     id: string;
 
@@ -256,6 +364,9 @@ export namespace TweetGetFavoritersResponse {
   }
 }
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface TweetGetQuotesResponse {
   has_next_page: boolean;
 
@@ -265,6 +376,9 @@ export interface TweetGetQuotesResponse {
 }
 
 export namespace TweetGetQuotesResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
   export interface Tweet {
     id: string;
 
@@ -277,7 +391,7 @@ export namespace TweetGetQuotesResponse {
     createdAt?: string;
 
     /**
-     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     * True for Note Tweets (long-form content, up to 25,000 characters)
      */
     isNoteTweet?: boolean;
 
@@ -305,6 +419,9 @@ export namespace TweetGetQuotesResponse {
   }
 }
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface TweetGetRepliesResponse {
   has_next_page: boolean;
 
@@ -314,6 +431,9 @@ export interface TweetGetRepliesResponse {
 }
 
 export namespace TweetGetRepliesResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
   export interface Tweet {
     id: string;
 
@@ -326,7 +446,7 @@ export namespace TweetGetRepliesResponse {
     createdAt?: string;
 
     /**
-     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     * True for Note Tweets (long-form content, up to 25,000 characters)
      */
     isNoteTweet?: boolean;
 
@@ -354,6 +474,9 @@ export namespace TweetGetRepliesResponse {
   }
 }
 
+/**
+ * Paginated list of user profiles with cursor-based navigation.
+ */
 export interface TweetGetRetweetersResponse {
   has_next_page: boolean;
 
@@ -363,6 +486,9 @@ export interface TweetGetRetweetersResponse {
 }
 
 export namespace TweetGetRetweetersResponse {
+  /**
+   * X user profile with bio, follower counts, and verification status.
+   */
   export interface User {
     id: string;
 
@@ -388,6 +514,9 @@ export namespace TweetGetRetweetersResponse {
   }
 }
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface TweetGetThreadResponse {
   has_next_page: boolean;
 
@@ -397,6 +526,9 @@ export interface TweetGetThreadResponse {
 }
 
 export namespace TweetGetThreadResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
   export interface Tweet {
     id: string;
 
@@ -409,7 +541,7 @@ export namespace TweetGetThreadResponse {
     createdAt?: string;
 
     /**
-     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     * True for Note Tweets (long-form content, up to 25,000 characters)
      */
     isNoteTweet?: boolean;
 
@@ -437,6 +569,9 @@ export namespace TweetGetThreadResponse {
   }
 }
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface TweetSearchResponse {
   has_next_page: boolean;
 
@@ -446,6 +581,9 @@ export interface TweetSearchResponse {
 }
 
 export namespace TweetSearchResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
   export interface Tweet {
     id: string;
 
@@ -458,7 +596,7 @@ export namespace TweetSearchResponse {
     createdAt?: string;
 
     /**
-     * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+     * True for Note Tweets (long-form content, up to 25,000 characters)
      */
     isNoteTweet?: boolean;
 
@@ -514,60 +652,60 @@ export interface TweetListParams {
 
 export interface TweetGetFavoritersParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for favoriters
    */
   cursor?: string;
 }
 
 export interface TweetGetQuotesParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for quote tweets
    */
   cursor?: string;
 
   /**
-   * Include replies (default false)
+   * Include reply quotes (default false)
    */
   includeReplies?: boolean;
 
   /**
-   * Unix timestamp - filter after
+   * Unix timestamp - return quotes posted after this time
    */
   sinceTime?: string;
 
   /**
-   * Unix timestamp - filter before
+   * Unix timestamp - return quotes posted before this time
    */
   untilTime?: string;
 }
 
 export interface TweetGetRepliesParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for tweet replies
    */
   cursor?: string;
 
   /**
-   * Unix timestamp - filter after
+   * Unix timestamp - return replies posted after this time
    */
   sinceTime?: string;
 
   /**
-   * Unix timestamp - filter before
+   * Unix timestamp - return replies posted before this time
    */
   untilTime?: string;
 }
 
 export interface TweetGetRetweetersParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for retweeters
    */
   cursor?: string;
 }
 
 export interface TweetGetThreadParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for thread tweets
    */
   cursor?: string;
 }
@@ -613,6 +751,7 @@ export declare namespace Tweets {
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
+    type TweetListResponse as TweetListResponse,
     type TweetGetFavoritersResponse as TweetGetFavoritersResponse,
     type TweetGetQuotesResponse as TweetGetQuotesResponse,
     type TweetGetRepliesResponse as TweetGetRepliesResponse,

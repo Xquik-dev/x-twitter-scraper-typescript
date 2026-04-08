@@ -11,6 +11,13 @@ import { path } from '../internal/utils/path';
 export class APIKeys extends APIResource {
   /**
    * Create API key
+   *
+   * @example
+   * ```ts
+   * const apiKey = await client.apiKeys.create({
+   *   name: 'My API Key',
+   * });
+   * ```
    */
   create(body: APIKeyCreateParams, options?: RequestOptions): APIPromise<APIKeyCreateResponse> {
     return this._client.post('/api-keys', { body, ...options, __security: { apiKeyAuth: true } });
@@ -18,6 +25,11 @@ export class APIKeys extends APIResource {
 
   /**
    * List API keys
+   *
+   * @example
+   * ```ts
+   * const apiKeys = await client.apiKeys.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<APIKeyListResponse> {
     return this._client.get('/api-keys', { ...options, __security: { apiKeyAuth: true } });
@@ -25,12 +37,20 @@ export class APIKeys extends APIResource {
 
   /**
    * Revoke API key
+   *
+   * @example
+   * ```ts
+   * const response = await client.apiKeys.revoke('id');
+   * ```
    */
   revoke(id: string, options?: RequestOptions): APIPromise<APIKeyRevokeResponse> {
     return this._client.delete(path`/api-keys/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 }
 
+/**
+ * API key metadata returned when listing keys.
+ */
 export interface APIKey {
   id: string;
 
@@ -62,6 +82,9 @@ export interface APIKeyListResponse {
 }
 
 export namespace APIKeyListResponse {
+  /**
+   * API key metadata returned when listing keys.
+   */
   export interface Key {
     id: string;
 

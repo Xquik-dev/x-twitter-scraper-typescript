@@ -11,6 +11,15 @@ import { path } from '../../internal/utils/path';
 export class Accounts extends APIResource {
   /**
    * Connect X account
+   *
+   * @example
+   * ```ts
+   * const account = await client.x.accounts.create({
+   *   email: 'user@example.com',
+   *   password: 's3cur3Pa$$w0rd',
+   *   username: 'elonmusk',
+   * });
+   * ```
    */
   create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
     return this._client.post('/x/accounts', { body, ...options, __security: { apiKeyAuth: true } });
@@ -18,6 +27,11 @@ export class Accounts extends APIResource {
 
   /**
    * Get X account details
+   *
+   * @example
+   * ```ts
+   * const account = await client.x.accounts.retrieve('id');
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
     return this._client.get(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
@@ -25,6 +39,11 @@ export class Accounts extends APIResource {
 
   /**
    * List connected X accounts
+   *
+   * @example
+   * ```ts
+   * const accounts = await client.x.accounts.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<AccountListResponse> {
     return this._client.get('/x/accounts', { ...options, __security: { apiKeyAuth: true } });
@@ -32,6 +51,11 @@ export class Accounts extends APIResource {
 
   /**
    * Disconnect X account
+   *
+   * @example
+   * ```ts
+   * const account = await client.x.accounts.delete('id');
+   * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<AccountDeleteResponse> {
     return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
@@ -39,6 +63,14 @@ export class Accounts extends APIResource {
 
   /**
    * Re-authenticate X account
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.accounts.reauth('id', {
+   *   password: 'password_value',
+   *   totp_secret: 'totp_secret_value',
+   * });
+   * ```
    */
   reauth(id: string, body: AccountReauthParams, options?: RequestOptions): APIPromise<AccountReauthResponse> {
     return this._client.post(path`/x/accounts/${id}/reauth`, {
@@ -49,6 +81,9 @@ export class Accounts extends APIResource {
   }
 }
 
+/**
+ * Linked X account summary with username and connection status.
+ */
 export interface XAccount {
   id: string;
 
@@ -61,6 +96,9 @@ export interface XAccount {
   xUsername: string;
 }
 
+/**
+ * Full X account details including proxy, cookies, and update timestamp.
+ */
 export interface XAccountDetail {
   id: string;
 
@@ -89,6 +127,9 @@ export interface AccountCreateResponse {
   xUsername: string;
 }
 
+/**
+ * Full X account details including proxy, cookies, and update timestamp.
+ */
 export interface AccountRetrieveResponse {
   id: string;
 
@@ -112,6 +153,9 @@ export interface AccountListResponse {
 }
 
 export namespace AccountListResponse {
+  /**
+   * Linked X account summary with username and connection status.
+   */
   export interface Account {
     id: string;
 
@@ -166,12 +210,12 @@ export interface AccountCreateParams {
 
 export interface AccountReauthParams {
   /**
-   * Account password
+   * Updated account password
    */
   password: string;
 
   /**
-   * TOTP secret for 2FA
+   * TOTP secret for 2FA re-authentication
    */
   totp_secret?: string;
 }

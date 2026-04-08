@@ -23,7 +23,7 @@ describe('resource account', () => {
 
   // Mock server tests are disabled
   test.skip('setXUsername: only required params', async () => {
-    const responsePromise = client.account.setXUsername({ username: 'username' });
+    const responsePromise = client.account.setXUsername({ username: 'elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -35,7 +35,7 @@ describe('resource account', () => {
 
   // Mock server tests are disabled
   test.skip('setXUsername: required and optional params', async () => {
-    const response = await client.account.setXUsername({ username: 'username' });
+    const response = await client.account.setXUsername({ username: 'elonmusk' });
   });
 
   // Mock server tests are disabled

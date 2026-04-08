@@ -10,9 +10,8 @@ import {
   JoinDeleteAllResponse,
 } from './join';
 import * as TweetsAPI from './tweets';
-import { TweetListParams, Tweets } from './tweets';
+import { TweetListParams, TweetListResponse, Tweets } from './tweets';
 import { APIPromise } from '../../../core/api-promise';
-import { buildHeaders } from '../../../internal/headers';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
@@ -22,6 +21,15 @@ export class Communities extends APIResource {
 
   /**
    * Create community
+   *
+   * @example
+   * ```ts
+   * const community = await client.x.communities.create({
+   *   account: '@elonmusk',
+   *   name: 'Example Name',
+   *   description: 'A community for Tesla enthusiasts',
+   * });
+   * ```
    */
   create(body: CommunityCreateParams, options?: RequestOptions): APIPromise<CommunityCreateResponse> {
     return this._client.post('/x/communities', { body, ...options });
@@ -29,6 +37,14 @@ export class Communities extends APIResource {
 
   /**
    * Delete community
+   *
+   * @example
+   * ```ts
+   * const community = await client.x.communities.delete('id', {
+   *   account: '@elonmusk',
+   *   community_name: 'Tesla Fans',
+   * });
+   * ```
    */
   delete(
     id: string,
@@ -40,6 +56,13 @@ export class Communities extends APIResource {
 
   /**
    * Get community details
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.communities.retrieveInfo(
+   *   'id',
+   * );
+   * ```
    */
   retrieveInfo(id: string, options?: RequestOptions): APIPromise<CommunityRetrieveInfoResponse> {
     return this._client.get(path`/x/communities/${id}/info`, options);
@@ -47,46 +70,60 @@ export class Communities extends APIResource {
 
   /**
    * Get community members
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.communities.retrieveMembers(
+   *   'id',
+   * );
+   * ```
    */
   retrieveMembers(
     id: string,
     query: CommunityRetrieveMembersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/communities/${id}/members`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<CommunityRetrieveMembersResponse> {
+    return this._client.get(path`/x/communities/${id}/members`, { query, ...options });
   }
 
   /**
    * Get community moderators
+   *
+   * @example
+   * ```ts
+   * const response =
+   *   await client.x.communities.retrieveModerators('id');
+   * ```
    */
   retrieveModerators(
     id: string,
     query: CommunityRetrieveModeratorsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/communities/${id}/moderators`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<CommunityRetrieveModeratorsResponse> {
+    return this._client.get(path`/x/communities/${id}/moderators`, { query, ...options });
   }
 
   /**
    * Search tweets across communities
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.communities.retrieveSearch({
+   *   q: 'q',
+   * });
+   * ```
    */
-  retrieveSearch(query: CommunityRetrieveSearchParams, options?: RequestOptions): APIPromise<void> {
-    return this._client.get('/x/communities/search', {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  retrieveSearch(
+    query: CommunityRetrieveSearchParams,
+    options?: RequestOptions,
+  ): APIPromise<CommunityRetrieveSearchResponse> {
+    return this._client.get('/x/communities/search', { query, ...options });
   }
 }
 
+/**
+ * Result of a community join or leave action.
+ */
 export interface CommunityActionResult {
   communityId: string;
 
@@ -120,7 +157,7 @@ export namespace CommunityRetrieveInfoResponse {
    */
   export interface Community {
     /**
-     * Community ID
+     * Unique community identifier
      */
     id: string;
 
@@ -135,7 +172,7 @@ export namespace CommunityRetrieveInfoResponse {
     created_at?: string;
 
     /**
-     * Community description
+     * About text for the community
      */
     description?: string;
 
@@ -155,7 +192,7 @@ export namespace CommunityRetrieveInfoResponse {
     moderator_count?: number;
 
     /**
-     * Community name
+     * Display name of the community
      */
     name?: string;
 
@@ -190,9 +227,144 @@ export namespace CommunityRetrieveInfoResponse {
   }
 }
 
+/**
+ * Paginated list of user profiles with cursor-based navigation.
+ */
+export interface CommunityRetrieveMembersResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  users: Array<CommunityRetrieveMembersResponse.User>;
+}
+
+export namespace CommunityRetrieveMembersResponse {
+  /**
+   * X user profile with bio, follower counts, and verification status.
+   */
+  export interface User {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    createdAt?: string;
+
+    description?: string;
+
+    followers?: number;
+
+    following?: number;
+
+    location?: string;
+
+    profilePicture?: string;
+
+    statusesCount?: number;
+
+    verified?: boolean;
+  }
+}
+
+/**
+ * Paginated list of user profiles with cursor-based navigation.
+ */
+export interface CommunityRetrieveModeratorsResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  users: Array<CommunityRetrieveModeratorsResponse.User>;
+}
+
+export namespace CommunityRetrieveModeratorsResponse {
+  /**
+   * X user profile with bio, follower counts, and verification status.
+   */
+  export interface User {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    createdAt?: string;
+
+    description?: string;
+
+    followers?: number;
+
+    following?: number;
+
+    location?: string;
+
+    profilePicture?: string;
+
+    statusesCount?: number;
+
+    verified?: boolean;
+  }
+}
+
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
+export interface CommunityRetrieveSearchResponse {
+  has_next_page: boolean;
+
+  next_cursor: string;
+
+  tweets: Array<CommunityRetrieveSearchResponse.Tweet>;
+}
+
+export namespace CommunityRetrieveSearchResponse {
+  /**
+   * Tweet returned from search results with inline author info.
+   */
+  export interface Tweet {
+    id: string;
+
+    text: string;
+
+    author?: Tweet.Author;
+
+    bookmarkCount?: number;
+
+    createdAt?: string;
+
+    /**
+     * True for Note Tweets (long-form content, up to 25,000 characters)
+     */
+    isNoteTweet?: boolean;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+
+    viewCount?: number;
+  }
+
+  export namespace Tweet {
+    export interface Author {
+      id: string;
+
+      name: string;
+
+      username: string;
+
+      verified?: boolean;
+    }
+  }
+}
+
 export interface CommunityCreateParams {
   /**
-   * X account (@username or account ID)
+   * X account (@username or ID) creating the community
    */
   account: string;
 
@@ -209,7 +381,7 @@ export interface CommunityCreateParams {
 
 export interface CommunityDeleteParams {
   /**
-   * X account (@username or account ID)
+   * X account (@username or ID) deleting the community
    */
   account: string;
 
@@ -228,7 +400,7 @@ export interface CommunityRetrieveMembersParams {
 
 export interface CommunityRetrieveModeratorsParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for community moderators
    */
   cursor?: string;
 }
@@ -240,7 +412,7 @@ export interface CommunityRetrieveSearchParams {
   q: string;
 
   /**
-   * Pagination cursor
+   * Pagination cursor for community search
    */
   cursor?: string;
 
@@ -259,6 +431,9 @@ export declare namespace Communities {
     type CommunityCreateResponse as CommunityCreateResponse,
     type CommunityDeleteResponse as CommunityDeleteResponse,
     type CommunityRetrieveInfoResponse as CommunityRetrieveInfoResponse,
+    type CommunityRetrieveMembersResponse as CommunityRetrieveMembersResponse,
+    type CommunityRetrieveModeratorsResponse as CommunityRetrieveModeratorsResponse,
+    type CommunityRetrieveSearchResponse as CommunityRetrieveSearchResponse,
     type CommunityCreateParams as CommunityCreateParams,
     type CommunityDeleteParams as CommunityDeleteParams,
     type CommunityRetrieveMembersParams as CommunityRetrieveMembersParams,
@@ -274,5 +449,9 @@ export declare namespace Communities {
     type JoinDeleteAllParams as JoinDeleteAllParams,
   };
 
-  export { Tweets as Tweets, type TweetListParams as TweetListParams };
+  export {
+    Tweets as Tweets,
+    type TweetListResponse as TweetListResponse,
+    type TweetListParams as TweetListParams,
+  };
 }

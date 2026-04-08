@@ -19,6 +19,9 @@ export class Radar extends APIResource {
   }
 }
 
+/**
+ * Trending topic with score, category, source, and region.
+ */
 export interface RadarItem {
   category: string;
 
@@ -46,6 +49,9 @@ export interface RadarRetrieveTrendingTopicsResponse {
 }
 
 export namespace RadarRetrieveTrendingTopicsResponse {
+  /**
+   * Trending topic with score, category, source, and region.
+   */
   export interface Item {
     category: string;
 

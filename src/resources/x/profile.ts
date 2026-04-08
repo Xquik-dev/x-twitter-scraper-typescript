@@ -12,6 +12,17 @@ import { multipartFormRequestOptions } from '../../internal/uploads';
 export class Profile extends APIResource {
   /**
    * Update X profile
+   *
+   * @example
+   * ```ts
+   * const profile = await client.x.profile.update({
+   *   account: '@elonmusk',
+   *   description: 'description_value',
+   *   location: 'location_value',
+   *   name: 'Example Name',
+   *   url: 'https://xquik.com/example',
+   * });
+   * ```
    */
   update(body: ProfileUpdateParams, options?: RequestOptions): APIPromise<ProfileUpdateResponse> {
     return this._client.patch('/x/profile', { body, ...options });
@@ -19,6 +30,14 @@ export class Profile extends APIResource {
 
   /**
    * Update profile avatar
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.profile.updateAvatar({
+   *   account: '@elonmusk',
+   *   file: fs.createReadStream('path/to/file'),
+   * });
+   * ```
    */
   updateAvatar(
     body: ProfileUpdateAvatarParams,
@@ -32,6 +51,14 @@ export class Profile extends APIResource {
 
   /**
    * Update profile banner
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.profile.updateBanner({
+   *   account: '@elonmusk',
+   *   file: fs.createReadStream('path/to/file'),
+   * });
+   * ```
    */
   updateBanner(
     body: ProfileUpdateBannerParams,
@@ -58,7 +85,7 @@ export interface ProfileUpdateBannerResponse {
 
 export interface ProfileUpdateParams {
   /**
-   * X account (@username or account ID)
+   * X account (@username or ID) to update profile
    */
   account: string;
 
@@ -82,7 +109,7 @@ export interface ProfileUpdateParams {
 
 export interface ProfileUpdateAvatarParams {
   /**
-   * X account (@username or account ID)
+   * X account (@username or ID) for avatar update
    */
   account: string;
 
@@ -94,7 +121,7 @@ export interface ProfileUpdateAvatarParams {
 
 export interface ProfileUpdateBannerParams {
   /**
-   * X account (@username or account ID)
+   * X account (@username or ID) for banner update
    */
   account: string;
 

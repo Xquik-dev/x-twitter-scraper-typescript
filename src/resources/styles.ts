@@ -10,6 +10,11 @@ import { RequestOptions } from '../internal/request-options';
 export class Styles extends APIResource {
   /**
    * List cached style profiles
+   *
+   * @example
+   * ```ts
+   * const styles = await client.styles.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<StyleListResponse> {
     return this._client.get('/styles', options);
@@ -17,6 +22,13 @@ export class Styles extends APIResource {
 
   /**
    * Analyze writing style from recent tweets
+   *
+   * @example
+   * ```ts
+   * const response = await client.styles.analyze({
+   *   username: 'elonmusk',
+   * });
+   * ```
    */
   analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleAnalyzeResponse> {
     return this._client.post('/styles', { body, ...options });
@@ -24,12 +36,23 @@ export class Styles extends APIResource {
 
   /**
    * Compare two style profiles
+   *
+   * @example
+   * ```ts
+   * const response = await client.styles.compare({
+   *   username1: 'username1',
+   *   username2: 'username2',
+   * });
+   * ```
    */
   compare(query: StyleCompareParams, options?: RequestOptions): APIPromise<StyleCompareResponse> {
     return this._client.get('/styles/compare', { query, ...options });
   }
 }
 
+/**
+ * Full style profile with sampled tweets used for tone analysis.
+ */
 export interface StyleProfile {
   fetchedAt: string;
 
@@ -54,6 +77,9 @@ export namespace StyleProfile {
   }
 }
 
+/**
+ * Style profile summary with tweet count and ownership flag.
+ */
 export interface StyleProfileSummary {
   fetchedAt: string;
 
@@ -69,6 +95,9 @@ export interface StyleListResponse {
 }
 
 export namespace StyleListResponse {
+  /**
+   * Style profile summary with tweet count and ownership flag.
+   */
   export interface Style {
     fetchedAt: string;
 
@@ -80,6 +109,9 @@ export namespace StyleListResponse {
   }
 }
 
+/**
+ * Full style profile with sampled tweets used for tone analysis.
+ */
 export interface StyleAnalyzeResponse {
   fetchedAt: string;
 
@@ -105,12 +137,21 @@ export namespace StyleAnalyzeResponse {
 }
 
 export interface StyleCompareResponse {
+  /**
+   * Full style profile with sampled tweets used for tone analysis.
+   */
   style1: StyleCompareResponse.Style1;
 
+  /**
+   * Full style profile with sampled tweets used for tone analysis.
+   */
   style2: StyleCompareResponse.Style2;
 }
 
 export namespace StyleCompareResponse {
+  /**
+   * Full style profile with sampled tweets used for tone analysis.
+   */
   export interface Style1 {
     fetchedAt: string;
 
@@ -135,6 +176,9 @@ export namespace StyleCompareResponse {
     }
   }
 
+  /**
+   * Full style profile with sampled tweets used for tone analysis.
+   */
   export interface Style2 {
     fetchedAt: string;
 

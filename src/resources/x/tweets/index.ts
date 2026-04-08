@@ -8,6 +8,7 @@ export {
   type TweetAuthor,
   type TweetDetail,
   type TweetCreateResponse,
+  type TweetListResponse,
   type TweetGetFavoritersResponse,
   type TweetGetQuotesResponse,
   type TweetGetRepliesResponse,

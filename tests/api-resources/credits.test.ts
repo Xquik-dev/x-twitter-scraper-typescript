@@ -23,7 +23,7 @@ describe('resource credits', () => {
 
   // Mock server tests are disabled
   test.skip('topupBalance: only required params', async () => {
-    const responsePromise = client.credits.topupBalance({ amount: 0 });
+    const responsePromise = client.credits.topupBalance({ amount: 10000 });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -35,6 +35,6 @@ describe('resource credits', () => {
 
   // Mock server tests are disabled
   test.skip('topupBalance: required and optional params', async () => {
-    const response = await client.credits.topupBalance({ amount: 0 });
+    const response = await client.credits.topupBalance({ amount: 10000 });
   });
 });

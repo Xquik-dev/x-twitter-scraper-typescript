@@ -50,7 +50,7 @@ describe('resource extractions', () => {
           after: 'after',
           limit: 1,
           status: 'running',
-          toolType: 'article_extractor',
+          toolType: 'follower_explorer',
         },
         { path: '/_stainless_unknown_path' },
       ),
@@ -59,7 +59,7 @@ describe('resource extractions', () => {
 
   // Mock server tests are disabled
   test.skip('estimateCost: only required params', async () => {
-    const responsePromise = client.extractions.estimateCost({ toolType: 'article_extractor' });
+    const responsePromise = client.extractions.estimateCost({ toolType: 'follower_explorer' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -72,16 +72,16 @@ describe('resource extractions', () => {
   // Mock server tests are disabled
   test.skip('estimateCost: required and optional params', async () => {
     const response = await client.extractions.estimateCost({
-      toolType: 'article_extractor',
-      advancedQuery: 'advancedQuery',
-      exactPhrase: 'exactPhrase',
-      excludeWords: 'excludeWords',
-      searchQuery: 'searchQuery',
-      targetCommunityId: 'targetCommunityId',
-      targetListId: 'targetListId',
-      targetSpaceId: 'targetSpaceId',
-      targetTweetId: 'targetTweetId',
-      targetUsername: 'targetUsername',
+      toolType: 'follower_explorer',
+      advancedQuery: 'min_faves:100',
+      exactPhrase: 'artificial intelligence',
+      excludeWords: 'spam',
+      searchQuery: 'AI trends 2025',
+      targetCommunityId: '1500000000000000000',
+      targetListId: '1234567890',
+      targetSpaceId: '1vOGwMdBqpwGB',
+      targetTweetId: '1234567890',
+      targetUsername: 'elonmusk',
     });
   });
 
@@ -95,7 +95,7 @@ describe('resource extractions', () => {
 
   // Mock server tests are disabled
   test.skip('run: only required params', async () => {
-    const responsePromise = client.extractions.run({ toolType: 'article_extractor' });
+    const responsePromise = client.extractions.run({ toolType: 'follower_explorer' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -108,16 +108,16 @@ describe('resource extractions', () => {
   // Mock server tests are disabled
   test.skip('run: required and optional params', async () => {
     const response = await client.extractions.run({
-      toolType: 'article_extractor',
-      advancedQuery: 'advancedQuery',
-      exactPhrase: 'exactPhrase',
-      excludeWords: 'excludeWords',
-      searchQuery: 'searchQuery',
-      targetCommunityId: 'targetCommunityId',
-      targetListId: 'targetListId',
-      targetSpaceId: 'targetSpaceId',
-      targetTweetId: 'targetTweetId',
-      targetUsername: 'targetUsername',
+      toolType: 'follower_explorer',
+      advancedQuery: 'min_faves:100',
+      exactPhrase: 'artificial intelligence',
+      excludeWords: 'spam',
+      searchQuery: 'AI trends 2025',
+      targetCommunityId: '1500000000000000000',
+      targetListId: '1234567890',
+      targetSpaceId: '1vOGwMdBqpwGB',
+      targetTweetId: '1234567890',
+      targetUsername: 'elonmusk',
     });
   });
 });
