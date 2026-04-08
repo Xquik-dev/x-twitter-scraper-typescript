@@ -147,86 +147,17 @@ export interface DrawRetrieveResponse {
   /**
    * Full giveaway draw with tweet metrics, entries, and timing.
    */
-  draw: DrawRetrieveResponse.Draw;
+  draw: DrawDetail;
 
-  winners: Array<DrawRetrieveResponse.Winner>;
-}
-
-export namespace DrawRetrieveResponse {
-  /**
-   * Full giveaway draw with tweet metrics, entries, and timing.
-   */
-  export interface Draw {
-    id: string;
-
-    createdAt: string;
-
-    status: string;
-
-    totalEntries: number;
-
-    tweetAuthorUsername: string;
-
-    tweetId: string;
-
-    tweetLikeCount: number;
-
-    tweetQuoteCount: number;
-
-    tweetReplyCount: number;
-
-    tweetRetweetCount: number;
-
-    tweetText: string;
-
-    tweetUrl: string;
-
-    validEntries: number;
-
-    drawnAt?: string;
-  }
-
-  /**
-   * Giveaway draw winner with position and backup flag.
-   */
-  export interface Winner {
-    authorUsername: string;
-
-    isBackup: boolean;
-
-    position: number;
-
-    tweetId: string;
-  }
+  winners: Array<Winner>;
 }
 
 export interface DrawListResponse {
-  draws: Array<DrawListResponse.Draw>;
+  draws: Array<DrawListItem>;
 
   hasMore: boolean;
 
   nextCursor?: string;
-}
-
-export namespace DrawListResponse {
-  /**
-   * Giveaway draw summary with entry counts and status.
-   */
-  export interface Draw {
-    id: string;
-
-    createdAt: string;
-
-    status: string;
-
-    totalEntries: number;
-
-    tweetUrl: string;
-
-    validEntries: number;
-
-    drawnAt?: string;
-  }
 }
 
 export interface DrawRunResponse {
@@ -238,22 +169,7 @@ export interface DrawRunResponse {
 
   validEntries: number;
 
-  winners: Array<DrawRunResponse.Winner>;
-}
-
-export namespace DrawRunResponse {
-  /**
-   * Giveaway draw winner with position and backup flag.
-   */
-  export interface Winner {
-    authorUsername: string;
-
-    isBackup: boolean;
-
-    position: number;
-
-    tweetId: string;
-  }
+  winners: Array<Winner>;
 }
 
 export interface DrawListParams {

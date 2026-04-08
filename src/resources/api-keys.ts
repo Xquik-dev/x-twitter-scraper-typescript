@@ -78,26 +78,7 @@ export interface APIKeyCreateResponse {
 }
 
 export interface APIKeyListResponse {
-  keys: Array<APIKeyListResponse.Key>;
-}
-
-export namespace APIKeyListResponse {
-  /**
-   * API key metadata returned when listing keys.
-   */
-  export interface Key {
-    id: string;
-
-    createdAt: string;
-
-    isActive: boolean;
-
-    name: string;
-
-    prefix: string;
-
-    lastUsedAt?: string;
-  }
+  keys: Array<APIKey>;
 }
 
 export interface APIKeyRevokeResponse {

@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -35,7 +36,7 @@ export class Webhooks extends APIResource {
    * });
    * ```
    */
-  update(id: string, body: WebhookUpdateParams, options?: RequestOptions): APIPromise<WebhookUpdateResponse> {
+  update(id: string, body: WebhookUpdateParams, options?: RequestOptions): APIPromise<Webhook> {
     return this._client.patch(path`/webhooks/${id}`, { body, ...options });
   }
 
@@ -120,9 +121,7 @@ export interface Webhook {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   isActive: boolean;
 
@@ -137,59 +136,15 @@ export interface WebhookCreateResponse {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   secret: string;
 
   url: string;
 }
 
-/**
- * Webhook endpoint registered to receive event deliveries.
- */
-export interface WebhookUpdateResponse {
-  id: string;
-
-  createdAt: string;
-
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
-
-  isActive: boolean;
-
-  url: string;
-}
-
 export interface WebhookListResponse {
-  webhooks: Array<WebhookListResponse.Webhook>;
-}
-
-export namespace WebhookListResponse {
-  /**
-   * Webhook endpoint registered to receive event deliveries.
-   */
-  export interface Webhook {
-    id: string;
-
-    createdAt: string;
-
-    /**
-     * Array of event types to subscribe to.
-     */
-    eventTypes: Array<
-      'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-    >;
-
-    isActive: boolean;
-
-    url: string;
-  }
+  webhooks: Array<Webhook>;
 }
 
 export interface WebhookDeactivateResponse {
@@ -197,30 +152,7 @@ export interface WebhookDeactivateResponse {
 }
 
 export interface WebhookListDeliveriesResponse {
-  deliveries: Array<WebhookListDeliveriesResponse.Delivery>;
-}
-
-export namespace WebhookListDeliveriesResponse {
-  /**
-   * Webhook delivery attempt record with status and retry count.
-   */
-  export interface Delivery {
-    id: string;
-
-    attempts: number;
-
-    createdAt: string;
-
-    status: string;
-
-    streamEventId: string;
-
-    deliveredAt?: string;
-
-    lastError?: string;
-
-    lastStatusCode?: number;
-  }
+  deliveries: Array<Delivery>;
 }
 
 export interface WebhookTestResponse {
@@ -235,9 +167,7 @@ export interface WebhookCreateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes: Array<Shared.EventType>;
 
   /**
    * HTTPS URL
@@ -249,9 +179,7 @@ export interface WebhookUpdateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes?: Array<
-    'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost'
-  >;
+  eventTypes?: Array<Shared.EventType>;
 
   isActive?: boolean;
 
@@ -263,7 +191,6 @@ export declare namespace Webhooks {
     type Delivery as Delivery,
     type Webhook as Webhook,
     type WebhookCreateResponse as WebhookCreateResponse,
-    type WebhookUpdateResponse as WebhookUpdateResponse,
     type WebhookListResponse as WebhookListResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,

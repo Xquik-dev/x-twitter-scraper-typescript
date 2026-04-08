@@ -30,10 +30,12 @@ export class Accounts extends APIResource {
    *
    * @example
    * ```ts
-   * const account = await client.x.accounts.retrieve('id');
+   * const xAccountDetail = await client.x.accounts.retrieve(
+   *   'id',
+   * );
    * ```
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<XAccountDetail> {
     return this._client.get(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 
@@ -59,6 +61,19 @@ export class Accounts extends APIResource {
    */
   delete(id: string, options?: RequestOptions): APIPromise<AccountDeleteResponse> {
     return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
+  }
+
+  /**
+   * Clears loginFailedAt and loginFailureReason for all accounts with transient or
+   * automated failure reasons, making them eligible for retry on next use.
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.accounts.bulkRetry();
+   * ```
+   */
+  bulkRetry(options?: RequestOptions): APIPromise<AccountBulkRetryResponse> {
+    return this._client.post('/x/accounts/bulk-retry', { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
@@ -127,50 +142,19 @@ export interface AccountCreateResponse {
   xUsername: string;
 }
 
-/**
- * Full X account details including proxy, cookies, and update timestamp.
- */
-export interface AccountRetrieveResponse {
-  id: string;
-
-  createdAt: string;
-
-  status: string;
-
-  xUserId: string;
-
-  xUsername: string;
-
-  cookiesObtainedAt?: string;
-
-  proxyCountry?: string;
-
-  updatedAt?: string;
-}
-
 export interface AccountListResponse {
-  accounts: Array<AccountListResponse.Account>;
-}
-
-export namespace AccountListResponse {
-  /**
-   * Linked X account summary with username and connection status.
-   */
-  export interface Account {
-    id: string;
-
-    createdAt: string;
-
-    status: string;
-
-    xUserId: string;
-
-    xUsername: string;
-  }
+  accounts: Array<XAccount>;
 }
 
 export interface AccountDeleteResponse {
   success: true;
+}
+
+export interface AccountBulkRetryResponse {
+  /**
+   * Number of accounts cleared
+   */
+  cleared: number;
 }
 
 export interface AccountReauthResponse {
@@ -225,9 +209,9 @@ export declare namespace Accounts {
     type XAccount as XAccount,
     type XAccountDetail as XAccountDetail,
     type AccountCreateResponse as AccountCreateResponse,
-    type AccountRetrieveResponse as AccountRetrieveResponse,
     type AccountListResponse as AccountListResponse,
     type AccountDeleteResponse as AccountDeleteResponse,
+    type AccountBulkRetryResponse as AccountBulkRetryResponse,
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
     type AccountReauthParams as AccountReauthParams,

@@ -38,6 +38,18 @@ describe('resource tweets', () => {
   });
 
   // Mock server tests are disabled
+  test.skip('retrieve', async () => {
+    const responsePromise = client.x.tweets.retrieve('id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
   test.skip('list: only required params', async () => {
     const responsePromise = client.x.tweets.list({ ids: 'ids' });
     const rawResponse = await responsePromise.asResponse();
@@ -52,6 +64,23 @@ describe('resource tweets', () => {
   // Mock server tests are disabled
   test.skip('list: required and optional params', async () => {
     const response = await client.x.tweets.list({ ids: 'ids' });
+  });
+
+  // Mock server tests are disabled
+  test.skip('delete: only required params', async () => {
+    const responsePromise = client.x.tweets.delete('id', { account: '@elonmusk' });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('delete: required and optional params', async () => {
+    const response = await client.x.tweets.delete('id', { account: '@elonmusk' });
   });
 
   // Mock server tests are disabled

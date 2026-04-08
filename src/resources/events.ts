@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -12,7 +13,7 @@ export class Events extends APIResource {
   /**
    * Get event
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<EventRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<EventDetail> {
     return this._client.get(path`/events/${id}`, options);
   }
 
@@ -42,7 +43,7 @@ export interface Event {
   /**
    * Type of monitor event fired when account activity occurs.
    */
-  type: 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost';
+  type: Shared.EventType;
 
   username: string;
 }
@@ -65,32 +66,7 @@ export interface EventDetail {
   /**
    * Type of monitor event fired when account activity occurs.
    */
-  type: 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost';
-
-  username: string;
-
-  xEventId?: string;
-}
-
-/**
- * Full monitor event including payload data and optional X event ID.
- */
-export interface EventRetrieveResponse {
-  id: string;
-
-  /**
-   * Event payload — shape varies by event type (JSON)
-   */
-  data: { [key: string]: unknown };
-
-  monitorId: string;
-
-  occurredAt: string;
-
-  /**
-   * Type of monitor event fired when account activity occurs.
-   */
-  type: 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost';
+  type: Shared.EventType;
 
   username: string;
 
@@ -98,33 +74,11 @@ export interface EventRetrieveResponse {
 }
 
 export interface EventListResponse {
-  events: Array<EventListResponse.Event>;
+  events: Array<Event>;
 
   hasMore: boolean;
 
   nextCursor?: string;
-}
-
-export namespace EventListResponse {
-  /**
-   * Monitor event summary with type, username, and occurrence time.
-   */
-  export interface Event {
-    id: string;
-
-    data: { [key: string]: unknown };
-
-    monitorId: string;
-
-    occurredAt: string;
-
-    /**
-     * Type of monitor event fired when account activity occurs.
-     */
-    type: 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote' | 'follower.gained' | 'follower.lost';
-
-    username: string;
-  }
 }
 
 export interface EventListParams {
@@ -136,13 +90,7 @@ export interface EventListParams {
   /**
    * Filter events by type
    */
-  eventType?:
-    | 'tweet.new'
-    | 'tweet.reply'
-    | 'tweet.retweet'
-    | 'tweet.quote'
-    | 'follower.gained'
-    | 'follower.lost';
+  eventType?: Shared.EventType;
 
   /**
    * Maximum number of items to return (1-100, default 50)
@@ -159,7 +107,6 @@ export declare namespace Events {
   export {
     type Event as Event,
     type EventDetail as EventDetail,
-    type EventRetrieveResponse as EventRetrieveResponse,
     type EventListResponse as EventListResponse,
     type EventListParams as EventListParams,
   };

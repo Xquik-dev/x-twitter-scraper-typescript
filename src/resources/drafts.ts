@@ -15,14 +15,14 @@ export class Drafts extends APIResource {
    *
    * @example
    * ```ts
-   * const draft = await client.drafts.create({
+   * const draftDetail = await client.drafts.create({
    *   text: 'AI is the future of productivity',
    *   goal: 'engagement',
    *   topic: 'AI trends',
    * });
    * ```
    */
-  create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftCreateResponse> {
+  create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftDetail> {
     return this._client.post('/drafts', { body, ...options });
   }
 
@@ -31,10 +31,10 @@ export class Drafts extends APIResource {
    *
    * @example
    * ```ts
-   * const draft = await client.drafts.retrieve('id');
+   * const draftDetail = await client.drafts.retrieve('id');
    * ```
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<DraftRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<DraftDetail> {
     return this._client.get(path`/drafts/${id}`, options);
   }
 
@@ -101,63 +101,12 @@ export interface DraftDetail {
   topic?: string;
 }
 
-/**
- * Full tweet draft including update timestamp.
- */
-export interface DraftCreateResponse {
-  id: string;
-
-  createdAt: string;
-
-  text: string;
-
-  updatedAt: string;
-
-  goal?: string;
-
-  topic?: string;
-}
-
-/**
- * Full tweet draft including update timestamp.
- */
-export interface DraftRetrieveResponse {
-  id: string;
-
-  createdAt: string;
-
-  text: string;
-
-  updatedAt: string;
-
-  goal?: string;
-
-  topic?: string;
-}
-
 export interface DraftListResponse {
-  drafts: Array<DraftListResponse.Draft>;
+  drafts: Array<Draft>;
 
   hasMore: boolean;
 
   nextCursor?: string;
-}
-
-export namespace DraftListResponse {
-  /**
-   * Saved tweet draft with optional topic and goal.
-   */
-  export interface Draft {
-    id: string;
-
-    createdAt: string;
-
-    text: string;
-
-    goal?: string;
-
-    topic?: string;
-  }
 }
 
 export interface DraftCreateParams {
@@ -184,8 +133,6 @@ export declare namespace Drafts {
   export {
     type Draft as Draft,
     type DraftDetail as DraftDetail,
-    type DraftCreateResponse as DraftCreateResponse,
-    type DraftRetrieveResponse as DraftRetrieveResponse,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
     type DraftListParams as DraftListParams,
