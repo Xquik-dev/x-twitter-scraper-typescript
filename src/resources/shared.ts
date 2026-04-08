@@ -2,7 +2,6 @@
 
 import * as TweetsAPI from './x/tweets/tweets';
 import * as UsersAPI from './x/users/users';
-import { CursorPage } from '../core/pagination';
 
 /**
  * Error response containing a machine-readable error code.
@@ -68,5 +67,3 @@ export interface PaginatedUsers {
 
   users: Array<UsersAPI.UserProfile>;
 }
-
-export type PaginatedTweetsCursorPage = CursorPage<PaginatedTweets>;

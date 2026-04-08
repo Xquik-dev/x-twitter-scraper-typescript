@@ -2,8 +2,7 @@
 
 import { APIResource } from '../../../core/resource';
 import * as Shared from '../../shared';
-import { PaginatedTweetsCursorPage } from '../../shared';
-import { CursorPage, type CursorPageParams, PagePromise } from '../../../core/pagination';
+import { APIPromise } from '../../../core/api-promise';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
@@ -16,22 +15,12 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * // Automatically fetches more pages as needed.
-   * for await (const paginatedTweets of client.x.communities.tweets.list(
-   *   { q: 'q' },
-   * )) {
-   *   // ...
-   * }
+   * const paginatedTweets =
+   *   await client.x.communities.tweets.list({ q: 'q' });
    * ```
    */
-  list(
-    query: TweetListParams,
-    options?: RequestOptions,
-  ): PagePromise<PaginatedTweetsCursorPage, Shared.PaginatedTweets> {
-    return this._client.getAPIList('/x/communities/tweets', CursorPage<Shared.PaginatedTweets>, {
-      query,
-      ...options,
-    });
+  list(query: TweetListParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+    return this._client.get('/x/communities/tweets', { query, ...options });
   }
 
   /**
@@ -39,31 +28,29 @@ export class Tweets extends APIResource {
    *
    * @example
    * ```ts
-   * // Automatically fetches more pages as needed.
-   * for await (const paginatedTweets of client.x.communities.tweets.listByCommunity(
-   *   'id',
-   * )) {
-   *   // ...
-   * }
+   * const paginatedTweets =
+   *   await client.x.communities.tweets.listByCommunity('id');
    * ```
    */
   listByCommunity(
     id: string,
     query: TweetListByCommunityParams | null | undefined = {},
     options?: RequestOptions,
-  ): PagePromise<PaginatedTweetsCursorPage, Shared.PaginatedTweets> {
-    return this._client.getAPIList(path`/x/communities/${id}/tweets`, CursorPage<Shared.PaginatedTweets>, {
-      query,
-      ...options,
-    });
+  ): APIPromise<Shared.PaginatedTweets> {
+    return this._client.get(path`/x/communities/${id}/tweets`, { query, ...options });
   }
 }
 
-export interface TweetListParams extends CursorPageParams {
+export interface TweetListParams {
   /**
    * Search query for cross-community tweets
    */
   q: string;
+
+  /**
+   * Pagination cursor for cross-community results
+   */
+  cursor?: string;
 
   /**
    * Sort order for cross-community results (Latest or Top)
@@ -71,7 +58,12 @@ export interface TweetListParams extends CursorPageParams {
   queryType?: string;
 }
 
-export interface TweetListByCommunityParams extends CursorPageParams {}
+export interface TweetListByCommunityParams {
+  /**
+   * Pagination cursor for community tweets
+   */
+  cursor?: string;
+}
 
 export declare namespace Tweets {
   export {
@@ -79,5 +71,3 @@ export declare namespace Tweets {
     type TweetListByCommunityParams as TweetListByCommunityParams,
   };
 }
-
-export { type PaginatedTweetsCursorPage };
