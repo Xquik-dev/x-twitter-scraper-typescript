@@ -11,40 +11,94 @@ import { path } from '../../internal/utils/path';
 export class Accounts extends APIResource {
   /**
    * Connect X account
+   *
+   * @example
+   * ```ts
+   * const account = await client.x.accounts.create({
+   *   email: 'user@example.com',
+   *   password: 's3cur3Pa$$w0rd',
+   *   username: 'elonmusk',
+   * });
+   * ```
    */
   create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
-    return this._client.post('/x/accounts', { body, ...options, __security: {} });
+    return this._client.post('/x/accounts', { body, ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Get X account details
+   *
+   * @example
+   * ```ts
+   * const xAccountDetail = await client.x.accounts.retrieve(
+   *   'id',
+   * );
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<XAccountDetail> {
-    return this._client.get(path`/x/accounts/${id}`, { ...options, __security: {} });
+    return this._client.get(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * List connected X accounts
+   *
+   * @example
+   * ```ts
+   * const accounts = await client.x.accounts.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<AccountListResponse> {
-    return this._client.get('/x/accounts', { ...options, __security: {} });
+    return this._client.get('/x/accounts', { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Disconnect X account
+   *
+   * @example
+   * ```ts
+   * const account = await client.x.accounts.delete('id');
+   * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<AccountDeleteResponse> {
-    return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: {} });
+    return this._client.delete(path`/x/accounts/${id}`, { ...options, __security: { apiKeyAuth: true } });
+  }
+
+  /**
+   * Clears loginFailedAt and loginFailureReason for all accounts with transient or
+   * automated failure reasons, making them eligible for retry on next use.
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.accounts.bulkRetry();
+   * ```
+   */
+  bulkRetry(options?: RequestOptions): APIPromise<AccountBulkRetryResponse> {
+    return this._client.post('/x/accounts/bulk-retry', { ...options, __security: { apiKeyAuth: true } });
   }
 
   /**
    * Re-authenticate X account
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.accounts.reauth('id', {
+   *   password: 'password_value',
+   *   totp_secret: 'totp_secret_value',
+   * });
+   * ```
    */
   reauth(id: string, body: AccountReauthParams, options?: RequestOptions): APIPromise<AccountReauthResponse> {
-    return this._client.post(path`/x/accounts/${id}/reauth`, { body, ...options, __security: {} });
+    return this._client.post(path`/x/accounts/${id}/reauth`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true },
+    });
   }
 }
 
+/**
+ * Linked X account summary with username and connection status.
+ */
 export interface XAccount {
   id: string;
 
@@ -57,6 +111,9 @@ export interface XAccount {
   xUsername: string;
 }
 
+/**
+ * Full X account details including proxy, cookies, and update timestamp.
+ */
 export interface XAccountDetail {
   id: string;
 
@@ -91,6 +148,13 @@ export interface AccountListResponse {
 
 export interface AccountDeleteResponse {
   success: true;
+}
+
+export interface AccountBulkRetryResponse {
+  /**
+   * Number of accounts cleared
+   */
+  cleared: number;
 }
 
 export interface AccountReauthResponse {
@@ -130,12 +194,12 @@ export interface AccountCreateParams {
 
 export interface AccountReauthParams {
   /**
-   * Account password
+   * Updated account password
    */
   password: string;
 
   /**
-   * TOTP secret for 2FA
+   * TOTP secret for 2FA re-authentication
    */
   totp_secret?: string;
 }
@@ -147,6 +211,7 @@ export declare namespace Accounts {
     type AccountCreateResponse as AccountCreateResponse,
     type AccountListResponse as AccountListResponse,
     type AccountDeleteResponse as AccountDeleteResponse,
+    type AccountBulkRetryResponse as AccountBulkRetryResponse,
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
     type AccountReauthParams as AccountReauthParams,

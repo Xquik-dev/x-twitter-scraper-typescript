@@ -24,7 +24,7 @@ describe('resource media', () => {
   // Mock server tests are disabled
   test.skip('upload: only required params', async () => {
     const responsePromise = client.x.media.upload({
-      account: 'account',
+      account: '@elonmusk',
       file: await toFile(Buffer.from('Example data'), 'README.md'),
     });
     const rawResponse = await responsePromise.asResponse();
@@ -39,7 +39,7 @@ describe('resource media', () => {
   // Mock server tests are disabled
   test.skip('upload: required and optional params', async () => {
     const response = await client.x.media.upload({
-      account: 'account',
+      account: '@elonmusk',
       file: await toFile(Buffer.from('Example data'), 'README.md'),
       is_long_video: true,
     });

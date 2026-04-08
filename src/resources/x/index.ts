@@ -7,6 +7,7 @@ export {
   type AccountCreateResponse,
   type AccountListResponse,
   type AccountDeleteResponse,
+  type AccountBulkRetryResponse,
   type AccountReauthResponse,
   type AccountCreateParams,
   type AccountReauthParams,
@@ -90,6 +91,7 @@ export {
   X,
   type XGetArticleResponse,
   type XGetNotificationsResponse,
+  type XGetTrendsResponse,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,
 } from './x';

@@ -11,7 +11,7 @@ const client = new XTwitterScraper({
 describe('resource drafts', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.drafts.create({ text: 'text' });
+    const responsePromise = client.drafts.create({ text: 'AI is the future of productivity' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -24,9 +24,9 @@ describe('resource drafts', () => {
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.drafts.create({
-      text: 'text',
+      text: 'AI is the future of productivity',
       goal: 'engagement',
-      topic: 'topic',
+      topic: 'AI trends',
     });
   });
 

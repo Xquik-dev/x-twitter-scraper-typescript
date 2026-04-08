@@ -11,7 +11,10 @@ const client = new XTwitterScraper({
 describe('resource monitors', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.monitors.create({ eventTypes: ['tweet.new'], username: 'username' });
+    const responsePromise = client.monitors.create({
+      eventTypes: ['tweet.new', 'follower.gained'],
+      username: 'elonmusk',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,7 +26,10 @@ describe('resource monitors', () => {
 
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
-    const response = await client.monitors.create({ eventTypes: ['tweet.new'], username: 'username' });
+    const response = await client.monitors.create({
+      eventTypes: ['tweet.new', 'follower.gained'],
+      username: 'elonmusk',
+    });
   });
 
   // Mock server tests are disabled

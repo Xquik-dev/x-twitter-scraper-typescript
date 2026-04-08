@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../core/resource';
+import * as Shared from '../shared';
 import { APIPromise } from '../../core/api-promise';
-import { buildHeaders } from '../../internal/headers';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
@@ -12,67 +12,75 @@ import { path } from '../../internal/utils/path';
 export class Lists extends APIResource {
   /**
    * Get list followers
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers =
+   *   await client.x.lists.retrieveFollowers('id');
+   * ```
    */
   retrieveFollowers(
     id: string,
     query: ListRetrieveFollowersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/lists/${id}/followers`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<Shared.PaginatedUsers> {
+    return this._client.get(path`/x/lists/${id}/followers`, { query, ...options });
   }
 
   /**
    * Get list members
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers = await client.x.lists.retrieveMembers(
+   *   'id',
+   * );
+   * ```
    */
   retrieveMembers(
     id: string,
     query: ListRetrieveMembersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/lists/${id}/members`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<Shared.PaginatedUsers> {
+    return this._client.get(path`/x/lists/${id}/members`, { query, ...options });
   }
 
   /**
    * Get list tweets
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.lists.retrieveTweets(
+   *   'id',
+   * );
+   * ```
    */
   retrieveTweets(
     id: string,
     query: ListRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/lists/${id}/tweets`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<Shared.PaginatedTweets> {
+    return this._client.get(path`/x/lists/${id}/tweets`, { query, ...options });
   }
 }
 
 export interface ListRetrieveFollowersParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for list followers
    */
   cursor?: string;
 }
 
 export interface ListRetrieveMembersParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for list members
    */
   cursor?: string;
 }
 
 export interface ListRetrieveTweetsParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for list tweets
    */
   cursor?: string;
 

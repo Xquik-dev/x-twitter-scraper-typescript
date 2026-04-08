@@ -12,20 +12,42 @@ import { path } from '../internal/utils/path';
 export class Styles extends APIResource {
   /**
    * Get cached style profile
+   *
+   * @example
+   * ```ts
+   * const styleProfile = await client.styles.retrieve('id');
+   * ```
    */
-  retrieve(username: string, options?: RequestOptions): APIPromise<StyleProfile> {
-    return this._client.get(path`/styles/${username}`, options);
+  retrieve(id: string, options?: RequestOptions): APIPromise<StyleProfile> {
+    return this._client.get(path`/styles/${id}`, options);
   }
 
   /**
    * Save style profile with custom tweets
+   *
+   * @example
+   * ```ts
+   * const styleProfile = await client.styles.update('id', {
+   *   label: 'Professional Voice',
+   *   tweets: [
+   *     {
+   *       text: 'Excited to share our latest research findings.',
+   *     },
+   *   ],
+   * });
+   * ```
    */
-  update(username: string, body: StyleUpdateParams, options?: RequestOptions): APIPromise<StyleProfile> {
-    return this._client.put(path`/styles/${username}`, { body, ...options });
+  update(id: string, body: StyleUpdateParams, options?: RequestOptions): APIPromise<StyleProfile> {
+    return this._client.put(path`/styles/${id}`, { body, ...options });
   }
 
   /**
    * List cached style profiles
+   *
+   * @example
+   * ```ts
+   * const styles = await client.styles.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<StyleListResponse> {
     return this._client.get('/styles', options);
@@ -33,9 +55,14 @@ export class Styles extends APIResource {
 
   /**
    * Delete a style profile
+   *
+   * @example
+   * ```ts
+   * await client.styles.delete('id');
+   * ```
    */
-  delete(username: string, options?: RequestOptions): APIPromise<void> {
-    return this._client.delete(path`/styles/${username}`, {
+  delete(id: string, options?: RequestOptions): APIPromise<void> {
+    return this._client.delete(path`/styles/${id}`, {
       ...options,
       headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
     });
@@ -43,6 +70,13 @@ export class Styles extends APIResource {
 
   /**
    * Analyze writing style from recent tweets
+   *
+   * @example
+   * ```ts
+   * const styleProfile = await client.styles.analyze({
+   *   username: 'elonmusk',
+   * });
+   * ```
    */
   analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleProfile> {
     return this._client.post('/styles', { body, ...options });
@@ -50,6 +84,14 @@ export class Styles extends APIResource {
 
   /**
    * Compare two style profiles
+   *
+   * @example
+   * ```ts
+   * const response = await client.styles.compare({
+   *   username1: 'username1',
+   *   username2: 'username2',
+   * });
+   * ```
    */
   compare(query: StyleCompareParams, options?: RequestOptions): APIPromise<StyleCompareResponse> {
     return this._client.get('/styles/compare', { query, ...options });
@@ -57,12 +99,20 @@ export class Styles extends APIResource {
 
   /**
    * Get engagement metrics for style tweets
+   *
+   * @example
+   * ```ts
+   * const response = await client.styles.getPerformance('id');
+   * ```
    */
-  getPerformance(username: string, options?: RequestOptions): APIPromise<StyleGetPerformanceResponse> {
-    return this._client.get(path`/styles/${username}/performance`, options);
+  getPerformance(id: string, options?: RequestOptions): APIPromise<StyleGetPerformanceResponse> {
+    return this._client.get(path`/styles/${id}/performance`, options);
   }
 }
 
+/**
+ * Full style profile with sampled tweets used for tone analysis.
+ */
 export interface StyleProfile {
   fetchedAt: string;
 
@@ -87,6 +137,9 @@ export namespace StyleProfile {
   }
 }
 
+/**
+ * Style profile summary with tweet count and ownership flag.
+ */
 export interface StyleProfileSummary {
   fetchedAt: string;
 
@@ -102,8 +155,14 @@ export interface StyleListResponse {
 }
 
 export interface StyleCompareResponse {
+  /**
+   * Full style profile with sampled tweets used for tone analysis.
+   */
   style1: StyleProfile;
 
+  /**
+   * Full style profile with sampled tweets used for tone analysis.
+   */
   style2: StyleProfile;
 }
 

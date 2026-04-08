@@ -12,6 +12,11 @@ import { path } from '../internal/utils/path';
 export class Extractions extends APIResource {
   /**
    * Get extraction results
+   *
+   * @example
+   * ```ts
+   * const extraction = await client.extractions.retrieve('id');
+   * ```
    */
   retrieve(
     id: string,
@@ -23,6 +28,11 @@ export class Extractions extends APIResource {
 
   /**
    * List extraction jobs
+   *
+   * @example
+   * ```ts
+   * const extractions = await client.extractions.list();
+   * ```
    */
   list(
     query: ExtractionListParams | null | undefined = {},
@@ -33,6 +43,14 @@ export class Extractions extends APIResource {
 
   /**
    * Estimate extraction cost
+   *
+   * @example
+   * ```ts
+   * const response = await client.extractions.estimateCost({
+   *   toolType: 'follower_explorer',
+   *   targetUsername: 'elonmusk',
+   * });
+   * ```
    */
   estimateCost(
     body: ExtractionEstimateCostParams,
@@ -43,6 +61,16 @@ export class Extractions extends APIResource {
 
   /**
    * Export extraction results
+   *
+   * @example
+   * ```ts
+   * const response = await client.extractions.exportResults(
+   *   'id',
+   * );
+   *
+   * const content = await response.blob();
+   * console.log(content);
+   * ```
    */
   exportResults(
     id: string,
@@ -59,12 +87,23 @@ export class Extractions extends APIResource {
 
   /**
    * Run extraction
+   *
+   * @example
+   * ```ts
+   * const response = await client.extractions.run({
+   *   toolType: 'follower_explorer',
+   *   targetUsername: 'elonmusk',
+   * });
+   * ```
    */
   run(body: ExtractionRunParams, options?: RequestOptions): APIPromise<ExtractionRunResponse> {
     return this._client.post('/extractions', { body, ...options });
   }
 }
 
+/**
+ * Extraction job tracking status, tool type, and result count.
+ */
 export interface ExtractionJob {
   id: string;
 
@@ -72,6 +111,9 @@ export interface ExtractionJob {
 
   status: 'running' | 'completed' | 'failed';
 
+  /**
+   * Identifier for the extraction tool used to run a job.
+   */
   toolType:
     | 'article_extractor'
     | 'community_extractor'
@@ -102,6 +144,9 @@ export interface ExtractionJob {
 export interface ExtractionRetrieveResponse {
   hasMore: boolean;
 
+  /**
+   * Extraction job metadata — shape varies by tool type (JSON)
+   */
   job: { [key: string]: unknown };
 
   results: Array<{ [key: string]: unknown }>;
@@ -134,6 +179,9 @@ export interface ExtractionRunResponse {
 
   status: 'running';
 
+  /**
+   * Identifier for the extraction tool used to run a job.
+   */
   toolType:
     | 'article_extractor'
     | 'community_extractor'
@@ -159,23 +207,35 @@ export interface ExtractionRunResponse {
 
 export interface ExtractionRetrieveParams {
   /**
-   * Cursor for pagination
+   * Cursor for keyset pagination
    */
   after?: string;
 
+  /**
+   * Maximum number of results to return (1-1000, default 100)
+   */
   limit?: number;
 }
 
 export interface ExtractionListParams {
   /**
-   * Cursor for pagination
+   * Cursor for keyset pagination
    */
   after?: string;
 
+  /**
+   * Maximum number of items to return (1-100, default 50)
+   */
   limit?: number;
 
+  /**
+   * Filter by job status
+   */
   status?: 'running' | 'completed' | 'failed';
 
+  /**
+   * Filter by extraction tool type
+   */
   toolType?:
     | 'article_extractor'
     | 'community_extractor'
@@ -200,6 +260,9 @@ export interface ExtractionListParams {
 }
 
 export interface ExtractionEstimateCostParams {
+  /**
+   * Identifier for the extraction tool used to run a job.
+   */
   toolType:
     | 'article_extractor'
     | 'community_extractor'
@@ -223,17 +286,17 @@ export interface ExtractionEstimateCostParams {
     | 'verified_follower_explorer';
 
   /**
-   * Raw advanced search query appended as-is (tweet_search_extractor)
+   * Raw advanced query string appended to the estimate (tweet_search_extractor)
    */
   advancedQuery?: string;
 
   /**
-   * Exact phrase to match (tweet_search_extractor)
+   * Exact phrase filter for search estimation
    */
   exactPhrase?: string;
 
   /**
-   * Words to exclude from results (tweet_search_extractor)
+   * Words excluded from estimated search results
    */
   excludeWords?: string;
 
@@ -251,10 +314,16 @@ export interface ExtractionEstimateCostParams {
 }
 
 export interface ExtractionExportResultsParams {
+  /**
+   * Export file format
+   */
   format?: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
 }
 
 export interface ExtractionRunParams {
+  /**
+   * Identifier for the extraction tool used to run a job.
+   */
   toolType:
     | 'article_extractor'
     | 'community_extractor'

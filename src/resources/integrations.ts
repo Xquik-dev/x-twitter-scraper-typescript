@@ -12,6 +12,16 @@ import { path } from '../internal/utils/path';
 export class Integrations extends APIResource {
   /**
    * Create integration
+   *
+   * @example
+   * ```ts
+   * const integration = await client.integrations.create({
+   *   config: { chatId: '-1001234567890' },
+   *   eventTypes: ['tweet.new', 'follower.gained'],
+   *   name: 'My Telegram Bot',
+   *   type: 'telegram',
+   * });
+   * ```
    */
   create(body: IntegrationCreateParams, options?: RequestOptions): APIPromise<Integration> {
     return this._client.post('/integrations', { body, ...options });
@@ -19,6 +29,13 @@ export class Integrations extends APIResource {
 
   /**
    * Get integration details
+   *
+   * @example
+   * ```ts
+   * const integration = await client.integrations.retrieve(
+   *   'id',
+   * );
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Integration> {
     return this._client.get(path`/integrations/${id}`, options);
@@ -26,6 +43,14 @@ export class Integrations extends APIResource {
 
   /**
    * Update integration
+   *
+   * @example
+   * ```ts
+   * const integration = await client.integrations.update('id', {
+   *   isActive: true,
+   *   name: 'My Telegram Bot',
+   * });
+   * ```
    */
   update(id: string, body: IntegrationUpdateParams, options?: RequestOptions): APIPromise<Integration> {
     return this._client.patch(path`/integrations/${id}`, { body, ...options });
@@ -33,6 +58,11 @@ export class Integrations extends APIResource {
 
   /**
    * List integrations
+   *
+   * @example
+   * ```ts
+   * const integrations = await client.integrations.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<IntegrationListResponse> {
     return this._client.get('/integrations', options);
@@ -40,6 +70,11 @@ export class Integrations extends APIResource {
 
   /**
    * Delete integration
+   *
+   * @example
+   * ```ts
+   * const integration = await client.integrations.delete('id');
+   * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<IntegrationDeleteResponse> {
     return this._client.delete(path`/integrations/${id}`, options);
@@ -47,6 +82,13 @@ export class Integrations extends APIResource {
 
   /**
    * List integration delivery history
+   *
+   * @example
+   * ```ts
+   * const response = await client.integrations.listDeliveries(
+   *   'id',
+   * );
+   * ```
    */
   listDeliveries(
     id: string,
@@ -58,19 +100,33 @@ export class Integrations extends APIResource {
 
   /**
    * Send test delivery
+   *
+   * @example
+   * ```ts
+   * const response = await client.integrations.sendTest('id');
+   * ```
    */
   sendTest(id: string, options?: RequestOptions): APIPromise<IntegrationSendTestResponse> {
     return this._client.post(path`/integrations/${id}/test`, options);
   }
 }
 
+/**
+ * Third-party integration (e.g. Telegram) subscribed to monitor events.
+ */
 export interface Integration {
   id: string;
 
+  /**
+   * Integration config — shape varies by type (JSON)
+   */
   config: { [key: string]: unknown };
 
   createdAt: string;
 
+  /**
+   * Array of event types to subscribe to.
+   */
   eventTypes: Array<Shared.EventType>;
 
   isActive: boolean;
@@ -79,6 +135,9 @@ export interface Integration {
 
   type: 'telegram';
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   messageTemplate?: string;
@@ -88,6 +147,9 @@ export interface Integration {
   silentPush?: boolean;
 }
 
+/**
+ * Integration delivery attempt record with status and retry count.
+ */
 export interface IntegrationDelivery {
   id: string;
 
@@ -132,6 +194,9 @@ export interface IntegrationCreateParams {
    */
   config: IntegrationCreateParams.Config;
 
+  /**
+   * Array of event types to subscribe to.
+   */
   eventTypes: Array<Shared.EventType>;
 
   name: string;
@@ -149,12 +214,21 @@ export namespace IntegrationCreateParams {
 }
 
 export interface IntegrationUpdateParams {
+  /**
+   * Array of event types to subscribe to.
+   */
   eventTypes?: Array<Shared.EventType>;
 
+  /**
+   * Event filter rules (JSON)
+   */
   filters?: { [key: string]: unknown };
 
   isActive?: boolean;
 
+  /**
+   * Custom message template (JSON)
+   */
   messageTemplate?: { [key: string]: unknown };
 
   name?: string;
@@ -165,6 +239,9 @@ export interface IntegrationUpdateParams {
 }
 
 export interface IntegrationListDeliveriesParams {
+  /**
+   * Maximum number of items to return (1-100, default 50)
+   */
   limit?: number;
 }
 

@@ -11,7 +11,7 @@ const client = new XTwitterScraper({
 describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieve', async () => {
-    const responsePromise = client.x.users.retrieve('username');
+    const responsePromise = client.x.users.retrieve('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;

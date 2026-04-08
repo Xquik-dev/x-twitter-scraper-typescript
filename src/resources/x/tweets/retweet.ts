@@ -11,24 +11,30 @@ import { path } from '../../../internal/utils/path';
 export class Retweet extends APIResource {
   /**
    * Retweet
+   *
+   * @example
+   * ```ts
+   * const retweet = await client.x.tweets.retweet.create('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
    */
-  create(
-    tweetID: string,
-    body: RetweetCreateParams,
-    options?: RequestOptions,
-  ): APIPromise<RetweetCreateResponse> {
-    return this._client.post(path`/x/tweets/${tweetID}/retweet`, { body, ...options });
+  create(id: string, body: RetweetCreateParams, options?: RequestOptions): APIPromise<RetweetCreateResponse> {
+    return this._client.post(path`/x/tweets/${id}/retweet`, { body, ...options });
   }
 
   /**
    * Unretweet
+   *
+   * @example
+   * ```ts
+   * const retweet = await client.x.tweets.retweet.delete('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
    */
-  delete(
-    tweetID: string,
-    body: RetweetDeleteParams,
-    options?: RequestOptions,
-  ): APIPromise<RetweetDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${tweetID}/retweet`, { body, ...options });
+  delete(id: string, body: RetweetDeleteParams, options?: RequestOptions): APIPromise<RetweetDeleteResponse> {
+    return this._client.delete(path`/x/tweets/${id}/retweet`, { body, ...options });
   }
 }
 
@@ -42,14 +48,14 @@ export interface RetweetDeleteResponse {
 
 export interface RetweetCreateParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }
 
 export interface RetweetDeleteParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }

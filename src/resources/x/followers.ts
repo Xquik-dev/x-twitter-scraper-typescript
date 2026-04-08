@@ -10,6 +10,14 @@ import { RequestOptions } from '../../internal/request-options';
 export class Followers extends APIResource {
   /**
    * Check follow relationship
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.followers.check({
+   *   source: 'source',
+   *   target: 'target',
+   * });
+   * ```
    */
   check(query: FollowerCheckParams, options?: RequestOptions): APIPromise<FollowerCheckResponse> {
     return this._client.get('/x/followers/check', { query, ...options });

@@ -12,6 +12,14 @@ import { path } from '../../../internal/utils/path';
 export class Join extends APIResource {
   /**
    * Join community
+   *
+   * @example
+   * ```ts
+   * const communityActionResult =
+   *   await client.x.communities.join.create('id', {
+   *     account: '@elonmusk',
+   *   });
+   * ```
    */
   create(
     id: string,
@@ -23,6 +31,14 @@ export class Join extends APIResource {
 
   /**
    * Leave community
+   *
+   * @example
+   * ```ts
+   * const communityActionResult =
+   *   await client.x.communities.join.deleteAll('id', {
+   *     account: '@elonmusk',
+   *   });
+   * ```
    */
   deleteAll(
     id: string,
@@ -35,14 +51,14 @@ export class Join extends APIResource {
 
 export interface JoinCreateParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }
 
 export interface JoinDeleteAllParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }

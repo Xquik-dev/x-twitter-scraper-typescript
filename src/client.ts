@@ -134,6 +134,7 @@ import {
   XGetHomeTimelineParams,
   XGetNotificationsParams,
   XGetNotificationsResponse,
+  XGetTrendsResponse,
 } from './resources/x/x';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
@@ -1095,6 +1096,7 @@ export declare namespace XTwitterScraper {
     X as X,
     type XGetArticleResponse as XGetArticleResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
+    type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
   };

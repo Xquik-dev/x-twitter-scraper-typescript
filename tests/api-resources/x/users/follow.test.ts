@@ -11,7 +11,7 @@ const client = new XTwitterScraper({
 describe('resource follow', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.x.users.follow.create('userId', { account: 'account' });
+    const responsePromise = client.x.users.follow.create('id', { account: '@elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,12 +23,12 @@ describe('resource follow', () => {
 
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
-    const response = await client.x.users.follow.create('userId', { account: 'account' });
+    const response = await client.x.users.follow.create('id', { account: '@elonmusk' });
   });
 
   // Mock server tests are disabled
   test.skip('deleteAll: only required params', async () => {
-    const responsePromise = client.x.users.follow.deleteAll('userId', { account: 'account' });
+    const responsePromise = client.x.users.follow.deleteAll('id', { account: '@elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -40,6 +40,6 @@ describe('resource follow', () => {
 
   // Mock server tests are disabled
   test.skip('deleteAll: required and optional params', async () => {
-    const response = await client.x.users.follow.deleteAll('userId', { account: 'account' });
+    const response = await client.x.users.follow.deleteAll('id', { account: '@elonmusk' });
   });
 });

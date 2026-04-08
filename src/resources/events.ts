@@ -28,6 +28,9 @@ export class Events extends APIResource {
   }
 }
 
+/**
+ * Monitor event summary with type, username, and occurrence time.
+ */
 export interface Event {
   id: string;
 
@@ -37,20 +40,32 @@ export interface Event {
 
   occurredAt: string;
 
+  /**
+   * Type of monitor event fired when account activity occurs.
+   */
   type: Shared.EventType;
 
   username: string;
 }
 
+/**
+ * Full monitor event including payload data and optional X event ID.
+ */
 export interface EventDetail {
   id: string;
 
+  /**
+   * Event payload — shape varies by event type (JSON)
+   */
   data: { [key: string]: unknown };
 
   monitorId: string;
 
   occurredAt: string;
 
+  /**
+   * Type of monitor event fired when account activity occurs.
+   */
   type: Shared.EventType;
 
   username: string;
@@ -68,14 +83,23 @@ export interface EventListResponse {
 
 export interface EventListParams {
   /**
-   * Cursor for pagination
+   * Cursor for keyset pagination
    */
   after?: string;
 
+  /**
+   * Filter events by type
+   */
   eventType?: Shared.EventType;
 
+  /**
+   * Maximum number of items to return (1-100, default 50)
+   */
   limit?: number;
 
+  /**
+   * Filter events by monitor ID
+   */
   monitorId?: string;
 }
 

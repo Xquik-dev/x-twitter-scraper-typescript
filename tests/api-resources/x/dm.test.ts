@@ -35,7 +35,10 @@ describe('resource dm', () => {
 
   // Mock server tests are disabled
   test.skip('send: only required params', async () => {
-    const responsePromise = client.x.dm.send('userId', { account: 'account', text: 'text' });
+    const responsePromise = client.x.dm.send('userId', {
+      account: '@elonmusk',
+      text: 'Example text content',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -48,10 +51,10 @@ describe('resource dm', () => {
   // Mock server tests are disabled
   test.skip('send: required and optional params', async () => {
     const response = await client.x.dm.send('userId', {
-      account: 'account',
-      text: 'text',
-      media_ids: ['string'],
-      reply_to_message_id: 'reply_to_message_id',
+      account: '@elonmusk',
+      text: 'Example text content',
+      media_ids: ['1234567890123456789'],
+      reply_to_message_id: '1234567890123456789',
     });
   });
 });

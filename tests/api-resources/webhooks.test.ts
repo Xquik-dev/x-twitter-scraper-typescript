@@ -11,7 +11,10 @@ const client = new XTwitterScraper({
 describe('resource webhooks', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.webhooks.create({ eventTypes: ['tweet.new'], url: 'https://example.com' });
+    const responsePromise = client.webhooks.create({
+      eventTypes: ['tweet.new', 'follower.gained'],
+      url: 'https://example.com/webhook',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,7 +26,10 @@ describe('resource webhooks', () => {
 
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
-    const response = await client.webhooks.create({ eventTypes: ['tweet.new'], url: 'https://example.com' });
+    const response = await client.webhooks.create({
+      eventTypes: ['tweet.new', 'follower.gained'],
+      url: 'https://example.com/webhook',
+    });
   });
 
   // Mock server tests are disabled

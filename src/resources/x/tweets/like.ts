@@ -11,16 +11,30 @@ import { path } from '../../../internal/utils/path';
 export class Like extends APIResource {
   /**
    * Like tweet
+   *
+   * @example
+   * ```ts
+   * const like = await client.x.tweets.like.create('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
    */
-  create(tweetID: string, body: LikeCreateParams, options?: RequestOptions): APIPromise<LikeCreateResponse> {
-    return this._client.post(path`/x/tweets/${tweetID}/like`, { body, ...options });
+  create(id: string, body: LikeCreateParams, options?: RequestOptions): APIPromise<LikeCreateResponse> {
+    return this._client.post(path`/x/tweets/${id}/like`, { body, ...options });
   }
 
   /**
    * Unlike tweet
+   *
+   * @example
+   * ```ts
+   * const like = await client.x.tweets.like.delete('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
    */
-  delete(tweetID: string, body: LikeDeleteParams, options?: RequestOptions): APIPromise<LikeDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${tweetID}/like`, { body, ...options });
+  delete(id: string, body: LikeDeleteParams, options?: RequestOptions): APIPromise<LikeDeleteResponse> {
+    return this._client.delete(path`/x/tweets/${id}/like`, { body, ...options });
   }
 }
 
@@ -34,14 +48,14 @@ export interface LikeDeleteResponse {
 
 export interface LikeCreateParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }
 
 export interface LikeDeleteParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }

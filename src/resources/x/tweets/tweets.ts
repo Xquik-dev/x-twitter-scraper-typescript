@@ -13,7 +13,6 @@ import {
   RetweetDeleteResponse,
 } from './retweet';
 import { APIPromise } from '../../../core/api-promise';
-import { buildHeaders } from '../../../internal/headers';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
@@ -23,6 +22,14 @@ export class Tweets extends APIResource {
 
   /**
    * Create tweet
+   *
+   * @example
+   * ```ts
+   * const tweet = await client.x.tweets.create({
+   *   account: '@elonmusk',
+   *   text: 'Just launched our new feature!',
+   * });
+   * ```
    */
   create(body: TweetCreateParams, options?: RequestOptions): APIPromise<TweetCreateResponse> {
     return this._client.post('/x/tweets', { body, ...options });
@@ -30,35 +37,53 @@ export class Tweets extends APIResource {
 
   /**
    * Look up tweet
+   *
+   * @example
+   * ```ts
+   * const tweet = await client.x.tweets.retrieve('id');
+   * ```
    */
-  retrieve(tweetID: string, options?: RequestOptions): APIPromise<TweetRetrieveResponse> {
-    return this._client.get(path`/x/tweets/${tweetID}`, options);
+  retrieve(id: string, options?: RequestOptions): APIPromise<TweetRetrieveResponse> {
+    return this._client.get(path`/x/tweets/${id}`, options);
   }
 
   /**
    * Get multiple tweets by IDs
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.tweets.list({
+   *   ids: 'ids',
+   * });
+   * ```
    */
-  list(query: TweetListParams, options?: RequestOptions): APIPromise<void> {
-    return this._client.get('/x/tweets', {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  list(query: TweetListParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+    return this._client.get('/x/tweets', { query, ...options });
   }
 
   /**
    * Delete tweet
+   *
+   * @example
+   * ```ts
+   * const tweet = await client.x.tweets.delete('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
    */
-  delete(
-    tweetID: string,
-    body: TweetDeleteParams,
-    options?: RequestOptions,
-  ): APIPromise<TweetDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${tweetID}`, { body, ...options });
+  delete(id: string, body: TweetDeleteParams, options?: RequestOptions): APIPromise<TweetDeleteResponse> {
+    return this._client.delete(path`/x/tweets/${id}`, { body, ...options });
   }
 
   /**
    * Get users who liked a tweet
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers = await client.x.tweets.getFavoriters(
+   *   'id',
+   * );
+   * ```
    */
   getFavoriters(
     id: string,
@@ -70,6 +95,13 @@ export class Tweets extends APIResource {
 
   /**
    * Get quote tweets of a tweet
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.tweets.getQuotes(
+   *   'id',
+   * );
+   * ```
    */
   getQuotes(
     id: string,
@@ -81,6 +113,13 @@ export class Tweets extends APIResource {
 
   /**
    * Get replies to a tweet
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.tweets.getReplies(
+   *   'id',
+   * );
+   * ```
    */
   getReplies(
     id: string,
@@ -92,6 +131,13 @@ export class Tweets extends APIResource {
 
   /**
    * Get users who retweeted a tweet
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers = await client.x.tweets.getRetweeters(
+   *   'id',
+   * );
+   * ```
    */
   getRetweeters(
     id: string,
@@ -103,6 +149,13 @@ export class Tweets extends APIResource {
 
   /**
    * Get thread context for a tweet
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.tweets.getThread(
+   *   'id',
+   * );
+   * ```
    */
   getThread(
     id: string,
@@ -114,12 +167,22 @@ export class Tweets extends APIResource {
 
   /**
    * Search tweets
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.tweets.search({
+   *   q: 'q',
+   * });
+   * ```
    */
   search(query: TweetSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/tweets/search', { query, ...options });
   }
 }
 
+/**
+ * Tweet returned from search results with inline author info.
+ */
 export interface SearchTweet {
   id: string;
 
@@ -130,6 +193,11 @@ export interface SearchTweet {
   bookmarkCount?: number;
 
   createdAt?: string;
+
+  /**
+   * True for Note Tweets (long-form content, up to 25,000 characters)
+   */
+  isNoteTweet?: boolean;
 
   likeCount?: number;
 
@@ -154,6 +222,9 @@ export namespace SearchTweet {
   }
 }
 
+/**
+ * Author of a tweet with follower count and verification status.
+ */
 export interface TweetAuthor {
   id: string;
 
@@ -166,6 +237,9 @@ export interface TweetAuthor {
   profilePicture?: string;
 }
 
+/**
+ * Full tweet with text, engagement metrics, media, and metadata.
+ */
 export interface TweetDetail {
   id: string;
 
@@ -183,7 +257,57 @@ export interface TweetDetail {
 
   viewCount: number;
 
+  /**
+   * ID of the root tweet in the conversation thread
+   */
+  conversationId?: string;
+
   createdAt?: string;
+
+  /**
+   * Parsed entities from the tweet text (URLs, mentions, hashtags, media)
+   */
+  entities?: { [key: string]: unknown };
+
+  /**
+   * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
+   */
+  isNoteTweet?: boolean;
+
+  /**
+   * Whether this tweet quotes another tweet
+   */
+  isQuoteStatus?: boolean;
+
+  /**
+   * Whether this tweet is a reply to another tweet
+   */
+  isReply?: boolean;
+
+  /**
+   * Attached media items, omitted when the tweet has no media
+   */
+  media?: Array<TweetDetail.Media>;
+
+  /**
+   * The quoted tweet object, present when isQuoteStatus is true
+   */
+  quoted_tweet?: { [key: string]: unknown };
+
+  /**
+   * Client application used to post this tweet
+   */
+  source?: string;
+}
+
+export namespace TweetDetail {
+  export interface Media {
+    mediaUrl?: string;
+
+    type?: 'photo' | 'video' | 'animated_gif';
+
+    url?: string;
+  }
 }
 
 export interface TweetCreateResponse {
@@ -193,8 +317,14 @@ export interface TweetCreateResponse {
 }
 
 export interface TweetRetrieveResponse {
+  /**
+   * Full tweet with text, engagement metrics, media, and metadata.
+   */
   tweet: TweetDetail;
 
+  /**
+   * Author of a tweet with follower count and verification status.
+   */
   author?: TweetAuthor;
 }
 
@@ -230,67 +360,67 @@ export interface TweetListParams {
 
 export interface TweetDeleteParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }
 
 export interface TweetGetFavoritersParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for favoriters
    */
   cursor?: string;
 }
 
 export interface TweetGetQuotesParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for quote tweets
    */
   cursor?: string;
 
   /**
-   * Include replies (default false)
+   * Include reply quotes (default false)
    */
   includeReplies?: boolean;
 
   /**
-   * Unix timestamp - filter after
+   * Unix timestamp - return quotes posted after this time
    */
   sinceTime?: string;
 
   /**
-   * Unix timestamp - filter before
+   * Unix timestamp - return quotes posted before this time
    */
   untilTime?: string;
 }
 
 export interface TweetGetRepliesParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for tweet replies
    */
   cursor?: string;
 
   /**
-   * Unix timestamp - filter after
+   * Unix timestamp - return replies posted after this time
    */
   sinceTime?: string;
 
   /**
-   * Unix timestamp - filter before
+   * Unix timestamp - return replies posted before this time
    */
   untilTime?: string;
 }
 
 export interface TweetGetRetweetersParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for retweeters
    */
   cursor?: string;
 }
 
 export interface TweetGetThreadParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for thread tweets
    */
   cursor?: string;
 }
@@ -307,7 +437,7 @@ export interface TweetSearchParams {
   cursor?: string;
 
   /**
-   * Deprecated — use cursor-based pagination instead
+   * Max tweets to return (server paginates internally). Omit for single page (~20).
    */
   limit?: number;
 

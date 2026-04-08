@@ -11,7 +11,6 @@ import {
   FollowDeleteAllResponse,
 } from './follow';
 import { APIPromise } from '../../../core/api-promise';
-import { buildHeaders } from '../../../internal/headers';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
@@ -23,39 +22,55 @@ export class Users extends APIResource {
 
   /**
    * Look up X user
+   *
+   * @example
+   * ```ts
+   * const userProfile = await client.x.users.retrieve('id');
+   * ```
    */
-  retrieve(username: string, options?: RequestOptions): APIPromise<UserProfile> {
-    return this._client.get(path`/x/users/${username}`, options);
+  retrieve(id: string, options?: RequestOptions): APIPromise<UserProfile> {
+    return this._client.get(path`/x/users/${id}`, options);
   }
 
   /**
    * Get multiple users by IDs
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers = await client.x.users.retrieveBatch({
+   *   ids: 'ids',
+   * });
+   * ```
    */
-  retrieveBatch(query: UserRetrieveBatchParams, options?: RequestOptions): APIPromise<void> {
-    return this._client.get('/x/users/batch', {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  retrieveBatch(query: UserRetrieveBatchParams, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
+    return this._client.get('/x/users/batch', { query, ...options });
   }
 
   /**
    * Get user followers
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers =
+   *   await client.x.users.retrieveFollowers('id');
+   * ```
    */
   retrieveFollowers(
     id: string,
     query: UserRetrieveFollowersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/users/${id}/followers`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<Shared.PaginatedUsers> {
+    return this._client.get(path`/x/users/${id}/followers`, { query, ...options });
   }
 
   /**
    * Get followers you know for a user
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers =
+   *   await client.x.users.retrieveFollowersYouKnow('id');
+   * ```
    */
   retrieveFollowersYouKnow(
     id: string,
@@ -67,21 +82,30 @@ export class Users extends APIResource {
 
   /**
    * Get users this user follows
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers =
+   *   await client.x.users.retrieveFollowing('id');
+   * ```
    */
   retrieveFollowing(
     id: string,
     query: UserRetrieveFollowingParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/users/${id}/following`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<Shared.PaginatedUsers> {
+    return this._client.get(path`/x/users/${id}/following`, { query, ...options });
   }
 
   /**
    * Get tweets liked by a user
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.users.retrieveLikes(
+   *   'id',
+   * );
+   * ```
    */
   retrieveLikes(
     id: string,
@@ -93,6 +117,13 @@ export class Users extends APIResource {
 
   /**
    * Get media tweets by a user
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.users.retrieveMedia(
+   *   'id',
+   * );
+   * ```
    */
   retrieveMedia(
     id: string,
@@ -104,32 +135,47 @@ export class Users extends APIResource {
 
   /**
    * Get tweets mentioning a user
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets =
+   *   await client.x.users.retrieveMentions('id');
+   * ```
    */
   retrieveMentions(
     id: string,
     query: UserRetrieveMentionsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/users/${id}/mentions`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<Shared.PaginatedTweets> {
+    return this._client.get(path`/x/users/${id}/mentions`, { query, ...options });
   }
 
   /**
    * Search users by name or username
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers = await client.x.users.retrieveSearch({
+   *   q: 'q',
+   * });
+   * ```
    */
-  retrieveSearch(query: UserRetrieveSearchParams, options?: RequestOptions): APIPromise<void> {
-    return this._client.get('/x/users/search', {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  retrieveSearch(
+    query: UserRetrieveSearchParams,
+    options?: RequestOptions,
+  ): APIPromise<Shared.PaginatedUsers> {
+    return this._client.get('/x/users/search', { query, ...options });
   }
 
   /**
    * Get recent tweets by a user
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.users.retrieveTweets(
+   *   'id',
+   * );
+   * ```
    */
   retrieveTweets(
     id: string,
@@ -141,20 +187,25 @@ export class Users extends APIResource {
 
   /**
    * Get verified followers
+   *
+   * @example
+   * ```ts
+   * const paginatedUsers =
+   *   await client.x.users.retrieveVerifiedFollowers('id');
+   * ```
    */
   retrieveVerifiedFollowers(
     id: string,
     query: UserRetrieveVerifiedFollowersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<void> {
-    return this._client.get(path`/x/users/${id}/verified-followers`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  ): APIPromise<Shared.PaginatedUsers> {
+    return this._client.get(path`/x/users/${id}/verified-followers`, { query, ...options });
   }
 }
 
+/**
+ * X user profile with bio, follower counts, and verification status.
+ */
 export interface UserProfile {
   id: string;
 
@@ -188,7 +239,7 @@ export interface UserRetrieveBatchParams {
 
 export interface UserRetrieveFollowersParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for followers list
    */
   cursor?: string;
 
@@ -200,69 +251,69 @@ export interface UserRetrieveFollowersParams {
 
 export interface UserRetrieveFollowersYouKnowParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for followers-you-know
    */
   cursor?: string;
 }
 
 export interface UserRetrieveFollowingParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for following list
    */
   cursor?: string;
 
   /**
-   * Items per page (20-200, default 200)
+   * Results per page (20-200, default 200)
    */
   pageSize?: number;
 }
 
 export interface UserRetrieveLikesParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for liked tweets
    */
   cursor?: string;
 }
 
 export interface UserRetrieveMediaParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for media tweets
    */
   cursor?: string;
 }
 
 export interface UserRetrieveMentionsParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for mentions
    */
   cursor?: string;
 
   /**
-   * Unix timestamp - filter after
+   * Unix timestamp - return mentions after this time
    */
   sinceTime?: string;
 
   /**
-   * Unix timestamp - filter before
+   * Unix timestamp - return mentions before this time
    */
   untilTime?: string;
 }
 
 export interface UserRetrieveSearchParams {
   /**
-   * Search query
+   * User search query
    */
   q: string;
 
   /**
-   * Pagination cursor
+   * Pagination cursor for user search
    */
   cursor?: string;
 }
 
 export interface UserRetrieveTweetsParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for user tweets
    */
   cursor?: string;
 
@@ -279,7 +330,7 @@ export interface UserRetrieveTweetsParams {
 
 export interface UserRetrieveVerifiedFollowersParams {
   /**
-   * Pagination cursor
+   * Pagination cursor for verified followers
    */
   cursor?: string;
 }

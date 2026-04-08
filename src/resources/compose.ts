@@ -10,13 +10,44 @@ import { RequestOptions } from '../internal/request-options';
 export class Compose extends APIResource {
   /**
    * Compose, refine, or score a tweet
+   *
+   * @example
+   * ```ts
+   * const compose = await client.compose.create({
+   *   step: 'compose',
+   *   goal: 'engagement',
+   *   topic: 'AI trends in 2025',
+   * });
+   * ```
    */
   create(body: ComposeCreateParams, options?: RequestOptions): APIPromise<ComposeCreateResponse> {
     return this._client.post('/compose', { body, ...options });
   }
 }
 
-export type ComposeCreateResponse = { [key: string]: unknown };
+export interface ComposeCreateResponse {
+  /**
+   * AI feedback on the draft
+   */
+  feedback?: string;
+
+  /**
+   * Engagement score (0-100)
+   */
+  score?: number;
+
+  /**
+   * Improvement suggestions
+   */
+  suggestions?: Array<string>;
+
+  /**
+   * Generated or refined tweet text
+   */
+  text?: string;
+
+  [k: string]: unknown;
+}
 
 export interface ComposeCreateParams {
   /**

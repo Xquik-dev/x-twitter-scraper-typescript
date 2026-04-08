@@ -10,6 +10,11 @@ import { RequestOptions } from '../internal/request-options';
 export class Account extends APIResource {
   /**
    * Get account info
+   *
+   * @example
+   * ```ts
+   * const account = await client.account.retrieve();
+   * ```
    */
   retrieve(options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
     return this._client.get('/account', { ...options, __security: { apiKeyAuth: true } });
@@ -17,6 +22,13 @@ export class Account extends APIResource {
 
   /**
    * Set linked X username
+   *
+   * @example
+   * ```ts
+   * const response = await client.account.setXUsername({
+   *   username: 'elonmusk',
+   * });
+   * ```
    */
   setXUsername(
     body: AccountSetXUsernameParams,
@@ -27,12 +39,19 @@ export class Account extends APIResource {
 
   /**
    * Update account locale
+   *
+   * @example
+   * ```ts
+   * const response = await client.account.updateLocale({
+   *   locale: 'en',
+   * });
+   * ```
    */
   updateLocale(
     body: AccountUpdateLocaleParams,
     options?: RequestOptions,
   ): APIPromise<AccountUpdateLocaleResponse> {
-    return this._client.patch('/account', { body, ...options, __security: {} });
+    return this._client.patch('/account', { body, ...options, __security: { apiKeyAuth: true } });
   }
 }
 

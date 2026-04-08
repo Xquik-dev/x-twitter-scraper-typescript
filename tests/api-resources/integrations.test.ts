@@ -12,9 +12,9 @@ describe('resource integrations', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.integrations.create({
-      config: { chatId: 'chatId' },
-      eventTypes: ['tweet.new'],
-      name: 'name',
+      config: { chatId: '-1001234567890' },
+      eventTypes: ['tweet.new', 'follower.gained'],
+      name: 'My Telegram Bot',
       type: 'telegram',
     });
     const rawResponse = await responsePromise.asResponse();
@@ -29,9 +29,9 @@ describe('resource integrations', () => {
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.integrations.create({
-      config: { chatId: 'chatId' },
-      eventTypes: ['tweet.new'],
-      name: 'name',
+      config: { chatId: '-1001234567890' },
+      eventTypes: ['tweet.new', 'follower.gained'],
+      name: 'My Telegram Bot',
       type: 'telegram',
     });
   });

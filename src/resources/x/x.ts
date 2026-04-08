@@ -4,6 +4,7 @@ import { APIResource } from '../../core/resource';
 import * as Shared from '../shared';
 import * as AccountsAPI from './accounts';
 import {
+  AccountBulkRetryResponse,
   AccountCreateParams,
   AccountCreateResponse,
   AccountDeleteResponse,
@@ -93,7 +94,6 @@ import {
   Users,
 } from './users/users';
 import { APIPromise } from '../../core/api-promise';
-import { buildHeaders } from '../../internal/headers';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
@@ -114,6 +114,11 @@ export class X extends APIResource {
 
   /**
    * Retrieve the full content of an X Article (long-form post) by tweet ID.
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getArticle('tweetId');
+   * ```
    */
   getArticle(tweetID: string, options?: RequestOptions): APIPromise<XGetArticleResponse> {
     return this._client.get(path`/x/articles/${tweetID}`, options);
@@ -121,6 +126,11 @@ export class X extends APIResource {
 
   /**
    * Get home timeline
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.getHomeTimeline();
+   * ```
    */
   getHomeTimeline(
     query: XGetHomeTimelineParams | null | undefined = {},
@@ -131,6 +141,11 @@ export class X extends APIResource {
 
   /**
    * Get notifications
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getNotifications();
+   * ```
    */
   getNotifications(
     query: XGetNotificationsParams | null | undefined = {},
@@ -141,18 +156,23 @@ export class X extends APIResource {
 
   /**
    * Get trending topics
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getTrends();
+   * ```
    */
-  getTrends(options?: RequestOptions): APIPromise<void> {
-    return this._client.get('/x/trends', {
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+  getTrends(options?: RequestOptions): APIPromise<XGetTrendsResponse> {
+    return this._client.get('/x/trends', options);
   }
 }
 
 export interface XGetArticleResponse {
   article: XGetArticleResponse.Article;
 
+  /**
+   * Author of a tweet with follower count and verification status.
+   */
   author?: TweetsAPI.TweetAuthor;
 }
 
@@ -219,9 +239,29 @@ export namespace XGetNotificationsResponse {
   }
 }
 
+export interface XGetTrendsResponse {
+  count: number;
+
+  trends: Array<XGetTrendsResponse.Trend>;
+
+  woeid: number;
+}
+
+export namespace XGetTrendsResponse {
+  export interface Trend {
+    name: string;
+
+    description?: string;
+
+    query?: string;
+
+    rank?: number;
+  }
+}
+
 export interface XGetHomeTimelineParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for timeline
    */
   cursor?: string;
 
@@ -233,7 +273,7 @@ export interface XGetHomeTimelineParams {
 
 export interface XGetNotificationsParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for notifications
    */
   cursor?: string;
 
@@ -258,6 +298,7 @@ export declare namespace X {
   export {
     type XGetArticleResponse as XGetArticleResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
+    type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
   };
@@ -348,6 +389,7 @@ export declare namespace X {
     type AccountCreateResponse as AccountCreateResponse,
     type AccountListResponse as AccountListResponse,
     type AccountDeleteResponse as AccountDeleteResponse,
+    type AccountBulkRetryResponse as AccountBulkRetryResponse,
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
     type AccountReauthParams as AccountReauthParams,

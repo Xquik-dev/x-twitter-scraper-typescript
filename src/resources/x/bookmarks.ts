@@ -11,6 +11,11 @@ import { RequestOptions } from '../../internal/request-options';
 export class Bookmarks extends APIResource {
   /**
    * Get bookmarked tweets
+   *
+   * @example
+   * ```ts
+   * const paginatedTweets = await client.x.bookmarks.list();
+   * ```
    */
   list(
     query: BookmarkListParams | null | undefined = {},
@@ -21,6 +26,11 @@ export class Bookmarks extends APIResource {
 
   /**
    * Get bookmark folders
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.bookmarks.retrieveFolders();
+   * ```
    */
   retrieveFolders(options?: RequestOptions): APIPromise<BookmarkRetrieveFoldersResponse> {
     return this._client.get('/x/bookmarks/folders', options);
@@ -45,7 +55,7 @@ export namespace BookmarkRetrieveFoldersResponse {
 
 export interface BookmarkListParams {
   /**
-   * Pagination cursor from previous response
+   * Pagination cursor for bookmarks
    */
   cursor?: string;
 

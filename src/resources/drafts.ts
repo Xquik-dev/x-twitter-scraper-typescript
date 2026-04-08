@@ -12,6 +12,15 @@ import { path } from '../internal/utils/path';
 export class Drafts extends APIResource {
   /**
    * Save a tweet draft
+   *
+   * @example
+   * ```ts
+   * const draftDetail = await client.drafts.create({
+   *   text: 'AI is the future of productivity',
+   *   goal: 'engagement',
+   *   topic: 'AI trends',
+   * });
+   * ```
    */
   create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftDetail> {
     return this._client.post('/drafts', { body, ...options });
@@ -19,6 +28,11 @@ export class Drafts extends APIResource {
 
   /**
    * Get draft by ID
+   *
+   * @example
+   * ```ts
+   * const draftDetail = await client.drafts.retrieve('id');
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<DraftDetail> {
     return this._client.get(path`/drafts/${id}`, options);
@@ -26,6 +40,11 @@ export class Drafts extends APIResource {
 
   /**
    * List saved drafts
+   *
+   * @example
+   * ```ts
+   * const drafts = await client.drafts.list();
+   * ```
    */
   list(
     query: DraftListParams | null | undefined = {},
@@ -36,6 +55,11 @@ export class Drafts extends APIResource {
 
   /**
    * Delete a draft
+   *
+   * @example
+   * ```ts
+   * await client.drafts.delete('id');
+   * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<void> {
     return this._client.delete(path`/drafts/${id}`, {
@@ -45,6 +69,9 @@ export class Drafts extends APIResource {
   }
 }
 
+/**
+ * Saved tweet draft with optional topic and goal.
+ */
 export interface Draft {
   id: string;
 
@@ -57,6 +84,9 @@ export interface Draft {
   topic?: string;
 }
 
+/**
+ * Full tweet draft including update timestamp.
+ */
 export interface DraftDetail {
   id: string;
 
@@ -93,6 +123,9 @@ export interface DraftListParams {
    */
   afterCursor?: string;
 
+  /**
+   * Maximum number of items to return (1-100, default 50)
+   */
   limit?: number;
 }
 

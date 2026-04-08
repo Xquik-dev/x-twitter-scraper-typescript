@@ -83,13 +83,13 @@ Types:
 
 Methods:
 
-- <code title="get /styles/{username}">client.styles.<a href="./src/resources/styles.ts">retrieve</a>(username) -> StyleProfile</code>
-- <code title="put /styles/{username}">client.styles.<a href="./src/resources/styles.ts">update</a>(username, { ...params }) -> StyleProfile</code>
+- <code title="get /styles/{id}">client.styles.<a href="./src/resources/styles.ts">retrieve</a>(id) -> StyleProfile</code>
+- <code title="put /styles/{id}">client.styles.<a href="./src/resources/styles.ts">update</a>(id, { ...params }) -> StyleProfile</code>
 - <code title="get /styles">client.styles.<a href="./src/resources/styles.ts">list</a>() -> StyleListResponse</code>
-- <code title="delete /styles/{username}">client.styles.<a href="./src/resources/styles.ts">delete</a>(username) -> void</code>
+- <code title="delete /styles/{id}">client.styles.<a href="./src/resources/styles.ts">delete</a>(id) -> void</code>
 - <code title="post /styles">client.styles.<a href="./src/resources/styles.ts">analyze</a>({ ...params }) -> StyleProfile</code>
 - <code title="get /styles/compare">client.styles.<a href="./src/resources/styles.ts">compare</a>({ ...params }) -> StyleCompareResponse</code>
-- <code title="get /styles/{username}/performance">client.styles.<a href="./src/resources/styles.ts">getPerformance</a>(username) -> StyleGetPerformanceResponse</code>
+- <code title="get /styles/{id}/performance">client.styles.<a href="./src/resources/styles.ts">getPerformance</a>(id) -> StyleGetPerformanceResponse</code>
 
 # Radar
 
@@ -216,13 +216,14 @@ Types:
 
 - <code><a href="./src/resources/x/x.ts">XGetArticleResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XGetNotificationsResponse</a></code>
+- <code><a href="./src/resources/x/x.ts">XGetTrendsResponse</a></code>
 
 Methods:
 
 - <code title="get /x/articles/{tweetId}">client.x.<a href="./src/resources/x/x.ts">getArticle</a>(tweetID) -> XGetArticleResponse</code>
 - <code title="get /x/timeline">client.x.<a href="./src/resources/x/x.ts">getHomeTimeline</a>({ ...params }) -> PaginatedTweets</code>
 - <code title="get /x/notifications">client.x.<a href="./src/resources/x/x.ts">getNotifications</a>({ ...params }) -> XGetNotificationsResponse</code>
-- <code title="get /x/trends">client.x.<a href="./src/resources/x/x.ts">getTrends</a>() -> void</code>
+- <code title="get /x/trends">client.x.<a href="./src/resources/x/x.ts">getTrends</a>() -> XGetTrendsResponse</code>
 
 ## Tweets
 
@@ -238,9 +239,9 @@ Types:
 Methods:
 
 - <code title="post /x/tweets">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">create</a>({ ...params }) -> TweetCreateResponse</code>
-- <code title="get /x/tweets/{tweetId}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">retrieve</a>(tweetID) -> TweetRetrieveResponse</code>
-- <code title="get /x/tweets">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">list</a>({ ...params }) -> void</code>
-- <code title="delete /x/tweets/{tweetId}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">delete</a>(tweetID, { ...params }) -> TweetDeleteResponse</code>
+- <code title="get /x/tweets/{id}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">retrieve</a>(id) -> TweetRetrieveResponse</code>
+- <code title="get /x/tweets">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">list</a>({ ...params }) -> PaginatedTweets</code>
+- <code title="delete /x/tweets/{id}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">delete</a>(id, { ...params }) -> TweetDeleteResponse</code>
 - <code title="get /x/tweets/{id}/favoriters">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getFavoriters</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/tweets/{id}/quotes">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getQuotes</a>(id, { ...params }) -> PaginatedTweets</code>
 - <code title="get /x/tweets/{id}/replies">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getReplies</a>(id, { ...params }) -> PaginatedTweets</code>
@@ -257,8 +258,8 @@ Types:
 
 Methods:
 
-- <code title="post /x/tweets/{tweetId}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">create</a>(tweetID, { ...params }) -> LikeCreateResponse</code>
-- <code title="delete /x/tweets/{tweetId}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">delete</a>(tweetID, { ...params }) -> LikeDeleteResponse</code>
+- <code title="post /x/tweets/{id}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">create</a>(id, { ...params }) -> LikeCreateResponse</code>
+- <code title="delete /x/tweets/{id}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">delete</a>(id, { ...params }) -> LikeDeleteResponse</code>
 
 ### Retweet
 
@@ -269,8 +270,8 @@ Types:
 
 Methods:
 
-- <code title="post /x/tweets/{tweetId}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">create</a>(tweetID, { ...params }) -> RetweetCreateResponse</code>
-- <code title="delete /x/tweets/{tweetId}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">delete</a>(tweetID, { ...params }) -> RetweetDeleteResponse</code>
+- <code title="post /x/tweets/{id}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">create</a>(id, { ...params }) -> RetweetCreateResponse</code>
+- <code title="delete /x/tweets/{id}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">delete</a>(id, { ...params }) -> RetweetDeleteResponse</code>
 
 ## Users
 
@@ -280,17 +281,17 @@ Types:
 
 Methods:
 
-- <code title="get /x/users/{username}">client.x.users.<a href="./src/resources/x/users/users.ts">retrieve</a>(username) -> UserProfile</code>
-- <code title="get /x/users/batch">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveBatch</a>({ ...params }) -> void</code>
-- <code title="get /x/users/{id}/followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowers</a>(id, { ...params }) -> void</code>
+- <code title="get /x/users/{id}">client.x.users.<a href="./src/resources/x/users/users.ts">retrieve</a>(id) -> UserProfile</code>
+- <code title="get /x/users/batch">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveBatch</a>({ ...params }) -> PaginatedUsers</code>
+- <code title="get /x/users/{id}/followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowers</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/users/{id}/followers-you-know">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowersYouKnow</a>(id, { ...params }) -> PaginatedUsers</code>
-- <code title="get /x/users/{id}/following">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowing</a>(id, { ...params }) -> void</code>
+- <code title="get /x/users/{id}/following">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowing</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/users/{id}/likes">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveLikes</a>(id, { ...params }) -> PaginatedTweets</code>
 - <code title="get /x/users/{id}/media">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveMedia</a>(id, { ...params }) -> PaginatedTweets</code>
-- <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveMentions</a>(id, { ...params }) -> void</code>
-- <code title="get /x/users/search">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSearch</a>({ ...params }) -> void</code>
+- <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveMentions</a>(id, { ...params }) -> PaginatedTweets</code>
+- <code title="get /x/users/search">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSearch</a>({ ...params }) -> PaginatedUsers</code>
 - <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveTweets</a>(id, { ...params }) -> PaginatedTweets</code>
-- <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveVerifiedFollowers</a>(id, { ...params }) -> void</code>
+- <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveVerifiedFollowers</a>(id, { ...params }) -> PaginatedUsers</code>
 
 ### Follow
 
@@ -301,8 +302,8 @@ Types:
 
 Methods:
 
-- <code title="post /x/users/{userId}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">create</a>(userID, { ...params }) -> FollowCreateResponse</code>
-- <code title="delete /x/users/{userId}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">deleteAll</a>(userID, { ...params }) -> FollowDeleteAllResponse</code>
+- <code title="post /x/users/{id}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">create</a>(id, { ...params }) -> FollowCreateResponse</code>
+- <code title="delete /x/users/{id}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">deleteAll</a>(id, { ...params }) -> FollowDeleteAllResponse</code>
 
 ## Followers
 
@@ -366,9 +367,9 @@ Methods:
 - <code title="post /x/communities">client.x.communities.<a href="./src/resources/x/communities/communities.ts">create</a>({ ...params }) -> CommunityCreateResponse</code>
 - <code title="delete /x/communities/{id}">client.x.communities.<a href="./src/resources/x/communities/communities.ts">delete</a>(id, { ...params }) -> CommunityDeleteResponse</code>
 - <code title="get /x/communities/{id}/info">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveInfo</a>(id) -> CommunityRetrieveInfoResponse</code>
-- <code title="get /x/communities/{id}/members">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveMembers</a>(id, { ...params }) -> void</code>
-- <code title="get /x/communities/{id}/moderators">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveModerators</a>(id, { ...params }) -> void</code>
-- <code title="get /x/communities/search">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveSearch</a>({ ...params }) -> void</code>
+- <code title="get /x/communities/{id}/members">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveMembers</a>(id, { ...params }) -> PaginatedUsers</code>
+- <code title="get /x/communities/{id}/moderators">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveModerators</a>(id, { ...params }) -> PaginatedUsers</code>
+- <code title="get /x/communities/search">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveSearch</a>({ ...params }) -> PaginatedTweets</code>
 
 ### Join
 
@@ -381,7 +382,8 @@ Methods:
 
 Methods:
 
-- <code title="get /x/communities/tweets">client.x.communities.tweets.<a href="./src/resources/x/communities/tweets.ts">list</a>({ ...params }) -> void</code>
+- <code title="get /x/communities/tweets">client.x.communities.tweets.<a href="./src/resources/x/communities/tweets.ts">list</a>({ ...params }) -> PaginatedTweets</code>
+- <code title="get /x/communities/{id}/tweets">client.x.communities.tweets.<a href="./src/resources/x/communities/tweets.ts">listByCommunity</a>(id, { ...params }) -> PaginatedTweets</code>
 
 ## Accounts
 
@@ -392,6 +394,7 @@ Types:
 - <code><a href="./src/resources/x/accounts.ts">AccountCreateResponse</a></code>
 - <code><a href="./src/resources/x/accounts.ts">AccountListResponse</a></code>
 - <code><a href="./src/resources/x/accounts.ts">AccountDeleteResponse</a></code>
+- <code><a href="./src/resources/x/accounts.ts">AccountBulkRetryResponse</a></code>
 - <code><a href="./src/resources/x/accounts.ts">AccountReauthResponse</a></code>
 
 Methods:
@@ -400,6 +403,7 @@ Methods:
 - <code title="get /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">retrieve</a>(id) -> XAccountDetail</code>
 - <code title="get /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">list</a>() -> AccountListResponse</code>
 - <code title="delete /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">delete</a>(id) -> AccountDeleteResponse</code>
+- <code title="post /x/accounts/bulk-retry">client.x.accounts.<a href="./src/resources/x/accounts.ts">bulkRetry</a>() -> AccountBulkRetryResponse</code>
 - <code title="post /x/accounts/{id}/reauth">client.x.accounts.<a href="./src/resources/x/accounts.ts">reauth</a>(id, { ...params }) -> AccountReauthResponse</code>
 
 ## Bookmarks
@@ -417,9 +421,9 @@ Methods:
 
 Methods:
 
-- <code title="get /x/lists/{id}/followers">client.x.lists.<a href="./src/resources/x/lists.ts">retrieveFollowers</a>(id, { ...params }) -> void</code>
-- <code title="get /x/lists/{id}/members">client.x.lists.<a href="./src/resources/x/lists.ts">retrieveMembers</a>(id, { ...params }) -> void</code>
-- <code title="get /x/lists/{id}/tweets">client.x.lists.<a href="./src/resources/x/lists.ts">retrieveTweets</a>(id, { ...params }) -> void</code>
+- <code title="get /x/lists/{id}/followers">client.x.lists.<a href="./src/resources/x/lists.ts">retrieveFollowers</a>(id, { ...params }) -> PaginatedUsers</code>
+- <code title="get /x/lists/{id}/members">client.x.lists.<a href="./src/resources/x/lists.ts">retrieveMembers</a>(id, { ...params }) -> PaginatedUsers</code>
+- <code title="get /x/lists/{id}/tweets">client.x.lists.<a href="./src/resources/x/lists.ts">retrieveTweets</a>(id, { ...params }) -> PaginatedTweets</code>
 
 # Trends
 

@@ -12,6 +12,14 @@ import { path } from '../internal/utils/path';
 export class Webhooks extends APIResource {
   /**
    * Create webhook
+   *
+   * @example
+   * ```ts
+   * const webhook = await client.webhooks.create({
+   *   eventTypes: ['tweet.new', 'follower.gained'],
+   *   url: 'https://example.com/webhook',
+   * });
+   * ```
    */
   create(body: WebhookCreateParams, options?: RequestOptions): APIPromise<WebhookCreateResponse> {
     return this._client.post('/webhooks', { body, ...options });
@@ -19,6 +27,14 @@ export class Webhooks extends APIResource {
 
   /**
    * Update webhook
+   *
+   * @example
+   * ```ts
+   * const webhook = await client.webhooks.update('id', {
+   *   isActive: true,
+   *   url: 'https://example.com/webhook',
+   * });
+   * ```
    */
   update(id: string, body: WebhookUpdateParams, options?: RequestOptions): APIPromise<Webhook> {
     return this._client.patch(path`/webhooks/${id}`, { body, ...options });
@@ -26,6 +42,11 @@ export class Webhooks extends APIResource {
 
   /**
    * List webhooks
+   *
+   * @example
+   * ```ts
+   * const webhooks = await client.webhooks.list();
+   * ```
    */
   list(options?: RequestOptions): APIPromise<WebhookListResponse> {
     return this._client.get('/webhooks', options);
@@ -33,6 +54,11 @@ export class Webhooks extends APIResource {
 
   /**
    * Deactivate webhook
+   *
+   * @example
+   * ```ts
+   * const response = await client.webhooks.deactivate('id');
+   * ```
    */
   deactivate(id: string, options?: RequestOptions): APIPromise<WebhookDeactivateResponse> {
     return this._client.delete(path`/webhooks/${id}`, options);
@@ -40,6 +66,11 @@ export class Webhooks extends APIResource {
 
   /**
    * List webhook deliveries
+   *
+   * @example
+   * ```ts
+   * const response = await client.webhooks.listDeliveries('id');
+   * ```
    */
   listDeliveries(id: string, options?: RequestOptions): APIPromise<WebhookListDeliveriesResponse> {
     return this._client.get(path`/webhooks/${id}/deliveries`, options);
@@ -47,12 +78,20 @@ export class Webhooks extends APIResource {
 
   /**
    * Test webhook endpoint
+   *
+   * @example
+   * ```ts
+   * const response = await client.webhooks.test('id');
+   * ```
    */
   test(id: string, options?: RequestOptions): APIPromise<WebhookTestResponse> {
     return this._client.post(path`/webhooks/${id}/test`, options);
   }
 }
 
+/**
+ * Webhook delivery attempt record with status and retry count.
+ */
 export interface Delivery {
   id: string;
 
@@ -71,11 +110,17 @@ export interface Delivery {
   lastStatusCode?: number;
 }
 
+/**
+ * Webhook endpoint registered to receive event deliveries.
+ */
 export interface Webhook {
   id: string;
 
   createdAt: string;
 
+  /**
+   * Array of event types to subscribe to.
+   */
   eventTypes: Array<Shared.EventType>;
 
   isActive: boolean;
@@ -88,6 +133,9 @@ export interface WebhookCreateResponse {
 
   createdAt: string;
 
+  /**
+   * Array of event types to subscribe to.
+   */
   eventTypes: Array<Shared.EventType>;
 
   secret: string;
@@ -116,6 +164,9 @@ export interface WebhookTestResponse {
 }
 
 export interface WebhookCreateParams {
+  /**
+   * Array of event types to subscribe to.
+   */
   eventTypes: Array<Shared.EventType>;
 
   /**
@@ -125,6 +176,9 @@ export interface WebhookCreateParams {
 }
 
 export interface WebhookUpdateParams {
+  /**
+   * Array of event types to subscribe to.
+   */
   eventTypes?: Array<Shared.EventType>;
 
   isActive?: boolean;

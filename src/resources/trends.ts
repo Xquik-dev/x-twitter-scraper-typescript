@@ -9,7 +9,7 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Trends extends APIResource {
   /**
-   * Get trending topics
+   * Get regional trending topics
    */
   list(
     query: TrendListParams | null | undefined = {},
@@ -40,6 +40,9 @@ export namespace TrendListResponse {
 }
 
 export interface TrendListParams {
+  /**
+   * Number of trending topics to return (1-50, default 30)
+   */
   count?: number;
 
   /**

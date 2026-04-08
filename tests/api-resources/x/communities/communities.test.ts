@@ -11,7 +11,7 @@ const client = new XTwitterScraper({
 describe('resource communities', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.x.communities.create({ account: 'account', name: 'name' });
+    const responsePromise = client.x.communities.create({ account: '@elonmusk', name: 'Example Name' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -24,17 +24,17 @@ describe('resource communities', () => {
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.x.communities.create({
-      account: 'account',
-      name: 'name',
-      description: 'description',
+      account: '@elonmusk',
+      name: 'Example Name',
+      description: 'A community for Tesla enthusiasts',
     });
   });
 
   // Mock server tests are disabled
   test.skip('delete: only required params', async () => {
     const responsePromise = client.x.communities.delete('id', {
-      account: 'account',
-      community_name: 'community_name',
+      account: '@elonmusk',
+      community_name: 'Tesla Fans',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -48,8 +48,8 @@ describe('resource communities', () => {
   // Mock server tests are disabled
   test.skip('delete: required and optional params', async () => {
     const response = await client.x.communities.delete('id', {
-      account: 'account',
-      community_name: 'community_name',
+      account: '@elonmusk',
+      community_name: 'Tesla Fans',
     });
   });
 

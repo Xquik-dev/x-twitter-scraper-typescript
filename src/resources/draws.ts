@@ -12,6 +12,11 @@ import { path } from '../internal/utils/path';
 export class Draws extends APIResource {
   /**
    * Get draw details
+   *
+   * @example
+   * ```ts
+   * const draw = await client.draws.retrieve('id');
+   * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<DrawRetrieveResponse> {
     return this._client.get(path`/draws/${id}`, options);
@@ -19,6 +24,11 @@ export class Draws extends APIResource {
 
   /**
    * List draws
+   *
+   * @example
+   * ```ts
+   * const draws = await client.draws.list();
+   * ```
    */
   list(
     query: DrawListParams | null | undefined = {},
@@ -29,6 +39,14 @@ export class Draws extends APIResource {
 
   /**
    * Export draw data
+   *
+   * @example
+   * ```ts
+   * const response = await client.draws.export('id');
+   *
+   * const content = await response.blob();
+   * console.log(content);
+   * ```
    */
   export(
     id: string,
@@ -45,12 +63,24 @@ export class Draws extends APIResource {
 
   /**
    * Run giveaway draw
+   *
+   * @example
+   * ```ts
+   * const response = await client.draws.run({
+   *   tweetUrl: 'https://x.com/elonmusk/status/1234567890',
+   *   mustRetweet: true,
+   *   winnerCount: 3,
+   * });
+   * ```
    */
   run(body: DrawRunParams, options?: RequestOptions): APIPromise<DrawRunResponse> {
     return this._client.post('/draws', { body, ...options });
   }
 }
 
+/**
+ * Full giveaway draw with tweet metrics, entries, and timing.
+ */
 export interface DrawDetail {
   id: string;
 
@@ -81,6 +111,9 @@ export interface DrawDetail {
   drawnAt?: string;
 }
 
+/**
+ * Giveaway draw summary with entry counts and status.
+ */
 export interface DrawListItem {
   id: string;
 
@@ -97,6 +130,9 @@ export interface DrawListItem {
   drawnAt?: string;
 }
 
+/**
+ * Giveaway draw winner with position and backup flag.
+ */
 export interface Winner {
   authorUsername: string;
 
@@ -108,6 +144,9 @@ export interface Winner {
 }
 
 export interface DrawRetrieveResponse {
+  /**
+   * Full giveaway draw with tweet metrics, entries, and timing.
+   */
   draw: DrawDetail;
 
   winners: Array<Winner>;
@@ -135,14 +174,20 @@ export interface DrawRunResponse {
 
 export interface DrawListParams {
   /**
-   * Cursor for pagination
+   * Cursor for keyset pagination
    */
   after?: string;
 
+  /**
+   * Maximum number of items to return (1-100, default 50)
+   */
   limit?: number;
 }
 
 export interface DrawExportParams {
+  /**
+   * Export output format
+   */
   format?: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
 
   /**

@@ -31,7 +31,7 @@ describe('resource radar', () => {
           count: 0,
           hours: 0,
           region: 'region',
-          source: 'source',
+          source: 'github',
         },
         { path: '/_stainless_unknown_path' },
       ),

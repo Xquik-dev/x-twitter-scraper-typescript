@@ -13,4 +13,4 @@ export {
   type CommunityRetrieveSearchParams,
 } from './communities';
 export { Join, type JoinCreateParams, type JoinDeleteAllParams } from './join';
-export { Tweets, type TweetListParams } from './tweets';
+export { Tweets, type TweetListParams, type TweetListByCommunityParams } from './tweets';

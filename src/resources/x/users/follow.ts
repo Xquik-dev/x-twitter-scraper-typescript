@@ -11,24 +11,35 @@ import { path } from '../../../internal/utils/path';
 export class Follow extends APIResource {
   /**
    * Follow user
+   *
+   * @example
+   * ```ts
+   * const follow = await client.x.users.follow.create('id', {
+   *   account: '@elonmusk',
+   * });
+   * ```
    */
-  create(
-    userID: string,
-    body: FollowCreateParams,
-    options?: RequestOptions,
-  ): APIPromise<FollowCreateResponse> {
-    return this._client.post(path`/x/users/${userID}/follow`, { body, ...options });
+  create(id: string, body: FollowCreateParams, options?: RequestOptions): APIPromise<FollowCreateResponse> {
+    return this._client.post(path`/x/users/${id}/follow`, { body, ...options });
   }
 
   /**
    * Unfollow user
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.users.follow.deleteAll(
+   *   'id',
+   *   { account: '@elonmusk' },
+   * );
+   * ```
    */
   deleteAll(
-    userID: string,
+    id: string,
     body: FollowDeleteAllParams,
     options?: RequestOptions,
   ): APIPromise<FollowDeleteAllResponse> {
-    return this._client.delete(path`/x/users/${userID}/follow`, { body, ...options });
+    return this._client.delete(path`/x/users/${id}/follow`, { body, ...options });
   }
 }
 
@@ -42,14 +53,14 @@ export interface FollowDeleteAllResponse {
 
 export interface FollowCreateParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }
 
 export interface FollowDeleteAllParams {
   /**
-   * X account (@username or account ID)
+   * X account identifier (@username or account ID)
    */
   account: string;
 }

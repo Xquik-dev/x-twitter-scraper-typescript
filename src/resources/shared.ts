@@ -3,6 +3,9 @@
 import * as TweetsAPI from './x/tweets/tweets';
 import * as UsersAPI from './x/users/users';
 
+/**
+ * Error response containing a machine-readable error code.
+ */
 export interface Error {
   error:
     | 'internal_error'
@@ -32,6 +35,9 @@ export interface Error {
     | 'x_api_unauthorized';
 }
 
+/**
+ * Type of monitor event fired when account activity occurs.
+ */
 export type EventType =
   | 'tweet.new'
   | 'tweet.reply'
@@ -40,6 +46,9 @@ export type EventType =
   | 'follower.gained'
   | 'follower.lost';
 
+/**
+ * Paginated list of tweets with cursor-based navigation.
+ */
 export interface PaginatedTweets {
   has_next_page: boolean;
 
@@ -48,6 +57,9 @@ export interface PaginatedTweets {
   tweets: Array<TweetsAPI.SearchTweet>;
 }
 
+/**
+ * Paginated list of user profiles with cursor-based navigation.
+ */
 export interface PaginatedUsers {
   has_next_page: boolean;
 

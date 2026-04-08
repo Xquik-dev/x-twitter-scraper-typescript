@@ -11,7 +11,7 @@ const client = new XTwitterScraper({
 describe('resource retweet', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.x.tweets.retweet.create('tweetId', { account: 'account' });
+    const responsePromise = client.x.tweets.retweet.create('id', { account: '@elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,12 +23,12 @@ describe('resource retweet', () => {
 
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
-    const response = await client.x.tweets.retweet.create('tweetId', { account: 'account' });
+    const response = await client.x.tweets.retweet.create('id', { account: '@elonmusk' });
   });
 
   // Mock server tests are disabled
   test.skip('delete: only required params', async () => {
-    const responsePromise = client.x.tweets.retweet.delete('tweetId', { account: 'account' });
+    const responsePromise = client.x.tweets.retweet.delete('id', { account: '@elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -40,6 +40,6 @@ describe('resource retweet', () => {
 
   // Mock server tests are disabled
   test.skip('delete: required and optional params', async () => {
-    const response = await client.x.tweets.retweet.delete('tweetId', { account: 'account' });
+    const response = await client.x.tweets.retweet.delete('id', { account: '@elonmusk' });
   });
 });

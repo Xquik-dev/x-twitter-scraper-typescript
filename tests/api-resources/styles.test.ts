@@ -11,7 +11,7 @@ const client = new XTwitterScraper({
 describe('resource styles', () => {
   // Mock server tests are disabled
   test.skip('retrieve', async () => {
-    const responsePromise = client.styles.retrieve('username');
+    const responsePromise = client.styles.retrieve('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,7 +23,10 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('update: only required params', async () => {
-    const responsePromise = client.styles.update('username', { label: 'label', tweets: [{ text: 'text' }] });
+    const responsePromise = client.styles.update('id', {
+      label: 'Professional Voice',
+      tweets: [{ text: 'Excited to share our latest research findings.' }],
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -35,7 +38,10 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('update: required and optional params', async () => {
-    const response = await client.styles.update('username', { label: 'label', tweets: [{ text: 'text' }] });
+    const response = await client.styles.update('id', {
+      label: 'Professional Voice',
+      tweets: [{ text: 'Excited to share our latest research findings.' }],
+    });
   });
 
   // Mock server tests are disabled
@@ -52,7 +58,7 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('delete', async () => {
-    const responsePromise = client.styles.delete('username');
+    const responsePromise = client.styles.delete('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -64,7 +70,7 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('analyze: only required params', async () => {
-    const responsePromise = client.styles.analyze({ username: 'username' });
+    const responsePromise = client.styles.analyze({ username: 'elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -76,7 +82,7 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('analyze: required and optional params', async () => {
-    const response = await client.styles.analyze({ username: 'username' });
+    const response = await client.styles.analyze({ username: 'elonmusk' });
   });
 
   // Mock server tests are disabled
@@ -98,7 +104,7 @@ describe('resource styles', () => {
 
   // Mock server tests are disabled
   test.skip('getPerformance', async () => {
-    const responsePromise = client.styles.getPerformance('username');
+    const responsePromise = client.styles.getPerformance('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
