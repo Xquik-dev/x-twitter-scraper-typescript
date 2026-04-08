@@ -163,37 +163,6 @@ On timeout, an `APIConnectionTimeoutError` is thrown.
 
 Note that requests which time out will be [retried twice by default](#retries).
 
-## Auto-pagination
-
-List methods in the XTwitterScraper API are paginated.
-You can use the `for await … of` syntax to iterate through items across all pages:
-
-```ts
-async function fetchAllPaginatedTweets(params) {
-  const allPaginatedTweets = [];
-  // Automatically fetches more pages as needed.
-  for await (const paginatedTweets of client.x.communities.tweets.list({ q: 'q' })) {
-    allPaginatedTweets.push(paginatedTweets);
-  }
-  return allPaginatedTweets;
-}
-```
-
-Alternatively, you can request a single page at a time:
-
-```ts
-let page = await client.x.communities.tweets.list({ q: 'q' });
-for (const paginatedTweets of page.data) {
-  console.log(paginatedTweets);
-}
-
-// Convenience methods are provided for manually paginating:
-while (page.hasNextPage()) {
-  page = await page.getNextPage();
-  // ...
-}
-```
-
 ## Advanced Usage
 
 ### Accessing raw Response data (e.g., headers)

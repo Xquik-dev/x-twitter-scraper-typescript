@@ -2,9 +2,7 @@
 
 import { APIResource } from '../../core/resource';
 import * as Shared from '../shared';
-import { PaginatedTweetsCursorPage } from '../shared';
 import { APIPromise } from '../../core/api-promise';
-import { CursorPage, type CursorPageParams, PagePromise } from '../../core/pagination';
 import { RequestOptions } from '../../internal/request-options';
 
 /**
@@ -16,17 +14,14 @@ export class Bookmarks extends APIResource {
    *
    * @example
    * ```ts
-   * // Automatically fetches more pages as needed.
-   * for await (const paginatedTweets of client.x.bookmarks.list()) {
-   *   // ...
-   * }
+   * const paginatedTweets = await client.x.bookmarks.list();
    * ```
    */
   list(
     query: BookmarkListParams | null | undefined = {},
     options?: RequestOptions,
-  ): PagePromise<PaginatedTweetsCursorPage, Shared.PaginatedTweets> {
-    return this._client.getAPIList('/x/bookmarks', CursorPage<Shared.PaginatedTweets>, { query, ...options });
+  ): APIPromise<Shared.PaginatedTweets> {
+    return this._client.get('/x/bookmarks', { query, ...options });
   }
 
   /**
@@ -58,7 +53,12 @@ export namespace BookmarkRetrieveFoldersResponse {
   }
 }
 
-export interface BookmarkListParams extends CursorPageParams {
+export interface BookmarkListParams {
+  /**
+   * Pagination cursor for bookmarks
+   */
+  cursor?: string;
+
   /**
    * Optional bookmark folder ID
    */
@@ -71,5 +71,3 @@ export declare namespace Bookmarks {
     type BookmarkListParams as BookmarkListParams,
   };
 }
-
-export { type PaginatedTweetsCursorPage };
