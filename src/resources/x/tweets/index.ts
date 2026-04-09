@@ -16,7 +16,6 @@ export {
 } from './retweet';
 export {
   Tweets,
-  type SearchTweet,
   type TweetAuthor,
   type TweetDetail,
   type TweetCreateResponse,

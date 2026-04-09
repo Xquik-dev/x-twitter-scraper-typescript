@@ -6,6 +6,8 @@ Types:
 - <code><a href="./src/resources/shared.ts">EventType</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedTweets</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedUsers</a></code>
+- <code><a href="./src/resources/shared.ts">SearchTweet</a></code>
+- <code><a href="./src/resources/shared.ts">UserProfile</a></code>
 
 # Account
 
@@ -229,7 +231,6 @@ Methods:
 
 Types:
 
-- <code><a href="./src/resources/x/tweets/tweets.ts">SearchTweet</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetAuthor</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetDetail</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetCreateResponse</a></code>
@@ -274,10 +275,6 @@ Methods:
 - <code title="delete /x/tweets/{id}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">delete</a>(id, { ...params }) -> RetweetDeleteResponse</code>
 
 ## Users
-
-Types:
-
-- <code><a href="./src/resources/x/users/users.ts">UserProfile</a></code>
 
 Methods:
 

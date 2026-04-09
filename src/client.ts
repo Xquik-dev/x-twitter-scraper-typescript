@@ -1122,4 +1122,6 @@ export declare namespace XTwitterScraper {
   export type EventType = API.EventType;
   export type PaginatedTweets = API.PaginatedTweets;
   export type PaginatedUsers = API.PaginatedUsers;
+  export type SearchTweet = API.SearchTweet;
+  export type UserProfile = API.UserProfile;
 }

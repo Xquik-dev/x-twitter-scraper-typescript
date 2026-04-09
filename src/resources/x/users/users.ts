@@ -28,7 +28,7 @@ export class Users extends APIResource {
    * const userProfile = await client.x.users.retrieve('id');
    * ```
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<UserProfile> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<Shared.UserProfile> {
     return this._client.get(path`/x/users/${id}`, options);
   }
 
@@ -203,33 +203,6 @@ export class Users extends APIResource {
   }
 }
 
-/**
- * X user profile with bio, follower counts, and verification status.
- */
-export interface UserProfile {
-  id: string;
-
-  name: string;
-
-  username: string;
-
-  createdAt?: string;
-
-  description?: string;
-
-  followers?: number;
-
-  following?: number;
-
-  location?: string;
-
-  profilePicture?: string;
-
-  statusesCount?: number;
-
-  verified?: boolean;
-}
-
 export interface UserRetrieveBatchParams {
   /**
    * Comma-separated user IDs (max 100)
@@ -339,7 +312,6 @@ Users.Follow = Follow;
 
 export declare namespace Users {
   export {
-    type UserProfile as UserProfile,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,

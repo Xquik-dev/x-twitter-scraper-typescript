@@ -61,7 +61,6 @@ import {
 } from './communities/communities';
 import * as TweetsAPI from './tweets/tweets';
 import {
-  SearchTweet,
   TweetAuthor,
   TweetCreateParams,
   TweetCreateResponse,
@@ -80,7 +79,6 @@ import {
 } from './tweets/tweets';
 import * as UsersAPI from './users/users';
 import {
-  UserProfile,
   UserRetrieveBatchParams,
   UserRetrieveFollowersParams,
   UserRetrieveFollowersYouKnowParams,
@@ -305,7 +303,6 @@ export declare namespace X {
 
   export {
     Tweets as Tweets,
-    type SearchTweet as SearchTweet,
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
@@ -324,7 +321,6 @@ export declare namespace X {
 
   export {
     Users as Users,
-    type UserProfile as UserProfile,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,

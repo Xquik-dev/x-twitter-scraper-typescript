@@ -181,48 +181,6 @@ export class Tweets extends APIResource {
 }
 
 /**
- * Tweet returned from search results with inline author info.
- */
-export interface SearchTweet {
-  id: string;
-
-  text: string;
-
-  author?: SearchTweet.Author;
-
-  bookmarkCount?: number;
-
-  createdAt?: string;
-
-  /**
-   * True for Note Tweets (long-form content, up to 25,000 characters)
-   */
-  isNoteTweet?: boolean;
-
-  likeCount?: number;
-
-  quoteCount?: number;
-
-  replyCount?: number;
-
-  retweetCount?: number;
-
-  viewCount?: number;
-}
-
-export namespace SearchTweet {
-  export interface Author {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    verified?: boolean;
-  }
-}
-
-/**
  * Author of a tweet with follower count and verification status.
  */
 export interface TweetAuthor {
@@ -462,7 +420,6 @@ Tweets.Retweet = Retweet;
 
 export declare namespace Tweets {
   export {
-    type SearchTweet as SearchTweet,
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
