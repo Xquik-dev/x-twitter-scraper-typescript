@@ -225,7 +225,7 @@ Methods:
 - <code title="get /x/articles/{tweetId}">client.x.<a href="./src/resources/x/x.ts">getArticle</a>(tweetID) -> XGetArticleResponse</code>
 - <code title="get /x/timeline">client.x.<a href="./src/resources/x/x.ts">getHomeTimeline</a>({ ...params }) -> PaginatedTweets</code>
 - <code title="get /x/notifications">client.x.<a href="./src/resources/x/x.ts">getNotifications</a>({ ...params }) -> XGetNotificationsResponse</code>
-- <code title="get /x/trends">client.x.<a href="./src/resources/x/x.ts">getTrends</a>() -> XGetTrendsResponse</code>
+- <code title="get /x/trends">client.x.<a href="./src/resources/x/x.ts">getTrends</a>({ ...params }) -> XGetTrendsResponse</code>
 
 ## Tweets
 

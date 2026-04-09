@@ -134,6 +134,7 @@ import {
   XGetHomeTimelineParams,
   XGetNotificationsParams,
   XGetNotificationsResponse,
+  XGetTrendsParams,
   XGetTrendsResponse,
 } from './resources/x/x';
 import { type Fetch } from './internal/builtin-types';
@@ -346,14 +347,8 @@ export class XTwitterScraper {
     );
   }
 
-  protected async authHeaders(
-    opts: FinalRequestOptions,
-    schemes: { apiKeyAuth?: boolean; oauthBearerAuth?: boolean },
-  ): Promise<NullableHeaders | undefined> {
-    return buildHeaders([
-      schemes.apiKeyAuth ? await this.apiKeyAuth(opts) : null,
-      schemes.oauthBearerAuth ? await this.oauthBearerAuth(opts) : null,
-    ]);
+  protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    return buildHeaders([await this.apiKeyAuth(opts), await this.oauthBearerAuth(opts)]);
   }
 
   protected async apiKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
@@ -796,7 +791,7 @@ export class XTwitterScraper {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
-      await this.authHeaders(options, options.__security ?? { apiKeyAuth: true, oauthBearerAuth: true }),
+      await this.authHeaders(options),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
@@ -1099,6 +1094,7 @@ export declare namespace XTwitterScraper {
     type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
+    type XGetTrendsParams as XGetTrendsParams,
   };
 
   export {

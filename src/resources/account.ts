@@ -17,7 +17,7 @@ export class Account extends APIResource {
    * ```
    */
   retrieve(options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
-    return this._client.get('/account', { ...options, __security: { apiKeyAuth: true } });
+    return this._client.get('/account', options);
   }
 
   /**
@@ -51,7 +51,7 @@ export class Account extends APIResource {
     body: AccountUpdateLocaleParams,
     options?: RequestOptions,
   ): APIPromise<AccountUpdateLocaleResponse> {
-    return this._client.patch('/account', { body, ...options, __security: { apiKeyAuth: true } });
+    return this._client.patch('/account', { body, ...options });
   }
 }
 

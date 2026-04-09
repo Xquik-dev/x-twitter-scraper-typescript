@@ -160,8 +160,11 @@ export class X extends APIResource {
    * const response = await client.x.getTrends();
    * ```
    */
-  getTrends(options?: RequestOptions): APIPromise<XGetTrendsResponse> {
-    return this._client.get('/x/trends', options);
+  getTrends(
+    query: XGetTrendsParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<XGetTrendsResponse> {
+    return this._client.get('/x/trends', { query, ...options });
   }
 }
 
@@ -281,6 +284,18 @@ export interface XGetNotificationsParams {
   type?: 'All' | 'Verified' | 'Mentions';
 }
 
+export interface XGetTrendsParams {
+  /**
+   * Number of trending topics to return (1-50, default 30)
+   */
+  count?: number;
+
+  /**
+   * Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+   */
+  woeid?: number;
+}
+
 X.Tweets = Tweets;
 X.Users = Users;
 X.Followers = Followers;
@@ -299,6 +314,7 @@ export declare namespace X {
     type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
+    type XGetTrendsParams as XGetTrendsParams,
   };
 
   export {

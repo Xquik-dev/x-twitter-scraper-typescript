@@ -92,4 +92,5 @@ export {
   type XGetTrendsResponse,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,
+  type XGetTrendsParams,
 } from './x';
