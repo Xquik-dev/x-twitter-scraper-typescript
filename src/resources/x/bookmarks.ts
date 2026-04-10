@@ -6,7 +6,7 @@ import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 
 /**
- * X data lookups (subscription required)
+ * Look up, search, and analyze individual tweets
  */
 export class Bookmarks extends APIResource {
   /**

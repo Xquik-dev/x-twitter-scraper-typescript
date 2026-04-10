@@ -5,7 +5,7 @@ import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
 /**
- * Account info & settings
+ * Account info and settings
  */
 export class Account extends APIResource {
   /**

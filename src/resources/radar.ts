@@ -5,7 +5,7 @@ import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
 /**
- * Tweet composition, drafts, writing styles & radar
+ * AI tweet composition, drafts, writing styles, and radar
  */
 export class Radar extends APIResource {
   /**

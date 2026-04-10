@@ -15,13 +15,13 @@ import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 /**
- * X data lookups (subscription required)
+ * Look up, search, and explore user profiles and relationships
  */
 export class Users extends APIResource {
   follow: FollowAPI.Follow = new FollowAPI.Follow(this._client);
 
   /**
-   * Look up X user
+   * Get user profile with follower counts & verification
    *
    * @example
    * ```ts
@@ -33,7 +33,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get multiple users by IDs
+   * Look up multiple users by IDs in one call
    *
    * @example
    * ```ts
@@ -47,7 +47,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get user followers
+   * List followers of a user
    *
    * @example
    * ```ts
@@ -64,7 +64,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get followers you know for a user
+   * List mutual followers between you and a user
    *
    * @example
    * ```ts
@@ -81,7 +81,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get users this user follows
+   * List accounts a user follows
    *
    * @example
    * ```ts
@@ -98,7 +98,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get tweets liked by a user
+   * List tweets liked by a user
    *
    * @example
    * ```ts
@@ -116,7 +116,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get media tweets by a user
+   * List media tweets posted by a user
    *
    * @example
    * ```ts
@@ -134,7 +134,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get tweets mentioning a user
+   * List tweets mentioning a user
    *
    * @example
    * ```ts
@@ -168,7 +168,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get recent tweets by a user
+   * List recent tweets posted by a user
    *
    * @example
    * ```ts
@@ -186,7 +186,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get verified followers
+   * List verified followers of a user
    *
    * @example
    * ```ts

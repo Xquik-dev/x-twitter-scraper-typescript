@@ -7,11 +7,11 @@ import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 /**
- * X data lookups (subscription required)
+ * X List followers, members, and tweets
  */
 export class Lists extends APIResource {
   /**
-   * Get list followers
+   * List followers of an X List
    *
    * @example
    * ```ts
@@ -28,7 +28,7 @@ export class Lists extends APIResource {
   }
 
   /**
-   * Get list members
+   * List members of an X List
    *
    * @example
    * ```ts
@@ -46,7 +46,7 @@ export class Lists extends APIResource {
   }
 
   /**
-   * Get list tweets
+   * List tweets from an X List
    *
    * @example
    * ```ts

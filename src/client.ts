@@ -873,7 +873,7 @@ export class XTwitterScraper {
   static toFile = Uploads.toFile;
 
   /**
-   * Account info & settings
+   * Account info and settings
    */
   account: API.Account = new API.Account(this);
   /**
@@ -881,23 +881,23 @@ export class XTwitterScraper {
    */
   apiKeys: API.APIKeys = new API.APIKeys(this);
   /**
-   * Subscription & billing
+   * Subscription, billing, and credits
    */
   subscribe: API.Subscribe = new API.Subscribe(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   compose: API.Compose = new API.Compose(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   drafts: API.Drafts = new API.Drafts(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   styles: API.Styles = new API.Styles(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   radar: API.Radar = new API.Radar(this);
   /**
@@ -917,25 +917,22 @@ export class XTwitterScraper {
    */
   draws: API.Draws = new API.Draws(this);
   /**
-   * Webhook endpoint management & delivery
+   * Webhook endpoint management and delivery
    */
   webhooks: API.Webhooks = new API.Webhooks(this);
   /**
    * Push notification integrations (Telegram)
    */
   integrations: API.Integrations = new API.Integrations(this);
-  /**
-   * X data lookups (subscription required)
-   */
   x: API.X = new API.X(this);
   /**
-   * Trending topics by region
+   * Trending topics and hashtags by region
    */
   trends: API.Trends = new API.Trends(this);
   bot: API.Bot = new API.Bot(this);
   support: API.Support = new API.Support(this);
   /**
-   * Subscription & billing
+   * Subscription, billing, and credits
    */
   credits: API.Credits = new API.Credits(this);
 }

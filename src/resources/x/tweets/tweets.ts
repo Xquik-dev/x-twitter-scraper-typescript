@@ -36,7 +36,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Look up tweet
+   * Get tweet with full text, author, metrics & media
    *
    * @example
    * ```ts
@@ -76,7 +76,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get users who liked a tweet
+   * List users who liked a tweet
    *
    * @example
    * ```ts
@@ -94,7 +94,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get quote tweets of a tweet
+   * List quote tweets of a tweet
    *
    * @example
    * ```ts
@@ -112,7 +112,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get replies to a tweet
+   * List replies to a tweet
    *
    * @example
    * ```ts
@@ -130,7 +130,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get users who retweeted a tweet
+   * List users who retweeted a tweet
    *
    * @example
    * ```ts
@@ -148,7 +148,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get thread context for a tweet
+   * Get full conversation thread for a tweet
    *
    * @example
    * ```ts
@@ -166,7 +166,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Search tweets
+   * Search tweets with X query operators & pagination
    *
    * @example
    * ```ts

@@ -95,9 +95,6 @@ import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
-/**
- * X data lookups (subscription required)
- */
 export class X extends APIResource {
   tweets: TweetsAPI.Tweets = new TweetsAPI.Tweets(this._client);
   users: UsersAPI.Users = new UsersAPI.Users(this._client);
@@ -153,7 +150,7 @@ export class X extends APIResource {
   }
 
   /**
-   * Get trending topics
+   * Get trending hashtags & topics from X by region
    *
    * @example
    * ```ts

@@ -7,7 +7,7 @@ import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
 
 /**
- * Webhook endpoint management & delivery
+ * Webhook endpoint management and delivery
  */
 export class Webhooks extends APIResource {
   /**
