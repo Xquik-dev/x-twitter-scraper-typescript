@@ -21,7 +21,7 @@ export class Users extends APIResource {
   follow: FollowAPI.Follow = new FollowAPI.Follow(this._client);
 
   /**
-   * Get user profile with follower counts & verification
+   * Get user profile with follower counts and verification
    *
    * @example
    * ```ts
