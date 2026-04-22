@@ -4,7 +4,6 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
-  bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
@@ -27,9 +26,10 @@ describe('resource radar', () => {
     await expect(
       client.radar.retrieveTrendingTopics(
         {
-          category: 'category',
-          count: 0,
-          hours: 0,
+          after: 'after',
+          category: 'general',
+          hours: 1,
+          limit: 1,
           region: 'region',
           source: 'github',
         },

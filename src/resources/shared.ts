@@ -1,8 +1,5 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import * as TweetsAPI from './x/tweets/tweets';
-import * as UsersAPI from './x/users/users';
-
 /**
  * Error response containing a machine-readable error code.
  */
@@ -17,17 +14,17 @@ export interface Error {
     | 'invalid_tweet_id'
     | 'invalid_tweet_url'
     | 'invalid_username'
+    | 'insufficient_credits'
     | 'missing_params'
     | 'missing_query'
     | 'monitor_already_exists'
     | 'monitor_limit_reached'
+    | 'no_credits'
     | 'no_subscription'
     | 'not_found'
-    | 'stream_registration_failed'
     | 'subscription_inactive'
     | 'tweet_not_found'
     | 'unauthenticated'
-    | 'usage_limit_reached'
     | 'user_not_found'
     | 'webhook_inactive'
     | 'x_api_rate_limited'
@@ -38,13 +35,7 @@ export interface Error {
 /**
  * Type of monitor event fired when account activity occurs.
  */
-export type EventType =
-  | 'tweet.new'
-  | 'tweet.reply'
-  | 'tweet.retweet'
-  | 'tweet.quote'
-  | 'follower.gained'
-  | 'follower.lost';
+export type EventType = 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote';
 
 /**
  * Paginated list of tweets with cursor-based navigation.
@@ -54,7 +45,7 @@ export interface PaginatedTweets {
 
   next_cursor: string;
 
-  tweets: Array<TweetsAPI.SearchTweet>;
+  tweets: Array<SearchTweet>;
 }
 
 /**
@@ -65,5 +56,74 @@ export interface PaginatedUsers {
 
   next_cursor: string;
 
-  users: Array<UsersAPI.UserProfile>;
+  users: Array<UserProfile>;
+}
+
+/**
+ * Tweet returned from search results with inline author info.
+ */
+export interface SearchTweet {
+  id: string;
+
+  text: string;
+
+  author?: SearchTweet.Author;
+
+  bookmarkCount?: number;
+
+  createdAt?: string;
+
+  /**
+   * True for Note Tweets (long-form content, up to 25,000 characters)
+   */
+  isNoteTweet?: boolean;
+
+  likeCount?: number;
+
+  quoteCount?: number;
+
+  replyCount?: number;
+
+  retweetCount?: number;
+
+  viewCount?: number;
+}
+
+export namespace SearchTweet {
+  export interface Author {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    verified?: boolean;
+  }
+}
+
+/**
+ * X user profile with bio, follower counts, and verification status.
+ */
+export interface UserProfile {
+  id: string;
+
+  name: string;
+
+  username: string;
+
+  createdAt?: string;
+
+  description?: string;
+
+  followers?: number;
+
+  following?: number;
+
+  location?: string;
+
+  profilePicture?: string;
+
+  statusesCount?: number;
+
+  verified?: boolean;
 }

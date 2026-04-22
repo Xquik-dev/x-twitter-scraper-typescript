@@ -9,7 +9,6 @@ export {
 } from './follow';
 export {
   Users,
-  type UserProfile,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,

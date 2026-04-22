@@ -7,7 +7,7 @@ import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
 
 /**
- * Tweet composition, drafts, writing styles & radar
+ * AI tweet composition, drafts, writing styles, and radar
  */
 export class Drafts extends APIResource {
   /**

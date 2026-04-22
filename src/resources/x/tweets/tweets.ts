@@ -36,7 +36,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Look up tweet
+   * Get tweet with full text, author, metrics & media
    *
    * @example
    * ```ts
@@ -76,7 +76,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get users who liked a tweet
+   * List users who liked a tweet
    *
    * @example
    * ```ts
@@ -94,7 +94,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get quote tweets of a tweet
+   * List quote tweets of a tweet
    *
    * @example
    * ```ts
@@ -112,7 +112,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get replies to a tweet
+   * List replies to a tweet
    *
    * @example
    * ```ts
@@ -130,7 +130,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get users who retweeted a tweet
+   * List users who retweeted a tweet
    *
    * @example
    * ```ts
@@ -148,7 +148,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get thread context for a tweet
+   * Get full conversation thread for a tweet
    *
    * @example
    * ```ts
@@ -166,7 +166,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Search tweets
+   * Search tweets with X query operators & pagination
    *
    * @example
    * ```ts
@@ -177,48 +177,6 @@ export class Tweets extends APIResource {
    */
   search(query: TweetSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/tweets/search', { query, ...options });
-  }
-}
-
-/**
- * Tweet returned from search results with inline author info.
- */
-export interface SearchTweet {
-  id: string;
-
-  text: string;
-
-  author?: SearchTweet.Author;
-
-  bookmarkCount?: number;
-
-  createdAt?: string;
-
-  /**
-   * True for Note Tweets (long-form content, up to 25,000 characters)
-   */
-  isNoteTweet?: boolean;
-
-  likeCount?: number;
-
-  quoteCount?: number;
-
-  replyCount?: number;
-
-  retweetCount?: number;
-
-  viewCount?: number;
-}
-
-export namespace SearchTweet {
-  export interface Author {
-    id: string;
-
-    name: string;
-
-    username: string;
-
-    verified?: boolean;
   }
 }
 
@@ -338,17 +296,28 @@ export interface TweetCreateParams {
    */
   account: string;
 
-  text: string;
-
   attachment_url?: string;
 
   community_id?: string;
 
   is_note_tweet?: boolean;
 
+  /**
+   * Array of media URLs to attach (mutually exclusive with media_ids)
+   */
+  media?: Array<string>;
+
+  /**
+   * Array of media IDs to attach (mutually exclusive with media)
+   */
   media_ids?: Array<string>;
 
   reply_to_tweet_id?: string;
+
+  /**
+   * Tweet text (optional when media is provided)
+   */
+  text?: string;
 }
 
 export interface TweetListParams {
@@ -462,7 +431,6 @@ Tweets.Retweet = Retweet;
 
 export declare namespace Tweets {
   export {
-    type SearchTweet as SearchTweet,
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,

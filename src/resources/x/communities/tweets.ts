@@ -7,11 +7,11 @@ import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 /**
- * X data lookups (subscription required)
+ * X Community info, members, and tweets
  */
 export class Tweets extends APIResource {
   /**
-   * Search tweets across all communities
+   * List tweets across all communities
    *
    * @example
    * ```ts
@@ -24,7 +24,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get community tweets
+   * List tweets posted in a community
    *
    * @example
    * ```ts

@@ -4,17 +4,13 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
-  bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
 describe('resource tweets', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.x.tweets.create({
-      account: '@elonmusk',
-      text: 'Just launched our new feature!',
-    });
+    const responsePromise = client.x.tweets.create({ account: '@elonmusk' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -28,12 +24,13 @@ describe('resource tweets', () => {
   test.skip('create: required and optional params', async () => {
     const response = await client.x.tweets.create({
       account: '@elonmusk',
-      text: 'Just launched our new feature!',
       attachment_url: 'https://x.com/elonmusk/status/1234567890',
       community_id: '1500000000000000000',
       is_note_tweet: false,
+      media: ['https://example.com/image.jpg'],
       media_ids: ['1234567890123456789'],
       reply_to_tweet_id: '1234567890',
+      text: 'Just launched our new feature!',
     });
   });
 
