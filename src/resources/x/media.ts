@@ -11,7 +11,7 @@ import { multipartFormRequestOptions } from '../../internal/uploads';
  */
 export class Media extends APIResource {
   /**
-   * Download images & videos from tweets
+   * Download images and videos from tweets
    *
    * @example
    * ```ts
