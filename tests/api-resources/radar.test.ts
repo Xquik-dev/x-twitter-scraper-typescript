@@ -26,9 +26,10 @@ describe('resource radar', () => {
     await expect(
       client.radar.retrieveTrendingTopics(
         {
-          category: 'category',
-          count: 0,
-          hours: 0,
+          after: 'after',
+          category: 'general',
+          hours: 1,
+          limit: 1,
           region: 'region',
           source: 'github',
         },

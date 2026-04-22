@@ -296,17 +296,28 @@ export interface TweetCreateParams {
    */
   account: string;
 
-  text: string;
-
   attachment_url?: string;
 
   community_id?: string;
 
   is_note_tweet?: boolean;
 
+  /**
+   * Array of media URLs to attach (mutually exclusive with media_ids)
+   */
+  media?: Array<string>;
+
+  /**
+   * Array of media IDs to attach (mutually exclusive with media)
+   */
   media_ids?: Array<string>;
 
   reply_to_tweet_id?: string;
+
+  /**
+   * Tweet text (optional when media is provided)
+   */
+  text?: string;
 }
 
 export interface TweetListParams {

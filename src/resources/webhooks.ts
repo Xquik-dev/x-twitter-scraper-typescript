@@ -16,7 +16,7 @@ export class Webhooks extends APIResource {
    * @example
    * ```ts
    * const webhook = await client.webhooks.create({
-   *   eventTypes: ['tweet.new', 'follower.gained'],
+   *   eventTypes: ['tweet.new', 'tweet.reply'],
    *   url: 'https://example.com/webhook',
    * });
    * ```

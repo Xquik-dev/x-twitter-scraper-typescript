@@ -100,6 +100,15 @@ export interface XAccount {
 
   createdAt: string;
 
+  /**
+   * Derived login/cookie health. `healthy` = cookies valid. `needsReauth` = user
+   * must submit fresh credentials. `locked` = X locked the account; unlock on x.com
+   * first. `suspended` = X banned the account. `recovering` = past cooldown, will
+   * auto-retry on next use. `temporaryIssue` = transient backend problem; retry
+   * shortly.
+   */
+  health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
+
   status: string;
 
   xUserId: string;
@@ -115,6 +124,8 @@ export interface XAccountDetail {
 
   createdAt: string;
 
+  health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
+
   status: string;
 
   xUserId: string;
@@ -128,14 +139,32 @@ export interface XAccountDetail {
   updatedAt?: string;
 }
 
+/**
+ * Sanitized X account summary returned by connect and reauth. Includes an optional
+ * `loginCountry` field surfaced only when the declared proxy region had no Driver
+ * capacity and the login fell back to a single US consumer device for this
+ * one-time action. Future activity continues to use the selected `proxy_country`;
+ * the field is omitted on normal logins.
+ */
 export interface AccountCreateResponse {
   id: string;
+
+  createdAt: string;
+
+  health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
 
   status: string;
 
   xUserId: string;
 
   xUsername: string;
+
+  /**
+   * ISO-3166-1 alpha-2 country code of the Driver consumer device used for this
+   * login. Present only when the US fallback was triggered because Driver had no
+   * capacity in the declared region. Omitted otherwise.
+   */
+  loginCountry?: string;
 }
 
 export interface AccountListResponse {
@@ -153,12 +182,32 @@ export interface AccountBulkRetryResponse {
   cleared: number;
 }
 
+/**
+ * Sanitized X account summary returned by connect and reauth. Includes an optional
+ * `loginCountry` field surfaced only when the declared proxy region had no Driver
+ * capacity and the login fell back to a single US consumer device for this
+ * one-time action. Future activity continues to use the selected `proxy_country`;
+ * the field is omitted on normal logins.
+ */
 export interface AccountReauthResponse {
   id: string;
 
+  createdAt: string;
+
+  health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
+
   status: string;
 
+  xUserId: string;
+
   xUsername: string;
+
+  /**
+   * ISO-3166-1 alpha-2 country code of the Driver consumer device used for this
+   * login. Present only when the US fallback was triggered because Driver had no
+   * capacity in the declared region. Omitted otherwise.
+   */
+  loginCountry?: string;
 }
 
 export interface AccountCreateParams {
@@ -193,6 +242,16 @@ export interface AccountReauthParams {
    * Updated account password
    */
   password: string;
+
+  /**
+   * Email for the X account (updates stored email)
+   */
+  email?: string;
+
+  /**
+   * Two-letter country code for login proxy region
+   */
+  proxy_country?: string;
 
   /**
    * TOTP secret for 2FA re-authentication

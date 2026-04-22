@@ -20,10 +20,35 @@ export class Radar extends APIResource {
 }
 
 /**
- * Trending topic with score, category, source, and region.
+ * Trending topic with score, category, source, region, language, and
+ * source-specific metadata.
  */
 export interface RadarItem {
-  category: string;
+  /**
+   * Internal numeric identifier (stringified bigint).
+   */
+  id: string;
+
+  category: 'general' | 'tech' | 'dev' | 'science' | 'culture' | 'politics' | 'business' | 'entertainment';
+
+  createdAt: string;
+
+  language: string;
+
+  /**
+   * Source-specific fields. Shape varies per source:
+   *
+   * - reddit: { subreddit: string, author: string }
+   * - github: { starsToday: number }
+   * - hacker_news: { points: number, numberComments: number }
+   * - google_trends: { approxTraffic: number }
+   * - polymarket: { volume24hr: number }
+   * - wikipedia: { views: number }
+   * - trustmrr: { mrr, growthPercent, last30Days, total, customers,
+   *   activeSubscriptions, onSale, xHandle?, category?, askingPrice?, country?,
+   *   growthMrrPercent?, multiple?, paymentProvider?, rank? }
+   */
+  metadata: { [key: string]: unknown };
 
   publishedAt: string;
 
@@ -31,7 +56,12 @@ export interface RadarItem {
 
   score: number;
 
-  source: string;
+  source: 'github' | 'google_trends' | 'hacker_news' | 'polymarket' | 'reddit' | 'trustmrr' | 'wikipedia';
+
+  /**
+   * Source-specific identifier used for deduplication.
+   */
+  sourceId: string;
 
   title: string;
 
@@ -43,26 +73,36 @@ export interface RadarItem {
 }
 
 export interface RadarRetrieveTrendingTopicsResponse {
+  hasMore: boolean;
+
   items: Array<RadarItem>;
 
-  total: number;
+  /**
+   * Opaque cursor for the next page (present only when hasMore is true).
+   */
+  nextCursor?: string;
 }
 
 export interface RadarRetrieveTrendingTopicsParams {
   /**
-   * Filter by category (general, tech, dev, etc.)
+   * Cursor for pagination (from prior response nextCursor).
    */
-  category?: string;
+  after?: string;
 
   /**
-   * Number of items to return
+   * Filter by category.
    */
-  count?: number;
+  category?: 'general' | 'tech' | 'dev' | 'science' | 'culture' | 'politics' | 'business' | 'entertainment';
 
   /**
-   * Lookback window in hours
+   * Lookback window in hours (1-168, default 24).
    */
   hours?: number;
+
+  /**
+   * Number of items to return (1-100, default 50).
+   */
+  limit?: number;
 
   /**
    * Region filter (us, global, etc.)

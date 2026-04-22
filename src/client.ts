@@ -75,18 +75,6 @@ import {
   Extractions,
 } from './resources/extractions';
 import {
-  Integration,
-  IntegrationCreateParams,
-  IntegrationDeleteResponse,
-  IntegrationDelivery,
-  IntegrationListDeliveriesParams,
-  IntegrationListDeliveriesResponse,
-  IntegrationListResponse,
-  IntegrationSendTestResponse,
-  IntegrationUpdateParams,
-  Integrations,
-} from './resources/integrations';
-import {
   Monitor,
   MonitorCreateParams,
   MonitorCreateResponse,
@@ -126,7 +114,6 @@ import {
   WebhookUpdateParams,
   Webhooks,
 } from './resources/webhooks';
-import { Bot } from './resources/bot/bot';
 import { Support } from './resources/support/support';
 import {
   X,
@@ -920,16 +907,11 @@ export class XTwitterScraper {
    * Webhook endpoint management and delivery
    */
   webhooks: API.Webhooks = new API.Webhooks(this);
-  /**
-   * Push notification integrations (Telegram)
-   */
-  integrations: API.Integrations = new API.Integrations(this);
   x: API.X = new API.X(this);
   /**
    * Trending topics and hashtags by region
    */
   trends: API.Trends = new API.Trends(this);
-  bot: API.Bot = new API.Bot(this);
   support: API.Support = new API.Support(this);
   /**
    * Subscription, billing, and credits
@@ -949,10 +931,8 @@ XTwitterScraper.Events = Events;
 XTwitterScraper.Extractions = Extractions;
 XTwitterScraper.Draws = Draws;
 XTwitterScraper.Webhooks = Webhooks;
-XTwitterScraper.Integrations = Integrations;
 XTwitterScraper.X = X;
 XTwitterScraper.Trends = Trends;
-XTwitterScraper.Bot = Bot;
 XTwitterScraper.Support = Support;
 XTwitterScraper.Credits = Credits;
 
@@ -1072,19 +1052,6 @@ export declare namespace XTwitterScraper {
   };
 
   export {
-    Integrations as Integrations,
-    type Integration as Integration,
-    type IntegrationDelivery as IntegrationDelivery,
-    type IntegrationListResponse as IntegrationListResponse,
-    type IntegrationDeleteResponse as IntegrationDeleteResponse,
-    type IntegrationListDeliveriesResponse as IntegrationListDeliveriesResponse,
-    type IntegrationSendTestResponse as IntegrationSendTestResponse,
-    type IntegrationCreateParams as IntegrationCreateParams,
-    type IntegrationUpdateParams as IntegrationUpdateParams,
-    type IntegrationListDeliveriesParams as IntegrationListDeliveriesParams,
-  };
-
-  export {
     X as X,
     type XGetArticleResponse as XGetArticleResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
@@ -1099,8 +1066,6 @@ export declare namespace XTwitterScraper {
     type TrendListResponse as TrendListResponse,
     type TrendListParams as TrendListParams,
   };
-
-  export { Bot as Bot };
 
   export { Support as Support };
 

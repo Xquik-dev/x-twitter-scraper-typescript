@@ -99,6 +99,8 @@ describe('resource accounts', () => {
   test.skip('reauth: required and optional params', async () => {
     const response = await client.x.accounts.reauth('id', {
       password: 'password_value',
+      email: 'user@example.com',
+      proxy_country: 'US',
       totp_secret: 'totp_secret_value',
     });
   });

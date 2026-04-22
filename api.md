@@ -191,27 +191,6 @@ Methods:
 - <code title="get /webhooks/{id}/deliveries">client.webhooks.<a href="./src/resources/webhooks.ts">listDeliveries</a>(id) -> WebhookListDeliveriesResponse</code>
 - <code title="post /webhooks/{id}/test">client.webhooks.<a href="./src/resources/webhooks.ts">test</a>(id) -> WebhookTestResponse</code>
 
-# Integrations
-
-Types:
-
-- <code><a href="./src/resources/integrations.ts">Integration</a></code>
-- <code><a href="./src/resources/integrations.ts">IntegrationDelivery</a></code>
-- <code><a href="./src/resources/integrations.ts">IntegrationListResponse</a></code>
-- <code><a href="./src/resources/integrations.ts">IntegrationDeleteResponse</a></code>
-- <code><a href="./src/resources/integrations.ts">IntegrationListDeliveriesResponse</a></code>
-- <code><a href="./src/resources/integrations.ts">IntegrationSendTestResponse</a></code>
-
-Methods:
-
-- <code title="post /integrations">client.integrations.<a href="./src/resources/integrations.ts">create</a>({ ...params }) -> Integration</code>
-- <code title="get /integrations/{id}">client.integrations.<a href="./src/resources/integrations.ts">retrieve</a>(id) -> Integration</code>
-- <code title="patch /integrations/{id}">client.integrations.<a href="./src/resources/integrations.ts">update</a>(id, { ...params }) -> Integration</code>
-- <code title="get /integrations">client.integrations.<a href="./src/resources/integrations.ts">list</a>() -> IntegrationListResponse</code>
-- <code title="delete /integrations/{id}">client.integrations.<a href="./src/resources/integrations.ts">delete</a>(id) -> IntegrationDeleteResponse</code>
-- <code title="get /integrations/{id}/deliveries">client.integrations.<a href="./src/resources/integrations.ts">listDeliveries</a>(id, { ...params }) -> IntegrationListDeliveriesResponse</code>
-- <code title="post /integrations/{id}/test">client.integrations.<a href="./src/resources/integrations.ts">sendTest</a>(id) -> IntegrationSendTestResponse</code>
-
 # X
 
 Types:
@@ -431,10 +410,6 @@ Types:
 Methods:
 
 - <code title="get /trends">client.trends.<a href="./src/resources/trends.ts">list</a>({ ...params }) -> TrendListResponse</code>
-
-# Bot
-
-## PlatformLinks
 
 # Support
 

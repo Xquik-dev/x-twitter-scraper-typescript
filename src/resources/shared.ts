@@ -14,17 +14,17 @@ export interface Error {
     | 'invalid_tweet_id'
     | 'invalid_tweet_url'
     | 'invalid_username'
+    | 'insufficient_credits'
     | 'missing_params'
     | 'missing_query'
     | 'monitor_already_exists'
     | 'monitor_limit_reached'
+    | 'no_credits'
     | 'no_subscription'
     | 'not_found'
-    | 'stream_registration_failed'
     | 'subscription_inactive'
     | 'tweet_not_found'
     | 'unauthenticated'
-    | 'usage_limit_reached'
     | 'user_not_found'
     | 'webhook_inactive'
     | 'x_api_rate_limited'
@@ -35,13 +35,7 @@ export interface Error {
 /**
  * Type of monitor event fired when account activity occurs.
  */
-export type EventType =
-  | 'tweet.new'
-  | 'tweet.reply'
-  | 'tweet.retweet'
-  | 'tweet.quote'
-  | 'follower.gained'
-  | 'follower.lost';
+export type EventType = 'tweet.new' | 'tweet.reply' | 'tweet.retweet' | 'tweet.quote';
 
 /**
  * Paginated list of tweets with cursor-based navigation.

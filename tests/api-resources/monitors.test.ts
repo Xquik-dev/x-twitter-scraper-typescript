@@ -11,7 +11,7 @@ describe('resource monitors', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.monitors.create({
-      eventTypes: ['tweet.new', 'follower.gained'],
+      eventTypes: ['tweet.new', 'tweet.reply'],
       username: 'elonmusk',
     });
     const rawResponse = await responsePromise.asResponse();
@@ -26,7 +26,7 @@ describe('resource monitors', () => {
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.monitors.create({
-      eventTypes: ['tweet.new', 'follower.gained'],
+      eventTypes: ['tweet.new', 'tweet.reply'],
       username: 'elonmusk',
     });
   });

@@ -62,16 +62,18 @@ export interface AccountRetrieveResponse {
 
   plan: 'active' | 'inactive';
 
-  currentPeriod?: AccountRetrieveResponse.CurrentPeriod;
+  creditInfo?: AccountRetrieveResponse.CreditInfo;
 }
 
 export namespace AccountRetrieveResponse {
-  export interface CurrentPeriod {
-    end: string;
+  export interface CreditInfo {
+    autoTopupEnabled: boolean;
 
-    start: string;
+    balance: number;
 
-    usagePercent: number;
+    lifetimePurchased: number;
+
+    lifetimeUsed: number;
   }
 }
 

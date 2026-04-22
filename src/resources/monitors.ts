@@ -16,7 +16,7 @@ export class Monitors extends APIResource {
    * @example
    * ```ts
    * const monitor = await client.monitors.create({
-   *   eventTypes: ['tweet.new', 'follower.gained'],
+   *   eventTypes: ['tweet.new', 'tweet.reply'],
    *   username: 'elonmusk',
    * });
    * ```

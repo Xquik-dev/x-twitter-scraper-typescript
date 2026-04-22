@@ -17,7 +17,6 @@ export {
   type AccountSetXUsernameParams,
   type AccountUpdateLocaleParams,
 } from './account';
-export { Bot } from './bot/bot';
 export { Compose, type ComposeCreateResponse, type ComposeCreateParams } from './compose';
 export {
   Credits,
@@ -59,18 +58,6 @@ export {
   type ExtractionExportResultsParams,
   type ExtractionRunParams,
 } from './extractions';
-export {
-  Integrations,
-  type Integration,
-  type IntegrationDelivery,
-  type IntegrationListResponse,
-  type IntegrationDeleteResponse,
-  type IntegrationListDeliveriesResponse,
-  type IntegrationSendTestResponse,
-  type IntegrationCreateParams,
-  type IntegrationUpdateParams,
-  type IntegrationListDeliveriesParams,
-} from './integrations';
 export {
   Monitors,
   type Monitor,
