@@ -5,11 +5,11 @@ import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 
 /**
- * X data lookups (subscription required)
+ * Look up, search, and explore user profiles and relationships
  */
 export class Followers extends APIResource {
   /**
-   * Check follow relationship
+   * Check if one user follows another
    *
    * @example
    * ```ts

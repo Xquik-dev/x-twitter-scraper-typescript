@@ -7,11 +7,11 @@ import { RequestOptions } from '../../internal/request-options';
 import { multipartFormRequestOptions } from '../../internal/uploads';
 
 /**
- * Media upload & download
+ * Media upload and download
  */
 export class Media extends APIResource {
   /**
-   * Download tweet media
+   * Download images and videos from tweets
    *
    * @example
    * ```ts

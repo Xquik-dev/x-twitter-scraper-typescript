@@ -5,11 +5,11 @@ import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
 /**
- * Trending topics by region
+ * Trending topics and hashtags by region
  */
 export class Trends extends APIResource {
   /**
-   * Get regional trending topics
+   * Get trending hashtags and topics by region (alias)
    */
   list(
     query: TrendListParams | null | undefined = {},

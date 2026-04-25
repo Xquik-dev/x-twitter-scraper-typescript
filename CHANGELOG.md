@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.3.0 (2026-04-25)
+
+Full Changelog: [v0.2.1...v0.3.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.2.1...v0.3.0)
+
+### Features
+
+* **api:** add SearchTweet & UserProfile shared models
+* **api:** getTrends now accepts query params
+* **api:** api updates (parity with Python/Go/Ruby/PHP/C# 0.4.0)
+
+
+### Bug Fixes
+
+* escape ampersand in OpenAPI summaries for C# XML docs
+
+
+### Chores
+
+* **internal:** more robust bootstrap script
+* wire production_repo for all targets
+* sync repo with latest OpenAPI spec
+
+
+### BREAKING CHANGES
+
+* Removed `Integrations` resource (7 endpoints) - migrate to `Webhooks`
+* Removed `Bot` resource - feature retired
+
 ## 0.2.1 (2026-04-08)
 
 Full Changelog: [v0.2.0...v0.2.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.2.0...v0.2.1)

@@ -50,7 +50,7 @@ export class Communities extends APIResource {
   }
 
   /**
-   * Get community details
+   * Get community name, description and member count
    *
    * @example
    * ```ts
@@ -64,7 +64,7 @@ export class Communities extends APIResource {
   }
 
   /**
-   * Get community members
+   * List members of a community
    *
    * @example
    * ```ts
@@ -81,7 +81,7 @@ export class Communities extends APIResource {
   }
 
   /**
-   * Get community moderators
+   * List moderators of a community
    *
    * @example
    * ```ts
@@ -98,7 +98,7 @@ export class Communities extends APIResource {
   }
 
   /**
-   * Search tweets across communities
+   * Search for communities by keyword
    *
    * @example
    * ```ts

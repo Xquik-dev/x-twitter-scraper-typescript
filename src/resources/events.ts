@@ -24,7 +24,7 @@ export class Events extends APIResource {
     query: EventListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<EventListResponse> {
-    return this._client.get('/events', { query, ...options, __security: { apiKeyAuth: true } });
+    return this._client.get('/events', { query, ...options });
   }
 }
 

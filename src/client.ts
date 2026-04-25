@@ -75,18 +75,6 @@ import {
   Extractions,
 } from './resources/extractions';
 import {
-  Integration,
-  IntegrationCreateParams,
-  IntegrationDeleteResponse,
-  IntegrationDelivery,
-  IntegrationListDeliveriesParams,
-  IntegrationListDeliveriesResponse,
-  IntegrationListResponse,
-  IntegrationSendTestResponse,
-  IntegrationUpdateParams,
-  Integrations,
-} from './resources/integrations';
-import {
   Monitor,
   MonitorCreateParams,
   MonitorCreateResponse,
@@ -126,7 +114,6 @@ import {
   WebhookUpdateParams,
   Webhooks,
 } from './resources/webhooks';
-import { Bot } from './resources/bot/bot';
 import { Support } from './resources/support/support';
 import {
   X,
@@ -134,6 +121,7 @@ import {
   XGetHomeTimelineParams,
   XGetNotificationsParams,
   XGetNotificationsResponse,
+  XGetTrendsParams,
   XGetTrendsResponse,
 } from './resources/x/x';
 import { type Fetch } from './internal/builtin-types';
@@ -346,14 +334,8 @@ export class XTwitterScraper {
     );
   }
 
-  protected async authHeaders(
-    opts: FinalRequestOptions,
-    schemes: { apiKeyAuth?: boolean; oauthBearerAuth?: boolean },
-  ): Promise<NullableHeaders | undefined> {
-    return buildHeaders([
-      schemes.apiKeyAuth ? await this.apiKeyAuth(opts) : null,
-      schemes.oauthBearerAuth ? await this.oauthBearerAuth(opts) : null,
-    ]);
+  protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    return buildHeaders([await this.apiKeyAuth(opts), await this.oauthBearerAuth(opts)]);
   }
 
   protected async apiKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
@@ -796,7 +778,7 @@ export class XTwitterScraper {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
-      await this.authHeaders(options, options.__security ?? { apiKeyAuth: true, oauthBearerAuth: true }),
+      await this.authHeaders(options),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
@@ -878,7 +860,7 @@ export class XTwitterScraper {
   static toFile = Uploads.toFile;
 
   /**
-   * Account info & settings
+   * Account info and settings
    */
   account: API.Account = new API.Account(this);
   /**
@@ -886,23 +868,23 @@ export class XTwitterScraper {
    */
   apiKeys: API.APIKeys = new API.APIKeys(this);
   /**
-   * Subscription & billing
+   * Subscription, billing, and credits
    */
   subscribe: API.Subscribe = new API.Subscribe(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   compose: API.Compose = new API.Compose(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   drafts: API.Drafts = new API.Drafts(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   styles: API.Styles = new API.Styles(this);
   /**
-   * Tweet composition, drafts, writing styles & radar
+   * AI tweet composition, drafts, writing styles, and radar
    */
   radar: API.Radar = new API.Radar(this);
   /**
@@ -922,25 +904,17 @@ export class XTwitterScraper {
    */
   draws: API.Draws = new API.Draws(this);
   /**
-   * Webhook endpoint management & delivery
+   * Webhook endpoint management and delivery
    */
   webhooks: API.Webhooks = new API.Webhooks(this);
-  /**
-   * Push notification integrations (Telegram)
-   */
-  integrations: API.Integrations = new API.Integrations(this);
-  /**
-   * X data lookups (subscription required)
-   */
   x: API.X = new API.X(this);
   /**
-   * Trending topics by region
+   * Trending topics and hashtags by region
    */
   trends: API.Trends = new API.Trends(this);
-  bot: API.Bot = new API.Bot(this);
   support: API.Support = new API.Support(this);
   /**
-   * Subscription & billing
+   * Subscription, billing, and credits
    */
   credits: API.Credits = new API.Credits(this);
 }
@@ -957,10 +931,8 @@ XTwitterScraper.Events = Events;
 XTwitterScraper.Extractions = Extractions;
 XTwitterScraper.Draws = Draws;
 XTwitterScraper.Webhooks = Webhooks;
-XTwitterScraper.Integrations = Integrations;
 XTwitterScraper.X = X;
 XTwitterScraper.Trends = Trends;
-XTwitterScraper.Bot = Bot;
 XTwitterScraper.Support = Support;
 XTwitterScraper.Credits = Credits;
 
@@ -1080,25 +1052,13 @@ export declare namespace XTwitterScraper {
   };
 
   export {
-    Integrations as Integrations,
-    type Integration as Integration,
-    type IntegrationDelivery as IntegrationDelivery,
-    type IntegrationListResponse as IntegrationListResponse,
-    type IntegrationDeleteResponse as IntegrationDeleteResponse,
-    type IntegrationListDeliveriesResponse as IntegrationListDeliveriesResponse,
-    type IntegrationSendTestResponse as IntegrationSendTestResponse,
-    type IntegrationCreateParams as IntegrationCreateParams,
-    type IntegrationUpdateParams as IntegrationUpdateParams,
-    type IntegrationListDeliveriesParams as IntegrationListDeliveriesParams,
-  };
-
-  export {
     X as X,
     type XGetArticleResponse as XGetArticleResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
     type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
+    type XGetTrendsParams as XGetTrendsParams,
   };
 
   export {
@@ -1106,8 +1066,6 @@ export declare namespace XTwitterScraper {
     type TrendListResponse as TrendListResponse,
     type TrendListParams as TrendListParams,
   };
-
-  export { Bot as Bot };
 
   export { Support as Support };
 
@@ -1122,4 +1080,6 @@ export declare namespace XTwitterScraper {
   export type EventType = API.EventType;
   export type PaginatedTweets = API.PaginatedTweets;
   export type PaginatedUsers = API.PaginatedUsers;
+  export type SearchTweet = API.SearchTweet;
+  export type UserProfile = API.UserProfile;
 }

@@ -165,13 +165,15 @@ export interface ExtractionListResponse {
 export interface ExtractionEstimateCostResponse {
   allowed: boolean;
 
-  estimatedResults: number;
+  creditsAvailable: string;
 
-  projectedPercent: number;
+  creditsRequired: string;
+
+  estimatedResults: number;
 
   source: string;
 
-  usagePercent: number;
+  resolvedXUserId?: string;
 }
 
 export interface ExtractionRunResponse {

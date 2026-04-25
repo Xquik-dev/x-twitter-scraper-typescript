@@ -5,7 +5,7 @@ import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
 /**
- * Account info & settings
+ * Account info and settings
  */
 export class Account extends APIResource {
   /**
@@ -17,7 +17,7 @@ export class Account extends APIResource {
    * ```
    */
   retrieve(options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
-    return this._client.get('/account', { ...options, __security: { apiKeyAuth: true } });
+    return this._client.get('/account', options);
   }
 
   /**
@@ -51,7 +51,7 @@ export class Account extends APIResource {
     body: AccountUpdateLocaleParams,
     options?: RequestOptions,
   ): APIPromise<AccountUpdateLocaleResponse> {
-    return this._client.patch('/account', { body, ...options, __security: { apiKeyAuth: true } });
+    return this._client.patch('/account', { body, ...options });
   }
 }
 
@@ -62,16 +62,18 @@ export interface AccountRetrieveResponse {
 
   plan: 'active' | 'inactive';
 
-  currentPeriod?: AccountRetrieveResponse.CurrentPeriod;
+  creditInfo?: AccountRetrieveResponse.CreditInfo;
 }
 
 export namespace AccountRetrieveResponse {
-  export interface CurrentPeriod {
-    end: string;
+  export interface CreditInfo {
+    autoTopupEnabled: boolean;
 
-    start: string;
+    balance: number;
 
-    usagePercent: number;
+    lifetimePurchased: number;
+
+    lifetimeUsed: number;
   }
 }
 

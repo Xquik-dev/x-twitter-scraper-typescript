@@ -57,7 +57,6 @@ export {
 } from './profile';
 export {
   Tweets,
-  type SearchTweet,
   type TweetAuthor,
   type TweetDetail,
   type TweetCreateResponse,
@@ -75,7 +74,6 @@ export {
 } from './tweets/index';
 export {
   Users,
-  type UserProfile,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,
@@ -94,4 +92,5 @@ export {
   type XGetTrendsResponse,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,
+  type XGetTrendsParams,
 } from './x';

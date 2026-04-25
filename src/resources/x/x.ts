@@ -61,7 +61,6 @@ import {
 } from './communities/communities';
 import * as TweetsAPI from './tweets/tweets';
 import {
-  SearchTweet,
   TweetAuthor,
   TweetCreateParams,
   TweetCreateResponse,
@@ -80,7 +79,6 @@ import {
 } from './tweets/tweets';
 import * as UsersAPI from './users/users';
 import {
-  UserProfile,
   UserRetrieveBatchParams,
   UserRetrieveFollowersParams,
   UserRetrieveFollowersYouKnowParams,
@@ -97,9 +95,6 @@ import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
-/**
- * X data lookups (subscription required)
- */
 export class X extends APIResource {
   tweets: TweetsAPI.Tweets = new TweetsAPI.Tweets(this._client);
   users: UsersAPI.Users = new UsersAPI.Users(this._client);
@@ -155,15 +150,18 @@ export class X extends APIResource {
   }
 
   /**
-   * Get trending topics
+   * Get trending hashtags and topics from X by region
    *
    * @example
    * ```ts
    * const response = await client.x.getTrends();
    * ```
    */
-  getTrends(options?: RequestOptions): APIPromise<XGetTrendsResponse> {
-    return this._client.get('/x/trends', options);
+  getTrends(
+    query: XGetTrendsParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<XGetTrendsResponse> {
+    return this._client.get('/x/trends', { query, ...options });
   }
 }
 
@@ -283,6 +281,18 @@ export interface XGetNotificationsParams {
   type?: 'All' | 'Verified' | 'Mentions';
 }
 
+export interface XGetTrendsParams {
+  /**
+   * Number of trending topics to return (1-50, default 30)
+   */
+  count?: number;
+
+  /**
+   * Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+   */
+  woeid?: number;
+}
+
 X.Tweets = Tweets;
 X.Users = Users;
 X.Followers = Followers;
@@ -301,11 +311,11 @@ export declare namespace X {
     type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
+    type XGetTrendsParams as XGetTrendsParams,
   };
 
   export {
     Tweets as Tweets,
-    type SearchTweet as SearchTweet,
     type TweetAuthor as TweetAuthor,
     type TweetDetail as TweetDetail,
     type TweetCreateResponse as TweetCreateResponse,
@@ -324,7 +334,6 @@ export declare namespace X {
 
   export {
     Users as Users,
-    type UserProfile as UserProfile,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,

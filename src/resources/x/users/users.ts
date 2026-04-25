@@ -15,25 +15,25 @@ import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 /**
- * X data lookups (subscription required)
+ * Look up, search, and explore user profiles and relationships
  */
 export class Users extends APIResource {
   follow: FollowAPI.Follow = new FollowAPI.Follow(this._client);
 
   /**
-   * Look up X user
+   * Get user profile with follower counts and verification
    *
    * @example
    * ```ts
    * const userProfile = await client.x.users.retrieve('id');
    * ```
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<UserProfile> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<Shared.UserProfile> {
     return this._client.get(path`/x/users/${id}`, options);
   }
 
   /**
-   * Get multiple users by IDs
+   * Look up multiple users by IDs in one call
    *
    * @example
    * ```ts
@@ -47,7 +47,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get user followers
+   * List followers of a user
    *
    * @example
    * ```ts
@@ -64,7 +64,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get followers you know for a user
+   * List mutual followers between you and a user
    *
    * @example
    * ```ts
@@ -81,7 +81,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get users this user follows
+   * List accounts a user follows
    *
    * @example
    * ```ts
@@ -98,7 +98,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get tweets liked by a user
+   * List tweets liked by a user
    *
    * @example
    * ```ts
@@ -116,7 +116,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get media tweets by a user
+   * List media tweets posted by a user
    *
    * @example
    * ```ts
@@ -134,7 +134,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get tweets mentioning a user
+   * List tweets mentioning a user
    *
    * @example
    * ```ts
@@ -168,7 +168,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get recent tweets by a user
+   * List recent tweets posted by a user
    *
    * @example
    * ```ts
@@ -186,7 +186,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Get verified followers
+   * List verified followers of a user
    *
    * @example
    * ```ts
@@ -201,33 +201,6 @@ export class Users extends APIResource {
   ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/verified-followers`, { query, ...options });
   }
-}
-
-/**
- * X user profile with bio, follower counts, and verification status.
- */
-export interface UserProfile {
-  id: string;
-
-  name: string;
-
-  username: string;
-
-  createdAt?: string;
-
-  description?: string;
-
-  followers?: number;
-
-  following?: number;
-
-  location?: string;
-
-  profilePicture?: string;
-
-  statusesCount?: number;
-
-  verified?: boolean;
 }
 
 export interface UserRetrieveBatchParams {
@@ -339,7 +312,6 @@ Users.Follow = Follow;
 
 export declare namespace Users {
   export {
-    type UserProfile as UserProfile,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,

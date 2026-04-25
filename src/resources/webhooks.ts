@@ -7,7 +7,7 @@ import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
 
 /**
- * Webhook endpoint management & delivery
+ * Webhook endpoint management and delivery
  */
 export class Webhooks extends APIResource {
   /**
@@ -16,7 +16,7 @@ export class Webhooks extends APIResource {
    * @example
    * ```ts
    * const webhook = await client.webhooks.create({
-   *   eventTypes: ['tweet.new', 'follower.gained'],
+   *   eventTypes: ['tweet.new', 'tweet.reply'],
    *   url: 'https://example.com/webhook',
    * });
    * ```
