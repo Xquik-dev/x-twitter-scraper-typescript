@@ -36,7 +36,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get tweet with full text, author, metrics & media
+   * Get tweet with full text, author, metrics and media
    *
    * @example
    * ```ts
@@ -166,7 +166,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Search tweets with X query operators & pagination
+   * Search tweets with X query operators and pagination
    *
    * @example
    * ```ts

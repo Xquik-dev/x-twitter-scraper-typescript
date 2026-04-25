@@ -9,7 +9,7 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Trends extends APIResource {
   /**
-   * Get trending hashtags & topics by region (alias)
+   * Get trending hashtags and topics by region (alias)
    */
   list(
     query: TrendListParams | null | undefined = {},

@@ -50,7 +50,7 @@ export class Communities extends APIResource {
   }
 
   /**
-   * Get community name, description & member count
+   * Get community name, description and member count
    *
    * @example
    * ```ts
