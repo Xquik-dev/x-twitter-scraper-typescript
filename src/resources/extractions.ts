@@ -145,7 +145,7 @@ export interface ExtractionRetrieveResponse {
   hasMore: boolean;
 
   /**
-   * Extraction job metadata — shape varies by tool type (JSON)
+   * Extraction job metadata - shape varies by tool type (JSON)
    */
   job: { [key: string]: unknown };
 

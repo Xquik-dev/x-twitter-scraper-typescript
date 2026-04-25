@@ -36,7 +36,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Get tweet with full text, author, metrics and media
+   * Get tweet with full text, author, metrics & media
    *
    * @example
    * ```ts
@@ -166,7 +166,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Search tweets with X query operators and pagination
+   * Search tweets with X query operators & pagination
    *
    * @example
    * ```ts
@@ -303,14 +303,10 @@ export interface TweetCreateParams {
   is_note_tweet?: boolean;
 
   /**
-   * Array of media URLs to attach (mutually exclusive with media_ids)
+   * Array of public image URLs to attach (max 4). Each URL must be publicly
+   * reachable - the browser composer fetches them directly.
    */
   media?: Array<string>;
-
-  /**
-   * Array of media IDs to attach (mutually exclusive with media)
-   */
-  media_ids?: Array<string>;
 
   reply_to_tweet_id?: string;
 
@@ -411,17 +407,17 @@ export interface TweetSearchParams {
   limit?: number;
 
   /**
-   * Sort order — Latest (chronological) or Top (engagement-ranked)
+   * Sort order - Latest (chronological) or Top (engagement-ranked)
    */
   queryType?: 'Latest' | 'Top';
 
   /**
-   * ISO 8601 timestamp — only return tweets after this time
+   * ISO 8601 timestamp - only return tweets after this time
    */
   sinceTime?: string;
 
   /**
-   * ISO 8601 timestamp — only return tweets before this time
+   * ISO 8601 timestamp - only return tweets before this time
    */
   untilTime?: string;
 }

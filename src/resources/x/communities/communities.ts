@@ -50,7 +50,7 @@ export class Communities extends APIResource {
   }
 
   /**
-   * Get community name, description and member count
+   * Get community name, description & member count
    *
    * @example
    * ```ts
@@ -254,6 +254,11 @@ export interface CommunityRetrieveMembersParams {
    * Pagination cursor
    */
   cursor?: string;
+
+  /**
+   * Items per page (20-200, default 20)
+   */
+  pageSize?: number;
 }
 
 export interface CommunityRetrieveModeratorsParams {

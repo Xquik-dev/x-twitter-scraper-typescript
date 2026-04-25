@@ -76,6 +76,11 @@ export interface ListRetrieveMembersParams {
    * Pagination cursor for list members
    */
   cursor?: string;
+
+  /**
+   * Members per page (20-200, default 20)
+   */
+  pageSize?: number;
 }
 
 export interface ListRetrieveTweetsParams {

@@ -25,6 +25,7 @@ export interface Error {
     | 'subscription_inactive'
     | 'tweet_not_found'
     | 'unauthenticated'
+    | 'unsupported_field'
     | 'user_not_found'
     | 'webhook_inactive'
     | 'x_api_rate_limited'

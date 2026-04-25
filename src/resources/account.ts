@@ -63,6 +63,11 @@ export interface AccountRetrieveResponse {
   plan: 'active' | 'inactive';
 
   creditInfo?: AccountRetrieveResponse.CreditInfo;
+
+  /**
+   * Linked X username, omitted when no X account is connected.
+   */
+  xUsername?: string;
 }
 
 export namespace AccountRetrieveResponse {

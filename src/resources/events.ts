@@ -55,7 +55,7 @@ export interface EventDetail {
   id: string;
 
   /**
-   * Event payload — shape varies by event type (JSON)
+   * Event payload - shape varies by event type (JSON)
    */
   data: { [key: string]: unknown };
 
