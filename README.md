@@ -46,8 +46,7 @@ const client = new XTwitterScraper({
   apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
 });
 
-const params: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit: 10 };
-const paginatedTweets: XTwitterScraper.PaginatedTweets = await client.x.tweets.search(params);
+const account: XTwitterScraper.AccountRetrieveResponse = await client.account.retrieve();
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -95,17 +94,15 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const paginatedTweets = await client.x.tweets
-  .search({ q: 'from:elonmusk', limit: 10 })
-  .catch(async (err) => {
-    if (err instanceof XTwitterScraper.APIError) {
-      console.log(err.status); // 400
-      console.log(err.name); // BadRequestError
-      console.log(err.headers); // {server: 'nginx', ...}
-    } else {
-      throw err;
-    }
-  });
+const account = await client.account.retrieve().catch(async (err) => {
+  if (err instanceof XTwitterScraper.APIError) {
+    console.log(err.status); // 400
+    console.log(err.name); // BadRequestError
+    console.log(err.headers); // {server: 'nginx', ...}
+  } else {
+    throw err;
+  }
+});
 ```
 
 Error codes are as follows:
@@ -137,7 +134,7 @@ const client = new XTwitterScraper({
 });
 
 // Or, configure per-request:
-await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
+await client.account.retrieve({
   maxRetries: 5,
 });
 ```
@@ -154,7 +151,7 @@ const client = new XTwitterScraper({
 });
 
 // Override per-request:
-await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
+await client.account.retrieve({
   timeout: 5 * 1000,
 });
 ```
@@ -177,15 +174,13 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 ```ts
 const client = new XTwitterScraper();
 
-const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }).asResponse();
+const response = await client.account.retrieve().asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
-const { data: paginatedTweets, response: raw } = await client.x.tweets
-  .search({ q: 'from:elonmusk', limit: 10 })
-  .withResponse();
+const { data: account, response: raw } = await client.account.retrieve().withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(paginatedTweets.has_next_page);
+console.log(account.monitorsAllowed);
 ```
 
 ### Logging
