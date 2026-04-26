@@ -39,14 +39,8 @@ export class Profile extends APIResource {
    * });
    * ```
    */
-  updateAvatar(
-    body: ProfileUpdateAvatarParams,
-    options?: RequestOptions,
-  ): APIPromise<ProfileUpdateAvatarResponse> {
-    return this._client.patch(
-      '/x/profile/avatar',
-      multipartFormRequestOptions({ body, ...options }, this._client),
-    );
+  updateAvatar(body: ProfileUpdateAvatarParams, options?: RequestOptions): APIPromise<ProfileUpdateAvatarResponse> {
+    return this._client.patch('/x/profile/avatar', multipartFormRequestOptions({ body, ...options }, this._client));
   }
 
   /**
@@ -60,14 +54,8 @@ export class Profile extends APIResource {
    * });
    * ```
    */
-  updateBanner(
-    body: ProfileUpdateBannerParams,
-    options?: RequestOptions,
-  ): APIPromise<ProfileUpdateBannerResponse> {
-    return this._client.patch(
-      '/x/profile/banner',
-      multipartFormRequestOptions({ body, ...options }, this._client),
-    );
+  updateBanner(body: ProfileUpdateBannerParams, options?: RequestOptions): APIPromise<ProfileUpdateBannerResponse> {
+    return this._client.patch('/x/profile/banner', multipartFormRequestOptions({ body, ...options }, this._client));
   }
 }
 
@@ -138,6 +126,6 @@ export declare namespace Profile {
     type ProfileUpdateBannerResponse as ProfileUpdateBannerResponse,
     type ProfileUpdateParams as ProfileUpdateParams,
     type ProfileUpdateAvatarParams as ProfileUpdateAvatarParams,
-    type ProfileUpdateBannerParams as ProfileUpdateBannerParams,
+    type ProfileUpdateBannerParams as ProfileUpdateBannerParams
   };
 }

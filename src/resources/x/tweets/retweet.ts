@@ -65,6 +65,6 @@ export declare namespace Retweet {
     type RetweetCreateResponse as RetweetCreateResponse,
     type RetweetDeleteResponse as RetweetDeleteResponse,
     type RetweetCreateParams as RetweetCreateParams,
-    type RetweetDeleteParams as RetweetDeleteParams,
+    type RetweetDeleteParams as RetweetDeleteParams
   };
 }

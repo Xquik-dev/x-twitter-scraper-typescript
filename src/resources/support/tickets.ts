@@ -160,6 +160,6 @@ export declare namespace Tickets {
     type TicketReplyResponse as TicketReplyResponse,
     type TicketCreateParams as TicketCreateParams,
     type TicketUpdateParams as TicketUpdateParams,
-    type TicketReplyParams as TicketReplyParams,
+    type TicketReplyParams as TicketReplyParams
   };
 }

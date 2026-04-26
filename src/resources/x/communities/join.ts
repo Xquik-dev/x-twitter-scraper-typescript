@@ -21,11 +21,7 @@ export class Join extends APIResource {
    *   });
    * ```
    */
-  create(
-    id: string,
-    body: JoinCreateParams,
-    options?: RequestOptions,
-  ): APIPromise<CommunitiesAPI.CommunityActionResult> {
+  create(id: string, body: JoinCreateParams, options?: RequestOptions): APIPromise<CommunitiesAPI.CommunityActionResult> {
     return this._client.post(path`/x/communities/${id}/join`, { body, ...options });
   }
 
@@ -40,11 +36,7 @@ export class Join extends APIResource {
    *   });
    * ```
    */
-  deleteAll(
-    id: string,
-    body: JoinDeleteAllParams,
-    options?: RequestOptions,
-  ): APIPromise<CommunitiesAPI.CommunityActionResult> {
+  deleteAll(id: string, body: JoinDeleteAllParams, options?: RequestOptions): APIPromise<CommunitiesAPI.CommunityActionResult> {
     return this._client.delete(path`/x/communities/${id}/join`, { body, ...options });
   }
 }
@@ -64,5 +56,8 @@ export interface JoinDeleteAllParams {
 }
 
 export declare namespace Join {
-  export { type JoinCreateParams as JoinCreateParams, type JoinDeleteAllParams as JoinDeleteAllParams };
+  export {
+    type JoinCreateParams as JoinCreateParams,
+    type JoinDeleteAllParams as JoinDeleteAllParams
+  };
 }

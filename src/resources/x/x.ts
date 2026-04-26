@@ -3,18 +3,7 @@
 import { APIResource } from '../../core/resource';
 import * as Shared from '../shared';
 import * as AccountsAPI from './accounts';
-import {
-  AccountBulkRetryResponse,
-  AccountCreateParams,
-  AccountCreateResponse,
-  AccountDeleteResponse,
-  AccountListResponse,
-  AccountReauthParams,
-  AccountReauthResponse,
-  Accounts,
-  XAccount,
-  XAccountDetail,
-} from './accounts';
+import { AccountBulkRetryResponse, AccountCreateParams, AccountCreateResponse, AccountDeleteResponse, AccountListResponse, AccountReauthParams, AccountReauthResponse, Accounts, XAccount, XAccountDetail } from './accounts';
 import * as BookmarksAPI from './bookmarks';
 import { BookmarkListParams, BookmarkRetrieveFoldersResponse, Bookmarks } from './bookmarks';
 import * as DmAPI from './dm';
@@ -22,75 +11,17 @@ import { Dm, DmRetrieveHistoryParams, DmRetrieveHistoryResponse, DmSendParams, D
 import * as FollowersAPI from './followers';
 import { FollowerCheckParams, FollowerCheckResponse, Followers } from './followers';
 import * as ListsAPI from './lists';
-import {
-  ListRetrieveFollowersParams,
-  ListRetrieveMembersParams,
-  ListRetrieveTweetsParams,
-  Lists,
-} from './lists';
+import { ListRetrieveFollowersParams, ListRetrieveMembersParams, ListRetrieveTweetsParams, Lists } from './lists';
 import * as MediaAPI from './media';
-import {
-  Media,
-  MediaDownloadParams,
-  MediaDownloadResponse,
-  MediaUploadParams,
-  MediaUploadResponse,
-} from './media';
+import { Media, MediaDownloadParams, MediaDownloadResponse, MediaUploadParams, MediaUploadResponse } from './media';
 import * as ProfileAPI from './profile';
-import {
-  Profile,
-  ProfileUpdateAvatarParams,
-  ProfileUpdateAvatarResponse,
-  ProfileUpdateBannerParams,
-  ProfileUpdateBannerResponse,
-  ProfileUpdateParams,
-  ProfileUpdateResponse,
-} from './profile';
+import { Profile, ProfileUpdateAvatarParams, ProfileUpdateAvatarResponse, ProfileUpdateBannerParams, ProfileUpdateBannerResponse, ProfileUpdateParams, ProfileUpdateResponse } from './profile';
 import * as CommunitiesAPI from './communities/communities';
-import {
-  Communities,
-  CommunityActionResult,
-  CommunityCreateParams,
-  CommunityCreateResponse,
-  CommunityDeleteParams,
-  CommunityDeleteResponse,
-  CommunityRetrieveInfoResponse,
-  CommunityRetrieveMembersParams,
-  CommunityRetrieveModeratorsParams,
-  CommunityRetrieveSearchParams,
-} from './communities/communities';
+import { Communities, CommunityActionResult, CommunityCreateParams, CommunityCreateResponse, CommunityDeleteParams, CommunityDeleteResponse, CommunityRetrieveInfoResponse, CommunityRetrieveMembersParams, CommunityRetrieveModeratorsParams, CommunityRetrieveSearchParams } from './communities/communities';
 import * as TweetsAPI from './tweets/tweets';
-import {
-  TweetAuthor,
-  TweetCreateParams,
-  TweetCreateResponse,
-  TweetDeleteParams,
-  TweetDeleteResponse,
-  TweetDetail,
-  TweetGetFavoritersParams,
-  TweetGetQuotesParams,
-  TweetGetRepliesParams,
-  TweetGetRetweetersParams,
-  TweetGetThreadParams,
-  TweetListParams,
-  TweetRetrieveResponse,
-  TweetSearchParams,
-  Tweets,
-} from './tweets/tweets';
+import { TweetAuthor, TweetCreateParams, TweetCreateResponse, TweetDeleteParams, TweetDeleteResponse, TweetDetail, TweetGetFavoritersParams, TweetGetQuotesParams, TweetGetRepliesParams, TweetGetRetweetersParams, TweetGetThreadParams, TweetListParams, TweetRetrieveResponse, TweetSearchParams, Tweets } from './tweets/tweets';
 import * as UsersAPI from './users/users';
-import {
-  UserRetrieveBatchParams,
-  UserRetrieveFollowersParams,
-  UserRetrieveFollowersYouKnowParams,
-  UserRetrieveFollowingParams,
-  UserRetrieveLikesParams,
-  UserRetrieveMediaParams,
-  UserRetrieveMentionsParams,
-  UserRetrieveSearchParams,
-  UserRetrieveTweetsParams,
-  UserRetrieveVerifiedFollowersParams,
-  Users,
-} from './users/users';
+import { UserRetrieveBatchParams, UserRetrieveFollowersParams, UserRetrieveFollowersYouKnowParams, UserRetrieveFollowingParams, UserRetrieveLikesParams, UserRetrieveMediaParams, UserRetrieveMentionsParams, UserRetrieveSearchParams, UserRetrieveTweetsParams, UserRetrieveVerifiedFollowersParams, Users } from './users/users';
 import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
@@ -127,10 +58,7 @@ export class X extends APIResource {
    * const paginatedTweets = await client.x.getHomeTimeline();
    * ```
    */
-  getHomeTimeline(
-    query: XGetHomeTimelineParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  getHomeTimeline(query: XGetHomeTimelineParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/timeline', { query, ...options });
   }
 
@@ -142,10 +70,7 @@ export class X extends APIResource {
    * const response = await client.x.getNotifications();
    * ```
    */
-  getNotifications(
-    query: XGetNotificationsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<XGetNotificationsResponse> {
+  getNotifications(query: XGetNotificationsParams | null | undefined = {}, options?: RequestOptions): APIPromise<XGetNotificationsResponse> {
     return this._client.get('/x/notifications', { query, ...options });
   }
 
@@ -157,10 +82,7 @@ export class X extends APIResource {
    * const response = await client.x.getTrends();
    * ```
    */
-  getTrends(
-    query: XGetTrendsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<XGetTrendsResponse> {
+  getTrends(query: XGetTrendsParams | null | undefined = {}, options?: RequestOptions): APIPromise<XGetTrendsResponse> {
     return this._client.get('/x/trends', { query, ...options });
   }
 }
@@ -311,7 +233,7 @@ export declare namespace X {
     type XGetTrendsResponse as XGetTrendsResponse,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
-    type XGetTrendsParams as XGetTrendsParams,
+    type XGetTrendsParams as XGetTrendsParams
   };
 
   export {
@@ -329,7 +251,7 @@ export declare namespace X {
     type TweetGetRepliesParams as TweetGetRepliesParams,
     type TweetGetRetweetersParams as TweetGetRetweetersParams,
     type TweetGetThreadParams as TweetGetThreadParams,
-    type TweetSearchParams as TweetSearchParams,
+    type TweetSearchParams as TweetSearchParams
   };
 
   export {
@@ -343,13 +265,13 @@ export declare namespace X {
     type UserRetrieveMentionsParams as UserRetrieveMentionsParams,
     type UserRetrieveSearchParams as UserRetrieveSearchParams,
     type UserRetrieveTweetsParams as UserRetrieveTweetsParams,
-    type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams,
+    type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams
   };
 
   export {
     Followers as Followers,
     type FollowerCheckResponse as FollowerCheckResponse,
-    type FollowerCheckParams as FollowerCheckParams,
+    type FollowerCheckParams as FollowerCheckParams
   };
 
   export {
@@ -357,7 +279,7 @@ export declare namespace X {
     type DmRetrieveHistoryResponse as DmRetrieveHistoryResponse,
     type DmSendResponse as DmSendResponse,
     type DmRetrieveHistoryParams as DmRetrieveHistoryParams,
-    type DmSendParams as DmSendParams,
+    type DmSendParams as DmSendParams
   };
 
   export {
@@ -365,7 +287,7 @@ export declare namespace X {
     type MediaDownloadResponse as MediaDownloadResponse,
     type MediaUploadResponse as MediaUploadResponse,
     type MediaDownloadParams as MediaDownloadParams,
-    type MediaUploadParams as MediaUploadParams,
+    type MediaUploadParams as MediaUploadParams
   };
 
   export {
@@ -375,7 +297,7 @@ export declare namespace X {
     type ProfileUpdateBannerResponse as ProfileUpdateBannerResponse,
     type ProfileUpdateParams as ProfileUpdateParams,
     type ProfileUpdateAvatarParams as ProfileUpdateAvatarParams,
-    type ProfileUpdateBannerParams as ProfileUpdateBannerParams,
+    type ProfileUpdateBannerParams as ProfileUpdateBannerParams
   };
 
   export {
@@ -388,7 +310,7 @@ export declare namespace X {
     type CommunityDeleteParams as CommunityDeleteParams,
     type CommunityRetrieveMembersParams as CommunityRetrieveMembersParams,
     type CommunityRetrieveModeratorsParams as CommunityRetrieveModeratorsParams,
-    type CommunityRetrieveSearchParams as CommunityRetrieveSearchParams,
+    type CommunityRetrieveSearchParams as CommunityRetrieveSearchParams
   };
 
   export {
@@ -401,19 +323,19 @@ export declare namespace X {
     type AccountBulkRetryResponse as AccountBulkRetryResponse,
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
-    type AccountReauthParams as AccountReauthParams,
+    type AccountReauthParams as AccountReauthParams
   };
 
   export {
     Bookmarks as Bookmarks,
     type BookmarkRetrieveFoldersResponse as BookmarkRetrieveFoldersResponse,
-    type BookmarkListParams as BookmarkListParams,
+    type BookmarkListParams as BookmarkListParams
   };
 
   export {
     Lists as Lists,
     type ListRetrieveFollowersParams as ListRetrieveFollowersParams,
     type ListRetrieveMembersParams as ListRetrieveMembersParams,
-    type ListRetrieveTweetsParams as ListRetrieveTweetsParams,
+    type ListRetrieveTweetsParams as ListRetrieveTweetsParams
   };
 }

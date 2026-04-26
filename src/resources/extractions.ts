@@ -18,11 +18,7 @@ export class Extractions extends APIResource {
    * const extraction = await client.extractions.retrieve('id');
    * ```
    */
-  retrieve(
-    id: string,
-    query: ExtractionRetrieveParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<ExtractionRetrieveResponse> {
+  retrieve(id: string, query: ExtractionRetrieveParams | null | undefined = {}, options?: RequestOptions): APIPromise<ExtractionRetrieveResponse> {
     return this._client.get(path`/extractions/${id}`, { query, ...options });
   }
 
@@ -34,10 +30,7 @@ export class Extractions extends APIResource {
    * const extractions = await client.extractions.list();
    * ```
    */
-  list(
-    query: ExtractionListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<ExtractionListResponse> {
+  list(query: ExtractionListParams | null | undefined = {}, options?: RequestOptions): APIPromise<ExtractionListResponse> {
     return this._client.get('/extractions', { query, ...options });
   }
 
@@ -52,10 +45,7 @@ export class Extractions extends APIResource {
    * });
    * ```
    */
-  estimateCost(
-    body: ExtractionEstimateCostParams,
-    options?: RequestOptions,
-  ): APIPromise<ExtractionEstimateCostResponse> {
+  estimateCost(body: ExtractionEstimateCostParams, options?: RequestOptions): APIPromise<ExtractionEstimateCostResponse> {
     return this._client.post('/extractions/estimate', { body, ...options });
   }
 
@@ -72,17 +62,8 @@ export class Extractions extends APIResource {
    * console.log(content);
    * ```
    */
-  exportResults(
-    id: string,
-    query: ExtractionExportResultsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Response> {
-    return this._client.get(path`/extractions/${id}/export`, {
-      query,
-      ...options,
-      headers: buildHeaders([{ Accept: 'application/octet-stream' }, options?.headers]),
-      __binaryResponse: true,
-    });
+  exportResults(id: string, query: ExtractionExportResultsParams | null | undefined = {}, options?: RequestOptions): APIPromise<Response> {
+    return this._client.get(path`/extractions/${id}/export`, { query, ...options, headers: buildHeaders([{Accept: 'application/octet-stream'}, options?.headers]), __binaryResponse: true });
   }
 
   /**
@@ -114,27 +95,7 @@ export interface ExtractionJob {
   /**
    * Identifier for the extraction tool used to run a job.
    */
-  toolType:
-    | 'article_extractor'
-    | 'community_extractor'
-    | 'community_moderator_explorer'
-    | 'community_post_extractor'
-    | 'community_search'
-    | 'follower_explorer'
-    | 'following_explorer'
-    | 'list_follower_explorer'
-    | 'list_member_extractor'
-    | 'list_post_extractor'
-    | 'mention_extractor'
-    | 'people_search'
-    | 'post_extractor'
-    | 'quote_extractor'
-    | 'reply_extractor'
-    | 'repost_extractor'
-    | 'space_explorer'
-    | 'thread_extractor'
-    | 'tweet_search_extractor'
-    | 'verified_follower_explorer';
+  toolType: 'article_extractor' | 'community_extractor' | 'community_moderator_explorer' | 'community_post_extractor' | 'community_search' | 'follower_explorer' | 'following_explorer' | 'list_follower_explorer' | 'list_member_extractor' | 'list_post_extractor' | 'mention_extractor' | 'people_search' | 'post_extractor' | 'quote_extractor' | 'reply_extractor' | 'repost_extractor' | 'space_explorer' | 'thread_extractor' | 'tweet_search_extractor' | 'verified_follower_explorer';
 
   totalResults: number;
 
@@ -184,27 +145,7 @@ export interface ExtractionRunResponse {
   /**
    * Identifier for the extraction tool used to run a job.
    */
-  toolType:
-    | 'article_extractor'
-    | 'community_extractor'
-    | 'community_moderator_explorer'
-    | 'community_post_extractor'
-    | 'community_search'
-    | 'follower_explorer'
-    | 'following_explorer'
-    | 'list_follower_explorer'
-    | 'list_member_extractor'
-    | 'list_post_extractor'
-    | 'mention_extractor'
-    | 'people_search'
-    | 'post_extractor'
-    | 'quote_extractor'
-    | 'reply_extractor'
-    | 'repost_extractor'
-    | 'space_explorer'
-    | 'thread_extractor'
-    | 'tweet_search_extractor'
-    | 'verified_follower_explorer';
+  toolType: 'article_extractor' | 'community_extractor' | 'community_moderator_explorer' | 'community_post_extractor' | 'community_search' | 'follower_explorer' | 'following_explorer' | 'list_follower_explorer' | 'list_member_extractor' | 'list_post_extractor' | 'mention_extractor' | 'people_search' | 'post_extractor' | 'quote_extractor' | 'reply_extractor' | 'repost_extractor' | 'space_explorer' | 'thread_extractor' | 'tweet_search_extractor' | 'verified_follower_explorer';
 }
 
 export interface ExtractionRetrieveParams {
@@ -238,54 +179,14 @@ export interface ExtractionListParams {
   /**
    * Filter by extraction tool type
    */
-  toolType?:
-    | 'article_extractor'
-    | 'community_extractor'
-    | 'community_moderator_explorer'
-    | 'community_post_extractor'
-    | 'community_search'
-    | 'follower_explorer'
-    | 'following_explorer'
-    | 'list_follower_explorer'
-    | 'list_member_extractor'
-    | 'list_post_extractor'
-    | 'mention_extractor'
-    | 'people_search'
-    | 'post_extractor'
-    | 'quote_extractor'
-    | 'reply_extractor'
-    | 'repost_extractor'
-    | 'space_explorer'
-    | 'thread_extractor'
-    | 'tweet_search_extractor'
-    | 'verified_follower_explorer';
+  toolType?: 'article_extractor' | 'community_extractor' | 'community_moderator_explorer' | 'community_post_extractor' | 'community_search' | 'follower_explorer' | 'following_explorer' | 'list_follower_explorer' | 'list_member_extractor' | 'list_post_extractor' | 'mention_extractor' | 'people_search' | 'post_extractor' | 'quote_extractor' | 'reply_extractor' | 'repost_extractor' | 'space_explorer' | 'thread_extractor' | 'tweet_search_extractor' | 'verified_follower_explorer';
 }
 
 export interface ExtractionEstimateCostParams {
   /**
    * Identifier for the extraction tool used to run a job.
    */
-  toolType:
-    | 'article_extractor'
-    | 'community_extractor'
-    | 'community_moderator_explorer'
-    | 'community_post_extractor'
-    | 'community_search'
-    | 'follower_explorer'
-    | 'following_explorer'
-    | 'list_follower_explorer'
-    | 'list_member_extractor'
-    | 'list_post_extractor'
-    | 'mention_extractor'
-    | 'people_search'
-    | 'post_extractor'
-    | 'quote_extractor'
-    | 'reply_extractor'
-    | 'repost_extractor'
-    | 'space_explorer'
-    | 'thread_extractor'
-    | 'tweet_search_extractor'
-    | 'verified_follower_explorer';
+  toolType: 'article_extractor' | 'community_extractor' | 'community_moderator_explorer' | 'community_post_extractor' | 'community_search' | 'follower_explorer' | 'following_explorer' | 'list_follower_explorer' | 'list_member_extractor' | 'list_post_extractor' | 'mention_extractor' | 'people_search' | 'post_extractor' | 'quote_extractor' | 'reply_extractor' | 'repost_extractor' | 'space_explorer' | 'thread_extractor' | 'tweet_search_extractor' | 'verified_follower_explorer';
 
   /**
    * Raw advanced query string appended to the estimate (tweet_search_extractor)
@@ -326,27 +227,7 @@ export interface ExtractionRunParams {
   /**
    * Identifier for the extraction tool used to run a job.
    */
-  toolType:
-    | 'article_extractor'
-    | 'community_extractor'
-    | 'community_moderator_explorer'
-    | 'community_post_extractor'
-    | 'community_search'
-    | 'follower_explorer'
-    | 'following_explorer'
-    | 'list_follower_explorer'
-    | 'list_member_extractor'
-    | 'list_post_extractor'
-    | 'mention_extractor'
-    | 'people_search'
-    | 'post_extractor'
-    | 'quote_extractor'
-    | 'reply_extractor'
-    | 'repost_extractor'
-    | 'space_explorer'
-    | 'thread_extractor'
-    | 'tweet_search_extractor'
-    | 'verified_follower_explorer';
+  toolType: 'article_extractor' | 'community_extractor' | 'community_moderator_explorer' | 'community_post_extractor' | 'community_search' | 'follower_explorer' | 'following_explorer' | 'list_follower_explorer' | 'list_member_extractor' | 'list_post_extractor' | 'mention_extractor' | 'people_search' | 'post_extractor' | 'quote_extractor' | 'reply_extractor' | 'repost_extractor' | 'space_explorer' | 'thread_extractor' | 'tweet_search_extractor' | 'verified_follower_explorer';
 
   /**
    * Raw advanced search query appended as-is (tweet_search_extractor)
@@ -387,6 +268,6 @@ export declare namespace Extractions {
     type ExtractionListParams as ExtractionListParams,
     type ExtractionEstimateCostParams as ExtractionEstimateCostParams,
     type ExtractionExportResultsParams as ExtractionExportResultsParams,
-    type ExtractionRunParams as ExtractionRunParams,
+    type ExtractionRunParams as ExtractionRunParams
   };
 }

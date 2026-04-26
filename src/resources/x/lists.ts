@@ -19,11 +19,7 @@ export class Lists extends APIResource {
    *   await client.x.lists.retrieveFollowers('id');
    * ```
    */
-  retrieveFollowers(
-    id: string,
-    query: ListRetrieveFollowersParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveFollowers(id: string, query: ListRetrieveFollowersParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/lists/${id}/followers`, { query, ...options });
   }
 
@@ -37,11 +33,7 @@ export class Lists extends APIResource {
    * );
    * ```
    */
-  retrieveMembers(
-    id: string,
-    query: ListRetrieveMembersParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveMembers(id: string, query: ListRetrieveMembersParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/lists/${id}/members`, { query, ...options });
   }
 
@@ -55,11 +47,7 @@ export class Lists extends APIResource {
    * );
    * ```
    */
-  retrieveTweets(
-    id: string,
-    query: ListRetrieveTweetsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  retrieveTweets(id: string, query: ListRetrieveTweetsParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/lists/${id}/tweets`, { query, ...options });
   }
 }
@@ -109,6 +97,6 @@ export declare namespace Lists {
   export {
     type ListRetrieveFollowersParams as ListRetrieveFollowersParams,
     type ListRetrieveMembersParams as ListRetrieveMembersParams,
-    type ListRetrieveTweetsParams as ListRetrieveTweetsParams,
+    type ListRetrieveTweetsParams as ListRetrieveTweetsParams
   };
 }

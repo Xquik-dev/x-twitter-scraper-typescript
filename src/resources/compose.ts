@@ -46,7 +46,7 @@ export interface ComposeCreateResponse {
    */
   text?: string;
 
-  [k: string]: unknown;
+[k: string]: unknown
 }
 
 export interface ComposeCreateParams {
@@ -109,6 +109,6 @@ export interface ComposeCreateParams {
 export declare namespace Compose {
   export {
     type ComposeCreateResponse as ComposeCreateResponse,
-    type ComposeCreateParams as ComposeCreateParams,
+    type ComposeCreateParams as ComposeCreateParams
   };
 }

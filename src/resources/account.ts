@@ -30,10 +30,7 @@ export class Account extends APIResource {
    * });
    * ```
    */
-  setXUsername(
-    body: AccountSetXUsernameParams,
-    options?: RequestOptions,
-  ): APIPromise<AccountSetXUsernameResponse> {
+  setXUsername(body: AccountSetXUsernameParams, options?: RequestOptions): APIPromise<AccountSetXUsernameResponse> {
     return this._client.put('/account/x-identity', { body, ...options });
   }
 
@@ -47,10 +44,7 @@ export class Account extends APIResource {
    * });
    * ```
    */
-  updateLocale(
-    body: AccountUpdateLocaleParams,
-    options?: RequestOptions,
-  ): APIPromise<AccountUpdateLocaleResponse> {
+  updateLocale(body: AccountUpdateLocaleParams, options?: RequestOptions): APIPromise<AccountUpdateLocaleResponse> {
     return this._client.patch('/account', { body, ...options });
   }
 }
@@ -109,6 +103,6 @@ export declare namespace Account {
     type AccountSetXUsernameResponse as AccountSetXUsernameResponse,
     type AccountUpdateLocaleResponse as AccountUpdateLocaleResponse,
     type AccountSetXUsernameParams as AccountSetXUsernameParams,
-    type AccountUpdateLocaleParams as AccountUpdateLocaleParams,
+    type AccountUpdateLocaleParams as AccountUpdateLocaleParams
   };
 }

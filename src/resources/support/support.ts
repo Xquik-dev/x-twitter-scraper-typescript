@@ -2,17 +2,7 @@
 
 import { APIResource } from '../../core/resource';
 import * as TicketsAPI from './tickets';
-import {
-  TicketCreateParams,
-  TicketCreateResponse,
-  TicketListResponse,
-  TicketReplyParams,
-  TicketReplyResponse,
-  TicketRetrieveResponse,
-  TicketUpdateParams,
-  TicketUpdateResponse,
-  Tickets,
-} from './tickets';
+import { TicketCreateParams, TicketCreateResponse, TicketListResponse, TicketReplyParams, TicketReplyResponse, TicketRetrieveResponse, TicketUpdateParams, TicketUpdateResponse, Tickets } from './tickets';
 
 export class Support extends APIResource {
   tickets: TicketsAPI.Tickets = new TicketsAPI.Tickets(this._client);
@@ -30,6 +20,6 @@ export declare namespace Support {
     type TicketReplyResponse as TicketReplyResponse,
     type TicketCreateParams as TicketCreateParams,
     type TicketUpdateParams as TicketUpdateParams,
-    type TicketReplyParams as TicketReplyParams,
+    type TicketReplyParams as TicketReplyParams
   };
 }

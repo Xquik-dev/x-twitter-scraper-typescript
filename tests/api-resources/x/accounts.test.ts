@@ -2,19 +2,16 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 
-const client = new XTwitterScraper({
-  apiKey: 'My API Key',
-  baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
-});
+const client = new XTwitterScraper({ apiKey: 'My API Key', baseURL: process.env["TEST_API_BASE_URL"] ?? 'http://127.0.0.1:4010' });
 
 describe('resource accounts', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.x.accounts.create({
-      email: 'user@example.com',
-      password: 's3cur3Pa$$w0rd',
-      username: 'elonmusk',
-    });
+    email: 'user@example.com',
+    password: 's3cur3Pa$$w0rd',
+    username: 'elonmusk',
+  });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -27,12 +24,12 @@ describe('resource accounts', () => {
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.x.accounts.create({
-      email: 'user@example.com',
-      password: 's3cur3Pa$$w0rd',
-      username: 'elonmusk',
-      proxy_country: 'US',
-      totp_secret: 'JBSWY3DPEHPK3PXP',
-    });
+    email: 'user@example.com',
+    password: 's3cur3Pa$$w0rd',
+    username: 'elonmusk',
+    proxy_country: 'US',
+    totp_secret: 'JBSWY3DPEHPK3PXP',
+  });
   });
 
   // Mock server tests are disabled
@@ -98,10 +95,10 @@ describe('resource accounts', () => {
   // Mock server tests are disabled
   test.skip('reauth: required and optional params', async () => {
     const response = await client.x.accounts.reauth('id', {
-      password: 'password_value',
-      email: 'user@example.com',
-      proxy_country: 'US',
-      totp_secret: 'totp_secret_value',
-    });
+    password: 'password_value',
+    email: 'user@example.com',
+    proxy_country: 'US',
+    totp_secret: 'totp_secret_value',
+  });
   });
 });

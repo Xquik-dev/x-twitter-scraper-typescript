@@ -41,11 +41,7 @@ export class Communities extends APIResource {
    * });
    * ```
    */
-  delete(
-    id: string,
-    body: CommunityDeleteParams,
-    options?: RequestOptions,
-  ): APIPromise<CommunityDeleteResponse> {
+  delete(id: string, body: CommunityDeleteParams, options?: RequestOptions): APIPromise<CommunityDeleteResponse> {
     return this._client.delete(path`/x/communities/${id}`, { body, ...options });
   }
 
@@ -72,11 +68,7 @@ export class Communities extends APIResource {
    *   await client.x.communities.retrieveMembers('id');
    * ```
    */
-  retrieveMembers(
-    id: string,
-    query: CommunityRetrieveMembersParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveMembers(id: string, query: CommunityRetrieveMembersParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/communities/${id}/members`, { query, ...options });
   }
 
@@ -89,11 +81,7 @@ export class Communities extends APIResource {
    *   await client.x.communities.retrieveModerators('id');
    * ```
    */
-  retrieveModerators(
-    id: string,
-    query: CommunityRetrieveModeratorsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveModerators(id: string, query: CommunityRetrieveModeratorsParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/communities/${id}/moderators`, { query, ...options });
   }
 
@@ -106,10 +94,7 @@ export class Communities extends APIResource {
    *   await client.x.communities.retrieveSearch({ q: 'q' });
    * ```
    */
-  retrieveSearch(
-    query: CommunityRetrieveSearchParams,
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  retrieveSearch(query: CommunityRetrieveSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/communities/search', { query, ...options });
   }
 }
@@ -298,18 +283,18 @@ export declare namespace Communities {
     type CommunityDeleteParams as CommunityDeleteParams,
     type CommunityRetrieveMembersParams as CommunityRetrieveMembersParams,
     type CommunityRetrieveModeratorsParams as CommunityRetrieveModeratorsParams,
-    type CommunityRetrieveSearchParams as CommunityRetrieveSearchParams,
+    type CommunityRetrieveSearchParams as CommunityRetrieveSearchParams
   };
 
   export {
     Join as Join,
     type JoinCreateParams as JoinCreateParams,
-    type JoinDeleteAllParams as JoinDeleteAllParams,
+    type JoinDeleteAllParams as JoinDeleteAllParams
   };
 
   export {
     Tweets as Tweets,
     type TweetListParams as TweetListParams,
-    type TweetListByCommunityParams as TweetListByCommunityParams,
+    type TweetListByCommunityParams as TweetListByCommunityParams
   };
 }

@@ -32,11 +32,7 @@ export class Tweets extends APIResource {
    *   await client.x.communities.tweets.listByCommunity('id');
    * ```
    */
-  listByCommunity(
-    id: string,
-    query: TweetListByCommunityParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  listByCommunity(id: string, query: TweetListByCommunityParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/communities/${id}/tweets`, { query, ...options });
   }
 }
@@ -68,6 +64,6 @@ export interface TweetListByCommunityParams {
 export declare namespace Tweets {
   export {
     type TweetListParams as TweetListParams,
-    type TweetListByCommunityParams as TweetListByCommunityParams,
+    type TweetListByCommunityParams as TweetListByCommunityParams
   };
 }

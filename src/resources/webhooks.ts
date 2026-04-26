@@ -196,6 +196,6 @@ export declare namespace Webhooks {
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
     type WebhookTestResponse as WebhookTestResponse,
     type WebhookCreateParams as WebhookCreateParams,
-    type WebhookUpdateParams as WebhookUpdateParams,
+    type WebhookUpdateParams as WebhookUpdateParams
   };
 }

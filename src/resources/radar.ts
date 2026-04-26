@@ -11,10 +11,7 @@ export class Radar extends APIResource {
   /**
    * Get trending topics from curated sources
    */
-  retrieveTrendingTopics(
-    query: RadarRetrieveTrendingTopicsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<RadarRetrieveTrendingTopicsResponse> {
+  retrieveTrendingTopics(query: RadarRetrieveTrendingTopicsParams | null | undefined = {}, options?: RequestOptions): APIPromise<RadarRetrieveTrendingTopicsResponse> {
     return this._client.get('/radar', { query, ...options });
   }
 }
@@ -120,6 +117,6 @@ export declare namespace Radar {
   export {
     type RadarItem as RadarItem,
     type RadarRetrieveTrendingTopicsResponse as RadarRetrieveTrendingTopicsResponse,
-    type RadarRetrieveTrendingTopicsParams as RadarRetrieveTrendingTopicsParams,
+    type RadarRetrieveTrendingTopicsParams as RadarRetrieveTrendingTopicsParams
   };
 }

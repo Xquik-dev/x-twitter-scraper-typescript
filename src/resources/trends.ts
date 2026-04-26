@@ -11,10 +11,7 @@ export class Trends extends APIResource {
   /**
    * Get trending hashtags and topics by region (alias)
    */
-  list(
-    query: TrendListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<TrendListResponse> {
+  list(query: TrendListParams | null | undefined = {}, options?: RequestOptions): APIPromise<TrendListResponse> {
     return this._client.get('/trends', { query, ...options });
   }
 }
@@ -52,5 +49,8 @@ export interface TrendListParams {
 }
 
 export declare namespace Trends {
-  export { type TrendListResponse as TrendListResponse, type TrendListParams as TrendListParams };
+  export {
+    type TrendListResponse as TrendListResponse,
+    type TrendListParams as TrendListParams
+  };
 }

@@ -25,5 +25,7 @@ export interface SubscribeCreateResponse {
 }
 
 export declare namespace Subscribe {
-  export { type SubscribeCreateResponse as SubscribeCreateResponse };
+  export {
+    type SubscribeCreateResponse as SubscribeCreateResponse
+  };
 }

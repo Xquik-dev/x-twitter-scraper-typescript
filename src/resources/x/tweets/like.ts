@@ -65,6 +65,6 @@ export declare namespace Like {
     type LikeCreateResponse as LikeCreateResponse,
     type LikeDeleteResponse as LikeDeleteResponse,
     type LikeCreateParams as LikeCreateParams,
-    type LikeDeleteParams as LikeDeleteParams,
+    type LikeDeleteParams as LikeDeleteParams
   };
 }

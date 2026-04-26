@@ -46,10 +46,7 @@ export class Drafts extends APIResource {
    * const drafts = await client.drafts.list();
    * ```
    */
-  list(
-    query: DraftListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<DraftListResponse> {
+  list(query: DraftListParams | null | undefined = {}, options?: RequestOptions): APIPromise<DraftListResponse> {
     return this._client.get('/drafts', { query, ...options });
   }
 
@@ -62,10 +59,7 @@ export class Drafts extends APIResource {
    * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<void> {
-    return this._client.delete(path`/drafts/${id}`, {
-      ...options,
-      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
-    });
+    return this._client.delete(path`/drafts/${id}`, { ...options, headers: buildHeaders([{Accept: '*/*'}, options?.headers]) });
   }
 }
 
@@ -135,6 +129,6 @@ export declare namespace Drafts {
     type DraftDetail as DraftDetail,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
-    type DraftListParams as DraftListParams,
+    type DraftListParams as DraftListParams
   };
 }

@@ -49,6 +49,6 @@ export interface FollowerCheckParams {
 export declare namespace Followers {
   export {
     type FollowerCheckResponse as FollowerCheckResponse,
-    type FollowerCheckParams as FollowerCheckParams,
+    type FollowerCheckParams as FollowerCheckParams
   };
 }

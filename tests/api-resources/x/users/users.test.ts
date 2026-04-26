@@ -2,10 +2,7 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 
-const client = new XTwitterScraper({
-  apiKey: 'My API Key',
-  baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
-});
+const client = new XTwitterScraper({ apiKey: 'My API Key', baseURL: process.env["TEST_API_BASE_URL"] ?? 'http://127.0.0.1:4010' });
 
 describe('resource users', () => {
   // Mock server tests are disabled
@@ -52,13 +49,9 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveFollowers: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveFollowers(
-        'id',
-        { cursor: 'cursor', pageSize: 0 },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveFollowers('id', { cursor: 'cursor', pageSize: 0 }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -76,13 +69,9 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveFollowersYouKnow: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveFollowersYouKnow(
-        'id',
-        { cursor: 'cursor' },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveFollowersYouKnow('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -100,13 +89,9 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveFollowing: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveFollowing(
-        'id',
-        { cursor: 'cursor', pageSize: 0 },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveFollowing('id', { cursor: 'cursor', pageSize: 0 }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -124,9 +109,9 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveLikes: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveLikes('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveLikes('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -144,9 +129,9 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveMedia: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveMedia('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveMedia('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -164,17 +149,13 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveMentions: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveMentions(
-        'id',
-        {
-          cursor: 'cursor',
-          sinceTime: 'sinceTime',
-          untilTime: 'untilTime',
-        },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveMentions('id', {
+    cursor: 'cursor',
+    sinceTime: 'sinceTime',
+    untilTime: 'untilTime',
+  }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -209,17 +190,13 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveTweets: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveTweets(
-        'id',
-        {
-          cursor: 'cursor',
-          includeParentTweet: true,
-          includeReplies: true,
-        },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveTweets('id', {
+    cursor: 'cursor',
+    includeParentTweet: true,
+    includeReplies: true,
+  }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -237,12 +214,8 @@ describe('resource users', () => {
   // Mock server tests are disabled
   test.skip('retrieveVerifiedFollowers: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.x.users.retrieveVerifiedFollowers(
-        'id',
-        { cursor: 'cursor' },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+    await expect(client.x.users.retrieveVerifiedFollowers('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }))
+      .rejects
+      .toThrow(XTwitterScraper.NotFoundError);
   });
 });

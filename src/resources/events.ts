@@ -20,10 +20,7 @@ export class Events extends APIResource {
   /**
    * List events
    */
-  list(
-    query: EventListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<EventListResponse> {
+  list(query: EventListParams | null | undefined = {}, options?: RequestOptions): APIPromise<EventListResponse> {
     return this._client.get('/events', { query, ...options });
   }
 }
@@ -108,6 +105,6 @@ export declare namespace Events {
     type Event as Event,
     type EventDetail as EventDetail,
     type EventListResponse as EventListResponse,
-    type EventListParams as EventListParams,
+    type EventListParams as EventListParams
   };
 }

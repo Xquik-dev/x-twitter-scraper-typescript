@@ -3,13 +3,7 @@
 import { APIResource } from '../../../core/resource';
 import * as Shared from '../../shared';
 import * as FollowAPI from './follow';
-import {
-  Follow,
-  FollowCreateParams,
-  FollowCreateResponse,
-  FollowDeleteAllParams,
-  FollowDeleteAllResponse,
-} from './follow';
+import { Follow, FollowCreateParams, FollowCreateResponse, FollowDeleteAllParams, FollowDeleteAllResponse } from './follow';
 import { APIPromise } from '../../../core/api-promise';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
@@ -55,11 +49,7 @@ export class Users extends APIResource {
    *   await client.x.users.retrieveFollowers('id');
    * ```
    */
-  retrieveFollowers(
-    id: string,
-    query: UserRetrieveFollowersParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveFollowers(id: string, query: UserRetrieveFollowersParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/followers`, { query, ...options });
   }
 
@@ -72,11 +62,7 @@ export class Users extends APIResource {
    *   await client.x.users.retrieveFollowersYouKnow('id');
    * ```
    */
-  retrieveFollowersYouKnow(
-    id: string,
-    query: UserRetrieveFollowersYouKnowParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveFollowersYouKnow(id: string, query: UserRetrieveFollowersYouKnowParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/followers-you-know`, { query, ...options });
   }
 
@@ -89,11 +75,7 @@ export class Users extends APIResource {
    *   await client.x.users.retrieveFollowing('id');
    * ```
    */
-  retrieveFollowing(
-    id: string,
-    query: UserRetrieveFollowingParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveFollowing(id: string, query: UserRetrieveFollowingParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/following`, { query, ...options });
   }
 
@@ -107,11 +89,7 @@ export class Users extends APIResource {
    * );
    * ```
    */
-  retrieveLikes(
-    id: string,
-    query: UserRetrieveLikesParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  retrieveLikes(id: string, query: UserRetrieveLikesParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/likes`, { query, ...options });
   }
 
@@ -125,11 +103,7 @@ export class Users extends APIResource {
    * );
    * ```
    */
-  retrieveMedia(
-    id: string,
-    query: UserRetrieveMediaParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  retrieveMedia(id: string, query: UserRetrieveMediaParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/media`, { query, ...options });
   }
 
@@ -142,11 +116,7 @@ export class Users extends APIResource {
    *   await client.x.users.retrieveMentions('id');
    * ```
    */
-  retrieveMentions(
-    id: string,
-    query: UserRetrieveMentionsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  retrieveMentions(id: string, query: UserRetrieveMentionsParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/mentions`, { query, ...options });
   }
 
@@ -160,10 +130,7 @@ export class Users extends APIResource {
    * });
    * ```
    */
-  retrieveSearch(
-    query: UserRetrieveSearchParams,
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveSearch(query: UserRetrieveSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get('/x/users/search', { query, ...options });
   }
 
@@ -177,11 +144,7 @@ export class Users extends APIResource {
    * );
    * ```
    */
-  retrieveTweets(
-    id: string,
-    query: UserRetrieveTweetsParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  retrieveTweets(id: string, query: UserRetrieveTweetsParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/users/${id}/tweets`, { query, ...options });
   }
 
@@ -194,11 +157,7 @@ export class Users extends APIResource {
    *   await client.x.users.retrieveVerifiedFollowers('id');
    * ```
    */
-  retrieveVerifiedFollowers(
-    id: string,
-    query: UserRetrieveVerifiedFollowersParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  retrieveVerifiedFollowers(id: string, query: UserRetrieveVerifiedFollowersParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/users/${id}/verified-followers`, { query, ...options });
   }
 }
@@ -321,7 +280,7 @@ export declare namespace Users {
     type UserRetrieveMentionsParams as UserRetrieveMentionsParams,
     type UserRetrieveSearchParams as UserRetrieveSearchParams,
     type UserRetrieveTweetsParams as UserRetrieveTweetsParams,
-    type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams,
+    type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams
   };
 
   export {
@@ -329,6 +288,6 @@ export declare namespace Users {
     type FollowCreateResponse as FollowCreateResponse,
     type FollowDeleteAllResponse as FollowDeleteAllResponse,
     type FollowCreateParams as FollowCreateParams,
-    type FollowDeleteAllParams as FollowDeleteAllParams,
+    type FollowDeleteAllParams as FollowDeleteAllParams
   };
 }
