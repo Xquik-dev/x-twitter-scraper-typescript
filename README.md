@@ -1,4 +1,4 @@
-# X Twitter Scraper TypeScript API Library
+# Xquik API Library
 
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 
