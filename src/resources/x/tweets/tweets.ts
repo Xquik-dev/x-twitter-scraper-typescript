@@ -5,7 +5,13 @@ import * as Shared from '../../shared';
 import * as LikeAPI from './like';
 import { Like, LikeCreateParams, LikeCreateResponse, LikeDeleteParams, LikeDeleteResponse } from './like';
 import * as RetweetAPI from './retweet';
-import { Retweet, RetweetCreateParams, RetweetCreateResponse, RetweetDeleteParams, RetweetDeleteResponse } from './retweet';
+import {
+  Retweet,
+  RetweetCreateParams,
+  RetweetCreateResponse,
+  RetweetDeleteParams,
+  RetweetDeleteResponse,
+} from './retweet';
 import { APIPromise } from '../../../core/api-promise';
 import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
@@ -79,7 +85,11 @@ export class Tweets extends APIResource {
    * );
    * ```
    */
-  getFavoriters(id: string, query: TweetGetFavoritersParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
+  getFavoriters(
+    id: string,
+    query: TweetGetFavoritersParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/tweets/${id}/favoriters`, { query, ...options });
   }
 
@@ -93,7 +103,11 @@ export class Tweets extends APIResource {
    * );
    * ```
    */
-  getQuotes(id: string, query: TweetGetQuotesParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+  getQuotes(
+    id: string,
+    query: TweetGetQuotesParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/tweets/${id}/quotes`, { query, ...options });
   }
 
@@ -107,7 +121,11 @@ export class Tweets extends APIResource {
    * );
    * ```
    */
-  getReplies(id: string, query: TweetGetRepliesParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+  getReplies(
+    id: string,
+    query: TweetGetRepliesParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/tweets/${id}/replies`, { query, ...options });
   }
 
@@ -121,7 +139,11 @@ export class Tweets extends APIResource {
    * );
    * ```
    */
-  getRetweeters(id: string, query: TweetGetRetweetersParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedUsers> {
+  getRetweeters(
+    id: string,
+    query: TweetGetRetweetersParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/tweets/${id}/retweeters`, { query, ...options });
   }
 
@@ -135,7 +157,11 @@ export class Tweets extends APIResource {
    * );
    * ```
    */
-  getThread(id: string, query: TweetGetThreadParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+  getThread(
+    id: string,
+    query: TweetGetThreadParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get(path`/x/tweets/${id}/thread`, { query, ...options });
   }
 
@@ -414,7 +440,7 @@ export declare namespace Tweets {
     type TweetGetRepliesParams as TweetGetRepliesParams,
     type TweetGetRetweetersParams as TweetGetRetweetersParams,
     type TweetGetThreadParams as TweetGetThreadParams,
-    type TweetSearchParams as TweetSearchParams
+    type TweetSearchParams as TweetSearchParams,
   };
 
   export {
@@ -422,7 +448,7 @@ export declare namespace Tweets {
     type LikeCreateResponse as LikeCreateResponse,
     type LikeDeleteResponse as LikeDeleteResponse,
     type LikeCreateParams as LikeCreateParams,
-    type LikeDeleteParams as LikeDeleteParams
+    type LikeDeleteParams as LikeDeleteParams,
   };
 
   export {
@@ -430,6 +456,6 @@ export declare namespace Tweets {
     type RetweetCreateResponse as RetweetCreateResponse,
     type RetweetDeleteResponse as RetweetDeleteResponse,
     type RetweetCreateParams as RetweetCreateParams,
-    type RetweetDeleteParams as RetweetDeleteParams
+    type RetweetDeleteParams as RetweetDeleteParams,
   };
 }

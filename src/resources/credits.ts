@@ -30,7 +30,10 @@ export class Credits extends APIResource {
    * });
    * ```
    */
-  topupBalance(body: CreditTopupBalanceParams, options?: RequestOptions): APIPromise<CreditTopupBalanceResponse> {
+  topupBalance(
+    body: CreditTopupBalanceParams,
+    options?: RequestOptions,
+  ): APIPromise<CreditTopupBalanceResponse> {
     return this._client.post('/credits/topup', { body, ...options });
   }
 }
@@ -60,6 +63,6 @@ export declare namespace Credits {
   export {
     type CreditRetrieveBalanceResponse as CreditRetrieveBalanceResponse,
     type CreditTopupBalanceResponse as CreditTopupBalanceResponse,
-    type CreditTopupBalanceParams as CreditTopupBalanceParams
+    type CreditTopupBalanceParams as CreditTopupBalanceParams,
   };
 }

@@ -62,7 +62,10 @@ export class Styles extends APIResource {
    * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<void> {
-    return this._client.delete(path`/styles/${id}`, { ...options, headers: buildHeaders([{Accept: '*/*'}, options?.headers]) });
+    return this._client.delete(path`/styles/${id}`, {
+      ...options,
+      headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
+    });
   }
 
   /**
@@ -235,6 +238,6 @@ export declare namespace Styles {
     type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
     type StyleUpdateParams as StyleUpdateParams,
     type StyleAnalyzeParams as StyleAnalyzeParams,
-    type StyleCompareParams as StyleCompareParams
+    type StyleCompareParams as StyleCompareParams,
   };
 }

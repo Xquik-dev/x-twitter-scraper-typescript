@@ -90,6 +90,6 @@ export declare namespace Media {
     type MediaDownloadResponse as MediaDownloadResponse,
     type MediaUploadResponse as MediaUploadResponse,
     type MediaDownloadParams as MediaDownloadParams,
-    type MediaUploadParams as MediaUploadParams
+    type MediaUploadParams as MediaUploadParams,
   };
 }

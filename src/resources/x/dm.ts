@@ -16,7 +16,11 @@ export class Dm extends APIResource {
    * );
    * ```
    */
-  retrieveHistory(userID: string, query: DmRetrieveHistoryParams | null | undefined = {}, options?: RequestOptions): APIPromise<DmRetrieveHistoryResponse> {
+  retrieveHistory(
+    userID: string,
+    query: DmRetrieveHistoryParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<DmRetrieveHistoryResponse> {
     return this._client.get(path`/x/dm/${userID}/history`, { query, ...options });
   }
 
@@ -96,6 +100,6 @@ export declare namespace Dm {
     type DmRetrieveHistoryResponse as DmRetrieveHistoryResponse,
     type DmSendResponse as DmSendResponse,
     type DmRetrieveHistoryParams as DmRetrieveHistoryParams,
-    type DmSendParams as DmSendParams
+    type DmSendParams as DmSendParams,
   };
 }

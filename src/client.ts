@@ -17,27 +17,124 @@ import * as Errors from './core/error';
 import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
-import { Account, AccountRetrieveResponse, AccountSetXUsernameParams, AccountSetXUsernameResponse, AccountUpdateLocaleParams, AccountUpdateLocaleResponse } from './resources/account';
-import { APIKey, APIKeyCreateParams, APIKeyCreateResponse, APIKeyListResponse, APIKeyRevokeResponse, APIKeys } from './resources/api-keys';
+import {
+  Account,
+  AccountRetrieveResponse,
+  AccountSetXUsernameParams,
+  AccountSetXUsernameResponse,
+  AccountUpdateLocaleParams,
+  AccountUpdateLocaleResponse,
+} from './resources/account';
+import {
+  APIKey,
+  APIKeyCreateParams,
+  APIKeyCreateResponse,
+  APIKeyListResponse,
+  APIKeyRevokeResponse,
+  APIKeys,
+} from './resources/api-keys';
 import { Compose, ComposeCreateParams, ComposeCreateResponse } from './resources/compose';
-import { CreditRetrieveBalanceResponse, CreditTopupBalanceParams, CreditTopupBalanceResponse, Credits } from './resources/credits';
-import { Draft, DraftCreateParams, DraftDetail, DraftListParams, DraftListResponse, Drafts } from './resources/drafts';
-import { DrawDetail, DrawExportParams, DrawListItem, DrawListParams, DrawListResponse, DrawRetrieveResponse, DrawRunParams, DrawRunResponse, Draws, Winner } from './resources/draws';
+import {
+  CreditRetrieveBalanceResponse,
+  CreditTopupBalanceParams,
+  CreditTopupBalanceResponse,
+  Credits,
+} from './resources/credits';
+import {
+  Draft,
+  DraftCreateParams,
+  DraftDetail,
+  DraftListParams,
+  DraftListResponse,
+  Drafts,
+} from './resources/drafts';
+import {
+  DrawDetail,
+  DrawExportParams,
+  DrawListItem,
+  DrawListParams,
+  DrawListResponse,
+  DrawRetrieveResponse,
+  DrawRunParams,
+  DrawRunResponse,
+  Draws,
+  Winner,
+} from './resources/draws';
 import { Event, EventDetail, EventListParams, EventListResponse, Events } from './resources/events';
-import { ExtractionEstimateCostParams, ExtractionEstimateCostResponse, ExtractionExportResultsParams, ExtractionJob, ExtractionListParams, ExtractionListResponse, ExtractionRetrieveParams, ExtractionRetrieveResponse, ExtractionRunParams, ExtractionRunResponse, Extractions } from './resources/extractions';
-import { Monitor, MonitorCreateParams, MonitorCreateResponse, MonitorDeactivateResponse, MonitorListResponse, MonitorUpdateParams, Monitors } from './resources/monitors';
-import { Radar, RadarItem, RadarRetrieveTrendingTopicsParams, RadarRetrieveTrendingTopicsResponse } from './resources/radar';
-import { StyleAnalyzeParams, StyleCompareParams, StyleCompareResponse, StyleGetPerformanceResponse, StyleListResponse, StyleProfile, StyleProfileSummary, StyleUpdateParams, Styles } from './resources/styles';
+import {
+  ExtractionEstimateCostParams,
+  ExtractionEstimateCostResponse,
+  ExtractionExportResultsParams,
+  ExtractionJob,
+  ExtractionListParams,
+  ExtractionListResponse,
+  ExtractionRetrieveParams,
+  ExtractionRetrieveResponse,
+  ExtractionRunParams,
+  ExtractionRunResponse,
+  Extractions,
+} from './resources/extractions';
+import {
+  Monitor,
+  MonitorCreateParams,
+  MonitorCreateResponse,
+  MonitorDeactivateResponse,
+  MonitorListResponse,
+  MonitorUpdateParams,
+  Monitors,
+} from './resources/monitors';
+import {
+  Radar,
+  RadarItem,
+  RadarRetrieveTrendingTopicsParams,
+  RadarRetrieveTrendingTopicsResponse,
+} from './resources/radar';
+import {
+  StyleAnalyzeParams,
+  StyleCompareParams,
+  StyleCompareResponse,
+  StyleGetPerformanceResponse,
+  StyleListResponse,
+  StyleProfile,
+  StyleProfileSummary,
+  StyleUpdateParams,
+  Styles,
+} from './resources/styles';
 import { Subscribe, SubscribeCreateResponse } from './resources/subscribe';
 import { TrendListParams, TrendListResponse, Trends } from './resources/trends';
-import { Delivery, Webhook, WebhookCreateParams, WebhookCreateResponse, WebhookDeactivateResponse, WebhookListDeliveriesResponse, WebhookListResponse, WebhookTestResponse, WebhookUpdateParams, Webhooks } from './resources/webhooks';
+import {
+  Delivery,
+  Webhook,
+  WebhookCreateParams,
+  WebhookCreateResponse,
+  WebhookDeactivateResponse,
+  WebhookListDeliveriesResponse,
+  WebhookListResponse,
+  WebhookTestResponse,
+  WebhookUpdateParams,
+  Webhooks,
+} from './resources/webhooks';
 import { Support } from './resources/support/support';
-import { X, XGetArticleResponse, XGetHomeTimelineParams, XGetNotificationsParams, XGetNotificationsResponse, XGetTrendsParams, XGetTrendsResponse } from './resources/x/x';
+import {
+  X,
+  XGetArticleResponse,
+  XGetHomeTimelineParams,
+  XGetNotificationsParams,
+  XGetNotificationsResponse,
+  XGetTrendsParams,
+  XGetTrendsResponse,
+} from './resources/x/x';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
 import { readEnv } from './internal/utils/env';
-import { type LogLevel, type Logger, formatRequestDetails, loggerFor, parseLogLevel } from './internal/utils/log';
+import {
+  type LogLevel,
+  type Logger,
+  formatRequestDetails,
+  loggerFor,
+  parseLogLevel,
+} from './internal/utils/log';
 import { isEmptyObj } from './internal/utils/values';
 
 export interface ClientOptions {
@@ -121,7 +218,7 @@ export interface ClientOptions {
 }
 
 /**
- * API Client for interfacing with the X Twitter Scraper API. 
+ * API Client for interfacing with the X Twitter Scraper API.
  */
 export class XTwitterScraper {
   apiKey: string | null;
@@ -158,7 +255,6 @@ export class XTwitterScraper {
     bearerToken = readEnv('X_TWITTER_SCRAPER_BEARER_TOKEN') ?? null,
     ...opts
   }: ClientOptions = {}) {
-
     const options: ClientOptions = {
       apiKey,
       bearerToken,
@@ -172,7 +268,10 @@ export class XTwitterScraper {
     const defaultLogLevel = 'warn';
     // Set default logLevel early so that we can log a warning in parseLogLevel.
     this.logLevel = defaultLogLevel;
-    this.logLevel = parseLogLevel(options.logLevel, 'ClientOptions.logLevel', this) ?? parseLogLevel(readEnv('X_TWITTER_SCRAPER_LOG'), 'process.env[\'X_TWITTER_SCRAPER_LOG\']', this) ?? defaultLogLevel;
+    this.logLevel =
+      parseLogLevel(options.logLevel, 'ClientOptions.logLevel', this) ??
+      parseLogLevel(readEnv('X_TWITTER_SCRAPER_LOG'), "process.env['X_TWITTER_SCRAPER_LOG']", this) ??
+      defaultLogLevel;
     this.fetchOptions = options.fetchOptions;
     this.maxRetries = options.maxRetries ?? 2;
     this.fetch = options.fetch ?? Shims.getDefaultFetch();
@@ -199,7 +298,7 @@ export class XTwitterScraper {
       fetchOptions: this.fetchOptions,
       apiKey: this.apiKey,
       bearerToken: this.bearerToken,
-      ...options
+      ...options,
     });
     return client;
   }
@@ -212,7 +311,7 @@ export class XTwitterScraper {
   }
 
   protected defaultQuery(): Record<string, string | undefined> | undefined {
-    return this._options.defaultQuery
+    return this._options.defaultQuery;
   }
 
   protected validateHeaders({ values, nulls }: NullableHeaders) {
@@ -230,7 +329,9 @@ export class XTwitterScraper {
       return;
     }
 
-    throw new Error('Could not resolve authentication method. Expected either apiKey or bearerToken to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted')
+    throw new Error(
+      'Could not resolve authentication method. Expected either apiKey or bearerToken to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted',
+    );
   }
 
   protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
@@ -275,7 +376,11 @@ export class XTwitterScraper {
     return Errors.APIError.generate(status, error, message, headers);
   }
 
-  buildURL(path: string, query: Record<string, unknown> | null | undefined, defaultBaseURL?: string | undefined): string {
+  buildURL(
+    path: string,
+    query: Record<string, unknown> | null | undefined,
+    defaultBaseURL?: string | undefined,
+  ): string {
     const baseURL = (!this.#baseURLOverridden() && defaultBaseURL) || this.baseURL;
     const url =
       isAbsoluteURL(path) ?
@@ -363,7 +468,9 @@ export class XTwitterScraper {
 
     await this.prepareOptions(options);
 
-    const { req, url, timeout } = await this.buildRequest(options, { retryCount: maxRetries - retriesRemaining });
+    const { req, url, timeout } = await this.buildRequest(options, {
+      retryCount: maxRetries - retriesRemaining,
+    });
 
     await this.prepareRequest(req, { url, options });
 
@@ -372,7 +479,16 @@ export class XTwitterScraper {
     const retryLogStr = retryOfRequestLogID === undefined ? '' : `, retryOf: ${retryOfRequestLogID}`;
     const startTime = Date.now();
 
-    loggerFor(this).debug(`[${requestLogID}] sending request`, formatRequestDetails({ retryOfRequestLogID, method: options.method, url, options, headers: req.headers }));
+    loggerFor(this).debug(
+      `[${requestLogID}] sending request`,
+      formatRequestDetails({
+        retryOfRequestLogID,
+        method: options.method,
+        url,
+        options,
+        headers: req.headers,
+      }),
+    );
 
     if (options.signal?.aborted) {
       throw new Errors.APIUserAbortError();
@@ -391,21 +507,45 @@ export class XTwitterScraper {
       // deno throws "TypeError: error sending request for url (https://example/): client error (Connect): tcp connect error: Operation timed out (os error 60): Operation timed out (os error 60)"
       // undici throws "TypeError: fetch failed" with cause "ConnectTimeoutError: Connect Timeout Error (attempted address: example:443, timeout: 1ms)"
       // others do not provide enough information to distinguish timeouts from other connection errors
-      const isTimeout = isAbortError(response) || /timed? ?out/i.test(String(response) + ('cause' in response ? String(response.cause) : ''))
+      const isTimeout =
+        isAbortError(response) ||
+        /timed? ?out/i.test(String(response) + ('cause' in response ? String(response.cause) : ''));
       if (retriesRemaining) {
-        loggerFor(this).info(`[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} - ${retryMessage}`)
-        loggerFor(this).debug(`[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} (${retryMessage})`, formatRequestDetails({ retryOfRequestLogID, url, durationMs: headersTime - startTime, message: response.message }));
+        loggerFor(this).info(
+          `[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} - ${retryMessage}`,
+        );
+        loggerFor(this).debug(
+          `[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} (${retryMessage})`,
+          formatRequestDetails({
+            retryOfRequestLogID,
+            url,
+            durationMs: headersTime - startTime,
+            message: response.message,
+          }),
+        );
         return this.retryRequest(options, retriesRemaining, retryOfRequestLogID ?? requestLogID);
       }
-      loggerFor(this).info(`[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} - error; no more retries left`)
-      loggerFor(this).debug(`[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} (error; no more retries left)`, formatRequestDetails({ retryOfRequestLogID, url, durationMs: headersTime - startTime, message: response.message }));
+      loggerFor(this).info(
+        `[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} - error; no more retries left`,
+      );
+      loggerFor(this).debug(
+        `[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} (error; no more retries left)`,
+        formatRequestDetails({
+          retryOfRequestLogID,
+          url,
+          durationMs: headersTime - startTime,
+          message: response.message,
+        }),
+      );
       if (isTimeout) {
         throw new Errors.APIConnectionTimeoutError();
       }
       throw new Errors.APIConnectionError({ cause: response });
     }
 
-    const responseInfo = `[${requestLogID}${retryLogStr}] ${req.method} ${url} ${response.ok ? 'succeeded' : 'failed'} with status ${response.status} in ${headersTime - startTime}ms`;
+    const responseInfo = `[${requestLogID}${retryLogStr}] ${req.method} ${url} ${
+      response.ok ? 'succeeded' : 'failed'
+    } with status ${response.status} in ${headersTime - startTime}ms`;
 
     if (!response.ok) {
       const shouldRetry = await this.shouldRetry(response);
@@ -414,27 +554,60 @@ export class XTwitterScraper {
 
         // We don't need the body of this response.
         await Shims.CancelReadableStream(response.body);
-        loggerFor(this).info(`${responseInfo} - ${retryMessage}`)
-        loggerFor(this).debug(`[${requestLogID}] response error (${retryMessage})`, formatRequestDetails({ retryOfRequestLogID, url: response.url, status: response.status, headers: response.headers, durationMs: headersTime - startTime }));
-        return this.retryRequest(options, retriesRemaining, retryOfRequestLogID ?? requestLogID, response.headers);
+        loggerFor(this).info(`${responseInfo} - ${retryMessage}`);
+        loggerFor(this).debug(
+          `[${requestLogID}] response error (${retryMessage})`,
+          formatRequestDetails({
+            retryOfRequestLogID,
+            url: response.url,
+            status: response.status,
+            headers: response.headers,
+            durationMs: headersTime - startTime,
+          }),
+        );
+        return this.retryRequest(
+          options,
+          retriesRemaining,
+          retryOfRequestLogID ?? requestLogID,
+          response.headers,
+        );
       }
 
       const retryMessage = shouldRetry ? `error; no more retries left` : `error; not retryable`;
 
-      loggerFor(this).info(`${responseInfo} - ${retryMessage}`)
+      loggerFor(this).info(`${responseInfo} - ${retryMessage}`);
 
       const errText = await response.text().catch((err: any) => castToError(err).message);
       const errJSON = safeJSON(errText) as any;
       const errMessage = errJSON ? undefined : errText;
 
-      loggerFor(this).debug(`[${requestLogID}] response error (${retryMessage})`, formatRequestDetails({ retryOfRequestLogID, url: response.url, status: response.status, headers: response.headers, message: errMessage, durationMs: Date.now() - startTime }));
+      loggerFor(this).debug(
+        `[${requestLogID}] response error (${retryMessage})`,
+        formatRequestDetails({
+          retryOfRequestLogID,
+          url: response.url,
+          status: response.status,
+          headers: response.headers,
+          message: errMessage,
+          durationMs: Date.now() - startTime,
+        }),
+      );
 
       const err = this.makeStatusError(response.status, errJSON, errMessage, response.headers);
       throw err;
     }
 
-    loggerFor(this).info(responseInfo)
-    loggerFor(this).debug(`[${requestLogID}] response start`, formatRequestDetails({ retryOfRequestLogID, url: response.url, status: response.status, headers: response.headers, durationMs: headersTime - startTime }));
+    loggerFor(this).info(responseInfo);
+    loggerFor(this).debug(
+      `[${requestLogID}] response start`,
+      formatRequestDetails({
+        retryOfRequestLogID,
+        url: response.url,
+        status: response.status,
+        headers: response.headers,
+        durationMs: headersTime - startTime,
+      }),
+    );
 
     return { response, options, controller, requestLogID, retryOfRequestLogID, startTime };
   }
@@ -451,7 +624,9 @@ export class XTwitterScraper {
 
     const timeout = setTimeout(abort, ms);
 
-    const isReadableBody = ((globalThis as any).ReadableStream && options.body instanceof (globalThis as any).ReadableStream) || (typeof options.body === "object" && options.body !== null && Symbol.asyncIterator in options.body);
+    const isReadableBody =
+      ((globalThis as any).ReadableStream && options.body instanceof (globalThis as any).ReadableStream) ||
+      (typeof options.body === 'object' && options.body !== null && Symbol.asyncIterator in options.body);
 
     const fetchOptions: RequestInit = {
       signal: controller.signal as any,
@@ -466,7 +641,6 @@ export class XTwitterScraper {
     }
 
     try {
-
       // use undefined this binding; fetch errors if bound to something else in browser/cloudflare
       return await this.fetch.call(undefined, url, fetchOptions);
     } finally {
@@ -567,11 +741,12 @@ export class XTwitterScraper {
     const req: FinalizedRequestInit = {
       method,
       headers: reqHeaders,
-      ...(options.signal && { signal: options.signal}),
-      ...((globalThis as any).ReadableStream && body instanceof (globalThis as any).ReadableStream && { duplex: "half" }),
+      ...(options.signal && { signal: options.signal }),
+      ...((globalThis as any).ReadableStream &&
+        body instanceof (globalThis as any).ReadableStream && { duplex: 'half' }),
       ...(body && { body }),
-      ...(this.fetchOptions as any ?? {}),
-      ...(options.fetchOptions as any ?? {}),
+      ...((this.fetchOptions as any) ?? {}),
+      ...((options.fetchOptions as any) ?? {}),
     };
 
     return { req, url, timeout: options.timeout };
@@ -596,15 +771,17 @@ export class XTwitterScraper {
 
     const headers = buildHeaders([
       idempotencyHeaders,
-      {Accept: 'application/json',
-      'User-Agent': this.getUserAgent(),
-      'X-Stainless-Retry-Count': String(retryCount),
-      ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
-      ...getPlatformHeaders()},
+      {
+        Accept: 'application/json',
+        'User-Agent': this.getUserAgent(),
+        'X-Stainless-Retry-Count': String(retryCount),
+        ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
+        ...getPlatformHeaders(),
+      },
       await this.authHeaders(options),
       this._options.defaultHeaders,
       bodyHeaders,
-      options.headers
+      options.headers,
     ]);
 
     this.validateHeaders(headers);
@@ -631,11 +808,9 @@ export class XTwitterScraper {
       ArrayBuffer.isView(body) ||
       body instanceof ArrayBuffer ||
       body instanceof DataView ||
-      (
-        typeof body === 'string' &&
+      (typeof body === 'string' &&
         // Preserve legacy string encoding behavior for now
-        headers.values.has('content-type')
-      ) ||
+        headers.values.has('content-type')) ||
       // `Blob` is superset of `File`
       ((globalThis as any).Blob && body instanceof (globalThis as any).Blob) ||
       // `FormData` -> `multipart/form-data`
@@ -666,7 +841,7 @@ export class XTwitterScraper {
   }
 
   static XTwitterScraper = this;
-  static DEFAULT_TIMEOUT = 60000 // 1 minute
+  static DEFAULT_TIMEOUT = 60000; // 1 minute
 
   static XTwitterScraperError = Errors.XTwitterScraperError;
   static APIError = Errors.APIError;
@@ -762,154 +937,149 @@ XTwitterScraper.Support = Support;
 XTwitterScraper.Credits = Credits;
 
 export declare namespace XTwitterScraper {
-      export type RequestOptions = Opts.RequestOptions;
+  export type RequestOptions = Opts.RequestOptions;
 
-      export {
-  Account as Account,
-  type AccountRetrieveResponse as AccountRetrieveResponse,
-  type AccountSetXUsernameResponse as AccountSetXUsernameResponse,
-  type AccountUpdateLocaleResponse as AccountUpdateLocaleResponse,
-  type AccountSetXUsernameParams as AccountSetXUsernameParams,
-  type AccountUpdateLocaleParams as AccountUpdateLocaleParams
-};
+  export {
+    Account as Account,
+    type AccountRetrieveResponse as AccountRetrieveResponse,
+    type AccountSetXUsernameResponse as AccountSetXUsernameResponse,
+    type AccountUpdateLocaleResponse as AccountUpdateLocaleResponse,
+    type AccountSetXUsernameParams as AccountSetXUsernameParams,
+    type AccountUpdateLocaleParams as AccountUpdateLocaleParams,
+  };
 
-export {
-  APIKeys as APIKeys,
-  type APIKey as APIKey,
-  type APIKeyCreateResponse as APIKeyCreateResponse,
-  type APIKeyListResponse as APIKeyListResponse,
-  type APIKeyRevokeResponse as APIKeyRevokeResponse,
-  type APIKeyCreateParams as APIKeyCreateParams
-};
+  export {
+    APIKeys as APIKeys,
+    type APIKey as APIKey,
+    type APIKeyCreateResponse as APIKeyCreateResponse,
+    type APIKeyListResponse as APIKeyListResponse,
+    type APIKeyRevokeResponse as APIKeyRevokeResponse,
+    type APIKeyCreateParams as APIKeyCreateParams,
+  };
 
-export {
-  Subscribe as Subscribe,
-  type SubscribeCreateResponse as SubscribeCreateResponse
-};
+  export { Subscribe as Subscribe, type SubscribeCreateResponse as SubscribeCreateResponse };
 
-export {
-  Compose as Compose,
-  type ComposeCreateResponse as ComposeCreateResponse,
-  type ComposeCreateParams as ComposeCreateParams
-};
+  export {
+    Compose as Compose,
+    type ComposeCreateResponse as ComposeCreateResponse,
+    type ComposeCreateParams as ComposeCreateParams,
+  };
 
-export {
-  Drafts as Drafts,
-  type Draft as Draft,
-  type DraftDetail as DraftDetail,
-  type DraftListResponse as DraftListResponse,
-  type DraftCreateParams as DraftCreateParams,
-  type DraftListParams as DraftListParams
-};
+  export {
+    Drafts as Drafts,
+    type Draft as Draft,
+    type DraftDetail as DraftDetail,
+    type DraftListResponse as DraftListResponse,
+    type DraftCreateParams as DraftCreateParams,
+    type DraftListParams as DraftListParams,
+  };
 
-export {
-  Styles as Styles,
-  type StyleProfile as StyleProfile,
-  type StyleProfileSummary as StyleProfileSummary,
-  type StyleListResponse as StyleListResponse,
-  type StyleCompareResponse as StyleCompareResponse,
-  type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
-  type StyleUpdateParams as StyleUpdateParams,
-  type StyleAnalyzeParams as StyleAnalyzeParams,
-  type StyleCompareParams as StyleCompareParams
-};
+  export {
+    Styles as Styles,
+    type StyleProfile as StyleProfile,
+    type StyleProfileSummary as StyleProfileSummary,
+    type StyleListResponse as StyleListResponse,
+    type StyleCompareResponse as StyleCompareResponse,
+    type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
+    type StyleUpdateParams as StyleUpdateParams,
+    type StyleAnalyzeParams as StyleAnalyzeParams,
+    type StyleCompareParams as StyleCompareParams,
+  };
 
-export {
-  Radar as Radar,
-  type RadarItem as RadarItem,
-  type RadarRetrieveTrendingTopicsResponse as RadarRetrieveTrendingTopicsResponse,
-  type RadarRetrieveTrendingTopicsParams as RadarRetrieveTrendingTopicsParams
-};
+  export {
+    Radar as Radar,
+    type RadarItem as RadarItem,
+    type RadarRetrieveTrendingTopicsResponse as RadarRetrieveTrendingTopicsResponse,
+    type RadarRetrieveTrendingTopicsParams as RadarRetrieveTrendingTopicsParams,
+  };
 
-export {
-  Monitors as Monitors,
-  type Monitor as Monitor,
-  type MonitorCreateResponse as MonitorCreateResponse,
-  type MonitorListResponse as MonitorListResponse,
-  type MonitorDeactivateResponse as MonitorDeactivateResponse,
-  type MonitorCreateParams as MonitorCreateParams,
-  type MonitorUpdateParams as MonitorUpdateParams
-};
+  export {
+    Monitors as Monitors,
+    type Monitor as Monitor,
+    type MonitorCreateResponse as MonitorCreateResponse,
+    type MonitorListResponse as MonitorListResponse,
+    type MonitorDeactivateResponse as MonitorDeactivateResponse,
+    type MonitorCreateParams as MonitorCreateParams,
+    type MonitorUpdateParams as MonitorUpdateParams,
+  };
 
-export {
-  Events as Events,
-  type Event as Event,
-  type EventDetail as EventDetail,
-  type EventListResponse as EventListResponse,
-  type EventListParams as EventListParams
-};
+  export {
+    Events as Events,
+    type Event as Event,
+    type EventDetail as EventDetail,
+    type EventListResponse as EventListResponse,
+    type EventListParams as EventListParams,
+  };
 
-export {
-  Extractions as Extractions,
-  type ExtractionJob as ExtractionJob,
-  type ExtractionRetrieveResponse as ExtractionRetrieveResponse,
-  type ExtractionListResponse as ExtractionListResponse,
-  type ExtractionEstimateCostResponse as ExtractionEstimateCostResponse,
-  type ExtractionRunResponse as ExtractionRunResponse,
-  type ExtractionRetrieveParams as ExtractionRetrieveParams,
-  type ExtractionListParams as ExtractionListParams,
-  type ExtractionEstimateCostParams as ExtractionEstimateCostParams,
-  type ExtractionExportResultsParams as ExtractionExportResultsParams,
-  type ExtractionRunParams as ExtractionRunParams
-};
+  export {
+    Extractions as Extractions,
+    type ExtractionJob as ExtractionJob,
+    type ExtractionRetrieveResponse as ExtractionRetrieveResponse,
+    type ExtractionListResponse as ExtractionListResponse,
+    type ExtractionEstimateCostResponse as ExtractionEstimateCostResponse,
+    type ExtractionRunResponse as ExtractionRunResponse,
+    type ExtractionRetrieveParams as ExtractionRetrieveParams,
+    type ExtractionListParams as ExtractionListParams,
+    type ExtractionEstimateCostParams as ExtractionEstimateCostParams,
+    type ExtractionExportResultsParams as ExtractionExportResultsParams,
+    type ExtractionRunParams as ExtractionRunParams,
+  };
 
-export {
-  Draws as Draws,
-  type DrawDetail as DrawDetail,
-  type DrawListItem as DrawListItem,
-  type Winner as Winner,
-  type DrawRetrieveResponse as DrawRetrieveResponse,
-  type DrawListResponse as DrawListResponse,
-  type DrawRunResponse as DrawRunResponse,
-  type DrawListParams as DrawListParams,
-  type DrawExportParams as DrawExportParams,
-  type DrawRunParams as DrawRunParams
-};
+  export {
+    Draws as Draws,
+    type DrawDetail as DrawDetail,
+    type DrawListItem as DrawListItem,
+    type Winner as Winner,
+    type DrawRetrieveResponse as DrawRetrieveResponse,
+    type DrawListResponse as DrawListResponse,
+    type DrawRunResponse as DrawRunResponse,
+    type DrawListParams as DrawListParams,
+    type DrawExportParams as DrawExportParams,
+    type DrawRunParams as DrawRunParams,
+  };
 
-export {
-  Webhooks as Webhooks,
-  type Delivery as Delivery,
-  type Webhook as Webhook,
-  type WebhookCreateResponse as WebhookCreateResponse,
-  type WebhookListResponse as WebhookListResponse,
-  type WebhookDeactivateResponse as WebhookDeactivateResponse,
-  type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
-  type WebhookTestResponse as WebhookTestResponse,
-  type WebhookCreateParams as WebhookCreateParams,
-  type WebhookUpdateParams as WebhookUpdateParams
-};
+  export {
+    Webhooks as Webhooks,
+    type Delivery as Delivery,
+    type Webhook as Webhook,
+    type WebhookCreateResponse as WebhookCreateResponse,
+    type WebhookListResponse as WebhookListResponse,
+    type WebhookDeactivateResponse as WebhookDeactivateResponse,
+    type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
+    type WebhookTestResponse as WebhookTestResponse,
+    type WebhookCreateParams as WebhookCreateParams,
+    type WebhookUpdateParams as WebhookUpdateParams,
+  };
 
-export {
-  X as X,
-  type XGetArticleResponse as XGetArticleResponse,
-  type XGetNotificationsResponse as XGetNotificationsResponse,
-  type XGetTrendsResponse as XGetTrendsResponse,
-  type XGetHomeTimelineParams as XGetHomeTimelineParams,
-  type XGetNotificationsParams as XGetNotificationsParams,
-  type XGetTrendsParams as XGetTrendsParams
-};
+  export {
+    X as X,
+    type XGetArticleResponse as XGetArticleResponse,
+    type XGetNotificationsResponse as XGetNotificationsResponse,
+    type XGetTrendsResponse as XGetTrendsResponse,
+    type XGetHomeTimelineParams as XGetHomeTimelineParams,
+    type XGetNotificationsParams as XGetNotificationsParams,
+    type XGetTrendsParams as XGetTrendsParams,
+  };
 
-export {
-  Trends as Trends,
-  type TrendListResponse as TrendListResponse,
-  type TrendListParams as TrendListParams
-};
+  export {
+    Trends as Trends,
+    type TrendListResponse as TrendListResponse,
+    type TrendListParams as TrendListParams,
+  };
 
-export {
-  Support as Support
-};
+  export { Support as Support };
 
-export {
-  Credits as Credits,
-  type CreditRetrieveBalanceResponse as CreditRetrieveBalanceResponse,
-  type CreditTopupBalanceResponse as CreditTopupBalanceResponse,
-  type CreditTopupBalanceParams as CreditTopupBalanceParams
-};
+  export {
+    Credits as Credits,
+    type CreditRetrieveBalanceResponse as CreditRetrieveBalanceResponse,
+    type CreditTopupBalanceResponse as CreditTopupBalanceResponse,
+    type CreditTopupBalanceParams as CreditTopupBalanceParams,
+  };
 
-export type Error = API.Error;
-export type EventType = API.EventType;
-export type PaginatedTweets = API.PaginatedTweets;
-export type PaginatedUsers = API.PaginatedUsers;
-export type SearchTweet = API.SearchTweet;
-export type UserProfile = API.UserProfile;
-    }
+  export type Error = API.Error;
+  export type EventType = API.EventType;
+  export type PaginatedTweets = API.PaginatedTweets;
+  export type PaginatedUsers = API.PaginatedUsers;
+  export type SearchTweet = API.SearchTweet;
+  export type UserProfile = API.UserProfile;
+}

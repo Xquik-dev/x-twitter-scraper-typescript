@@ -2,7 +2,10 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 
-const client = new XTwitterScraper({ apiKey: 'My API Key', baseURL: process.env["TEST_API_BASE_URL"] ?? 'http://127.0.0.1:4010' });
+const client = new XTwitterScraper({
+  apiKey: 'My API Key',
+  baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
+});
 
 describe('resource followers', () => {
   // Mock server tests are disabled

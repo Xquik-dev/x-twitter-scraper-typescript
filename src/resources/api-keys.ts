@@ -95,6 +95,6 @@ export declare namespace APIKeys {
     type APIKeyCreateResponse as APIKeyCreateResponse,
     type APIKeyListResponse as APIKeyListResponse,
     type APIKeyRevokeResponse as APIKeyRevokeResponse,
-    type APIKeyCreateParams as APIKeyCreateParams
+    type APIKeyCreateParams as APIKeyCreateParams,
   };
 }

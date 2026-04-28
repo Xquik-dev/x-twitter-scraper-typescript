@@ -30,7 +30,10 @@ export class Draws extends APIResource {
    * const draws = await client.draws.list();
    * ```
    */
-  list(query: DrawListParams | null | undefined = {}, options?: RequestOptions): APIPromise<DrawListResponse> {
+  list(
+    query: DrawListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<DrawListResponse> {
     return this._client.get('/draws', { query, ...options });
   }
 
@@ -45,8 +48,17 @@ export class Draws extends APIResource {
    * console.log(content);
    * ```
    */
-  export(id: string, query: DrawExportParams | null | undefined = {}, options?: RequestOptions): APIPromise<Response> {
-    return this._client.get(path`/draws/${id}/export`, { query, ...options, headers: buildHeaders([{Accept: 'application/octet-stream'}, options?.headers]), __binaryResponse: true });
+  export(
+    id: string,
+    query: DrawExportParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<Response> {
+    return this._client.get(path`/draws/${id}/export`, {
+      query,
+      ...options,
+      headers: buildHeaders([{ Accept: 'application/octet-stream' }, options?.headers]),
+      __binaryResponse: true,
+    });
   }
 
   /**
@@ -220,6 +232,6 @@ export declare namespace Draws {
     type DrawRunResponse as DrawRunResponse,
     type DrawListParams as DrawListParams,
     type DrawExportParams as DrawExportParams,
-    type DrawRunParams as DrawRunParams
+    type DrawRunParams as DrawRunParams,
   };
 }

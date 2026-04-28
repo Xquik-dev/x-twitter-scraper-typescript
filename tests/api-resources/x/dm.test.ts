@@ -2,7 +2,10 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 
-const client = new XTwitterScraper({ apiKey: 'My API Key', baseURL: process.env["TEST_API_BASE_URL"] ?? 'http://127.0.0.1:4010' });
+const client = new XTwitterScraper({
+  apiKey: 'My API Key',
+  baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
+});
 
 describe('resource dm', () => {
   // Mock server tests are disabled
@@ -20,14 +23,21 @@ describe('resource dm', () => {
   // Mock server tests are disabled
   test.skip('retrieveHistory: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(client.x.dm.retrieveHistory('userId', { cursor: 'cursor', maxId: 'maxId' }, { path: '/_stainless_unknown_path' }))
-      .rejects
-      .toThrow(XTwitterScraper.NotFoundError);
+    await expect(
+      client.x.dm.retrieveHistory(
+        'userId',
+        { cursor: 'cursor', maxId: 'maxId' },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
   // Mock server tests are disabled
   test.skip('send: only required params', async () => {
-    const responsePromise = client.x.dm.send('userId', { account: '@elonmusk', text: 'Example text content' });
+    const responsePromise = client.x.dm.send('userId', {
+      account: '@elonmusk',
+      text: 'Example text content',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -40,10 +50,10 @@ describe('resource dm', () => {
   // Mock server tests are disabled
   test.skip('send: required and optional params', async () => {
     const response = await client.x.dm.send('userId', {
-    account: '@elonmusk',
-    text: 'Example text content',
-    media_ids: ['1234567890123456789'],
-    reply_to_message_id: '1234567890123456789',
-  });
+      account: '@elonmusk',
+      text: 'Example text content',
+      media_ids: ['1234567890123456789'],
+      reply_to_message_id: '1234567890123456789',
+    });
   });
 });

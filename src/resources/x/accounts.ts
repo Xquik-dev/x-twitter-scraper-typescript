@@ -269,6 +269,6 @@ export declare namespace Accounts {
     type AccountBulkRetryResponse as AccountBulkRetryResponse,
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
-    type AccountReauthParams as AccountReauthParams
+    type AccountReauthParams as AccountReauthParams,
   };
 }

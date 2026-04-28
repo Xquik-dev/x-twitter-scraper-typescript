@@ -150,6 +150,6 @@ export declare namespace Monitors {
     type MonitorListResponse as MonitorListResponse,
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
     type MonitorCreateParams as MonitorCreateParams,
-    type MonitorUpdateParams as MonitorUpdateParams
+    type MonitorUpdateParams as MonitorUpdateParams,
   };
 }

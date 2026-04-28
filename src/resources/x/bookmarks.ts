@@ -17,7 +17,10 @@ export class Bookmarks extends APIResource {
    * const paginatedTweets = await client.x.bookmarks.list();
    * ```
    */
-  list(query: BookmarkListParams | null | undefined = {}, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+  list(
+    query: BookmarkListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/bookmarks', { query, ...options });
   }
 
@@ -65,6 +68,6 @@ export interface BookmarkListParams {
 export declare namespace Bookmarks {
   export {
     type BookmarkRetrieveFoldersResponse as BookmarkRetrieveFoldersResponse,
-    type BookmarkListParams as BookmarkListParams
+    type BookmarkListParams as BookmarkListParams,
   };
 }

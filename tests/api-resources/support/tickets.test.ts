@@ -2,12 +2,18 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 
-const client = new XTwitterScraper({ apiKey: 'My API Key', baseURL: process.env["TEST_API_BASE_URL"] ?? 'http://127.0.0.1:4010' });
+const client = new XTwitterScraper({
+  apiKey: 'My API Key',
+  baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
+});
 
 describe('resource tickets', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.support.tickets.create({ body: 'I am unable to connect my X account. Please help.', subject: 'Cannot connect X account' });
+    const responsePromise = client.support.tickets.create({
+      body: 'I am unable to connect my X account. Please help.',
+      subject: 'Cannot connect X account',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -19,7 +25,10 @@ describe('resource tickets', () => {
 
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
-    const response = await client.support.tickets.create({ body: 'I am unable to connect my X account. Please help.', subject: 'Cannot connect X account' });
+    const response = await client.support.tickets.create({
+      body: 'I am unable to connect my X account. Please help.',
+      subject: 'Cannot connect X account',
+    });
   });
 
   // Mock server tests are disabled

@@ -34,7 +34,11 @@ export class Follow extends APIResource {
    * );
    * ```
    */
-  deleteAll(id: string, body: FollowDeleteAllParams, options?: RequestOptions): APIPromise<FollowDeleteAllResponse> {
+  deleteAll(
+    id: string,
+    body: FollowDeleteAllParams,
+    options?: RequestOptions,
+  ): APIPromise<FollowDeleteAllResponse> {
     return this._client.delete(path`/x/users/${id}/follow`, { body, ...options });
   }
 }
@@ -66,6 +70,6 @@ export declare namespace Follow {
     type FollowCreateResponse as FollowCreateResponse,
     type FollowDeleteAllResponse as FollowDeleteAllResponse,
     type FollowCreateParams as FollowCreateParams,
-    type FollowDeleteAllParams as FollowDeleteAllParams
+    type FollowDeleteAllParams as FollowDeleteAllParams,
   };
 }
