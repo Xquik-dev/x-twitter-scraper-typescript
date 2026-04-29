@@ -1,12 +1,60 @@
-# X Twitter Scraper TypeScript API Library
+# Xquik TypeScript SDK for X (Twitter) Scraper API
 
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 
-This library provides convenient access to the X Twitter Scraper REST API from server-side TypeScript or JavaScript.
+Xquik TypeScript SDK for the X (Twitter) Scraper API: typed REST, HMAC webhooks, MCP, and docs at https://docs.xquik.com/api-reference/overview.
 
-The REST API documentation can be found on [xquik.com](https://xquik.com). The full API of this library can be found in [api.md](api.md).
+Use it to search tweets, look up users, monitor accounts, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
+
+[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Server](https://xquik.com/mcp) | [Python SDK](https://github.com/Xquik-dev/x-twitter-scraper-python)
 
 It is generated with [Stainless](https://www.stainless.com/).
+
+## Tweet Search & User Lookup
+
+Build TypeScript services that search tweets, fetch user profiles, check follower relationships, download media, and inspect timeline data through one typed REST client.
+
+## Real-Time Monitoring & Webhooks
+
+Create monitors for X accounts, receive HMAC-signed webhook events, and query event history from the same SDK surface.
+
+## AI Agent Workflows With MCP
+
+Connect agent systems to Xquik through the MCP server while keeping custom product code on the typed REST SDK.
+
+## Giveaway Draws & Extractions
+
+Run giveaway draws, export winners, and launch extraction jobs for replies, reposts, quotes, followers, lists, communities, threads, articles, and tweet search.
+
+## Xquik SDK vs Building From Scratch
+
+| Need | Xquik TypeScript SDK | Building From Scratch |
+| --- | --- | --- |
+| Typed REST calls | Generated request and response types | Hand-maintained schemas |
+| Real-time events | Monitors plus HMAC webhooks | Separate queue and signing work |
+| AI agent access | REST SDK plus MCP server | Custom bridge layer |
+| X data workflows | Search, user lookup, draws, exports, and monitoring | Many separate integrations |
+
+## Package & Registry Trust
+
+- Package: [npm `x-twitter-scraper`](https://www.npmjs.com/package/x-twitter-scraper)
+- Source: [Xquik-dev/x-twitter-scraper-typescript](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
+- License: Apache-2.0
+- Citation metadata: [CITATION.cff](CITATION.cff)
+
+## FAQ
+
+### Is this SDK only for browser apps?
+
+No. It is designed for server-side TypeScript and JavaScript runtimes.
+
+### Where are the REST endpoints documented?
+
+Start with the [REST API overview](https://docs.xquik.com/api-reference/overview), then use [api.md](api.md) for generated method names.
+
+### Can this work with AI agents?
+
+Yes. Use the SDK in your app code and the [MCP server](https://xquik.com/mcp) for MCP-compatible agent clients.
 
 ## Installation
 
