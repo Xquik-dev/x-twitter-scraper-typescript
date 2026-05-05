@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2 (2026-05-05)
+
+Full Changelog: [v0.3.1...v0.3.2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.3.1...v0.3.2)
+
+### Bug Fixes
+
+* remove stale integrations resource from the TypeScript SDK package
+
 ## 0.3.1 (2026-05-05)
 
 Full Changelog: [v0.3.0...v0.3.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.3.0...v0.3.1)
