@@ -1,5 +1,7 @@
 # Xquik TypeScript SDK for X (Twitter) Scraper API
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg?url=https%3A%2F%2Fgithub.com%2FXquik-dev%2Fx-twitter-scraper-typescript)](https://deepwiki.com/Xquik-dev/x-twitter-scraper-typescript)
+
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 
 Xquik TypeScript SDK for the X (Twitter) Scraper API: typed REST, HMAC webhooks, MCP, and docs at https://docs.xquik.com/api-reference/overview.
