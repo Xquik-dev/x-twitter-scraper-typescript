@@ -141,8 +141,8 @@ export interface XAccountDetail {
 
 /**
  * Sanitized X account summary returned by connect and reauth. Includes an optional
- * `loginCountry` field surfaced only when the declared proxy region had no Driver
- * capacity and the login fell back to a single US consumer device for this
+ * `loginCountry` field surfaced only when the selected login region was
+ * temporarily unavailable and the login used a one-time US session for this
  * one-time action. Future activity continues to use the selected `proxy_country`;
  * the field is omitted on normal logins.
  */
@@ -160,9 +160,9 @@ export interface AccountCreateResponse {
   xUsername: string;
 
   /**
-   * ISO-3166-1 alpha-2 country code of the Driver consumer device used for this
-   * login. Present only when the US fallback was triggered because Driver had no
-   * capacity in the declared region. Omitted otherwise.
+   * ISO-3166-1 alpha-2 country code of the login service session used for this
+   * login. Present only when the US fallback was triggered because the selected
+   * login region was temporarily unavailable. Omitted otherwise.
    */
   loginCountry?: string;
 }
@@ -184,8 +184,8 @@ export interface AccountBulkRetryResponse {
 
 /**
  * Sanitized X account summary returned by connect and reauth. Includes an optional
- * `loginCountry` field surfaced only when the declared proxy region had no Driver
- * capacity and the login fell back to a single US consumer device for this
+ * `loginCountry` field surfaced only when the selected login region was
+ * temporarily unavailable and the login used a one-time US session for this
  * one-time action. Future activity continues to use the selected `proxy_country`;
  * the field is omitted on normal logins.
  */
@@ -203,9 +203,9 @@ export interface AccountReauthResponse {
   xUsername: string;
 
   /**
-   * ISO-3166-1 alpha-2 country code of the Driver consumer device used for this
-   * login. Present only when the US fallback was triggered because Driver had no
-   * capacity in the declared region. Omitted otherwise.
+   * ISO-3166-1 alpha-2 country code of the login service session used for this
+   * login. Present only when the US fallback was triggered because the selected
+   * login region was temporarily unavailable. Omitted otherwise.
    */
   loginCountry?: string;
 }
