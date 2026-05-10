@@ -57,5 +57,5 @@ else
   TAG="latest"
 fi
 
-# Publish with the appropriate tag
-pnpm publish --no-git-checks --tag "$TAG"
+# Publish with npm provenance from GitHub Actions OIDC.
+npm publish --provenance --tag "$TAG"
