@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/Xquik-dev/x-twitter-scraper-typescript.git"
   },
+  "bugs": {
+    "url": "https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues"
+  },
   "keywords": [
     "x-api",
     "twitter-api",
