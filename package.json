@@ -1,6 +1,6 @@
 {
   "name": "x-twitter-scraper",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Official TypeScript SDK for the Xquik X (Twitter) Scraper API, webhooks, monitoring, and agent workflows",
   "author": "X Twitter Scraper <support@xquik.com>",
   "types": "dist/index.d.ts",
