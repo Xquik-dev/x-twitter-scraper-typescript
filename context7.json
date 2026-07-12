@@ -1,7 +1,7 @@
 {
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "Xquik TypeScript SDK",
-  "description": "Official TypeScript and Node.js SDK for Xquik's X/Twitter API with typed REST methods for tweet search, user lookup, monitors, webhooks, MCP, and extractions.",
+  "description": "Xquik TypeScript and Node.js SDK for X/Twitter workflows with typed REST methods for tweet search, user lookup, monitors, webhooks, MCP, and extractions. Not affiliated with X Corp.",
   "branch": "main",
   "rules": [
     "Use README.md first for install, API key setup, TypeScript and JavaScript examples, webhooks, MCP, and common workflows.",
