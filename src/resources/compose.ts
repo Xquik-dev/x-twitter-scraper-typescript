@@ -21,7 +21,11 @@ export class Compose extends APIResource {
    * ```
    */
   create(body: ComposeCreateParams, options?: RequestOptions): APIPromise<ComposeCreateResponse> {
-    return this._client.post('/compose', { body, ...options });
+    return this._client.post('/compose', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 

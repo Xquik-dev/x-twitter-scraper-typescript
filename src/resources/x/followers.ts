@@ -20,7 +20,11 @@ export class Followers extends APIResource {
    * ```
    */
   check(query: FollowerCheckParams, options?: RequestOptions): APIPromise<FollowerCheckResponse> {
-    return this._client.get('/x/followers/check', { query, ...options });
+    return this._client.get('/x/followers/check', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
@@ -36,12 +40,12 @@ export interface FollowerCheckResponse {
 
 export interface FollowerCheckParams {
   /**
-   * Username to check (without @)
+   * Source username, @username, or X or Twitter profile URL
    */
   source: string;
 
   /**
-   * Target username (without @)
+   * Target username, @username, or X or Twitter profile URL
    */
   target: string;
 }

@@ -35,7 +35,12 @@ import {
 } from './resources/api-keys';
 import { Compose, ComposeCreateParams, ComposeCreateResponse } from './resources/compose';
 import {
+  CreditQuickTopupBalanceParams,
+  CreditQuickTopupBalanceResponse,
+  CreditRedirectTopupCheckoutParams,
   CreditRetrieveBalanceResponse,
+  CreditRetrieveTopupStatusParams,
+  CreditRetrieveTopupStatusResponse,
   CreditTopupBalanceParams,
   CreditTopupBalanceResponse,
   Credits,
@@ -75,14 +80,13 @@ import {
   Extractions,
 } from './resources/extractions';
 import {
-  Monitor,
-  MonitorCreateParams,
-  MonitorCreateResponse,
-  MonitorDeactivateResponse,
-  MonitorListResponse,
-  MonitorUpdateParams,
-  Monitors,
-} from './resources/monitors';
+  GuestWalletCreateParams,
+  GuestWalletCreateResponse,
+  GuestWalletRetrieveStatusResponse,
+  GuestWalletTopupParams,
+  GuestWalletTopupResponse,
+  GuestWallets,
+} from './resources/guest-wallets';
 import {
   Radar,
   RadarItem,
@@ -100,7 +104,7 @@ import {
   StyleUpdateParams,
   Styles,
 } from './resources/styles';
-import { Subscribe, SubscribeCreateResponse } from './resources/subscribe';
+import { Subscribe, SubscribeCreateParams, SubscribeCreateResponse } from './resources/subscribe';
 import { TrendListParams, TrendListResponse, Trends } from './resources/trends';
 import {
   Delivery,
@@ -110,10 +114,20 @@ import {
   WebhookDeactivateResponse,
   WebhookListDeliveriesResponse,
   WebhookListResponse,
+  WebhookResumeResponse,
   WebhookTestResponse,
   WebhookUpdateParams,
   Webhooks,
 } from './resources/webhooks';
+import {
+  Monitor,
+  MonitorCreateParams,
+  MonitorCreateResponse,
+  MonitorDeactivateResponse,
+  MonitorListResponse,
+  MonitorUpdateParams,
+  Monitors,
+} from './resources/monitors/monitors';
 import { Support } from './resources/support/support';
 import {
   X,
@@ -147,6 +161,11 @@ export interface ClientOptions {
    * OAuth 2.1 access token
    */
   bearerToken?: string | null | undefined;
+
+  /**
+   * Secure Xquik browser session cookie
+   */
+  cookieSession?: string | null | undefined;
 
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
@@ -223,6 +242,7 @@ export interface ClientOptions {
 export class XTwitterScraper {
   apiKey: string | null;
   bearerToken: string | null;
+  cookieSession: string | null;
 
   baseURL: string;
   maxRetries: number;
@@ -241,6 +261,7 @@ export class XTwitterScraper {
    *
    * @param {string | null | undefined} [opts.apiKey=process.env['X_TWITTER_SCRAPER_API_KEY'] ?? null]
    * @param {string | null | undefined} [opts.bearerToken=process.env['X_TWITTER_SCRAPER_BEARER_TOKEN'] ?? null]
+   * @param {string | null | undefined} [opts.cookieSession=process.env['X_TWITTER_SCRAPER_SESSION'] ?? null]
    * @param {string} [opts.baseURL=process.env['X_TWITTER_SCRAPER_BASE_URL'] ?? https://xquik.com/api/v1] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
@@ -253,11 +274,13 @@ export class XTwitterScraper {
     baseURL = readEnv('X_TWITTER_SCRAPER_BASE_URL'),
     apiKey = readEnv('X_TWITTER_SCRAPER_API_KEY') ?? null,
     bearerToken = readEnv('X_TWITTER_SCRAPER_BEARER_TOKEN') ?? null,
+    cookieSession = readEnv('X_TWITTER_SCRAPER_SESSION') ?? null,
     ...opts
   }: ClientOptions = {}) {
     const options: ClientOptions = {
       apiKey,
       bearerToken,
+      cookieSession,
       ...opts,
       baseURL: baseURL || `https://xquik.com/api/v1`,
     };
@@ -293,6 +316,7 @@ export class XTwitterScraper {
 
     this.apiKey = apiKey;
     this.bearerToken = bearerToken;
+    this.cookieSession = cookieSession;
   }
 
   /**
@@ -310,6 +334,7 @@ export class XTwitterScraper {
       fetchOptions: this.fetchOptions,
       apiKey: this.apiKey,
       bearerToken: this.bearerToken,
+      cookieSession: this.cookieSession,
       ...options,
     });
     return client;
@@ -341,20 +366,34 @@ export class XTwitterScraper {
       return;
     }
 
+    if (this.cookieSession && values.get('__host-xquik_session')) {
+      return;
+    }
+    if (nulls.has('__host-xquik_session')) {
+      return;
+    }
+
     throw new Error(
-      'Could not resolve authentication method. Expected either apiKey or bearerToken to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted',
+      'Could not resolve authentication method. Expected one of apiKey, bearerToken or cookieSession to be set. Or for one of the "x-api-key", "Authorization" or "__Host-xquik_session" headers to be explicitly omitted',
     );
   }
 
-  protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
-    return buildHeaders([await this.apiKeyAuth(opts), await this.oauthBearerAuth(opts)]);
+  protected async authHeaders(
+    opts: FinalRequestOptions,
+    schemes: { apiKeyAuth?: boolean; oauthBearerAuth?: boolean; cookieSessionAuth?: boolean },
+  ): Promise<NullableHeaders | undefined> {
+    return buildHeaders([
+      schemes.apiKeyAuth ? await this.apiKeyAuth(opts) : null,
+      schemes.oauthBearerAuth ? await this.oauthBearerAuth(opts) : null,
+      schemes.cookieSessionAuth ? await this.cookieSessionAuth(opts) : null,
+    ]);
   }
 
   protected async apiKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     if (this.apiKey == null) {
       return undefined;
     }
-    return buildHeaders([{ 'X-Api-Key': this.apiKey }]);
+    return buildHeaders([{ 'x-api-key': this.apiKey }]);
   }
 
   protected async oauthBearerAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
@@ -362,6 +401,13 @@ export class XTwitterScraper {
       return undefined;
     }
     return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
+  }
+
+  protected async cookieSessionAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    if (this.cookieSession == null) {
+      return undefined;
+    }
+    return buildHeaders([{ '__Host-xquik_session': this.cookieSession }]);
   }
 
   /**
@@ -790,7 +836,10 @@ export class XTwitterScraper {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
-      await this.authHeaders(options),
+      await this.authHeaders(
+        options,
+        options.__security ?? { apiKeyAuth: true, oauthBearerAuth: true, cookieSessionAuth: true },
+      ),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
@@ -807,11 +856,19 @@ export class XTwitterScraper {
     return () => controller.abort();
   }
 
-  private buildBody({ options: { body, headers: rawHeaders } }: { options: FinalRequestOptions }): {
+  private buildBody({ options }: { options: FinalRequestOptions }): {
     bodyHeaders: HeadersLike;
     body: BodyInit | undefined;
   } {
+    const { body, headers: rawHeaders } = options;
     if (!body) {
+      // A resource method always passes a `body` key when its operation defines a
+      // request body, even if the caller omitted an optional body param. Keep the
+      // content-type for those, and only elide it for operations with no body at
+      // all (e.g. GET/DELETE).
+      if (body == null && 'body' in options) {
+        return this.#encoder({ body, headers: buildHeaders([rawHeaders]) });
+      }
       return { bodyHeaders: undefined, body: undefined };
     }
     const headers = buildHeaders([rawHeaders]);
@@ -908,7 +965,7 @@ export class XTwitterScraper {
    */
   events: API.Events = new API.Events(this);
   /**
-   * Bulk data extraction (20 tool types)
+   * Bulk data extraction (23 tool types)
    */
   extractions: API.Extractions = new API.Extractions(this);
   /**
@@ -929,6 +986,10 @@ export class XTwitterScraper {
    * Subscription, billing, and credits
    */
   credits: API.Credits = new API.Credits(this);
+  /**
+   * Accountless prepaid access for paid read endpoints
+   */
+  guestWallets: API.GuestWallets = new API.GuestWallets(this);
 }
 
 XTwitterScraper.Account = Account;
@@ -947,6 +1008,7 @@ XTwitterScraper.X = X;
 XTwitterScraper.Trends = Trends;
 XTwitterScraper.Support = Support;
 XTwitterScraper.Credits = Credits;
+XTwitterScraper.GuestWallets = GuestWallets;
 
 export declare namespace XTwitterScraper {
   export type RequestOptions = Opts.RequestOptions;
@@ -969,7 +1031,11 @@ export declare namespace XTwitterScraper {
     type APIKeyCreateParams as APIKeyCreateParams,
   };
 
-  export { Subscribe as Subscribe, type SubscribeCreateResponse as SubscribeCreateResponse };
+  export {
+    Subscribe as Subscribe,
+    type SubscribeCreateResponse as SubscribeCreateResponse,
+    type SubscribeCreateParams as SubscribeCreateParams,
+  };
 
   export {
     Compose as Compose,
@@ -1058,6 +1124,7 @@ export declare namespace XTwitterScraper {
     type WebhookListResponse as WebhookListResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
+    type WebhookResumeResponse as WebhookResumeResponse,
     type WebhookTestResponse as WebhookTestResponse,
     type WebhookCreateParams as WebhookCreateParams,
     type WebhookUpdateParams as WebhookUpdateParams,
@@ -1083,9 +1150,23 @@ export declare namespace XTwitterScraper {
 
   export {
     Credits as Credits,
+    type CreditQuickTopupBalanceResponse as CreditQuickTopupBalanceResponse,
     type CreditRetrieveBalanceResponse as CreditRetrieveBalanceResponse,
+    type CreditRetrieveTopupStatusResponse as CreditRetrieveTopupStatusResponse,
     type CreditTopupBalanceResponse as CreditTopupBalanceResponse,
+    type CreditQuickTopupBalanceParams as CreditQuickTopupBalanceParams,
+    type CreditRedirectTopupCheckoutParams as CreditRedirectTopupCheckoutParams,
+    type CreditRetrieveTopupStatusParams as CreditRetrieveTopupStatusParams,
     type CreditTopupBalanceParams as CreditTopupBalanceParams,
+  };
+
+  export {
+    GuestWallets as GuestWallets,
+    type GuestWalletCreateResponse as GuestWalletCreateResponse,
+    type GuestWalletRetrieveStatusResponse as GuestWalletRetrieveStatusResponse,
+    type GuestWalletTopupResponse as GuestWalletTopupResponse,
+    type GuestWalletCreateParams as GuestWalletCreateParams,
+    type GuestWalletTopupParams as GuestWalletTopupParams,
   };
 
   export type Error = API.Error;

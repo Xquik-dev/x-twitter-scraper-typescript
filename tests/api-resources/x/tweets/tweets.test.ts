@@ -4,6 +4,8 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
+  bearerToken: 'My Bearer Token',
+  cookieSession: 'My Cookie Session',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
@@ -27,7 +29,7 @@ describe('resource tweets', () => {
       attachment_url: 'https://x.com/elonmusk/status/1234567890',
       community_id: '1500000000000000000',
       is_note_tweet: false,
-      media: ['https://example.com/image.jpg'],
+      media: ['https://example.com/video.mp4'],
       reply_to_tweet_id: '1234567890',
       text: 'Just launched our new feature!',
     });
@@ -95,7 +97,11 @@ describe('resource tweets', () => {
   test.skip('getFavoriters: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
-      client.x.tweets.getFavoriters('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
+      client.x.tweets.getFavoriters(
+        'id',
+        { cursor: 'cursor', pageSize: 20 },
+        { path: '/_stainless_unknown_path' },
+      ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
@@ -118,10 +124,36 @@ describe('resource tweets', () => {
       client.x.tweets.getQuotes(
         'id',
         {
+          anyWords: 'anyWords',
+          cashtags: 'cashtags',
+          conversationId: 'conversationId',
           cursor: 'cursor',
+          exactPhrase: 'exactPhrase',
+          excludeWords: 'excludeWords',
+          fromUser: 'fromUser',
+          hashtags: 'hashtags',
           includeReplies: true,
+          inReplyToTweetId: 'inReplyToTweetId',
+          language: 'language',
+          mediaType: 'images',
+          mentioning: 'mentioning',
+          minFaves: 0,
+          minQuotes: 0,
+          minReplies: 0,
+          minRetweets: 0,
+          pageSize: 1,
+          quotes: 'include',
+          quotesOfTweetId: 'quotesOfTweetId',
+          replies: 'include',
+          retweets: 'include',
+          retweetsOfTweetId: 'retweetsOfTweetId',
+          sinceDate: '2019-12-27',
           sinceTime: 'sinceTime',
+          toUser: 'toUser',
+          untilDate: '2019-12-27',
           untilTime: 'untilTime',
+          url: 'url',
+          verifiedOnly: true,
         },
         { path: '/_stainless_unknown_path' },
       ),
@@ -147,9 +179,35 @@ describe('resource tweets', () => {
       client.x.tweets.getReplies(
         'id',
         {
+          anyWords: 'anyWords',
+          cashtags: 'cashtags',
+          conversationId: 'conversationId',
           cursor: 'cursor',
+          exactPhrase: 'exactPhrase',
+          excludeWords: 'excludeWords',
+          fromUser: 'fromUser',
+          hashtags: 'hashtags',
+          inReplyToTweetId: 'inReplyToTweetId',
+          language: 'language',
+          mediaType: 'images',
+          mentioning: 'mentioning',
+          minFaves: 0,
+          minQuotes: 0,
+          minReplies: 0,
+          minRetweets: 0,
+          pageSize: 1,
+          quotes: 'include',
+          quotesOfTweetId: 'quotesOfTweetId',
+          replies: 'include',
+          retweets: 'include',
+          retweetsOfTweetId: 'retweetsOfTweetId',
+          sinceDate: '2019-12-27',
           sinceTime: 'sinceTime',
+          toUser: 'toUser',
+          untilDate: '2019-12-27',
           untilTime: 'untilTime',
+          url: 'url',
+          verifiedOnly: true,
         },
         { path: '/_stainless_unknown_path' },
       ),
@@ -172,7 +230,11 @@ describe('resource tweets', () => {
   test.skip('getRetweeters: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
-      client.x.tweets.getRetweeters('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
+      client.x.tweets.getRetweeters(
+        'id',
+        { cursor: 'cursor', pageSize: 20 },
+        { path: '/_stainless_unknown_path' },
+      ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
@@ -192,7 +254,11 @@ describe('resource tweets', () => {
   test.skip('getThread: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
-      client.x.tweets.getThread('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
+      client.x.tweets.getThread(
+        'id',
+        { cursor: 'cursor', pageSize: 1 },
+        { path: '/_stainless_unknown_path' },
+      ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
@@ -212,11 +278,42 @@ describe('resource tweets', () => {
   test.skip('search: required and optional params', async () => {
     const response = await client.x.tweets.search({
       q: 'q',
+      advancedQuery: 'advancedQuery',
+      anyWords: 'anyWords',
+      boundingBox: 'boundingBox',
+      cashtags: 'cashtags',
+      conversationId: 'conversationId',
       cursor: 'cursor',
+      exactPhrase: 'exactPhrase',
+      excludeWords: 'excludeWords',
+      fromUser: 'fromUser',
+      hashtags: 'hashtags',
+      inReplyToTweetId: 'inReplyToTweetId',
+      language: 'language',
       limit: 200,
+      listId: 'listId',
+      mediaType: 'images',
+      mentioning: 'mentioning',
+      minFaves: 0,
+      minQuotes: 0,
+      minReplies: 0,
+      minRetweets: 0,
+      place: 'place',
+      placeCountry: 'placeCountry',
+      pointRadius: 'pointRadius',
       queryType: 'Latest',
+      quotes: 'include',
+      quotesOfTweetId: 'quotesOfTweetId',
+      replies: 'include',
+      retweets: 'include',
+      retweetsOfTweetId: 'retweetsOfTweetId',
+      sinceDate: '2019-12-27',
       sinceTime: 'sinceTime',
+      toUser: 'toUser',
+      untilDate: '2019-12-27',
       untilTime: 'untilTime',
+      url: 'url',
+      verifiedOnly: true,
     });
   });
 });

@@ -2,6 +2,12 @@
 
 import { APIResource } from '../../core/resource';
 import * as Shared from '../shared';
+import * as AccountConnectionChallengesAPI from './account-connection-challenges';
+import {
+  AccountConnectionChallengeSubmitParams,
+  AccountConnectionChallengeSubmitResponse,
+  AccountConnectionChallenges,
+} from './account-connection-challenges';
 import * as AccountsAPI from './accounts';
 import {
   AccountBulkRetryResponse,
@@ -46,10 +52,11 @@ import {
   ProfileUpdateParams,
   ProfileUpdateResponse,
 } from './profile';
+import * as WriteActionsAPI from './write-actions';
+import { WriteActionRetrieveResponse, WriteActions } from './write-actions';
 import * as CommunitiesAPI from './communities/communities';
 import {
   Communities,
-  CommunityActionResult,
   CommunityCreateParams,
   CommunityCreateResponse,
   CommunityDeleteParams,
@@ -79,13 +86,17 @@ import {
 } from './tweets/tweets';
 import * as UsersAPI from './users/users';
 import {
+  UserRemoveFollowerParams,
+  UserRemoveFollowerResponse,
   UserRetrieveBatchParams,
+  UserRetrieveBatchResponse,
   UserRetrieveFollowersParams,
   UserRetrieveFollowersYouKnowParams,
   UserRetrieveFollowingParams,
   UserRetrieveLikesParams,
   UserRetrieveMediaParams,
   UserRetrieveMentionsParams,
+  UserRetrieveRepliesParams,
   UserRetrieveSearchParams,
   UserRetrieveTweetsParams,
   UserRetrieveVerifiedFollowersParams,
@@ -96,6 +107,7 @@ import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 export class X extends APIResource {
+  writeActions: WriteActionsAPI.WriteActions = new WriteActionsAPI.WriteActions(this._client);
   tweets: TweetsAPI.Tweets = new TweetsAPI.Tweets(this._client);
   users: UsersAPI.Users = new UsersAPI.Users(this._client);
   followers: FollowersAPI.Followers = new FollowersAPI.Followers(this._client);
@@ -104,11 +116,14 @@ export class X extends APIResource {
   profile: ProfileAPI.Profile = new ProfileAPI.Profile(this._client);
   communities: CommunitiesAPI.Communities = new CommunitiesAPI.Communities(this._client);
   accounts: AccountsAPI.Accounts = new AccountsAPI.Accounts(this._client);
+  accountConnectionChallenges: AccountConnectionChallengesAPI.AccountConnectionChallenges =
+    new AccountConnectionChallengesAPI.AccountConnectionChallenges(this._client);
   bookmarks: BookmarksAPI.Bookmarks = new BookmarksAPI.Bookmarks(this._client);
   lists: ListsAPI.Lists = new ListsAPI.Lists(this._client);
 
   /**
-   * Retrieve the full content of an X Article (long-form post) by tweet ID.
+   * Retrieve the full content of an X Article (long-form post) by numeric tweet ID.
+   * Returns article_not_found when the tweet is valid but is not an X Article.
    *
    * @example
    * ```ts
@@ -116,7 +131,10 @@ export class X extends APIResource {
    * ```
    */
   getArticle(tweetID: string, options?: RequestOptions): APIPromise<XGetArticleResponse> {
-    return this._client.get(path`/x/articles/${tweetID}`, options);
+    return this._client.get(path`/x/articles/${tweetID}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -131,7 +149,11 @@ export class X extends APIResource {
     query: XGetHomeTimelineParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/timeline', { query, ...options });
+    return this._client.get('/x/timeline', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -146,7 +168,11 @@ export class X extends APIResource {
     query: XGetNotificationsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<XGetNotificationsResponse> {
-    return this._client.get('/x/notifications', { query, ...options });
+    return this._client.get('/x/notifications', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -161,7 +187,11 @@ export class X extends APIResource {
     query: XGetTrendsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<XGetTrendsResponse> {
-    return this._client.get('/x/trends', { query, ...options });
+    return this._client.get('/x/trends', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
@@ -169,13 +199,18 @@ export interface XGetArticleResponse {
   article: XGetArticleResponse.Article;
 
   /**
-   * Author of a tweet with follower count and verification status.
+   * X Article author profile fields returned when available.
    */
-  author?: TweetsAPI.TweetAuthor;
+  author?: XGetArticleResponse.Author;
 }
 
 export namespace XGetArticleResponse {
   export interface Article {
+    /**
+     * Plain text joined from all article blocks
+     */
+    bodyText?: string;
+
     contents?: Array<Article.Content>;
 
     coverImageUrl?: string;
@@ -199,21 +234,85 @@ export namespace XGetArticleResponse {
     export interface Content {
       height?: number;
 
+      /**
+       * Inline text formatting ranges
+       */
+      inlineStyleRanges?: Array<Content.InlineStyleRange>;
+
+      /**
+       * Preview image URL for media blocks
+       */
+      previewUrl?: string;
+
       text?: string;
 
       /**
-       * Block type: unstyled, header-one, header-two, header-three, unordered-list-item,
-       * ordered-list-item, image, gif, divider
+       * Block type: paragraph, header-one, header-two, header-three, header-four,
+       * header-five, header-six, unordered-list-item, ordered-list-item, blockquote,
+       * code-block, media, divider
        */
       type?: string;
 
       /**
-       * Media URL for image/gif blocks
+       * Media URL for media blocks
        */
       url?: string;
 
       width?: number;
     }
+
+    export namespace Content {
+      export interface InlineStyleRange {
+        length?: number;
+
+        offset?: number;
+
+        style?: string;
+      }
+    }
+  }
+
+  /**
+   * X Article author profile fields returned when available.
+   */
+  export interface Author {
+    id: string;
+
+    name: string;
+
+    username: string;
+
+    canDm?: boolean;
+
+    createdAt?: string;
+
+    description?: string;
+
+    favouritesCount?: number;
+
+    followersCount?: number;
+
+    followingCount?: number;
+
+    isBlueVerified?: boolean;
+
+    isTranslator?: boolean;
+
+    isVerified?: boolean;
+
+    location?: string;
+
+    mediaCount?: number;
+
+    profileBannerUrl?: string;
+
+    profilePicture?: string;
+
+    protected?: boolean;
+
+    statusesCount?: number;
+
+    url?: string;
   }
 }
 
@@ -264,7 +363,7 @@ export interface XGetHomeTimelineParams {
   cursor?: string;
 
   /**
-   * Comma-separated tweet IDs to exclude from results
+   * Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
    */
   seenTweetIds?: string;
 }
@@ -276,7 +375,7 @@ export interface XGetNotificationsParams {
   cursor?: string;
 
   /**
-   * Notification type filter
+   * Notification type filter. Unrecognized values fall back to All.
    */
   type?: 'All' | 'Verified' | 'Mentions';
 }
@@ -293,6 +392,7 @@ export interface XGetTrendsParams {
   woeid?: number;
 }
 
+X.WriteActions = WriteActions;
 X.Tweets = Tweets;
 X.Users = Users;
 X.Followers = Followers;
@@ -301,6 +401,7 @@ X.Media = Media;
 X.Profile = Profile;
 X.Communities = Communities;
 X.Accounts = Accounts;
+X.AccountConnectionChallenges = AccountConnectionChallenges;
 X.Bookmarks = Bookmarks;
 X.Lists = Lists;
 
@@ -313,6 +414,8 @@ export declare namespace X {
     type XGetNotificationsParams as XGetNotificationsParams,
     type XGetTrendsParams as XGetTrendsParams,
   };
+
+  export { WriteActions as WriteActions, type WriteActionRetrieveResponse as WriteActionRetrieveResponse };
 
   export {
     Tweets as Tweets,
@@ -334,6 +437,9 @@ export declare namespace X {
 
   export {
     Users as Users,
+    type UserRemoveFollowerResponse as UserRemoveFollowerResponse,
+    type UserRetrieveBatchResponse as UserRetrieveBatchResponse,
+    type UserRemoveFollowerParams as UserRemoveFollowerParams,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,
@@ -341,6 +447,7 @@ export declare namespace X {
     type UserRetrieveLikesParams as UserRetrieveLikesParams,
     type UserRetrieveMediaParams as UserRetrieveMediaParams,
     type UserRetrieveMentionsParams as UserRetrieveMentionsParams,
+    type UserRetrieveRepliesParams as UserRetrieveRepliesParams,
     type UserRetrieveSearchParams as UserRetrieveSearchParams,
     type UserRetrieveTweetsParams as UserRetrieveTweetsParams,
     type UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams,
@@ -380,7 +487,6 @@ export declare namespace X {
 
   export {
     Communities as Communities,
-    type CommunityActionResult as CommunityActionResult,
     type CommunityCreateResponse as CommunityCreateResponse,
     type CommunityDeleteResponse as CommunityDeleteResponse,
     type CommunityRetrieveInfoResponse as CommunityRetrieveInfoResponse,
@@ -402,6 +508,12 @@ export declare namespace X {
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
     type AccountReauthParams as AccountReauthParams,
+  };
+
+  export {
+    AccountConnectionChallenges as AccountConnectionChallenges,
+    type AccountConnectionChallengeSubmitResponse as AccountConnectionChallengeSubmitResponse,
+    type AccountConnectionChallengeSubmitParams as AccountConnectionChallengeSubmitParams,
   };
 
   export {

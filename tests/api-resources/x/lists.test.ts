@@ -4,6 +4,8 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
+  bearerToken: 'My Bearer Token',
+  cookieSession: 'My Cookie Session',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
@@ -24,7 +26,11 @@ describe('resource lists', () => {
   test.skip('retrieveFollowers: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
-      client.x.lists.retrieveFollowers('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
+      client.x.lists.retrieveFollowers(
+        'id',
+        { cursor: 'cursor', pageSize: 20 },
+        { path: '/_stainless_unknown_path' },
+      ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
@@ -46,7 +52,7 @@ describe('resource lists', () => {
     await expect(
       client.x.lists.retrieveMembers(
         'id',
-        { cursor: 'cursor', pageSize: 0 },
+        { cursor: 'cursor', pageSize: 20 },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
@@ -73,6 +79,7 @@ describe('resource lists', () => {
         {
           cursor: 'cursor',
           includeReplies: true,
+          pageSize: 1,
           sinceTime: 'sinceTime',
           untilTime: 'untilTime',
         },

@@ -32,7 +32,11 @@ export class Tweets extends APIResource {
    * ```
    */
   create(body: TweetCreateParams, options?: RequestOptions): APIPromise<TweetCreateResponse> {
-    return this._client.post('/x/tweets', { body, ...options });
+    return this._client.post('/x/tweets', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -44,7 +48,10 @@ export class Tweets extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<TweetRetrieveResponse> {
-    return this._client.get(path`/x/tweets/${id}`, options);
+    return this._client.get(path`/x/tweets/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -58,7 +65,11 @@ export class Tweets extends APIResource {
    * ```
    */
   list(query: TweetListParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/tweets', { query, ...options });
+    return this._client.get('/x/tweets', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -72,7 +83,11 @@ export class Tweets extends APIResource {
    * ```
    */
   delete(id: string, body: TweetDeleteParams, options?: RequestOptions): APIPromise<TweetDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${id}`, { body, ...options });
+    return this._client.delete(path`/x/tweets/${id}`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -90,7 +105,11 @@ export class Tweets extends APIResource {
     query: TweetGetFavoritersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/tweets/${id}/favoriters`, { query, ...options });
+    return this._client.get(path`/x/tweets/${id}/favoriters`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -108,7 +127,11 @@ export class Tweets extends APIResource {
     query: TweetGetQuotesParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/tweets/${id}/quotes`, { query, ...options });
+    return this._client.get(path`/x/tweets/${id}/quotes`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -126,7 +149,11 @@ export class Tweets extends APIResource {
     query: TweetGetRepliesParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/tweets/${id}/replies`, { query, ...options });
+    return this._client.get(path`/x/tweets/${id}/replies`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -144,7 +171,11 @@ export class Tweets extends APIResource {
     query: TweetGetRetweetersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/tweets/${id}/retweeters`, { query, ...options });
+    return this._client.get(path`/x/tweets/${id}/retweeters`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -162,11 +193,15 @@ export class Tweets extends APIResource {
     query: TweetGetThreadParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/tweets/${id}/thread`, { query, ...options });
+    return this._client.get(path`/x/tweets/${id}/thread`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
-   * Search tweets with X query operators and pagination
+   * Search tweets by query, Tweet ID, X status URL, or account date window
    *
    * @example
    * ```ts
@@ -176,27 +211,23 @@ export class Tweets extends APIResource {
    * ```
    */
   search(query: TweetSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/tweets/search', { query, ...options });
+    return this._client.get('/x/tweets/search', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
 /**
- * Author of a tweet with follower count and verification status.
+ * Tweet author profile. The lookup route always includes follower count and
+ * verification state. Other profile fields appear when available.
  */
-export interface TweetAuthor {
-  id: string;
-
-  followers: number;
-
-  username: string;
-
-  verified: boolean;
-
-  profilePicture?: string;
-}
+export interface TweetAuthor extends Shared.UserProfile {}
 
 /**
- * Full tweet with text, engagement metrics, media, and metadata.
+ * Full tweet with text, engagement metrics, media, and metadata. A zero metric can
+ * mean X did not report the count.
  */
 export interface TweetDetail {
   id: string;
@@ -216,6 +247,18 @@ export interface TweetDetail {
   viewCount: number;
 
   /**
+   * Tweet author profile. The lookup route always includes follower count and
+   * verification state. Other profile fields appear when available.
+   */
+  author?: TweetAuthor;
+
+  /**
+   * Content disclosure metadata shown by X when a tweet is labeled as paid
+   * partnership content or AI-generated media.
+   */
+  contentDisclosure?: TweetDetail.ContentDisclosure;
+
+  /**
    * ID of the root tweet in the conversation thread
    */
   conversationId?: string;
@@ -223,9 +266,34 @@ export interface TweetDetail {
   createdAt?: string;
 
   /**
+   * Start and end offsets for rendered tweet text
+   */
+  displayTextRange?: Array<number>;
+
+  /**
    * Parsed entities from the tweet text (URLs, mentions, hashtags, media)
    */
   entities?: { [key: string]: unknown };
+
+  /**
+   * Tweet ID being replied to
+   */
+  inReplyToId?: string;
+
+  /**
+   * User ID being replied to
+   */
+  inReplyToUserId?: string;
+
+  /**
+   * Username being replied to
+   */
+  inReplyToUsername?: string;
+
+  /**
+   * Whether replies are limited for this tweet
+   */
+  isLimitedReply?: boolean;
 
   /**
    * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
@@ -243,45 +311,413 @@ export interface TweetDetail {
   isReply?: boolean;
 
   /**
+   * Tweet language code
+   */
+  lang?: string;
+
+  /**
    * Attached media items, omitted when the tweet has no media
    */
   media?: Array<TweetDetail.Media>;
 
   /**
-   * The quoted tweet object, present when isQuoteStatus is true
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
    */
-  quoted_tweet?: { [key: string]: unknown };
+  quoted_tweet?: TweetDetail.QuotedTweet;
+
+  /**
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
+   */
+  retweeted_tweet?: TweetDetail.RetweetedTweet;
 
   /**
    * Client application used to post this tweet
    */
   source?: string;
+
+  /**
+   * Tweet result type
+   */
+  type?: string;
+
+  /**
+   * Tweet permalink URL
+   */
+  url?: string;
 }
 
 export namespace TweetDetail {
-  export interface Media {
-    mediaUrl?: string;
+  /**
+   * Content disclosure metadata shown by X when a tweet is labeled as paid
+   * partnership content or AI-generated media.
+   */
+  export interface ContentDisclosure {
+    advertising?: ContentDisclosure.Advertising;
 
-    type?: 'photo' | 'video' | 'animated_gif';
+    aiGenerated?: ContentDisclosure.AIGenerated;
+  }
+
+  export namespace ContentDisclosure {
+    export interface Advertising {
+      /**
+       * True when X labels the tweet as paid promotion content.
+       */
+      isPaidPromotion?: boolean;
+    }
+
+    export interface AIGenerated {
+      /**
+       * Whether the disclosure can be edited on X.
+       */
+      canEdit?: boolean;
+
+      /**
+       * Source of the AI-generated media disclosure.
+       */
+      detectionSource?: string;
+
+      /**
+       * True when X labels the tweet as containing AI-generated media.
+       */
+      hasAiGeneratedMedia?: boolean;
+    }
+  }
+
+  /**
+   * Normalized media attached to a tweet.
+   */
+  export interface Media {
+    /**
+     * Media preview URL
+     */
+    mediaUrl: string;
+
+    type: 'photo' | 'video' | 'animated_gif';
+
+    /**
+     * X media link from the tweet
+     */
+    url: string;
+
+    /**
+     * Available video encodings, ordered as returned
+     */
+    videoVariants?: Array<Media.VideoVariant>;
+  }
+
+  export namespace Media {
+    export interface VideoVariant {
+      contentType: string;
+
+      url: string;
+
+      bitrate?: number;
+    }
+  }
+
+  /**
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
+   */
+  export interface QuotedTweet {
+    id: string;
+
+    bookmarkCount: number;
+
+    likeCount: number;
+
+    quoteCount: number;
+
+    replyCount: number;
+
+    retweetCount: number;
+
+    text: string;
+
+    viewCount: number;
+
+    /**
+     * X user profile with bio, follower counts, and verification status.
+     */
+    author?: Shared.UserProfile;
+
+    /**
+     * Content disclosure metadata shown by X when a tweet is labeled as paid
+     * partnership content or AI-generated media.
+     */
+    contentDisclosure?: QuotedTweet.ContentDisclosure;
+
+    conversationId?: string;
+
+    createdAt?: string;
+
+    displayTextRange?: Array<number>;
+
+    entities?: { [key: string]: unknown };
+
+    inReplyToId?: string;
+
+    inReplyToUserId?: string;
+
+    inReplyToUsername?: string;
+
+    isLimitedReply?: boolean;
+
+    isNoteTweet?: boolean;
+
+    isQuoteStatus?: boolean;
+
+    isReply?: boolean;
+
+    lang?: string;
+
+    media?: Array<QuotedTweet.Media>;
+
+    source?: string;
+
+    type?: string;
 
     url?: string;
+  }
+
+  export namespace QuotedTweet {
+    /**
+     * Content disclosure metadata shown by X when a tweet is labeled as paid
+     * partnership content or AI-generated media.
+     */
+    export interface ContentDisclosure {
+      advertising?: ContentDisclosure.Advertising;
+
+      aiGenerated?: ContentDisclosure.AIGenerated;
+    }
+
+    export namespace ContentDisclosure {
+      export interface Advertising {
+        /**
+         * True when X labels the tweet as paid promotion content.
+         */
+        isPaidPromotion?: boolean;
+      }
+
+      export interface AIGenerated {
+        /**
+         * Whether the disclosure can be edited on X.
+         */
+        canEdit?: boolean;
+
+        /**
+         * Source of the AI-generated media disclosure.
+         */
+        detectionSource?: string;
+
+        /**
+         * True when X labels the tweet as containing AI-generated media.
+         */
+        hasAiGeneratedMedia?: boolean;
+      }
+    }
+
+    /**
+     * Normalized media attached to a tweet.
+     */
+    export interface Media {
+      /**
+       * Media preview URL
+       */
+      mediaUrl: string;
+
+      type: 'photo' | 'video' | 'animated_gif';
+
+      /**
+       * X media link from the tweet
+       */
+      url: string;
+
+      /**
+       * Available video encodings, ordered as returned
+       */
+      videoVariants?: Array<Media.VideoVariant>;
+    }
+
+    export namespace Media {
+      export interface VideoVariant {
+        contentType: string;
+
+        url: string;
+
+        bitrate?: number;
+      }
+    }
+  }
+
+  /**
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
+   */
+  export interface RetweetedTweet {
+    id: string;
+
+    bookmarkCount: number;
+
+    likeCount: number;
+
+    quoteCount: number;
+
+    replyCount: number;
+
+    retweetCount: number;
+
+    text: string;
+
+    viewCount: number;
+
+    /**
+     * X user profile with bio, follower counts, and verification status.
+     */
+    author?: Shared.UserProfile;
+
+    /**
+     * Content disclosure metadata shown by X when a tweet is labeled as paid
+     * partnership content or AI-generated media.
+     */
+    contentDisclosure?: RetweetedTweet.ContentDisclosure;
+
+    conversationId?: string;
+
+    createdAt?: string;
+
+    displayTextRange?: Array<number>;
+
+    entities?: { [key: string]: unknown };
+
+    inReplyToId?: string;
+
+    inReplyToUserId?: string;
+
+    inReplyToUsername?: string;
+
+    isLimitedReply?: boolean;
+
+    isNoteTweet?: boolean;
+
+    isQuoteStatus?: boolean;
+
+    isReply?: boolean;
+
+    lang?: string;
+
+    media?: Array<RetweetedTweet.Media>;
+
+    source?: string;
+
+    type?: string;
+
+    url?: string;
+  }
+
+  export namespace RetweetedTweet {
+    /**
+     * Content disclosure metadata shown by X when a tweet is labeled as paid
+     * partnership content or AI-generated media.
+     */
+    export interface ContentDisclosure {
+      advertising?: ContentDisclosure.Advertising;
+
+      aiGenerated?: ContentDisclosure.AIGenerated;
+    }
+
+    export namespace ContentDisclosure {
+      export interface Advertising {
+        /**
+         * True when X labels the tweet as paid promotion content.
+         */
+        isPaidPromotion?: boolean;
+      }
+
+      export interface AIGenerated {
+        /**
+         * Whether the disclosure can be edited on X.
+         */
+        canEdit?: boolean;
+
+        /**
+         * Source of the AI-generated media disclosure.
+         */
+        detectionSource?: string;
+
+        /**
+         * True when X labels the tweet as containing AI-generated media.
+         */
+        hasAiGeneratedMedia?: boolean;
+      }
+    }
+
+    /**
+     * Normalized media attached to a tweet.
+     */
+    export interface Media {
+      /**
+       * Media preview URL
+       */
+      mediaUrl: string;
+
+      type: 'photo' | 'video' | 'animated_gif';
+
+      /**
+       * X media link from the tweet
+       */
+      url: string;
+
+      /**
+       * Available video encodings, ordered as returned
+       */
+      videoVariants?: Array<Media.VideoVariant>;
+    }
+
+    export namespace Media {
+      export interface VideoVariant {
+        contentType: string;
+
+        url: string;
+
+        bitrate?: number;
+      }
+    }
   }
 }
 
 export interface TweetCreateResponse {
+  charged: boolean;
+
+  /**
+   * Credits charged for this tweet. Text-only tweets and replies cost 30 credits;
+   * attached media adds 2 credits per started MB.
+   */
+  chargedCredits: string;
+
   success: true;
 
   tweetId: string;
+
+  writeActionId?: string;
 }
 
 export interface TweetRetrieveResponse {
   /**
-   * Full tweet with text, engagement metrics, media, and metadata.
+   * Full tweet with text, engagement metrics, media, and metadata. A zero metric can
+   * mean X did not report the count.
    */
   tweet: TweetDetail;
 
   /**
-   * Author of a tweet with follower count and verification status.
+   * Tweet author profile. The lookup route always includes follower count and
+   * verification state. Other profile fields appear when available.
    */
   author?: TweetAuthor;
 }
@@ -303,8 +739,9 @@ export interface TweetCreateParams {
   is_note_tweet?: boolean;
 
   /**
-   * Array of public image URLs to attach (max 4). Each URL must be publicly
-   * reachable - the browser composer fetches them directly.
+   * Array of public media URLs to attach. Supports up to 4 images or exactly 1 MP4
+   * video up to 100 MB. Each URL must be publicly reachable. Attached media adds 2
+   * credits per started MB across all files.
    */
   media?: Array<string>;
 
@@ -335,13 +772,57 @@ export interface TweetGetFavoritersParams {
    * Pagination cursor for favoriters
    */
   cursor?: string;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). The
+   * response can contain fewer profiles because the source returned fewer or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export interface TweetGetQuotesParams {
   /**
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines.
+   */
+  anyWords?: string;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines.
+   */
+  cashtags?: string;
+
+  /**
+   * Conversation ID filter.
+   */
+  conversationId?: string;
+
+  /**
    * Pagination cursor for quote tweets
    */
   cursor?: string;
+
+  /**
+   * Exact phrase to match.
+   */
+  exactPhrase?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   */
+  excludeWords?: string;
+
+  /**
+   * Filter by author username.
+   */
+  fromUser?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines.
+   */
+  hashtags?: string;
 
   /**
    * Include reply quotes (default false)
@@ -349,21 +830,235 @@ export interface TweetGetQuotesParams {
   includeReplies?: boolean;
 
   /**
+   * Only replies to this tweet ID.
+   */
+  inReplyToTweetId?: string;
+
+  /**
+   * Language code filter, e.g. en or tr.
+   */
+  language?: string;
+
+  /**
+   * Filter by media type.
+   */
+  mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
+
+  /**
+   * Filter tweets mentioning a username.
+   */
+  mentioning?: string;
+
+  /**
+   * Minimum likes threshold.
+   */
+  minFaves?: number;
+
+  /**
+   * Minimum quote count threshold.
+   */
+  minQuotes?: number;
+
+  /**
+   * Minimum replies threshold.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum retweets threshold.
+   */
+  minRetweets?: number;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
+
+  /**
+   * Quote mode.
+   */
+  quotes?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only quotes of this tweet ID.
+   */
+  quotesOfTweetId?: string;
+
+  /**
+   * Reply mode.
+   */
+  replies?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Retweet mode.
+   */
+  retweets?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only retweets of this tweet ID.
+   */
+  retweetsOfTweetId?: string;
+
+  /**
+   * Start date in YYYY-MM-DD format.
+   */
+  sinceDate?: string;
+
+  /**
    * Unix timestamp - return quotes posted after this time
    */
   sinceTime?: string;
 
   /**
+   * Filter replies sent to a username.
+   */
+  toUser?: string;
+
+  /**
+   * End date in YYYY-MM-DD format.
+   */
+  untilDate?: string;
+
+  /**
    * Unix timestamp - return quotes posted before this time
    */
   untilTime?: string;
+
+  /**
+   * URL substring or domain filter.
+   */
+  url?: string;
+
+  /**
+   * Only return tweets from verified authors.
+   */
+  verifiedOnly?: boolean;
 }
 
 export interface TweetGetRepliesParams {
   /**
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines.
+   */
+  anyWords?: string;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines.
+   */
+  cashtags?: string;
+
+  /**
+   * Conversation ID filter.
+   */
+  conversationId?: string;
+
+  /**
    * Pagination cursor for tweet replies
    */
   cursor?: string;
+
+  /**
+   * Exact phrase to match.
+   */
+  exactPhrase?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   */
+  excludeWords?: string;
+
+  /**
+   * Filter by author username.
+   */
+  fromUser?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines.
+   */
+  hashtags?: string;
+
+  /**
+   * Only replies to this tweet ID.
+   */
+  inReplyToTweetId?: string;
+
+  /**
+   * Language code filter, e.g. en or tr.
+   */
+  language?: string;
+
+  /**
+   * Filter by media type.
+   */
+  mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
+
+  /**
+   * Filter tweets mentioning a username.
+   */
+  mentioning?: string;
+
+  /**
+   * Minimum likes threshold.
+   */
+  minFaves?: number;
+
+  /**
+   * Minimum quote count threshold.
+   */
+  minQuotes?: number;
+
+  /**
+   * Minimum replies threshold.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum retweets threshold.
+   */
+  minRetweets?: number;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
+
+  /**
+   * Quote mode.
+   */
+  quotes?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only quotes of this tweet ID.
+   */
+  quotesOfTweetId?: string;
+
+  /**
+   * Reply mode.
+   */
+  replies?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Retweet mode.
+   */
+  retweets?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only retweets of this tweet ID.
+   */
+  retweetsOfTweetId?: string;
+
+  /**
+   * Start date in YYYY-MM-DD format.
+   */
+  sinceDate?: string;
 
   /**
    * Unix timestamp - return replies posted after this time
@@ -371,9 +1066,29 @@ export interface TweetGetRepliesParams {
   sinceTime?: string;
 
   /**
+   * Filter replies sent to a username.
+   */
+  toUser?: string;
+
+  /**
+   * End date in YYYY-MM-DD format.
+   */
+  untilDate?: string;
+
+  /**
    * Unix timestamp - return replies posted before this time
    */
   untilTime?: string;
+
+  /**
+   * URL substring or domain filter.
+   */
+  url?: string;
+
+  /**
+   * Only return tweets from verified authors.
+   */
+  verifiedOnly?: boolean;
 }
 
 export interface TweetGetRetweetersParams {
@@ -381,6 +1096,14 @@ export interface TweetGetRetweetersParams {
    * Pagination cursor for retweeters
    */
   cursor?: string;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). The
+   * response can contain fewer profiles because the source returned fewer or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export interface TweetGetThreadParams {
@@ -388,6 +1111,15 @@ export interface TweetGetThreadParams {
    * Pagination cursor for thread tweets
    */
   cursor?: string;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export interface TweetSearchParams {
@@ -397,14 +1129,123 @@ export interface TweetSearchParams {
   q: string;
 
   /**
+   * Raw advanced search query appended as-is.
+   */
+  advancedQuery?: string;
+
+  /**
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines.
+   */
+  anyWords?: string;
+
+  /**
+   * Geo bounding box, e.g. -74.1 40.6 -73.9 40.8.
+   */
+  boundingBox?: string;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines.
+   */
+  cashtags?: string;
+
+  /**
+   * Conversation ID filter.
+   */
+  conversationId?: string;
+
+  /**
    * Pagination cursor from previous response
    */
   cursor?: string;
 
   /**
+   * Exact phrase to match.
+   */
+  exactPhrase?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   */
+  excludeWords?: string;
+
+  /**
+   * Filter by author username.
+   */
+  fromUser?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines.
+   */
+  hashtags?: string;
+
+  /**
+   * Only replies to this tweet ID.
+   */
+  inReplyToTweetId?: string;
+
+  /**
+   * Language code filter, e.g. en or tr.
+   */
+  language?: string;
+
+  /**
    * Max tweets to return (server paginates internally). Omit for single page (~20).
+   * This is an upper bound for paid authenticated calls: remaining credits can
+   * reduce the returned page size, and zero affordable results returns 402
+   * insufficient_credits.
    */
   limit?: number;
+
+  /**
+   * Search within a list ID.
+   */
+  listId?: string;
+
+  /**
+   * Filter by media type.
+   */
+  mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
+
+  /**
+   * Filter tweets mentioning a username.
+   */
+  mentioning?: string;
+
+  /**
+   * Minimum likes threshold.
+   */
+  minFaves?: number;
+
+  /**
+   * Minimum quote count threshold.
+   */
+  minQuotes?: number;
+
+  /**
+   * Minimum replies threshold.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum retweets threshold.
+   */
+  minRetweets?: number;
+
+  /**
+   * Search within a place ID.
+   */
+  place?: string;
+
+  /**
+   * Search within a country code.
+   */
+  placeCountry?: string;
+
+  /**
+   * Geo point radius, e.g. -73.99 40.73 25mi.
+   */
+  pointRadius?: string;
 
   /**
    * Sort order - Latest (chronological) or Top (engagement-ranked)
@@ -412,14 +1253,64 @@ export interface TweetSearchParams {
   queryType?: 'Latest' | 'Top';
 
   /**
+   * Quote mode.
+   */
+  quotes?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only quotes of this tweet ID.
+   */
+  quotesOfTweetId?: string;
+
+  /**
+   * Reply mode.
+   */
+  replies?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Retweet mode.
+   */
+  retweets?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only retweets of this tweet ID.
+   */
+  retweetsOfTweetId?: string;
+
+  /**
+   * Start date in YYYY-MM-DD format.
+   */
+  sinceDate?: string;
+
+  /**
    * ISO 8601 timestamp - only return tweets after this time
    */
   sinceTime?: string;
 
   /**
+   * Filter replies sent to a username.
+   */
+  toUser?: string;
+
+  /**
+   * End date in YYYY-MM-DD format.
+   */
+  untilDate?: string;
+
+  /**
    * ISO 8601 timestamp - only return tweets before this time
    */
   untilTime?: string;
+
+  /**
+   * URL substring or domain filter.
+   */
+  url?: string;
+
+  /**
+   * Only return tweets from verified authors.
+   */
+  verifiedOnly?: boolean;
 }
 
 Tweets.Like = Like;

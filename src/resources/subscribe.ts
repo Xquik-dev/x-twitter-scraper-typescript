@@ -9,21 +9,46 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Subscribe extends APIResource {
   /**
-   * Get checkout or billing URL
+   * Create a subscription checkout or billing-management URL only after the user
+   * confirms. The request never completes payment by itself.
+   *
+   * @example
+   * ```ts
+   * const subscribe = await client.subscribe.create({
+   *   tier: 'pro',
+   * });
+   * ```
    */
-  create(options?: RequestOptions): APIPromise<SubscribeCreateResponse> {
-    return this._client.post('/subscribe', options);
+  create(
+    body: SubscribeCreateParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<SubscribeCreateResponse> {
+    return this._client.post('/subscribe', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
 export interface SubscribeCreateResponse {
+  message: string;
+
+  status: 'checkout_created' | 'already_subscribed' | 'payment_issue';
+
   url: string;
+}
 
-  message?: string;
-
-  status?: 'checkout_created' | 'already_subscribed' | 'payment_issue';
+export interface SubscribeCreateParams {
+  /**
+   * Subscription tier to pre-select.
+   */
+  tier?: 'starter' | 'pro' | 'business';
 }
 
 export declare namespace Subscribe {
-  export { type SubscribeCreateResponse as SubscribeCreateResponse };
+  export {
+    type SubscribeCreateResponse as SubscribeCreateResponse,
+    type SubscribeCreateParams as SubscribeCreateParams,
+  };
 }

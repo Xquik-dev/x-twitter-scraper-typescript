@@ -20,7 +20,7 @@ export class APIKeys extends APIResource {
    * ```
    */
   create(body: APIKeyCreateParams, options?: RequestOptions): APIPromise<APIKeyCreateResponse> {
-    return this._client.post('/api-keys', { body, ...options });
+    return this._client.post('/api-keys', { body, ...options, __security: { cookieSessionAuth: true } });
   }
 
   /**
@@ -32,7 +32,7 @@ export class APIKeys extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<APIKeyListResponse> {
-    return this._client.get('/api-keys', options);
+    return this._client.get('/api-keys', { ...options, __security: { cookieSessionAuth: true } });
   }
 
   /**
@@ -44,7 +44,10 @@ export class APIKeys extends APIResource {
    * ```
    */
   revoke(id: string, options?: RequestOptions): APIPromise<APIKeyRevokeResponse> {
-    return this._client.delete(path`/api-keys/${id}`, options);
+    return this._client.delete(path`/api-keys/${id}`, {
+      ...options,
+      __security: { cookieSessionAuth: true },
+    });
   }
 }
 

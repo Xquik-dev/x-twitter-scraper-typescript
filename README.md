@@ -11,11 +11,8 @@ It is generated with [Stainless](https://www.stainless.com/).
 ## Installation
 
 ```sh
-npm install git+ssh://git@github.com:stainless-sdks/x-twitter-scraper-typescript.git
+npm install x-twitter-scraper
 ```
-
-> [!NOTE]
-> Once this package is [published to npm](https://www.stainless.com/docs/guides/publish), this will become: `npm install x-twitter-scraper`
 
 ## Usage
 
@@ -50,41 +47,6 @@ const account: XTwitterScraper.AccountRetrieveResponse = await client.account.re
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
-
-## File uploads
-
-Request parameters that correspond to file uploads can be passed in many different forms:
-
-- `File` (or an object with the same structure)
-- a `fetch` `Response` (or an object with the same structure)
-- an `fs.ReadStream`
-- the return value of our `toFile` helper
-
-```ts
-import fs from 'fs';
-import XTwitterScraper, { toFile } from 'x-twitter-scraper';
-
-const client = new XTwitterScraper();
-
-// If you have access to Node `fs` we recommend using `fs.createReadStream()`:
-await client.x.media.upload({ account: '@elonmusk', file: fs.createReadStream('/path/to/file') });
-
-// Or if you have the web `File` API you can pass a `File` instance:
-await client.x.media.upload({ account: '@elonmusk', file: new File(['my bytes'], 'file') });
-
-// You can also pass a `fetch` `Response`:
-await client.x.media.upload({ account: '@elonmusk', file: await fetch('https://somesite/file') });
-
-// Finally, if none of the above are convenient, you can use our `toFile` helper:
-await client.x.media.upload({
-  account: '@elonmusk',
-  file: await toFile(Buffer.from('my bytes'), 'file'),
-});
-await client.x.media.upload({
-  account: '@elonmusk',
-  file: await toFile(new Uint8Array([0, 1, 2]), 'file'),
-});
-```
 
 ## Handling errors
 
@@ -180,7 +142,7 @@ console.log(response.statusText); // access the underlying Response object
 
 const { data: account, response: raw } = await client.account.retrieve().withResponse();
 console.log(raw.headers.get('X-My-Header'));
-console.log(account.monitorsAllowed);
+console.log(account.monitorBilling);
 ```
 
 ### Logging
@@ -370,7 +332,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/x-twitter-scraper-typescript/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-typescript/issues) with questions, bugs, or suggestions.
 
 ## Requirements
 

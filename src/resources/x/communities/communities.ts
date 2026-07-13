@@ -3,7 +3,13 @@
 import { APIResource } from '../../../core/resource';
 import * as Shared from '../../shared';
 import * as JoinAPI from './join';
-import { Join, JoinCreateParams, JoinDeleteAllParams } from './join';
+import {
+  Join,
+  JoinCreateParams,
+  JoinCreateResponse,
+  JoinDeleteAllParams,
+  JoinDeleteAllResponse,
+} from './join';
 import * as TweetsAPI from './tweets';
 import { TweetListByCommunityParams, TweetListParams, Tweets } from './tweets';
 import { APIPromise } from '../../../core/api-promise';
@@ -27,7 +33,11 @@ export class Communities extends APIResource {
    * ```
    */
   create(body: CommunityCreateParams, options?: RequestOptions): APIPromise<CommunityCreateResponse> {
-    return this._client.post('/x/communities', { body, ...options });
+    return this._client.post('/x/communities', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -46,7 +56,11 @@ export class Communities extends APIResource {
     body: CommunityDeleteParams,
     options?: RequestOptions,
   ): APIPromise<CommunityDeleteResponse> {
-    return this._client.delete(path`/x/communities/${id}`, { body, ...options });
+    return this._client.delete(path`/x/communities/${id}`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -60,7 +74,10 @@ export class Communities extends APIResource {
    * ```
    */
   retrieveInfo(id: string, options?: RequestOptions): APIPromise<CommunityRetrieveInfoResponse> {
-    return this._client.get(path`/x/communities/${id}/info`, options);
+    return this._client.get(path`/x/communities/${id}/info`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -77,7 +94,11 @@ export class Communities extends APIResource {
     query: CommunityRetrieveMembersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/communities/${id}/members`, { query, ...options });
+    return this._client.get(path`/x/communities/${id}/members`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -94,35 +115,35 @@ export class Communities extends APIResource {
     query: CommunityRetrieveModeratorsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/communities/${id}/moderators`, { query, ...options });
+    return this._client.get(path`/x/communities/${id}/moderators`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
-   * Search for communities by keyword
+   * Returns tweets, not community records. Requires a Community ID.
    *
    * @example
    * ```ts
    * const paginatedTweets =
-   *   await client.x.communities.retrieveSearch({ q: 'q' });
+   *   await client.x.communities.retrieveSearch({
+   *     communityId: '321669910225',
+   *     q: 'q',
+   *   });
    * ```
    */
   retrieveSearch(
     query: CommunityRetrieveSearchParams,
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/communities/search', { query, ...options });
+    return this._client.get('/x/communities/search', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
-}
-
-/**
- * Result of a community join or leave action.
- */
-export interface CommunityActionResult {
-  communityId: string;
-
-  communityName: string;
-
-  success: true;
 }
 
 export interface CommunityCreateResponse {
@@ -164,10 +185,27 @@ export namespace CommunityRetrieveInfoResponse {
      */
     created_at?: string;
 
+    creator?: Community.Creator;
+
     /**
      * About text for the community
      */
     description?: string;
+
+    /**
+     * Invitation policy
+     */
+    invites_policy?: string;
+
+    /**
+     * Whether the authenticated viewer is a member
+     */
+    is_member?: boolean;
+
+    /**
+     * Whether the community is marked sensitive
+     */
+    is_nsfw?: boolean;
 
     /**
      * Join policy (open or restricted)
@@ -195,12 +233,27 @@ export namespace CommunityRetrieveInfoResponse {
     primary_topic?: Community.PrimaryTopic;
 
     /**
+     * Authenticated viewer's community role
+     */
+    role?: string;
+
+    /**
      * Community rules
      */
     rules?: Array<Community.Rule>;
   }
 
   export namespace Community {
+    export interface Creator {
+      id: string;
+
+      username: string;
+
+      verified: boolean;
+
+      name?: string;
+    }
+
     /**
      * Primary topic
      */
@@ -256,7 +309,9 @@ export interface CommunityRetrieveMembersParams {
   cursor?: string;
 
   /**
-   * Items per page (20-200, default 20)
+   * Items per page (20-200, default 20). This is an upper bound for paid
+   * authenticated calls: remaining credits can reduce the returned page size, and
+   * zero affordable results returns 402 insufficient_credits.
    */
   pageSize?: number;
 }
@@ -270,6 +325,11 @@ export interface CommunityRetrieveModeratorsParams {
 
 export interface CommunityRetrieveSearchParams {
   /**
+   * Numeric ID of the community whose posts to search
+   */
+  communityId: string;
+
+  /**
    * Search query
    */
   q: string;
@@ -280,9 +340,18 @@ export interface CommunityRetrieveSearchParams {
   cursor?: string;
 
   /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
+
+  /**
    * Sort order (Latest or Top)
    */
-  queryType?: string;
+  queryType?: 'Latest' | 'Top';
 }
 
 Communities.Join = Join;
@@ -290,7 +359,6 @@ Communities.Tweets = Tweets;
 
 export declare namespace Communities {
   export {
-    type CommunityActionResult as CommunityActionResult,
     type CommunityCreateResponse as CommunityCreateResponse,
     type CommunityDeleteResponse as CommunityDeleteResponse,
     type CommunityRetrieveInfoResponse as CommunityRetrieveInfoResponse,
@@ -303,6 +371,8 @@ export declare namespace Communities {
 
   export {
     Join as Join,
+    type JoinCreateResponse as JoinCreateResponse,
+    type JoinDeleteAllResponse as JoinDeleteAllResponse,
     type JoinCreateParams as JoinCreateParams,
     type JoinDeleteAllParams as JoinDeleteAllParams,
   };

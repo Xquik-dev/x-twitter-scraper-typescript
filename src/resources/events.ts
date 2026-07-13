@@ -14,7 +14,10 @@ export class Events extends APIResource {
    * Get event
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<EventDetail> {
-    return this._client.get(path`/events/${id}`, options);
+    return this._client.get(path`/events/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -24,19 +27,31 @@ export class Events extends APIResource {
     query: EventListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<EventListResponse> {
-    return this._client.get('/events', { query, ...options });
+    return this._client.get('/events', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
 /**
- * Monitor event summary with type, username, and occurrence time.
+ * Monitor event summary with source metadata and occurrence time.
  */
 export interface Event {
   id: string;
 
   data: { [key: string]: unknown };
 
+  /**
+   * Account monitor ID for account events, or keyword monitor ID for keyword events.
+   */
   monitorId: string;
+
+  /**
+   * Source monitor type.
+   */
+  monitorType: 'account' | 'keyword';
 
   occurredAt: string;
 
@@ -45,7 +60,20 @@ export interface Event {
    */
   type: Shared.EventType;
 
-  username: string;
+  /**
+   * Keyword monitor ID, present for keyword monitor events.
+   */
+  keywordMonitorId?: string;
+
+  /**
+   * Keyword query, present for keyword monitor events.
+   */
+  query?: string;
+
+  /**
+   * Account username, present for account monitor events.
+   */
+  username?: string;
 }
 
 /**
@@ -59,7 +87,15 @@ export interface EventDetail {
    */
   data: { [key: string]: unknown };
 
+  /**
+   * Monitor ID associated with this detailed event payload.
+   */
   monitorId: string;
+
+  /**
+   * Source monitor type for this detailed event.
+   */
+  monitorType: 'account' | 'keyword';
 
   occurredAt: string;
 
@@ -68,7 +104,20 @@ export interface EventDetail {
    */
   type: Shared.EventType;
 
-  username: string;
+  /**
+   * Keyword monitor ID included on detailed keyword events.
+   */
+  keywordMonitorId?: string;
+
+  /**
+   * Keyword query for this detailed monitor event.
+   */
+  query?: string;
+
+  /**
+   * Account username for this detailed monitor event.
+   */
+  username?: string;
 
   xEventId?: string;
 }
@@ -83,9 +132,9 @@ export interface EventListResponse {
 
 export interface EventListParams {
   /**
-   * Cursor for keyset pagination
+   * Cursor for keyset pagination from prior response next_cursor
    */
-  after?: string;
+  cursor?: string;
 
   /**
    * Filter events by type
@@ -93,7 +142,10 @@ export interface EventListParams {
   eventType?: Shared.EventType;
 
   /**
-   * Maximum number of items to return (1-100, default 50)
+   * Maximum number of items to return (1-100, default 50). For paid per-result
+   * endpoints, the returned count may be lower when remaining credits cannot cover
+   * the requested page. If zero paid results are affordable, the endpoint returns
+   * 402 insufficient_credits.
    */
   limit?: number;
 

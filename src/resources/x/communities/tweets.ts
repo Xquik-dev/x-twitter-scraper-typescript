@@ -11,16 +11,23 @@ import { path } from '../../../internal/utils/path';
  */
 export class Tweets extends APIResource {
   /**
-   * List tweets across all communities
+   * Requires a Community ID and keyword query.
    *
    * @example
    * ```ts
    * const paginatedTweets =
-   *   await client.x.communities.tweets.list({ q: 'q' });
+   *   await client.x.communities.tweets.list({
+   *     communityId: '321669910225',
+   *     q: 'q',
+   *   });
    * ```
    */
   list(query: TweetListParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/communities/tweets', { query, ...options });
+    return this._client.get('/x/communities/tweets', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -37,25 +44,43 @@ export class Tweets extends APIResource {
     query: TweetListByCommunityParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/communities/${id}/tweets`, { query, ...options });
+    return this._client.get(path`/x/communities/${id}/tweets`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
 export interface TweetListParams {
   /**
-   * Search query for cross-community tweets
+   * Numeric ID of the community to search
+   */
+  communityId: string;
+
+  /**
+   * Keyword query within the selected community
    */
   q: string;
 
   /**
-   * Pagination cursor for cross-community results
+   * Pagination cursor for community results
    */
   cursor?: string;
 
   /**
-   * Sort order for cross-community results (Latest or Top)
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
    */
-  queryType?: string;
+  pageSize?: number;
+
+  /**
+   * Sort order for community results (Latest or Top)
+   */
+  queryType?: 'Latest' | 'Top';
 }
 
 export interface TweetListByCommunityParams {
@@ -63,6 +88,15 @@ export interface TweetListByCommunityParams {
    * Pagination cursor for community tweets
    */
   cursor?: string;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export declare namespace Tweets {

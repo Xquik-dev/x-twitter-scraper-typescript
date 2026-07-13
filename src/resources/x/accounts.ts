@@ -22,7 +22,11 @@ export class Accounts extends APIResource {
    * ```
    */
   create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
-    return this._client.post('/x/accounts', { body, ...options });
+    return this._client.post('/x/accounts', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -36,7 +40,10 @@ export class Accounts extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<XAccountDetail> {
-    return this._client.get(path`/x/accounts/${id}`, options);
+    return this._client.get(path`/x/accounts/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -48,7 +55,10 @@ export class Accounts extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<AccountListResponse> {
-    return this._client.get('/x/accounts', options);
+    return this._client.get('/x/accounts', {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -60,7 +70,10 @@ export class Accounts extends APIResource {
    * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<AccountDeleteResponse> {
-    return this._client.delete(path`/x/accounts/${id}`, options);
+    return this._client.delete(path`/x/accounts/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -73,7 +86,10 @@ export class Accounts extends APIResource {
    * ```
    */
   bulkRetry(options?: RequestOptions): APIPromise<AccountBulkRetryResponse> {
-    return this._client.post('/x/accounts/bulk-retry', options);
+    return this._client.post('/x/accounts/bulk-retry', {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -88,12 +104,16 @@ export class Accounts extends APIResource {
    * ```
    */
   reauth(id: string, body: AccountReauthParams, options?: RequestOptions): APIPromise<AccountReauthResponse> {
-    return this._client.post(path`/x/accounts/${id}/reauth`, { body, ...options });
+    return this._client.post(path`/x/accounts/${id}/reauth`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
 /**
- * Linked X account summary with username and connection status.
+ * Linked X account summary with connection status, health, and timestamp metadata.
  */
 export interface XAccount {
   id: string;
@@ -111,13 +131,17 @@ export interface XAccount {
 
   status: string;
 
+  updatedAt: string;
+
   xUserId: string;
 
   xUsername: string;
+
+  cookiesObtainedAt?: string;
 }
 
 /**
- * Full X account details including proxy, cookies, and update timestamp.
+ * Full X account details with status, cookies, and update timestamp.
  */
 export interface XAccountDetail {
   id: string;
@@ -134,17 +158,11 @@ export interface XAccountDetail {
 
   cookiesObtainedAt?: string;
 
-  proxyCountry?: string;
-
   updatedAt?: string;
 }
 
 /**
- * Sanitized X account summary returned by connect and reauth. Includes an optional
- * `loginCountry` field surfaced only when the declared proxy region had no Driver
- * capacity and the login fell back to a single US consumer device for this
- * one-time action. Future activity continues to use the selected `proxy_country`;
- * the field is omitted on normal logins.
+ * Sanitized X account summary returned by connect and reauth.
  */
 export interface AccountCreateResponse {
   id: string;
@@ -158,13 +176,6 @@ export interface AccountCreateResponse {
   xUserId: string;
 
   xUsername: string;
-
-  /**
-   * ISO-3166-1 alpha-2 country code of the Driver consumer device used for this
-   * login. Present only when the US fallback was triggered because Driver had no
-   * capacity in the declared region. Omitted otherwise.
-   */
-  loginCountry?: string;
 }
 
 export interface AccountListResponse {
@@ -183,11 +194,7 @@ export interface AccountBulkRetryResponse {
 }
 
 /**
- * Sanitized X account summary returned by connect and reauth. Includes an optional
- * `loginCountry` field surfaced only when the declared proxy region had no Driver
- * capacity and the login fell back to a single US consumer device for this
- * one-time action. Future activity continues to use the selected `proxy_country`;
- * the field is omitted on normal logins.
+ * Sanitized X account summary returned by connect and reauth.
  */
 export interface AccountReauthResponse {
   id: string;
@@ -201,13 +208,6 @@ export interface AccountReauthResponse {
   xUserId: string;
 
   xUsername: string;
-
-  /**
-   * ISO-3166-1 alpha-2 country code of the Driver consumer device used for this
-   * login. Present only when the US fallback was triggered because Driver had no
-   * capacity in the declared region. Omitted otherwise.
-   */
-  loginCountry?: string;
 }
 
 export interface AccountCreateParams {
@@ -227,11 +227,6 @@ export interface AccountCreateParams {
   username: string;
 
   /**
-   * Proxy country code
-   */
-  proxy_country?: string;
-
-  /**
    * TOTP secret for 2FA
    */
   totp_secret?: string;
@@ -247,11 +242,6 @@ export interface AccountReauthParams {
    * Email for the X account (updates stored email)
    */
   email?: string;
-
-  /**
-   * Two-letter country code for login proxy region
-   */
-  proxy_country?: string;
 
   /**
    * TOTP secret for 2FA re-authentication

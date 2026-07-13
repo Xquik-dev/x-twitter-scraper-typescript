@@ -21,7 +21,11 @@ export class Tickets extends APIResource {
    * ```
    */
   create(body: TicketCreateParams, options?: RequestOptions): APIPromise<TicketCreateResponse> {
-    return this._client.post('/support/tickets', { body, ...options });
+    return this._client.post('/support/tickets', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -30,12 +34,15 @@ export class Tickets extends APIResource {
    * @example
    * ```ts
    * const ticket = await client.support.tickets.retrieve(
-   *   'messages_value',
+   *   'tkt_a1b2c3d4e5f6a1b2c3d4e5f6',
    * );
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<TicketRetrieveResponse> {
-    return this._client.get(path`/support/tickets/${id}`, options);
+    return this._client.get(path`/support/tickets/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -43,13 +50,18 @@ export class Tickets extends APIResource {
    *
    * @example
    * ```ts
-   * const ticket = await client.support.tickets.update('id', {
-   *   status: 'resolved',
-   * });
+   * const ticket = await client.support.tickets.update(
+   *   'tkt_a1b2c3d4e5f6a1b2c3d4e5f6',
+   *   { status: 'resolved' },
+   * );
    * ```
    */
   update(id: string, body: TicketUpdateParams, options?: RequestOptions): APIPromise<TicketUpdateResponse> {
-    return this._client.patch(path`/support/tickets/${id}`, { body, ...options });
+    return this._client.patch(path`/support/tickets/${id}`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -61,7 +73,10 @@ export class Tickets extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<TicketListResponse> {
-    return this._client.get('/support/tickets', options);
+    return this._client.get('/support/tickets', {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -69,13 +84,18 @@ export class Tickets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.support.tickets.reply('id', {
-   *   body: 'Thank you for the update.',
-   * });
+   * const response = await client.support.tickets.reply(
+   *   'tkt_a1b2c3d4e5f6a1b2c3d4e5f6',
+   *   { body: 'Thank you for the update.' },
+   * );
    * ```
    */
   reply(id: string, body: TicketReplyParams, options?: RequestOptions): APIPromise<TicketReplyResponse> {
-    return this._client.post(path`/support/tickets/${id}/messages`, { body, ...options });
+    return this._client.post(path`/support/tickets/${id}/messages`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 

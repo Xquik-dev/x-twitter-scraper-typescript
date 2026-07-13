@@ -19,7 +19,10 @@ export class Styles extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<StyleProfile> {
-    return this._client.get(path`/styles/${id}`, options);
+    return this._client.get(path`/styles/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -38,7 +41,11 @@ export class Styles extends APIResource {
    * ```
    */
   update(id: string, body: StyleUpdateParams, options?: RequestOptions): APIPromise<StyleProfile> {
-    return this._client.put(path`/styles/${id}`, { body, ...options });
+    return this._client.put(path`/styles/${id}`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -50,7 +57,10 @@ export class Styles extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<StyleListResponse> {
-    return this._client.get('/styles', options);
+    return this._client.get('/styles', {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -65,6 +75,7 @@ export class Styles extends APIResource {
     return this._client.delete(path`/styles/${id}`, {
       ...options,
       headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
     });
   }
 
@@ -79,7 +90,11 @@ export class Styles extends APIResource {
    * ```
    */
   analyze(body: StyleAnalyzeParams, options?: RequestOptions): APIPromise<StyleProfile> {
-    return this._client.post('/styles', { body, ...options });
+    return this._client.post('/styles', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -94,7 +109,11 @@ export class Styles extends APIResource {
    * ```
    */
   compare(query: StyleCompareParams, options?: RequestOptions): APIPromise<StyleCompareResponse> {
-    return this._client.get('/styles/compare', { query, ...options });
+    return this._client.get('/styles/compare', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -106,7 +125,10 @@ export class Styles extends APIResource {
    * ```
    */
   getPerformance(id: string, options?: RequestOptions): APIPromise<StyleGetPerformanceResponse> {
-    return this._client.get(path`/styles/${id}/performance`, options);
+    return this._client.get(path`/styles/${id}/performance`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 

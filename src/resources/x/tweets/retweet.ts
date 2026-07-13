@@ -20,7 +20,11 @@ export class Retweet extends APIResource {
    * ```
    */
   create(id: string, body: RetweetCreateParams, options?: RequestOptions): APIPromise<RetweetCreateResponse> {
-    return this._client.post(path`/x/tweets/${id}/retweet`, { body, ...options });
+    return this._client.post(path`/x/tweets/${id}/retweet`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -34,7 +38,11 @@ export class Retweet extends APIResource {
    * ```
    */
   delete(id: string, body: RetweetDeleteParams, options?: RequestOptions): APIPromise<RetweetDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${id}/retweet`, { body, ...options });
+    return this._client.delete(path`/x/tweets/${id}/retweet`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 

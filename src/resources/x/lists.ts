@@ -24,7 +24,11 @@ export class Lists extends APIResource {
     query: ListRetrieveFollowersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/lists/${id}/followers`, { query, ...options });
+    return this._client.get(path`/x/lists/${id}/followers`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -42,7 +46,11 @@ export class Lists extends APIResource {
     query: ListRetrieveMembersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/lists/${id}/members`, { query, ...options });
+    return this._client.get(path`/x/lists/${id}/members`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -60,7 +68,11 @@ export class Lists extends APIResource {
     query: ListRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/lists/${id}/tweets`, { query, ...options });
+    return this._client.get(path`/x/lists/${id}/tweets`, {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
@@ -69,6 +81,14 @@ export interface ListRetrieveFollowersParams {
    * Pagination cursor for list followers
    */
   cursor?: string;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). The
+   * response can contain fewer profiles because the source returned fewer or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export interface ListRetrieveMembersParams {
@@ -93,6 +113,15 @@ export interface ListRetrieveTweetsParams {
    * Include replies (default false)
    */
   includeReplies?: boolean;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * remaining credits cover fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
 
   /**
    * Unix timestamp - filter after

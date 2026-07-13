@@ -20,8 +20,13 @@ export {
 export { Compose, type ComposeCreateResponse, type ComposeCreateParams } from './compose';
 export {
   Credits,
+  type CreditQuickTopupBalanceResponse,
   type CreditRetrieveBalanceResponse,
+  type CreditRetrieveTopupStatusResponse,
   type CreditTopupBalanceResponse,
+  type CreditQuickTopupBalanceParams,
+  type CreditRedirectTopupCheckoutParams,
+  type CreditRetrieveTopupStatusParams,
   type CreditTopupBalanceParams,
 } from './credits';
 export {
@@ -59,6 +64,14 @@ export {
   type ExtractionRunParams,
 } from './extractions';
 export {
+  GuestWallets,
+  type GuestWalletCreateResponse,
+  type GuestWalletRetrieveStatusResponse,
+  type GuestWalletTopupResponse,
+  type GuestWalletCreateParams,
+  type GuestWalletTopupParams,
+} from './guest-wallets';
+export {
   Monitors,
   type Monitor,
   type MonitorCreateResponse,
@@ -66,7 +79,7 @@ export {
   type MonitorDeactivateResponse,
   type MonitorCreateParams,
   type MonitorUpdateParams,
-} from './monitors';
+} from './monitors/monitors';
 export {
   Radar,
   type RadarItem,
@@ -84,7 +97,7 @@ export {
   type StyleAnalyzeParams,
   type StyleCompareParams,
 } from './styles';
-export { Subscribe, type SubscribeCreateResponse } from './subscribe';
+export { Subscribe, type SubscribeCreateResponse, type SubscribeCreateParams } from './subscribe';
 export { Support } from './support/support';
 export { Trends, type TrendListResponse, type TrendListParams } from './trends';
 export {
@@ -95,6 +108,7 @@ export {
   type WebhookListResponse,
   type WebhookDeactivateResponse,
   type WebhookListDeliveriesResponse,
+  type WebhookResumeResponse,
   type WebhookTestResponse,
   type WebhookCreateParams,
   type WebhookUpdateParams,

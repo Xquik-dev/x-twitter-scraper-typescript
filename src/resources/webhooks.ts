@@ -22,7 +22,11 @@ export class Webhooks extends APIResource {
    * ```
    */
   create(body: WebhookCreateParams, options?: RequestOptions): APIPromise<WebhookCreateResponse> {
-    return this._client.post('/webhooks', { body, ...options });
+    return this._client.post('/webhooks', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -37,7 +41,11 @@ export class Webhooks extends APIResource {
    * ```
    */
   update(id: string, body: WebhookUpdateParams, options?: RequestOptions): APIPromise<Webhook> {
-    return this._client.patch(path`/webhooks/${id}`, { body, ...options });
+    return this._client.patch(path`/webhooks/${id}`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -49,7 +57,10 @@ export class Webhooks extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<WebhookListResponse> {
-    return this._client.get('/webhooks', options);
+    return this._client.get('/webhooks', {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -61,7 +72,10 @@ export class Webhooks extends APIResource {
    * ```
    */
   deactivate(id: string, options?: RequestOptions): APIPromise<WebhookDeactivateResponse> {
-    return this._client.delete(path`/webhooks/${id}`, options);
+    return this._client.delete(path`/webhooks/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -73,7 +87,25 @@ export class Webhooks extends APIResource {
    * ```
    */
   listDeliveries(id: string, options?: RequestOptions): APIPromise<WebhookListDeliveriesResponse> {
-    return this._client.get(path`/webhooks/${id}/deliveries`, options);
+    return this._client.get(path`/webhooks/${id}/deliveries`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
+  }
+
+  /**
+   * Test and resume webhook endpoint
+   *
+   * @example
+   * ```ts
+   * const response = await client.webhooks.resume('id');
+   * ```
+   */
+  resume(id: string, options?: RequestOptions): APIPromise<WebhookResumeResponse> {
+    return this._client.post(path`/webhooks/${id}/resume`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -85,7 +117,10 @@ export class Webhooks extends APIResource {
    * ```
    */
   test(id: string, options?: RequestOptions): APIPromise<WebhookTestResponse> {
-    return this._client.post(path`/webhooks/${id}/test`, options);
+    return this._client.post(path`/webhooks/${id}/test`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
@@ -116,12 +151,28 @@ export interface Delivery {
 export interface Webhook {
   id: string;
 
+  /**
+   * Consecutive failed delivery attempts since the last success.
+   */
+  consecutiveFailures: number;
+
   createdAt: string;
+
+  /**
+   * Endpoint delivery state. needs_attention means delivery stopped after repeated
+   * failures.
+   */
+  deliveryStatus: 'active' | 'paused' | 'needs_attention';
 
   /**
    * Array of event types to subscribe to.
    */
   eventTypes: Array<Shared.EventType>;
+
+  /**
+   * Consecutive delivery failures that pause the endpoint.
+   */
+  failureHardCap: number;
 
   isActive: boolean;
 
@@ -138,6 +189,9 @@ export interface WebhookCreateResponse {
    */
   eventTypes: Array<Shared.EventType>;
 
+  /**
+   * Plaintext HMAC signing secret returned only at creation.
+   */
   secret: string;
 
   url: string;
@@ -153,6 +207,17 @@ export interface WebhookDeactivateResponse {
 
 export interface WebhookListDeliveriesResponse {
   deliveries: Array<Delivery>;
+}
+
+export interface WebhookResumeResponse {
+  statusCode: number;
+
+  success: boolean;
+
+  /**
+   * Webhook endpoint registered to receive event deliveries.
+   */
+  webhook: Webhook;
 }
 
 export interface WebhookTestResponse {
@@ -194,6 +259,7 @@ export declare namespace Webhooks {
     type WebhookListResponse as WebhookListResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
+    type WebhookResumeResponse as WebhookResumeResponse,
     type WebhookTestResponse as WebhookTestResponse,
     type WebhookCreateParams as WebhookCreateParams,
     type WebhookUpdateParams as WebhookUpdateParams,

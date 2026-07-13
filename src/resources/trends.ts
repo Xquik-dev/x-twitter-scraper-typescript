@@ -15,7 +15,11 @@ export class Trends extends APIResource {
     query: TrendListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<TrendListResponse> {
-    return this._client.get('/trends', { query, ...options });
+    return this._client.get('/trends', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 

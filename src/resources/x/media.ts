@@ -2,9 +2,8 @@
 
 import { APIResource } from '../../core/resource';
 import { APIPromise } from '../../core/api-promise';
-import { type Uploadable } from '../../core/uploads';
 import { RequestOptions } from '../../internal/request-options';
-import { multipartFormRequestOptions } from '../../internal/uploads';
+import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
 
 /**
  * Media upload and download
@@ -21,7 +20,11 @@ export class Media extends APIResource {
    * ```
    */
   download(body: MediaDownloadParams, options?: RequestOptions): APIPromise<MediaDownloadResponse> {
-    return this._client.post('/x/media/download', { body, ...options });
+    return this._client.post('/x/media/download', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -31,13 +34,18 @@ export class Media extends APIResource {
    * ```ts
    * const response = await client.x.media.upload({
    *   account: '@elonmusk',
-   *   file: fs.createReadStream('path/to/file'),
-   *   is_long_video: true,
+   *   url: 'https://example.com/image.png',
    * });
    * ```
    */
   upload(body: MediaUploadParams, options?: RequestOptions): APIPromise<MediaUploadResponse> {
-    return this._client.post('/x/media', multipartFormRequestOptions({ body, ...options }, this._client));
+    return this._client.post(
+      '/x/media',
+      maybeMultipartFormRequestOptions(
+        { body, ...options, __security: { apiKeyAuth: true, oauthBearerAuth: true } },
+        this._client,
+      ),
+    );
   }
 }
 
@@ -56,12 +64,22 @@ export interface MediaDownloadResponse {
 export interface MediaUploadResponse {
   mediaId: string;
 
+  /**
+   * Public media URL for tweet `media` arrays.
+   */
+  mediaUrl: string;
+
   success: true;
 }
 
 export interface MediaDownloadParams {
   /**
-   * Array of tweet URLs or IDs (bulk, max 50)
+   * Numeric tweet ID alias for tweetInput
+   */
+  tweetId?: string;
+
+  /**
+   * Array of tweet URLs or IDs (bulk, max 50 string items)
    */
   tweetIds?: Array<string>;
 
@@ -69,20 +87,23 @@ export interface MediaDownloadParams {
    * Tweet URL or ID (single tweet)
    */
   tweetInput?: string;
+
+  /**
+   * Tweet URL alias for tweetInput
+   */
+  tweetUrl?: string;
 }
 
 export interface MediaUploadParams {
   /**
-   * X account (@username or ID) uploading media
+   * X account (@username or ID) uploading media from URL
    */
   account: string;
 
   /**
-   * Media file to upload
+   * HTTPS URL to download and upload as media
    */
-  file: Uploadable;
-
-  is_long_video?: boolean;
+  url: string;
 }
 
 export declare namespace Media {

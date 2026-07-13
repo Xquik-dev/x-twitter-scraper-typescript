@@ -20,7 +20,11 @@ export class Follow extends APIResource {
    * ```
    */
   create(id: string, body: FollowCreateParams, options?: RequestOptions): APIPromise<FollowCreateResponse> {
-    return this._client.post(path`/x/users/${id}/follow`, { body, ...options });
+    return this._client.post(path`/x/users/${id}/follow`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -39,7 +43,11 @@ export class Follow extends APIResource {
     body: FollowDeleteAllParams,
     options?: RequestOptions,
   ): APIPromise<FollowDeleteAllResponse> {
-    return this._client.delete(path`/x/users/${id}/follow`, { body, ...options });
+    return this._client.delete(path`/x/users/${id}/follow`, {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 

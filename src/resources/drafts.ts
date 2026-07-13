@@ -23,7 +23,11 @@ export class Drafts extends APIResource {
    * ```
    */
   create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftDetail> {
-    return this._client.post('/drafts', { body, ...options });
+    return this._client.post('/drafts', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -35,7 +39,10 @@ export class Drafts extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<DraftDetail> {
-    return this._client.get(path`/drafts/${id}`, options);
+    return this._client.get(path`/drafts/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -50,7 +57,11 @@ export class Drafts extends APIResource {
     query: DraftListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<DraftListResponse> {
-    return this._client.get('/drafts', { query, ...options });
+    return this._client.get('/drafts', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -65,6 +76,7 @@ export class Drafts extends APIResource {
     return this._client.delete(path`/drafts/${id}`, {
       ...options,
       headers: buildHeaders([{ Accept: '*/*' }, options?.headers]),
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
     });
   }
 }
@@ -124,7 +136,10 @@ export interface DraftListParams {
   afterCursor?: string;
 
   /**
-   * Maximum number of items to return (1-100, default 50)
+   * Maximum number of items to return (1-100, default 50). For paid per-result
+   * endpoints, the returned count may be lower when remaining credits cannot cover
+   * the requested page. If zero paid results are affordable, the endpoint returns
+   * 402 insufficient_credits.
    */
   limit?: number;
 }

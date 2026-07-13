@@ -21,7 +21,11 @@ export class Bookmarks extends APIResource {
     query: BookmarkListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/bookmarks', { query, ...options });
+    return this._client.get('/x/bookmarks', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -33,15 +37,24 @@ export class Bookmarks extends APIResource {
    * ```
    */
   retrieveFolders(options?: RequestOptions): APIPromise<BookmarkRetrieveFoldersResponse> {
-    return this._client.get('/x/bookmarks/folders', options);
+    return this._client.get('/x/bookmarks/folders', {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
 export interface BookmarkRetrieveFoldersResponse {
   folders: Array<BookmarkRetrieveFoldersResponse.Folder>;
 
+  /**
+   * Always false for the current bookmark folder route
+   */
   has_next_page: boolean;
 
+  /**
+   * Always empty for the current bookmark folder route
+   */
   next_cursor: string;
 }
 

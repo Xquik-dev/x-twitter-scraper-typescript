@@ -15,11 +15,16 @@ export class Draws extends APIResource {
    *
    * @example
    * ```ts
-   * const draw = await client.draws.retrieve('id');
+   * const draw = await client.draws.retrieve(
+   *   'f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345',
+   * );
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<DrawRetrieveResponse> {
-    return this._client.get(path`/draws/${id}`, options);
+    return this._client.get(path`/draws/${id}`, {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -34,7 +39,11 @@ export class Draws extends APIResource {
     query: DrawListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<DrawListResponse> {
-    return this._client.get('/draws', { query, ...options });
+    return this._client.get('/draws', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -42,27 +51,30 @@ export class Draws extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.draws.export('id');
+   * const response = await client.draws.export(
+   *   'f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345',
+   *   { format: 'csv' },
+   * );
    *
    * const content = await response.blob();
    * console.log(content);
    * ```
    */
-  export(
-    id: string,
-    query: DrawExportParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<Response> {
+  export(id: string, query: DrawExportParams, options?: RequestOptions): APIPromise<Response> {
     return this._client.get(path`/draws/${id}/export`, {
       query,
       ...options,
       headers: buildHeaders([{ Accept: 'application/octet-stream' }, options?.headers]),
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
       __binaryResponse: true,
     });
   }
 
   /**
-   * Run giveaway draw
+   * Runs a giveaway draw from a source tweet. The draw first checks the minimum
+   * credits needed to inspect the source tweet and at least one candidate. Remaining
+   * credits cap how many replies and retweeters can be inspected before filters and
+   * winner selection run.
    *
    * @example
    * ```ts
@@ -74,7 +86,11 @@ export class Draws extends APIResource {
    * ```
    */
   run(body: DrawRunParams, options?: RequestOptions): APIPromise<DrawRunResponse> {
-    return this._client.post('/draws', { body, ...options });
+    return this._client.post('/draws', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
@@ -82,6 +98,9 @@ export class Draws extends APIResource {
  * Full giveaway draw with tweet metrics, entries, and timing.
  */
 export interface DrawDetail {
+  /**
+   * Draw public ID.
+   */
   id: string;
 
   createdAt: string;
@@ -115,6 +134,9 @@ export interface DrawDetail {
  * Giveaway draw summary with entry counts and status.
  */
 export interface DrawListItem {
+  /**
+   * Draw public ID for detail responses.
+   */
   id: string;
 
   createdAt: string;
@@ -163,10 +185,18 @@ export interface DrawListResponse {
 export interface DrawRunResponse {
   id: string;
 
+  /**
+   * Candidate entries inspected for this draw after the credit-derived cap. This may
+   * be lower than the source tweet's full reply count.
+   */
   totalEntries: number;
 
   tweetId: string;
 
+  /**
+   * Entries from the inspected candidate set that passed all filters. This is not
+   * necessarily every valid reply on the source tweet when credits cap inspection.
+   */
   validEntries: number;
 
   winners: Array<Winner>;
@@ -174,12 +204,15 @@ export interface DrawRunResponse {
 
 export interface DrawListParams {
   /**
-   * Cursor for keyset pagination
+   * Cursor for keyset pagination from prior response next_cursor
    */
-  after?: string;
+  cursor?: string;
 
   /**
-   * Maximum number of items to return (1-100, default 50)
+   * Maximum number of items to return (1-100, default 50). For paid per-result
+   * endpoints, the returned count may be lower when remaining credits cannot cover
+   * the requested page. If zero paid results are affordable, the endpoint returns
+   * 402 insufficient_credits.
    */
   limit?: number;
 }
@@ -188,7 +221,7 @@ export interface DrawExportParams {
   /**
    * Export output format
    */
-  format?: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
+  format: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
 
   /**
    * Export winners or all entries

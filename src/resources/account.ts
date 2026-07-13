@@ -17,7 +17,10 @@ export class Account extends APIResource {
    * ```
    */
   retrieve(options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
-    return this._client.get('/account', options);
+    return this._client.get('/account', {
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -34,7 +37,11 @@ export class Account extends APIResource {
     body: AccountSetXUsernameParams,
     options?: RequestOptions,
   ): APIPromise<AccountSetXUsernameResponse> {
-    return this._client.put('/account/x-identity', { body, ...options });
+    return this._client.put('/account/x-identity', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 
   /**
@@ -51,11 +58,21 @@ export class Account extends APIResource {
     body: AccountUpdateLocaleParams,
     options?: RequestOptions,
   ): APIPromise<AccountUpdateLocaleResponse> {
-    return this._client.patch('/account', { body, ...options });
+    return this._client.patch('/account', {
+      body,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
 export interface AccountRetrieveResponse {
+  monitorBilling: AccountRetrieveResponse.MonitorBilling;
+
+  /**
+   * @deprecated Deprecated. Monitor slots are unlimited, so this is always
+   * Number.MAX_SAFE_INTEGER.
+   */
   monitorsAllowed: number;
 
   monitorsUsed: number;
@@ -71,14 +88,70 @@ export interface AccountRetrieveResponse {
 }
 
 export namespace AccountRetrieveResponse {
+  export interface MonitorBilling {
+    /**
+     * Estimated daily credits for currently active monitors.
+     */
+    activeDailyEstimate: string;
+
+    /**
+     * Credits charged each hour for currently active monitors.
+     */
+    activeHourlyBurn: string;
+
+    /**
+     * Estimated daily credits for 1 active instant monitor.
+     */
+    creditsPerActiveMonitorDay: string;
+
+    /**
+     * Hourly credits charged for 1 active instant monitor.
+     */
+    creditsPerActiveMonitorHour: string;
+
+    /**
+     * Webhook and event deliveries are included in monitor billing.
+     */
+    eventsIncluded: boolean;
+
+    /**
+     * Active monitors check every 1 second.
+     */
+    instantCheckIntervalSeconds: number;
+
+    /**
+     * Monitor slot count is unlimited.
+     */
+    unlimitedSlots: boolean;
+  }
+
   export interface CreditInfo {
+    /**
+     * Dollar amount charged when automatic top-up runs.
+     */
+    autoTopupAmountDollars: number;
+
     autoTopupEnabled: boolean;
 
-    balance: number;
+    /**
+     * Bigint string threshold that triggers automatic top-up when enabled.
+     */
+    autoTopupThreshold: string;
 
-    lifetimePurchased: number;
+    /**
+     * Bigint string to preserve precision above Number.MAX_SAFE_INTEGER.
+     */
+    balance: string;
 
-    lifetimeUsed: number;
+    /**
+     * Total purchased credits as a bigint string.
+     */
+    lifetimePurchased: string;
+
+    /**
+     * Total consumed credits as a bigint string.
+     */
+    lifetimeUsed: string;
   }
 }
 

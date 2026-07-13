@@ -15,7 +15,11 @@ export class Radar extends APIResource {
     query: RadarRetrieveTrendingTopicsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<RadarRetrieveTrendingTopicsResponse> {
-    return this._client.get('/radar', { query, ...options });
+    return this._client.get('/radar', {
+      query,
+      ...options,
+      __security: { apiKeyAuth: true, oauthBearerAuth: true },
+    });
   }
 }
 
@@ -25,7 +29,7 @@ export class Radar extends APIResource {
  */
 export interface RadarItem {
   /**
-   * Internal numeric identifier (stringified bigint).
+   * Radar item identifier.
    */
   id: string;
 
@@ -95,7 +99,7 @@ export interface RadarRetrieveTrendingTopicsParams {
   category?: 'general' | 'tech' | 'dev' | 'science' | 'culture' | 'politics' | 'business' | 'entertainment';
 
   /**
-   * Lookback window in hours (1-168, default 24).
+   * Lookback window in hours (1-72, default 6).
    */
   hours?: number;
 
@@ -105,7 +109,7 @@ export interface RadarRetrieveTrendingTopicsParams {
   limit?: number;
 
   /**
-   * Region filter (us, global, etc.)
+   * Region filter. Use `global` or a region code such as `US`, `GB`, `TR`, or `ES`.
    */
   region?: string;
 
