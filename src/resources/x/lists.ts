@@ -24,11 +24,7 @@ export class Lists extends APIResource {
     query: ListRetrieveFollowersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/lists/${id}/followers`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/lists/${id}/followers`, { query, ...options });
   }
 
   /**
@@ -46,11 +42,7 @@ export class Lists extends APIResource {
     query: ListRetrieveMembersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/lists/${id}/members`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/lists/${id}/members`, { query, ...options });
   }
 
   /**
@@ -68,11 +60,7 @@ export class Lists extends APIResource {
     query: ListRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/lists/${id}/tweets`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/lists/${id}/tweets`, { query, ...options });
   }
 }
 

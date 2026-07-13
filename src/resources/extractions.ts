@@ -23,11 +23,7 @@ export class Extractions extends APIResource {
     query: ExtractionRetrieveParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<ExtractionRetrieveResponse> {
-    return this._client.get(path`/extractions/${id}`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/extractions/${id}`, { query, ...options });
   }
 
   /**
@@ -42,11 +38,7 @@ export class Extractions extends APIResource {
     query: ExtractionListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<ExtractionListResponse> {
-    return this._client.get('/extractions', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/extractions', { query, ...options });
   }
 
   /**
@@ -64,11 +56,7 @@ export class Extractions extends APIResource {
     body: ExtractionEstimateCostParams,
     options?: RequestOptions,
   ): APIPromise<ExtractionEstimateCostResponse> {
-    return this._client.post('/extractions/estimate', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/extractions/estimate', { body, ...options });
   }
 
   /**
@@ -94,7 +82,6 @@ export class Extractions extends APIResource {
       query,
       ...options,
       headers: buildHeaders([{ Accept: 'application/octet-stream' }, options?.headers]),
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
       __binaryResponse: true,
     });
   }
@@ -111,11 +98,7 @@ export class Extractions extends APIResource {
    * ```
    */
   run(body: ExtractionRunParams, options?: RequestOptions): APIPromise<ExtractionRunResponse> {
-    return this._client.post('/extractions', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/extractions', { body, ...options });
   }
 }
 

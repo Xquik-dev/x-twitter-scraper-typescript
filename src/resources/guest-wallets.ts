@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as GuestWalletsAPI from './guest-wallets';
 import { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
@@ -77,6 +78,18 @@ export class GuestWallets extends APIResource {
 }
 
 /**
+ * Confirmed USD amount for a guest wallet purchase.
+ */
+export interface GuestWalletAmount {
+  /**
+   * USD amount in cents. Accepted range is $10-$250.
+   */
+  amount_minor: number;
+
+  currency: 'usd';
+}
+
+/**
  * Initial guest wallet response containing the one-time key.
  */
 export interface GuestWalletCreateResponse {
@@ -85,7 +98,7 @@ export interface GuestWalletCreateResponse {
   /**
    * Confirmed USD amount for a guest wallet purchase.
    */
-  amount: GuestWalletCreateResponse.Amount;
+  amount: GuestWalletAmount;
 
   /**
    * Paid-read bearer credential returned only by initial creation. Store it as a
@@ -131,18 +144,6 @@ export interface GuestWalletCreateResponse {
 }
 
 export namespace GuestWalletCreateResponse {
-  /**
-   * Confirmed USD amount for a guest wallet purchase.
-   */
-  export interface Amount {
-    /**
-     * USD amount in cents. Accepted range is $10-$250.
-     */
-    amount_minor: number;
-
-    currency: 'usd';
-  }
-
   export interface Authorization {
     header: 'Authorization';
 
@@ -195,7 +196,7 @@ export namespace GuestWalletRetrieveStatusResponse {
     /**
      * Confirmed USD amount for a guest wallet purchase.
      */
-    amount: LatestPurchase.Amount;
+    amount: GuestWalletsAPI.GuestWalletAmount;
 
     /**
      * Present only while the purchase is pending.
@@ -209,20 +210,6 @@ export namespace GuestWalletRetrieveStatusResponse {
     purchase_id: string;
 
     status: 'creating' | 'pending' | 'paid' | 'expired' | 'failed' | 'refunded' | 'disputed';
-  }
-
-  export namespace LatestPurchase {
-    /**
-     * Confirmed USD amount for a guest wallet purchase.
-     */
-    export interface Amount {
-      /**
-       * USD amount in cents. Accepted range is $10-$250.
-       */
-      amount_minor: number;
-
-      currency: 'usd';
-    }
   }
 
   /**
@@ -244,7 +231,7 @@ export interface GuestWalletTopupResponse {
   /**
    * Confirmed USD amount for a guest wallet purchase.
    */
-  amount: GuestWalletTopupResponse.Amount;
+  amount: GuestWalletAmount;
 
   /**
    * Raw Stripe-hosted checkout URL for user interaction.
@@ -290,18 +277,6 @@ export interface GuestWalletTopupResponse {
 }
 
 export namespace GuestWalletTopupResponse {
-  /**
-   * Confirmed USD amount for a guest wallet purchase.
-   */
-  export interface Amount {
-    /**
-     * USD amount in cents. Accepted range is $10-$250.
-     */
-    amount_minor: number;
-
-    currency: 'usd';
-  }
-
   export interface Authorization {
     header: 'Authorization';
 
@@ -349,6 +324,7 @@ export interface GuestWalletTopupParams {
 
 export declare namespace GuestWallets {
   export {
+    type GuestWalletAmount as GuestWalletAmount,
     type GuestWalletCreateResponse as GuestWalletCreateResponse,
     type GuestWalletRetrieveStatusResponse as GuestWalletRetrieveStatusResponse,
     type GuestWalletTopupResponse as GuestWalletTopupResponse,

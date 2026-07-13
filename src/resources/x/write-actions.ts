@@ -20,10 +20,7 @@ export class WriteActions extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<WriteActionRetrieveResponse> {
-    return this._client.get(path`/x/write-actions/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/write-actions/${id}`, options);
   }
 }
 

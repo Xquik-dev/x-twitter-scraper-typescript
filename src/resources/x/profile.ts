@@ -24,11 +24,7 @@ export class Profile extends APIResource {
    * ```
    */
   update(body: ProfileUpdateParams, options?: RequestOptions): APIPromise<ProfileUpdateResponse> {
-    return this._client.patch('/x/profile', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.patch('/x/profile', { body, ...options });
   }
 
   /**
@@ -48,10 +44,7 @@ export class Profile extends APIResource {
   ): APIPromise<ProfileUpdateAvatarResponse> {
     return this._client.patch(
       '/x/profile/avatar',
-      maybeMultipartFormRequestOptions(
-        { body, ...options, __security: { apiKeyAuth: true, oauthBearerAuth: true } },
-        this._client,
-      ),
+      maybeMultipartFormRequestOptions({ body, ...options }, this._client),
     );
   }
 
@@ -72,10 +65,7 @@ export class Profile extends APIResource {
   ): APIPromise<ProfileUpdateBannerResponse> {
     return this._client.patch(
       '/x/profile/banner',
-      maybeMultipartFormRequestOptions(
-        { body, ...options, __security: { apiKeyAuth: true, oauthBearerAuth: true } },
-        this._client,
-      ),
+      maybeMultipartFormRequestOptions({ body, ...options }, this._client),
     );
   }
 }

@@ -33,11 +33,7 @@ export class Communities extends APIResource {
    * ```
    */
   create(body: CommunityCreateParams, options?: RequestOptions): APIPromise<CommunityCreateResponse> {
-    return this._client.post('/x/communities', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/x/communities', { body, ...options });
   }
 
   /**
@@ -56,11 +52,7 @@ export class Communities extends APIResource {
     body: CommunityDeleteParams,
     options?: RequestOptions,
   ): APIPromise<CommunityDeleteResponse> {
-    return this._client.delete(path`/x/communities/${id}`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/x/communities/${id}`, { body, ...options });
   }
 
   /**
@@ -74,10 +66,7 @@ export class Communities extends APIResource {
    * ```
    */
   retrieveInfo(id: string, options?: RequestOptions): APIPromise<CommunityRetrieveInfoResponse> {
-    return this._client.get(path`/x/communities/${id}/info`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/communities/${id}/info`, options);
   }
 
   /**
@@ -94,11 +83,7 @@ export class Communities extends APIResource {
     query: CommunityRetrieveMembersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/communities/${id}/members`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/communities/${id}/members`, { query, ...options });
   }
 
   /**
@@ -115,11 +100,7 @@ export class Communities extends APIResource {
     query: CommunityRetrieveModeratorsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/communities/${id}/moderators`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/communities/${id}/moderators`, { query, ...options });
   }
 
   /**
@@ -138,11 +119,7 @@ export class Communities extends APIResource {
     query: CommunityRetrieveSearchParams,
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/communities/search', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/communities/search', { query, ...options });
   }
 }
 

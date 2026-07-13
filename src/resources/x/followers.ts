@@ -20,11 +20,7 @@ export class Followers extends APIResource {
    * ```
    */
   check(query: FollowerCheckParams, options?: RequestOptions): APIPromise<FollowerCheckResponse> {
-    return this._client.get('/x/followers/check', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/followers/check', { query, ...options });
   }
 }
 

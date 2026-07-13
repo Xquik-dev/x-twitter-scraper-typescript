@@ -23,11 +23,7 @@ export class Subscribe extends APIResource {
     body: SubscribeCreateParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<SubscribeCreateResponse> {
-    return this._client.post('/subscribe', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/subscribe', { body, ...options });
   }
 }
 

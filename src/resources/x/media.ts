@@ -20,11 +20,7 @@ export class Media extends APIResource {
    * ```
    */
   download(body: MediaDownloadParams, options?: RequestOptions): APIPromise<MediaDownloadResponse> {
-    return this._client.post('/x/media/download', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/x/media/download', { body, ...options });
   }
 
   /**
@@ -41,10 +37,7 @@ export class Media extends APIResource {
   upload(body: MediaUploadParams, options?: RequestOptions): APIPromise<MediaUploadResponse> {
     return this._client.post(
       '/x/media',
-      maybeMultipartFormRequestOptions(
-        { body, ...options, __security: { apiKeyAuth: true, oauthBearerAuth: true } },
-        this._client,
-      ),
+      maybeMultipartFormRequestOptions({ body, ...options }, this._client),
     );
   }
 }

@@ -10,27 +10,6 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Credits extends APIResource {
   /**
-   * Instantly charge saved card for credits
-   *
-   * @example
-   * ```ts
-   * const response = await client.credits.quickTopupBalance({
-   *   dollars: 25,
-   * });
-   * ```
-   */
-  quickTopupBalance(
-    body: CreditQuickTopupBalanceParams,
-    options?: RequestOptions,
-  ): APIPromise<CreditQuickTopupBalanceResponse> {
-    return this._client.post('/credits/quick-topup', {
-      body,
-      ...options,
-      __security: { cookieSessionAuth: true },
-    });
-  }
-
-  /**
    * Redirect to an active top-up payment page
    *
    * @example
@@ -61,10 +40,7 @@ export class Credits extends APIResource {
    * ```
    */
   retrieveBalance(options?: RequestOptions): APIPromise<CreditRetrieveBalanceResponse> {
-    return this._client.get('/credits', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/credits', options);
   }
 
   /**
@@ -81,11 +57,7 @@ export class Credits extends APIResource {
     query: CreditRetrieveTopupStatusParams,
     options?: RequestOptions,
   ): APIPromise<CreditRetrieveTopupStatusResponse> {
-    return this._client.get('/credits/topup/status', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/credits/topup/status', { query, ...options });
   }
 
   /**
@@ -103,45 +75,7 @@ export class Credits extends APIResource {
     body: CreditTopupBalanceParams,
     options?: RequestOptions,
   ): APIPromise<CreditTopupBalanceResponse> {
-    return this._client.post('/credits/topup', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
-  }
-}
-
-export type CreditQuickTopupBalanceResponse =
-  | CreditQuickTopupBalanceResponse.UnionMember0
-  | CreditQuickTopupBalanceResponse.UnionMember1
-  | CreditQuickTopupBalanceResponse.Outcome;
-
-export namespace CreditQuickTopupBalanceResponse {
-  export interface UnionMember0 {
-    /**
-     * Updated credit balance as a bigint string.
-     */
-    balance: string;
-
-    /**
-     * Credits added by this top-up as a bigint string.
-     */
-    credits: string;
-
-    outcome: 'charged';
-  }
-
-  export interface UnionMember1 {
-    /**
-     * Payment client secret for completing authentication.
-     */
-    clientSecret: string;
-
-    outcome: 'requires_action';
-  }
-
-  export interface Outcome {
-    outcome: 'no_payment_method';
+    return this._client.post('/credits/topup', { body, ...options });
   }
 }
 
@@ -203,13 +137,6 @@ export interface CreditTopupBalanceResponse {
   url: string;
 }
 
-export interface CreditQuickTopupBalanceParams {
-  /**
-   * Dollar amount for the top-up
-   */
-  dollars: number;
-}
-
 export interface CreditRedirectTopupCheckoutParams {
   /**
    * Billing session ID returned by the top-up billing flow.
@@ -238,11 +165,9 @@ export interface CreditTopupBalanceParams {
 
 export declare namespace Credits {
   export {
-    type CreditQuickTopupBalanceResponse as CreditQuickTopupBalanceResponse,
     type CreditRetrieveBalanceResponse as CreditRetrieveBalanceResponse,
     type CreditRetrieveTopupStatusResponse as CreditRetrieveTopupStatusResponse,
     type CreditTopupBalanceResponse as CreditTopupBalanceResponse,
-    type CreditQuickTopupBalanceParams as CreditQuickTopupBalanceParams,
     type CreditRedirectTopupCheckoutParams as CreditRedirectTopupCheckoutParams,
     type CreditRetrieveTopupStatusParams as CreditRetrieveTopupStatusParams,
     type CreditTopupBalanceParams as CreditTopupBalanceParams,

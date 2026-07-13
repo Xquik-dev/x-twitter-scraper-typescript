@@ -15,11 +15,7 @@ export class Radar extends APIResource {
     query: RadarRetrieveTrendingTopicsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<RadarRetrieveTrendingTopicsResponse> {
-    return this._client.get('/radar', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/radar', { query, ...options });
   }
 }
 

@@ -20,11 +20,7 @@ export class Like extends APIResource {
    * ```
    */
   create(id: string, body: LikeCreateParams, options?: RequestOptions): APIPromise<LikeCreateResponse> {
-    return this._client.post(path`/x/tweets/${id}/like`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/x/tweets/${id}/like`, { body, ...options });
   }
 
   /**
@@ -38,11 +34,7 @@ export class Like extends APIResource {
    * ```
    */
   delete(id: string, body: LikeDeleteParams, options?: RequestOptions): APIPromise<LikeDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${id}/like`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/x/tweets/${id}/like`, { body, ...options });
   }
 }
 

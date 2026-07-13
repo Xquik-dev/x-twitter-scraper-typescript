@@ -21,10 +21,7 @@ export class Draws extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<DrawRetrieveResponse> {
-    return this._client.get(path`/draws/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/draws/${id}`, options);
   }
 
   /**
@@ -39,11 +36,7 @@ export class Draws extends APIResource {
     query: DrawListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<DrawListResponse> {
-    return this._client.get('/draws', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/draws', { query, ...options });
   }
 
   /**
@@ -65,7 +58,6 @@ export class Draws extends APIResource {
       query,
       ...options,
       headers: buildHeaders([{ Accept: 'application/octet-stream' }, options?.headers]),
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
       __binaryResponse: true,
     });
   }
@@ -86,11 +78,7 @@ export class Draws extends APIResource {
    * ```
    */
   run(body: DrawRunParams, options?: RequestOptions): APIPromise<DrawRunResponse> {
-    return this._client.post('/draws', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/draws', { body, ...options });
   }
 }
 

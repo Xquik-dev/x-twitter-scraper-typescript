@@ -25,11 +25,7 @@ export class Keywords extends APIResource {
    * ```
    */
   create(body: KeywordCreateParams, options?: RequestOptions): APIPromise<KeywordCreateResponse> {
-    return this._client.post('/monitors/keywords', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/monitors/keywords', { body, ...options });
   }
 
   /**
@@ -43,10 +39,7 @@ export class Keywords extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<KeywordRetrieveResponse> {
-    return this._client.get(path`/monitors/keywords/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/monitors/keywords/${id}`, options);
   }
 
   /**
@@ -61,11 +54,7 @@ export class Keywords extends APIResource {
    * ```
    */
   update(id: string, body: KeywordUpdateParams, options?: RequestOptions): APIPromise<KeywordUpdateResponse> {
-    return this._client.patch(path`/monitors/keywords/${id}`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.patch(path`/monitors/keywords/${id}`, { body, ...options });
   }
 
   /**
@@ -77,10 +66,7 @@ export class Keywords extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<KeywordListResponse> {
-    return this._client.get('/monitors/keywords', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/monitors/keywords', options);
   }
 
   /**
@@ -94,10 +80,7 @@ export class Keywords extends APIResource {
    * ```
    */
   deactivate(id: string, options?: RequestOptions): APIPromise<KeywordDeactivateResponse> {
-    return this._client.delete(path`/monitors/keywords/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/monitors/keywords/${id}`, options);
   }
 }
 

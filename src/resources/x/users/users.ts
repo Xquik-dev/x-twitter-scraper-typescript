@@ -26,10 +26,7 @@ export class Users extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Shared.UserProfile> {
-    return this._client.get(path`/x/users/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}`, options);
   }
 
   /**
@@ -47,11 +44,7 @@ export class Users extends APIResource {
     body: UserRemoveFollowerParams,
     options?: RequestOptions,
   ): APIPromise<UserRemoveFollowerResponse> {
-    return this._client.post(path`/x/users/${id}/remove-follower`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/x/users/${id}/remove-follower`, { body, ...options });
   }
 
   /**
@@ -68,11 +61,7 @@ export class Users extends APIResource {
     query: UserRetrieveBatchParams,
     options?: RequestOptions,
   ): APIPromise<UserRetrieveBatchResponse> {
-    return this._client.get('/x/users/batch', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/users/batch', { query, ...options });
   }
 
   /**
@@ -89,11 +78,7 @@ export class Users extends APIResource {
     query: UserRetrieveFollowersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/users/${id}/followers`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/followers`, { query, ...options });
   }
 
   /**
@@ -110,11 +95,7 @@ export class Users extends APIResource {
     query: UserRetrieveFollowersYouKnowParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/users/${id}/followers-you-know`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/followers-you-know`, { query, ...options });
   }
 
   /**
@@ -131,11 +112,7 @@ export class Users extends APIResource {
     query: UserRetrieveFollowingParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/users/${id}/following`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/following`, { query, ...options });
   }
 
   /**
@@ -153,11 +130,7 @@ export class Users extends APIResource {
     query: UserRetrieveLikesParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/users/${id}/likes`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/likes`, { query, ...options });
   }
 
   /**
@@ -175,11 +148,7 @@ export class Users extends APIResource {
     query: UserRetrieveMediaParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/users/${id}/media`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/media`, { query, ...options });
   }
 
   /**
@@ -196,11 +165,7 @@ export class Users extends APIResource {
     query: UserRetrieveMentionsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/users/${id}/mentions`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/mentions`, { query, ...options });
   }
 
   /**
@@ -217,11 +182,7 @@ export class Users extends APIResource {
     query: UserRetrieveRepliesParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/users/${id}/replies`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/replies`, { query, ...options });
   }
 
   /**
@@ -238,11 +199,7 @@ export class Users extends APIResource {
     query: UserRetrieveSearchParams,
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get('/x/users/search', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/users/search', { query, ...options });
   }
 
   /**
@@ -260,11 +217,7 @@ export class Users extends APIResource {
     query: UserRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/users/${id}/tweets`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/tweets`, { query, ...options });
   }
 
   /**
@@ -281,11 +234,7 @@ export class Users extends APIResource {
     query: UserRetrieveVerifiedFollowersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/users/${id}/verified-followers`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/users/${id}/verified-followers`, { query, ...options });
   }
 }
 

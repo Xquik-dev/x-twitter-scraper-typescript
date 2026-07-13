@@ -25,7 +25,6 @@ describe('instantiate client', () => {
       defaultHeaders: { 'X-My-Default-Header': '2' },
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
     });
 
     test('they are used in the request', async () => {
@@ -94,7 +93,6 @@ describe('instantiate client', () => {
         logLevel: 'debug',
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
 
       await forceAPIResponseForClient(client);
@@ -102,11 +100,7 @@ describe('instantiate client', () => {
     });
 
     test('default logLevel is warn', async () => {
-      const client = new XTwitterScraper({
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
-      });
+      const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.logLevel).toBe('warn');
     });
 
@@ -124,7 +118,6 @@ describe('instantiate client', () => {
         logLevel: 'info',
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
 
       await forceAPIResponseForClient(client);
@@ -145,7 +138,6 @@ describe('instantiate client', () => {
         logger: logger,
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.logLevel).toBe('debug');
 
@@ -167,7 +159,6 @@ describe('instantiate client', () => {
         logger: logger,
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.logLevel).toBe('warn');
       expect(warnMock).toHaveBeenCalledWith(
@@ -190,7 +181,6 @@ describe('instantiate client', () => {
         logLevel: 'off',
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
 
       await forceAPIResponseForClient(client);
@@ -212,7 +202,6 @@ describe('instantiate client', () => {
         logLevel: 'debug',
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.logLevel).toBe('debug');
       expect(warnMock).not.toHaveBeenCalled();
@@ -226,7 +215,6 @@ describe('instantiate client', () => {
         defaultQuery: { apiVersion: 'foo' },
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo');
     });
@@ -237,7 +225,6 @@ describe('instantiate client', () => {
         defaultQuery: { apiVersion: 'foo', hello: 'world' },
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo&hello=world');
     });
@@ -248,7 +235,6 @@ describe('instantiate client', () => {
         defaultQuery: { hello: 'world' },
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.buildURL('/foo', { hello: undefined })).toEqual('http://localhost:5000/foo');
     });
@@ -259,7 +245,6 @@ describe('instantiate client', () => {
       baseURL: 'http://localhost:5000/',
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: (url) => {
         return Promise.resolve(
           new Response(JSON.stringify({ url, custom: true }), {
@@ -279,7 +264,6 @@ describe('instantiate client', () => {
       baseURL: 'http://localhost:5000/',
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: defaultFetch,
     });
   });
@@ -289,7 +273,6 @@ describe('instantiate client', () => {
       baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: (...args) => {
         return new Promise((resolve, reject) =>
           setTimeout(
@@ -323,7 +306,6 @@ describe('instantiate client', () => {
       baseURL: 'http://localhost:5000/',
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: testFetch,
     });
 
@@ -337,7 +319,6 @@ describe('instantiate client', () => {
         baseURL: 'http://localhost:5000/custom/path/',
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
@@ -347,7 +328,6 @@ describe('instantiate client', () => {
         baseURL: 'http://localhost:5000/custom/path',
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
@@ -361,47 +341,30 @@ describe('instantiate client', () => {
         baseURL: 'https://example.com',
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
       expect(client.baseURL).toEqual('https://example.com');
     });
 
     test('env variable', () => {
       process.env['X_TWITTER_SCRAPER_BASE_URL'] = 'https://example.com/from_env';
-      const client = new XTwitterScraper({
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
-      });
+      const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.baseURL).toEqual('https://example.com/from_env');
     });
 
     test('empty env variable', () => {
       process.env['X_TWITTER_SCRAPER_BASE_URL'] = ''; // empty
-      const client = new XTwitterScraper({
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
-      });
+      const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.baseURL).toEqual('https://xquik.com/api/v1');
     });
 
     test('blank env variable', () => {
       process.env['X_TWITTER_SCRAPER_BASE_URL'] = '  '; // blank
-      const client = new XTwitterScraper({
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
-      });
+      const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.baseURL).toEqual('https://xquik.com/api/v1');
     });
 
     test('in request options', () => {
-      const client = new XTwitterScraper({
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
-      });
+      const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.buildURL('/foo', null, 'http://localhost:5000/option')).toEqual(
         'http://localhost:5000/option/foo',
       );
@@ -411,7 +374,6 @@ describe('instantiate client', () => {
       const client = new XTwitterScraper({
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
         baseURL: 'http://localhost:5000/client',
       });
       expect(client.buildURL('/foo', null, 'http://localhost:5000/option')).toEqual(
@@ -421,11 +383,7 @@ describe('instantiate client', () => {
 
     test('in request options overridden by env variable', () => {
       process.env['X_TWITTER_SCRAPER_BASE_URL'] = 'http://localhost:5000/env';
-      const client = new XTwitterScraper({
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
-      });
+      const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.buildURL('/foo', null, 'http://localhost:5000/option')).toEqual(
         'http://localhost:5000/env/foo',
       );
@@ -437,16 +395,11 @@ describe('instantiate client', () => {
       maxRetries: 4,
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
     });
     expect(client.maxRetries).toEqual(4);
 
     // default
-    const client2 = new XTwitterScraper({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
-    });
+    const client2 = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
     expect(client2.maxRetries).toEqual(2);
   });
 
@@ -457,7 +410,6 @@ describe('instantiate client', () => {
         maxRetries: 3,
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
 
       const newClient = client.withOptions({
@@ -485,7 +437,6 @@ describe('instantiate client', () => {
         defaultQuery: { 'test-param': 'test-value' },
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
 
       const newClient = client.withOptions({
@@ -505,7 +456,6 @@ describe('instantiate client', () => {
         timeout: 1000,
         apiKey: 'My API Key',
         bearerToken: 'My Bearer Token',
-        cookieSession: 'My Cookie Session',
       });
 
       // Modify the client properties directly after creation
@@ -536,35 +486,23 @@ describe('instantiate client', () => {
     // set options via env var
     process.env['X_TWITTER_SCRAPER_API_KEY'] = 'My API Key';
     process.env['X_TWITTER_SCRAPER_BEARER_TOKEN'] = 'My Bearer Token';
-    process.env['X_TWITTER_SCRAPER_SESSION'] = 'My Cookie Session';
     const client = new XTwitterScraper();
     expect(client.apiKey).toBe('My API Key');
     expect(client.bearerToken).toBe('My Bearer Token');
-    expect(client.cookieSession).toBe('My Cookie Session');
   });
 
   test('with overridden environment variable arguments', () => {
     // set options via env var
     process.env['X_TWITTER_SCRAPER_API_KEY'] = 'another My API Key';
     process.env['X_TWITTER_SCRAPER_BEARER_TOKEN'] = 'another My Bearer Token';
-    process.env['X_TWITTER_SCRAPER_SESSION'] = 'another My Cookie Session';
-    const client = new XTwitterScraper({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
-    });
+    const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
     expect(client.apiKey).toBe('My API Key');
     expect(client.bearerToken).toBe('My Bearer Token');
-    expect(client.cookieSession).toBe('My Cookie Session');
   });
 });
 
 describe('request building', () => {
-  const client = new XTwitterScraper({
-    apiKey: 'My API Key',
-    bearerToken: 'My Bearer Token',
-    cookieSession: 'My Cookie Session',
-  });
+  const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
 
   describe('custom headers', () => {
     test('handles undefined', async () => {
@@ -583,11 +521,7 @@ describe('request building', () => {
 });
 
 describe('default encoder', () => {
-  const client = new XTwitterScraper({
-    apiKey: 'My API Key',
-    bearerToken: 'My Bearer Token',
-    cookieSession: 'My Cookie Session',
-  });
+  const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
 
   class Serializable {
     toJSON() {
@@ -675,7 +609,6 @@ describe('retries', () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       timeout: 10,
       fetch: testFetch,
     });
@@ -711,7 +644,6 @@ describe('retries', () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: testFetch,
       maxRetries: 4,
     });
@@ -741,7 +673,6 @@ describe('retries', () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: testFetch,
       maxRetries: 4,
     });
@@ -776,7 +707,6 @@ describe('retries', () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: testFetch,
       maxRetries: 4,
       defaultHeaders: { 'X-Stainless-Retry-Count': null },
@@ -811,7 +741,6 @@ describe('retries', () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: testFetch,
       maxRetries: 4,
     });
@@ -847,7 +776,6 @@ describe('retries', () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: testFetch,
     });
 
@@ -882,7 +810,6 @@ describe('retries', () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
-      cookieSession: 'My Cookie Session',
       fetch: testFetch,
     });
 

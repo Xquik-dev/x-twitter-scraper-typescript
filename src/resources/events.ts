@@ -14,10 +14,7 @@ export class Events extends APIResource {
    * Get event
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<EventDetail> {
-    return this._client.get(path`/events/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/events/${id}`, options);
   }
 
   /**
@@ -27,11 +24,7 @@ export class Events extends APIResource {
     query: EventListParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<EventListResponse> {
-    return this._client.get('/events', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/events', { query, ...options });
   }
 }
 

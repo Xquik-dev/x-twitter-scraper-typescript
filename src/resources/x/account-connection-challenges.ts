@@ -25,11 +25,7 @@ export class AccountConnectionChallenges extends APIResource {
     body: AccountConnectionChallengeSubmitParams,
     options?: RequestOptions,
   ): APIPromise<AccountConnectionChallengeSubmitResponse> {
-    return this._client.post(path`/x/account-connection-challenges/${id}/submit`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/x/account-connection-challenges/${id}/submit`, { body, ...options });
   }
 }
 

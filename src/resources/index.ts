@@ -2,14 +2,6 @@
 
 export * from './shared';
 export {
-  APIKeys,
-  type APIKey,
-  type APIKeyCreateResponse,
-  type APIKeyListResponse,
-  type APIKeyRevokeResponse,
-  type APIKeyCreateParams,
-} from './api-keys';
-export {
   Account,
   type AccountRetrieveResponse,
   type AccountSetXUsernameResponse,
@@ -20,11 +12,9 @@ export {
 export { Compose, type ComposeCreateResponse, type ComposeCreateParams } from './compose';
 export {
   Credits,
-  type CreditQuickTopupBalanceResponse,
   type CreditRetrieveBalanceResponse,
   type CreditRetrieveTopupStatusResponse,
   type CreditTopupBalanceResponse,
-  type CreditQuickTopupBalanceParams,
   type CreditRedirectTopupCheckoutParams,
   type CreditRetrieveTopupStatusParams,
   type CreditTopupBalanceParams,
@@ -65,6 +55,7 @@ export {
 } from './extractions';
 export {
   GuestWallets,
+  type GuestWalletAmount,
   type GuestWalletCreateResponse,
   type GuestWalletRetrieveStatusResponse,
   type GuestWalletTopupResponse,

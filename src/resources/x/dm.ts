@@ -22,11 +22,7 @@ export class Dm extends APIResource {
     query: DmRetrieveHistoryParams,
     options?: RequestOptions,
   ): APIPromise<DmRetrieveHistoryResponse> {
-    return this._client.get(path`/x/dm/${userID}/history`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/dm/${userID}/history`, { query, ...options });
   }
 
   /**
@@ -42,11 +38,7 @@ export class Dm extends APIResource {
    * ```
    */
   send(userID: string, body: DmSendParams, options?: RequestOptions): APIPromise<DmSendResponse> {
-    return this._client.post(path`/x/dm/${userID}`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/x/dm/${userID}`, { body, ...options });
   }
 }
 

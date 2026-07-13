@@ -5,7 +5,6 @@ import XTwitterScraper from 'x-twitter-scraper';
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
   bearerToken: 'My Bearer Token',
-  cookieSession: 'My Cookie Session',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 

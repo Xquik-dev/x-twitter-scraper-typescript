@@ -21,11 +21,7 @@ export class Tickets extends APIResource {
    * ```
    */
   create(body: TicketCreateParams, options?: RequestOptions): APIPromise<TicketCreateResponse> {
-    return this._client.post('/support/tickets', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/support/tickets', { body, ...options });
   }
 
   /**
@@ -39,10 +35,7 @@ export class Tickets extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<TicketRetrieveResponse> {
-    return this._client.get(path`/support/tickets/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/support/tickets/${id}`, options);
   }
 
   /**
@@ -57,11 +50,7 @@ export class Tickets extends APIResource {
    * ```
    */
   update(id: string, body: TicketUpdateParams, options?: RequestOptions): APIPromise<TicketUpdateResponse> {
-    return this._client.patch(path`/support/tickets/${id}`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.patch(path`/support/tickets/${id}`, { body, ...options });
   }
 
   /**
@@ -73,10 +62,7 @@ export class Tickets extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<TicketListResponse> {
-    return this._client.get('/support/tickets', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/support/tickets', options);
   }
 
   /**
@@ -91,11 +77,7 @@ export class Tickets extends APIResource {
    * ```
    */
   reply(id: string, body: TicketReplyParams, options?: RequestOptions): APIPromise<TicketReplyResponse> {
-    return this._client.post(path`/support/tickets/${id}/messages`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/support/tickets/${id}/messages`, { body, ...options });
   }
 }
 

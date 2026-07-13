@@ -38,11 +38,7 @@ export class Monitors extends APIResource {
    * ```
    */
   create(body: MonitorCreateParams, options?: RequestOptions): APIPromise<MonitorCreateResponse> {
-    return this._client.post('/monitors', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/monitors', { body, ...options });
   }
 
   /**
@@ -54,10 +50,7 @@ export class Monitors extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<Monitor> {
-    return this._client.get(path`/monitors/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/monitors/${id}`, options);
   }
 
   /**
@@ -72,11 +65,7 @@ export class Monitors extends APIResource {
    * ```
    */
   update(id: string, body: MonitorUpdateParams, options?: RequestOptions): APIPromise<Monitor> {
-    return this._client.patch(path`/monitors/${id}`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.patch(path`/monitors/${id}`, { body, ...options });
   }
 
   /**
@@ -88,10 +77,7 @@ export class Monitors extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<MonitorListResponse> {
-    return this._client.get('/monitors', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/monitors', options);
   }
 
   /**
@@ -103,10 +89,7 @@ export class Monitors extends APIResource {
    * ```
    */
   deactivate(id: string, options?: RequestOptions): APIPromise<MonitorDeactivateResponse> {
-    return this._client.delete(path`/monitors/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/monitors/${id}`, options);
   }
 }
 

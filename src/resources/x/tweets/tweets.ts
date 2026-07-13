@@ -32,11 +32,7 @@ export class Tweets extends APIResource {
    * ```
    */
   create(body: TweetCreateParams, options?: RequestOptions): APIPromise<TweetCreateResponse> {
-    return this._client.post('/x/tweets', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/x/tweets', { body, ...options });
   }
 
   /**
@@ -48,10 +44,7 @@ export class Tweets extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<TweetRetrieveResponse> {
-    return this._client.get(path`/x/tweets/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/tweets/${id}`, options);
   }
 
   /**
@@ -65,11 +58,7 @@ export class Tweets extends APIResource {
    * ```
    */
   list(query: TweetListParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/tweets', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/tweets', { query, ...options });
   }
 
   /**
@@ -83,11 +72,7 @@ export class Tweets extends APIResource {
    * ```
    */
   delete(id: string, body: TweetDeleteParams, options?: RequestOptions): APIPromise<TweetDeleteResponse> {
-    return this._client.delete(path`/x/tweets/${id}`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/x/tweets/${id}`, { body, ...options });
   }
 
   /**
@@ -105,11 +90,7 @@ export class Tweets extends APIResource {
     query: TweetGetFavoritersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/tweets/${id}/favoriters`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/tweets/${id}/favoriters`, { query, ...options });
   }
 
   /**
@@ -127,11 +108,7 @@ export class Tweets extends APIResource {
     query: TweetGetQuotesParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/tweets/${id}/quotes`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/tweets/${id}/quotes`, { query, ...options });
   }
 
   /**
@@ -149,11 +126,7 @@ export class Tweets extends APIResource {
     query: TweetGetRepliesParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/tweets/${id}/replies`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/tweets/${id}/replies`, { query, ...options });
   }
 
   /**
@@ -171,11 +144,7 @@ export class Tweets extends APIResource {
     query: TweetGetRetweetersParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedUsers> {
-    return this._client.get(path`/x/tweets/${id}/retweeters`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/tweets/${id}/retweeters`, { query, ...options });
   }
 
   /**
@@ -193,11 +162,7 @@ export class Tweets extends APIResource {
     query: TweetGetThreadParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/tweets/${id}/thread`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/tweets/${id}/thread`, { query, ...options });
   }
 
   /**
@@ -211,11 +176,7 @@ export class Tweets extends APIResource {
    * ```
    */
   search(query: TweetSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/tweets/search', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/tweets/search', { query, ...options });
   }
 }
 
@@ -223,7 +184,11 @@ export class Tweets extends APIResource {
  * Tweet author profile. The lookup route always includes follower count and
  * verification state. Other profile fields appear when available.
  */
-export interface TweetAuthor extends Shared.UserProfile {}
+export interface TweetAuthor extends Shared.UserProfile {
+  followers: number;
+
+  verified: boolean;
+}
 
 /**
  * Full tweet with text, engagement metrics, media, and metadata. A zero metric can
@@ -256,7 +221,7 @@ export interface TweetDetail {
    * Content disclosure metadata shown by X when a tweet is labeled as paid
    * partnership content or AI-generated media.
    */
-  contentDisclosure?: TweetDetail.ContentDisclosure;
+  contentDisclosure?: Shared.ContentDisclosure;
 
   /**
    * ID of the root tweet in the conversation thread
@@ -318,21 +283,21 @@ export interface TweetDetail {
   /**
    * Attached media items, omitted when the tweet has no media
    */
-  media?: Array<TweetDetail.Media>;
+  media?: Array<Shared.TweetMedia>;
 
   /**
    * Quoted or retweeted tweet context. Every object includes id, text, and
    * engagement metrics. A zero metric can mean X did not report the count. Author,
    * media, and conversation fields appear when available.
    */
-  quoted_tweet?: TweetDetail.QuotedTweet;
+  quoted_tweet?: Shared.EmbeddedTweet;
 
   /**
    * Quoted or retweeted tweet context. Every object includes id, text, and
    * engagement metrics. A zero metric can mean X did not report the count. Author,
    * media, and conversation fields appear when available.
    */
-  retweeted_tweet?: TweetDetail.RetweetedTweet;
+  retweeted_tweet?: Shared.EmbeddedTweet;
 
   /**
    * Client application used to post this tweet
@@ -348,348 +313,6 @@ export interface TweetDetail {
    * Tweet permalink URL
    */
   url?: string;
-}
-
-export namespace TweetDetail {
-  /**
-   * Content disclosure metadata shown by X when a tweet is labeled as paid
-   * partnership content or AI-generated media.
-   */
-  export interface ContentDisclosure {
-    advertising?: ContentDisclosure.Advertising;
-
-    aiGenerated?: ContentDisclosure.AIGenerated;
-  }
-
-  export namespace ContentDisclosure {
-    export interface Advertising {
-      /**
-       * True when X labels the tweet as paid promotion content.
-       */
-      isPaidPromotion?: boolean;
-    }
-
-    export interface AIGenerated {
-      /**
-       * Whether the disclosure can be edited on X.
-       */
-      canEdit?: boolean;
-
-      /**
-       * Source of the AI-generated media disclosure.
-       */
-      detectionSource?: string;
-
-      /**
-       * True when X labels the tweet as containing AI-generated media.
-       */
-      hasAiGeneratedMedia?: boolean;
-    }
-  }
-
-  /**
-   * Normalized media attached to a tweet.
-   */
-  export interface Media {
-    /**
-     * Media preview URL
-     */
-    mediaUrl: string;
-
-    type: 'photo' | 'video' | 'animated_gif';
-
-    /**
-     * X media link from the tweet
-     */
-    url: string;
-
-    /**
-     * Available video encodings, ordered as returned
-     */
-    videoVariants?: Array<Media.VideoVariant>;
-  }
-
-  export namespace Media {
-    export interface VideoVariant {
-      contentType: string;
-
-      url: string;
-
-      bitrate?: number;
-    }
-  }
-
-  /**
-   * Quoted or retweeted tweet context. Every object includes id, text, and
-   * engagement metrics. A zero metric can mean X did not report the count. Author,
-   * media, and conversation fields appear when available.
-   */
-  export interface QuotedTweet {
-    id: string;
-
-    bookmarkCount: number;
-
-    likeCount: number;
-
-    quoteCount: number;
-
-    replyCount: number;
-
-    retweetCount: number;
-
-    text: string;
-
-    viewCount: number;
-
-    /**
-     * X user profile with bio, follower counts, and verification status.
-     */
-    author?: Shared.UserProfile;
-
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    contentDisclosure?: QuotedTweet.ContentDisclosure;
-
-    conversationId?: string;
-
-    createdAt?: string;
-
-    displayTextRange?: Array<number>;
-
-    entities?: { [key: string]: unknown };
-
-    inReplyToId?: string;
-
-    inReplyToUserId?: string;
-
-    inReplyToUsername?: string;
-
-    isLimitedReply?: boolean;
-
-    isNoteTweet?: boolean;
-
-    isQuoteStatus?: boolean;
-
-    isReply?: boolean;
-
-    lang?: string;
-
-    media?: Array<QuotedTweet.Media>;
-
-    source?: string;
-
-    type?: string;
-
-    url?: string;
-  }
-
-  export namespace QuotedTweet {
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    export interface ContentDisclosure {
-      advertising?: ContentDisclosure.Advertising;
-
-      aiGenerated?: ContentDisclosure.AIGenerated;
-    }
-
-    export namespace ContentDisclosure {
-      export interface Advertising {
-        /**
-         * True when X labels the tweet as paid promotion content.
-         */
-        isPaidPromotion?: boolean;
-      }
-
-      export interface AIGenerated {
-        /**
-         * Whether the disclosure can be edited on X.
-         */
-        canEdit?: boolean;
-
-        /**
-         * Source of the AI-generated media disclosure.
-         */
-        detectionSource?: string;
-
-        /**
-         * True when X labels the tweet as containing AI-generated media.
-         */
-        hasAiGeneratedMedia?: boolean;
-      }
-    }
-
-    /**
-     * Normalized media attached to a tweet.
-     */
-    export interface Media {
-      /**
-       * Media preview URL
-       */
-      mediaUrl: string;
-
-      type: 'photo' | 'video' | 'animated_gif';
-
-      /**
-       * X media link from the tweet
-       */
-      url: string;
-
-      /**
-       * Available video encodings, ordered as returned
-       */
-      videoVariants?: Array<Media.VideoVariant>;
-    }
-
-    export namespace Media {
-      export interface VideoVariant {
-        contentType: string;
-
-        url: string;
-
-        bitrate?: number;
-      }
-    }
-  }
-
-  /**
-   * Quoted or retweeted tweet context. Every object includes id, text, and
-   * engagement metrics. A zero metric can mean X did not report the count. Author,
-   * media, and conversation fields appear when available.
-   */
-  export interface RetweetedTweet {
-    id: string;
-
-    bookmarkCount: number;
-
-    likeCount: number;
-
-    quoteCount: number;
-
-    replyCount: number;
-
-    retweetCount: number;
-
-    text: string;
-
-    viewCount: number;
-
-    /**
-     * X user profile with bio, follower counts, and verification status.
-     */
-    author?: Shared.UserProfile;
-
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    contentDisclosure?: RetweetedTweet.ContentDisclosure;
-
-    conversationId?: string;
-
-    createdAt?: string;
-
-    displayTextRange?: Array<number>;
-
-    entities?: { [key: string]: unknown };
-
-    inReplyToId?: string;
-
-    inReplyToUserId?: string;
-
-    inReplyToUsername?: string;
-
-    isLimitedReply?: boolean;
-
-    isNoteTweet?: boolean;
-
-    isQuoteStatus?: boolean;
-
-    isReply?: boolean;
-
-    lang?: string;
-
-    media?: Array<RetweetedTweet.Media>;
-
-    source?: string;
-
-    type?: string;
-
-    url?: string;
-  }
-
-  export namespace RetweetedTweet {
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    export interface ContentDisclosure {
-      advertising?: ContentDisclosure.Advertising;
-
-      aiGenerated?: ContentDisclosure.AIGenerated;
-    }
-
-    export namespace ContentDisclosure {
-      export interface Advertising {
-        /**
-         * True when X labels the tweet as paid promotion content.
-         */
-        isPaidPromotion?: boolean;
-      }
-
-      export interface AIGenerated {
-        /**
-         * Whether the disclosure can be edited on X.
-         */
-        canEdit?: boolean;
-
-        /**
-         * Source of the AI-generated media disclosure.
-         */
-        detectionSource?: string;
-
-        /**
-         * True when X labels the tweet as containing AI-generated media.
-         */
-        hasAiGeneratedMedia?: boolean;
-      }
-    }
-
-    /**
-     * Normalized media attached to a tweet.
-     */
-    export interface Media {
-      /**
-       * Media preview URL
-       */
-      mediaUrl: string;
-
-      type: 'photo' | 'video' | 'animated_gif';
-
-      /**
-       * X media link from the tweet
-       */
-      url: string;
-
-      /**
-       * Available video encodings, ordered as returned
-       */
-      videoVariants?: Array<Media.VideoVariant>;
-    }
-
-    export namespace Media {
-      export interface VideoVariant {
-        contentType: string;
-
-        url: string;
-
-        bitrate?: number;
-      }
-    }
-  }
 }
 
 export interface TweetCreateResponse {

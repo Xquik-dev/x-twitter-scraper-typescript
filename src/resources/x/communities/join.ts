@@ -20,11 +20,7 @@ export class Join extends APIResource {
    * ```
    */
   create(id: string, body: JoinCreateParams, options?: RequestOptions): APIPromise<JoinCreateResponse> {
-    return this._client.post(path`/x/communities/${id}/join`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/x/communities/${id}/join`, { body, ...options });
   }
 
   /**
@@ -43,11 +39,7 @@ export class Join extends APIResource {
     body: JoinDeleteAllParams,
     options?: RequestOptions,
   ): APIPromise<JoinDeleteAllResponse> {
-    return this._client.delete(path`/x/communities/${id}/join`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/x/communities/${id}/join`, { body, ...options });
   }
 }
 

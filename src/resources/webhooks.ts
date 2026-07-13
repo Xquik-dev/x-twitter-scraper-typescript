@@ -22,11 +22,7 @@ export class Webhooks extends APIResource {
    * ```
    */
   create(body: WebhookCreateParams, options?: RequestOptions): APIPromise<WebhookCreateResponse> {
-    return this._client.post('/webhooks', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/webhooks', { body, ...options });
   }
 
   /**
@@ -41,11 +37,7 @@ export class Webhooks extends APIResource {
    * ```
    */
   update(id: string, body: WebhookUpdateParams, options?: RequestOptions): APIPromise<Webhook> {
-    return this._client.patch(path`/webhooks/${id}`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.patch(path`/webhooks/${id}`, { body, ...options });
   }
 
   /**
@@ -57,10 +49,7 @@ export class Webhooks extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<WebhookListResponse> {
-    return this._client.get('/webhooks', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/webhooks', options);
   }
 
   /**
@@ -72,10 +61,7 @@ export class Webhooks extends APIResource {
    * ```
    */
   deactivate(id: string, options?: RequestOptions): APIPromise<WebhookDeactivateResponse> {
-    return this._client.delete(path`/webhooks/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/webhooks/${id}`, options);
   }
 
   /**
@@ -87,10 +73,7 @@ export class Webhooks extends APIResource {
    * ```
    */
   listDeliveries(id: string, options?: RequestOptions): APIPromise<WebhookListDeliveriesResponse> {
-    return this._client.get(path`/webhooks/${id}/deliveries`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/webhooks/${id}/deliveries`, options);
   }
 
   /**
@@ -102,10 +85,7 @@ export class Webhooks extends APIResource {
    * ```
    */
   resume(id: string, options?: RequestOptions): APIPromise<WebhookResumeResponse> {
-    return this._client.post(path`/webhooks/${id}/resume`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/webhooks/${id}/resume`, options);
   }
 
   /**
@@ -117,10 +97,7 @@ export class Webhooks extends APIResource {
    * ```
    */
   test(id: string, options?: RequestOptions): APIPromise<WebhookTestResponse> {
-    return this._client.post(path`/webhooks/${id}/test`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/webhooks/${id}/test`, options);
   }
 }
 

@@ -131,10 +131,7 @@ export class X extends APIResource {
    * ```
    */
   getArticle(tweetID: string, options?: RequestOptions): APIPromise<XGetArticleResponse> {
-    return this._client.get(path`/x/articles/${tweetID}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/articles/${tweetID}`, options);
   }
 
   /**
@@ -149,11 +146,7 @@ export class X extends APIResource {
     query: XGetHomeTimelineParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/timeline', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/timeline', { query, ...options });
   }
 
   /**
@@ -168,11 +161,7 @@ export class X extends APIResource {
     query: XGetNotificationsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<XGetNotificationsResponse> {
-    return this._client.get('/x/notifications', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/notifications', { query, ...options });
   }
 
   /**
@@ -187,11 +176,7 @@ export class X extends APIResource {
     query: XGetTrendsParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<XGetTrendsResponse> {
-    return this._client.get('/x/trends', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/trends', { query, ...options });
   }
 }
 

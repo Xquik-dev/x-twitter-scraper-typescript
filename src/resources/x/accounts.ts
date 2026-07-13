@@ -22,11 +22,7 @@ export class Accounts extends APIResource {
    * ```
    */
   create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
-    return this._client.post('/x/accounts', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/x/accounts', { body, ...options });
   }
 
   /**
@@ -40,10 +36,7 @@ export class Accounts extends APIResource {
    * ```
    */
   retrieve(id: string, options?: RequestOptions): APIPromise<XAccountDetail> {
-    return this._client.get(path`/x/accounts/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/accounts/${id}`, options);
   }
 
   /**
@@ -55,10 +48,7 @@ export class Accounts extends APIResource {
    * ```
    */
   list(options?: RequestOptions): APIPromise<AccountListResponse> {
-    return this._client.get('/x/accounts', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/accounts', options);
   }
 
   /**
@@ -70,10 +60,7 @@ export class Accounts extends APIResource {
    * ```
    */
   delete(id: string, options?: RequestOptions): APIPromise<AccountDeleteResponse> {
-    return this._client.delete(path`/x/accounts/${id}`, {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.delete(path`/x/accounts/${id}`, options);
   }
 
   /**
@@ -86,10 +73,7 @@ export class Accounts extends APIResource {
    * ```
    */
   bulkRetry(options?: RequestOptions): APIPromise<AccountBulkRetryResponse> {
-    return this._client.post('/x/accounts/bulk-retry', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post('/x/accounts/bulk-retry', options);
   }
 
   /**
@@ -104,11 +88,7 @@ export class Accounts extends APIResource {
    * ```
    */
   reauth(id: string, body: AccountReauthParams, options?: RequestOptions): APIPromise<AccountReauthResponse> {
-    return this._client.post(path`/x/accounts/${id}/reauth`, {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.post(path`/x/accounts/${id}/reauth`, { body, ...options });
   }
 }
 

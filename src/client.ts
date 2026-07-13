@@ -25,18 +25,8 @@ import {
   AccountUpdateLocaleParams,
   AccountUpdateLocaleResponse,
 } from './resources/account';
-import {
-  APIKey,
-  APIKeyCreateParams,
-  APIKeyCreateResponse,
-  APIKeyListResponse,
-  APIKeyRevokeResponse,
-  APIKeys,
-} from './resources/api-keys';
 import { Compose, ComposeCreateParams, ComposeCreateResponse } from './resources/compose';
 import {
-  CreditQuickTopupBalanceParams,
-  CreditQuickTopupBalanceResponse,
   CreditRedirectTopupCheckoutParams,
   CreditRetrieveBalanceResponse,
   CreditRetrieveTopupStatusParams,
@@ -80,6 +70,7 @@ import {
   Extractions,
 } from './resources/extractions';
 import {
+  GuestWalletAmount,
   GuestWalletCreateParams,
   GuestWalletCreateResponse,
   GuestWalletRetrieveStatusResponse,
@@ -163,11 +154,6 @@ export interface ClientOptions {
   bearerToken?: string | null | undefined;
 
   /**
-   * Secure Xquik browser session cookie
-   */
-  cookieSession?: string | null | undefined;
-
-  /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
    *
    * Defaults to process.env['X_TWITTER_SCRAPER_BASE_URL'].
@@ -242,7 +228,6 @@ export interface ClientOptions {
 export class XTwitterScraper {
   apiKey: string | null;
   bearerToken: string | null;
-  cookieSession: string | null;
 
   baseURL: string;
   maxRetries: number;
@@ -261,7 +246,6 @@ export class XTwitterScraper {
    *
    * @param {string | null | undefined} [opts.apiKey=process.env['X_TWITTER_SCRAPER_API_KEY'] ?? null]
    * @param {string | null | undefined} [opts.bearerToken=process.env['X_TWITTER_SCRAPER_BEARER_TOKEN'] ?? null]
-   * @param {string | null | undefined} [opts.cookieSession=process.env['X_TWITTER_SCRAPER_SESSION'] ?? null]
    * @param {string} [opts.baseURL=process.env['X_TWITTER_SCRAPER_BASE_URL'] ?? https://xquik.com/api/v1] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
@@ -274,13 +258,11 @@ export class XTwitterScraper {
     baseURL = readEnv('X_TWITTER_SCRAPER_BASE_URL'),
     apiKey = readEnv('X_TWITTER_SCRAPER_API_KEY') ?? null,
     bearerToken = readEnv('X_TWITTER_SCRAPER_BEARER_TOKEN') ?? null,
-    cookieSession = readEnv('X_TWITTER_SCRAPER_SESSION') ?? null,
     ...opts
   }: ClientOptions = {}) {
     const options: ClientOptions = {
       apiKey,
       bearerToken,
-      cookieSession,
       ...opts,
       baseURL: baseURL || `https://xquik.com/api/v1`,
     };
@@ -316,7 +298,6 @@ export class XTwitterScraper {
 
     this.apiKey = apiKey;
     this.bearerToken = bearerToken;
-    this.cookieSession = cookieSession;
   }
 
   /**
@@ -334,7 +315,6 @@ export class XTwitterScraper {
       fetchOptions: this.fetchOptions,
       apiKey: this.apiKey,
       bearerToken: this.bearerToken,
-      cookieSession: this.cookieSession,
       ...options,
     });
     return client;
@@ -366,26 +346,18 @@ export class XTwitterScraper {
       return;
     }
 
-    if (this.cookieSession && values.get('__host-xquik_session')) {
-      return;
-    }
-    if (nulls.has('__host-xquik_session')) {
-      return;
-    }
-
     throw new Error(
-      'Could not resolve authentication method. Expected one of apiKey, bearerToken or cookieSession to be set. Or for one of the "x-api-key", "Authorization" or "__Host-xquik_session" headers to be explicitly omitted',
+      'Could not resolve authentication method. Expected either apiKey or bearerToken to be set. Or for one of the "x-api-key" or "Authorization" headers to be explicitly omitted',
     );
   }
 
   protected async authHeaders(
     opts: FinalRequestOptions,
-    schemes: { apiKeyAuth?: boolean; oauthBearerAuth?: boolean; cookieSessionAuth?: boolean },
+    schemes: { apiKeyAuth?: boolean; oauthBearerAuth?: boolean },
   ): Promise<NullableHeaders | undefined> {
     return buildHeaders([
       schemes.apiKeyAuth ? await this.apiKeyAuth(opts) : null,
       schemes.oauthBearerAuth ? await this.oauthBearerAuth(opts) : null,
-      schemes.cookieSessionAuth ? await this.cookieSessionAuth(opts) : null,
     ]);
   }
 
@@ -401,13 +373,6 @@ export class XTwitterScraper {
       return undefined;
     }
     return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
-  }
-
-  protected async cookieSessionAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
-    if (this.cookieSession == null) {
-      return undefined;
-    }
-    return buildHeaders([{ '__Host-xquik_session': this.cookieSession }]);
   }
 
   /**
@@ -836,10 +801,7 @@ export class XTwitterScraper {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
-      await this.authHeaders(
-        options,
-        options.__security ?? { apiKeyAuth: true, oauthBearerAuth: true, cookieSessionAuth: true },
-      ),
+      await this.authHeaders(options, options.__security ?? { apiKeyAuth: true, oauthBearerAuth: true }),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
@@ -933,10 +895,6 @@ export class XTwitterScraper {
    */
   account: API.Account = new API.Account(this);
   /**
-   * API key management (session auth only)
-   */
-  apiKeys: API.APIKeys = new API.APIKeys(this);
-  /**
    * Subscription, billing, and credits
    */
   subscribe: API.Subscribe = new API.Subscribe(this);
@@ -993,7 +951,6 @@ export class XTwitterScraper {
 }
 
 XTwitterScraper.Account = Account;
-XTwitterScraper.APIKeys = APIKeys;
 XTwitterScraper.Subscribe = Subscribe;
 XTwitterScraper.Compose = Compose;
 XTwitterScraper.Drafts = Drafts;
@@ -1020,15 +977,6 @@ export declare namespace XTwitterScraper {
     type AccountUpdateLocaleResponse as AccountUpdateLocaleResponse,
     type AccountSetXUsernameParams as AccountSetXUsernameParams,
     type AccountUpdateLocaleParams as AccountUpdateLocaleParams,
-  };
-
-  export {
-    APIKeys as APIKeys,
-    type APIKey as APIKey,
-    type APIKeyCreateResponse as APIKeyCreateResponse,
-    type APIKeyListResponse as APIKeyListResponse,
-    type APIKeyRevokeResponse as APIKeyRevokeResponse,
-    type APIKeyCreateParams as APIKeyCreateParams,
   };
 
   export {
@@ -1150,11 +1098,9 @@ export declare namespace XTwitterScraper {
 
   export {
     Credits as Credits,
-    type CreditQuickTopupBalanceResponse as CreditQuickTopupBalanceResponse,
     type CreditRetrieveBalanceResponse as CreditRetrieveBalanceResponse,
     type CreditRetrieveTopupStatusResponse as CreditRetrieveTopupStatusResponse,
     type CreditTopupBalanceResponse as CreditTopupBalanceResponse,
-    type CreditQuickTopupBalanceParams as CreditQuickTopupBalanceParams,
     type CreditRedirectTopupCheckoutParams as CreditRedirectTopupCheckoutParams,
     type CreditRetrieveTopupStatusParams as CreditRetrieveTopupStatusParams,
     type CreditTopupBalanceParams as CreditTopupBalanceParams,
@@ -1162,6 +1108,7 @@ export declare namespace XTwitterScraper {
 
   export {
     GuestWallets as GuestWallets,
+    type GuestWalletAmount as GuestWalletAmount,
     type GuestWalletCreateResponse as GuestWalletCreateResponse,
     type GuestWalletRetrieveStatusResponse as GuestWalletRetrieveStatusResponse,
     type GuestWalletTopupResponse as GuestWalletTopupResponse,
@@ -1169,10 +1116,13 @@ export declare namespace XTwitterScraper {
     type GuestWalletTopupParams as GuestWalletTopupParams,
   };
 
+  export type ContentDisclosure = API.ContentDisclosure;
+  export type EmbeddedTweet = API.EmbeddedTweet;
   export type Error = API.Error;
   export type EventType = API.EventType;
   export type PaginatedTweets = API.PaginatedTweets;
   export type PaginatedUsers = API.PaginatedUsers;
   export type SearchTweet = API.SearchTweet;
+  export type TweetMedia = API.TweetMedia;
   export type UserProfile = API.UserProfile;
 }

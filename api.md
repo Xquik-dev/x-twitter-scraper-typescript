@@ -2,11 +2,14 @@
 
 Types:
 
+- <code><a href="./src/resources/shared.ts">ContentDisclosure</a></code>
+- <code><a href="./src/resources/shared.ts">EmbeddedTweet</a></code>
 - <code><a href="./src/resources/shared.ts">Error</a></code>
 - <code><a href="./src/resources/shared.ts">EventType</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedTweets</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedUsers</a></code>
 - <code><a href="./src/resources/shared.ts">SearchTweet</a></code>
+- <code><a href="./src/resources/shared.ts">TweetMedia</a></code>
 - <code><a href="./src/resources/shared.ts">UserProfile</a></code>
 
 # Account
@@ -22,21 +25,6 @@ Methods:
 - <code title="get /account">client.account.<a href="./src/resources/account.ts">retrieve</a>() -> AccountRetrieveResponse</code>
 - <code title="put /account/x-identity">client.account.<a href="./src/resources/account.ts">setXUsername</a>({ ...params }) -> AccountSetXUsernameResponse</code>
 - <code title="patch /account">client.account.<a href="./src/resources/account.ts">updateLocale</a>({ ...params }) -> AccountUpdateLocaleResponse</code>
-
-# APIKeys
-
-Types:
-
-- <code><a href="./src/resources/api-keys.ts">APIKey</a></code>
-- <code><a href="./src/resources/api-keys.ts">APIKeyCreateResponse</a></code>
-- <code><a href="./src/resources/api-keys.ts">APIKeyListResponse</a></code>
-- <code><a href="./src/resources/api-keys.ts">APIKeyRevokeResponse</a></code>
-
-Methods:
-
-- <code title="post /api-keys">client.apiKeys.<a href="./src/resources/api-keys.ts">create</a>({ ...params }) -> APIKeyCreateResponse</code>
-- <code title="get /api-keys">client.apiKeys.<a href="./src/resources/api-keys.ts">list</a>() -> APIKeyListResponse</code>
-- <code title="delete /api-keys/{id}">client.apiKeys.<a href="./src/resources/api-keys.ts">revoke</a>(id) -> APIKeyRevokeResponse</code>
 
 # Subscribe
 
@@ -486,14 +474,12 @@ Methods:
 
 Types:
 
-- <code><a href="./src/resources/credits.ts">CreditQuickTopupBalanceResponse</a></code>
 - <code><a href="./src/resources/credits.ts">CreditRetrieveBalanceResponse</a></code>
 - <code><a href="./src/resources/credits.ts">CreditRetrieveTopupStatusResponse</a></code>
 - <code><a href="./src/resources/credits.ts">CreditTopupBalanceResponse</a></code>
 
 Methods:
 
-- <code title="post /credits/quick-topup">client.credits.<a href="./src/resources/credits.ts">quickTopupBalance</a>({ ...params }) -> CreditQuickTopupBalanceResponse</code>
 - <code title="get /credits/topup/redirect">client.credits.<a href="./src/resources/credits.ts">redirectTopupCheckout</a>({ ...params }) -> void</code>
 - <code title="get /credits">client.credits.<a href="./src/resources/credits.ts">retrieveBalance</a>() -> CreditRetrieveBalanceResponse</code>
 - <code title="get /credits/topup/status">client.credits.<a href="./src/resources/credits.ts">retrieveTopupStatus</a>({ ...params }) -> CreditRetrieveTopupStatusResponse</code>
@@ -503,6 +489,7 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/guest-wallets.ts">GuestWalletAmount</a></code>
 - <code><a href="./src/resources/guest-wallets.ts">GuestWalletCreateResponse</a></code>
 - <code><a href="./src/resources/guest-wallets.ts">GuestWalletRetrieveStatusResponse</a></code>
 - <code><a href="./src/resources/guest-wallets.ts">GuestWalletTopupResponse</a></code>

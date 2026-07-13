@@ -23,11 +23,7 @@ export class Tweets extends APIResource {
    * ```
    */
   list(query: TweetListParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get('/x/communities/tweets', {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/x/communities/tweets', { query, ...options });
   }
 
   /**
@@ -44,11 +40,7 @@ export class Tweets extends APIResource {
     query: TweetListByCommunityParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Shared.PaginatedTweets> {
-    return this._client.get(path`/x/communities/${id}/tweets`, {
-      query,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get(path`/x/communities/${id}/tweets`, { query, ...options });
   }
 }
 

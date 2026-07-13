@@ -1,6 +1,106 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import * as Shared from './shared';
+/**
+ * Content disclosure metadata shown by X when a tweet is labeled as paid
+ * partnership content or AI-generated media.
+ */
+export interface ContentDisclosure {
+  advertising?: ContentDisclosure.Advertising;
+
+  aiGenerated?: ContentDisclosure.AIGenerated;
+}
+
+export namespace ContentDisclosure {
+  export interface Advertising {
+    /**
+     * True when X labels the tweet as paid promotion content.
+     */
+    isPaidPromotion?: boolean;
+  }
+
+  export interface AIGenerated {
+    /**
+     * Whether the disclosure can be edited on X.
+     */
+    canEdit?: boolean;
+
+    /**
+     * Source of the AI-generated media disclosure.
+     */
+    detectionSource?: string;
+
+    /**
+     * True when X labels the tweet as containing AI-generated media.
+     */
+    hasAiGeneratedMedia?: boolean;
+  }
+}
+
+/**
+ * Quoted or retweeted tweet context. Every object includes id, text, and
+ * engagement metrics. A zero metric can mean X did not report the count. Author,
+ * media, and conversation fields appear when available.
+ */
+export interface EmbeddedTweet {
+  id: string;
+
+  bookmarkCount: number;
+
+  likeCount: number;
+
+  quoteCount: number;
+
+  replyCount: number;
+
+  retweetCount: number;
+
+  text: string;
+
+  viewCount: number;
+
+  /**
+   * X user profile with bio, follower counts, and verification status.
+   */
+  author?: UserProfile;
+
+  /**
+   * Content disclosure metadata shown by X when a tweet is labeled as paid
+   * partnership content or AI-generated media.
+   */
+  contentDisclosure?: ContentDisclosure;
+
+  conversationId?: string;
+
+  createdAt?: string;
+
+  displayTextRange?: Array<number>;
+
+  entities?: { [key: string]: unknown };
+
+  inReplyToId?: string;
+
+  inReplyToUserId?: string;
+
+  inReplyToUsername?: string;
+
+  isLimitedReply?: boolean;
+
+  isNoteTweet?: boolean;
+
+  isQuoteStatus?: boolean;
+
+  isReply?: boolean;
+
+  lang?: string;
+
+  media?: Array<TweetMedia>;
+
+  source?: string;
+
+  type?: string;
+
+  url?: string;
+}
 
 /**
  * Error response. Default v1 returns a legacy string error code. Send
@@ -249,7 +349,7 @@ export interface SearchTweet {
    * Content disclosure metadata shown by X when a tweet is labeled as paid
    * partnership content or AI-generated media.
    */
-  contentDisclosure?: SearchTweet.ContentDisclosure;
+  contentDisclosure?: ContentDisclosure;
 
   /**
    * Root tweet ID for the search result conversation
@@ -312,21 +412,21 @@ export interface SearchTweet {
   /**
    * Search-result media attachments, omitted when no media is present
    */
-  media?: Array<SearchTweet.Media>;
+  media?: Array<TweetMedia>;
 
   /**
    * Quoted or retweeted tweet context. Every object includes id, text, and
    * engagement metrics. A zero metric can mean X did not report the count. Author,
    * media, and conversation fields appear when available.
    */
-  quoted_tweet?: SearchTweet.QuotedTweet;
+  quoted_tweet?: EmbeddedTweet;
 
   /**
    * Quoted or retweeted tweet context. Every object includes id, text, and
    * engagement metrics. A zero metric can mean X did not report the count. Author,
    * media, and conversation fields appear when available.
    */
-  retweeted_tweet?: SearchTweet.RetweetedTweet;
+  retweeted_tweet?: EmbeddedTweet;
 
   /**
    * Client application used to post the tweet
@@ -341,345 +441,35 @@ export interface SearchTweet {
   url?: string;
 }
 
-export namespace SearchTweet {
+/**
+ * Normalized media attached to a tweet.
+ */
+export interface TweetMedia {
   /**
-   * Content disclosure metadata shown by X when a tweet is labeled as paid
-   * partnership content or AI-generated media.
+   * Media preview URL
    */
-  export interface ContentDisclosure {
-    advertising?: ContentDisclosure.Advertising;
+  mediaUrl: string;
 
-    aiGenerated?: ContentDisclosure.AIGenerated;
-  }
-
-  export namespace ContentDisclosure {
-    export interface Advertising {
-      /**
-       * True when X labels the tweet as paid promotion content.
-       */
-      isPaidPromotion?: boolean;
-    }
-
-    export interface AIGenerated {
-      /**
-       * Whether the disclosure can be edited on X.
-       */
-      canEdit?: boolean;
-
-      /**
-       * Source of the AI-generated media disclosure.
-       */
-      detectionSource?: string;
-
-      /**
-       * True when X labels the tweet as containing AI-generated media.
-       */
-      hasAiGeneratedMedia?: boolean;
-    }
-  }
+  type: 'photo' | 'video' | 'animated_gif';
 
   /**
-   * Normalized media attached to a tweet.
+   * X media link from the tweet
    */
-  export interface Media {
-    /**
-     * Media preview URL
-     */
-    mediaUrl: string;
+  url: string;
 
-    type: 'photo' | 'video' | 'animated_gif';
+  /**
+   * Available video encodings, ordered as returned
+   */
+  videoVariants?: Array<TweetMedia.VideoVariant>;
+}
 
-    /**
-     * X media link from the tweet
-     */
+export namespace TweetMedia {
+  export interface VideoVariant {
+    contentType: string;
+
     url: string;
 
-    /**
-     * Available video encodings, ordered as returned
-     */
-    videoVariants?: Array<Media.VideoVariant>;
-  }
-
-  export namespace Media {
-    export interface VideoVariant {
-      contentType: string;
-
-      url: string;
-
-      bitrate?: number;
-    }
-  }
-
-  /**
-   * Quoted or retweeted tweet context. Every object includes id, text, and
-   * engagement metrics. A zero metric can mean X did not report the count. Author,
-   * media, and conversation fields appear when available.
-   */
-  export interface QuotedTweet {
-    id: string;
-
-    bookmarkCount: number;
-
-    likeCount: number;
-
-    quoteCount: number;
-
-    replyCount: number;
-
-    retweetCount: number;
-
-    text: string;
-
-    viewCount: number;
-
-    /**
-     * X user profile with bio, follower counts, and verification status.
-     */
-    author?: Shared.UserProfile;
-
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    contentDisclosure?: QuotedTweet.ContentDisclosure;
-
-    conversationId?: string;
-
-    createdAt?: string;
-
-    displayTextRange?: Array<number>;
-
-    entities?: { [key: string]: unknown };
-
-    inReplyToId?: string;
-
-    inReplyToUserId?: string;
-
-    inReplyToUsername?: string;
-
-    isLimitedReply?: boolean;
-
-    isNoteTweet?: boolean;
-
-    isQuoteStatus?: boolean;
-
-    isReply?: boolean;
-
-    lang?: string;
-
-    media?: Array<QuotedTweet.Media>;
-
-    source?: string;
-
-    type?: string;
-
-    url?: string;
-  }
-
-  export namespace QuotedTweet {
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    export interface ContentDisclosure {
-      advertising?: ContentDisclosure.Advertising;
-
-      aiGenerated?: ContentDisclosure.AIGenerated;
-    }
-
-    export namespace ContentDisclosure {
-      export interface Advertising {
-        /**
-         * True when X labels the tweet as paid promotion content.
-         */
-        isPaidPromotion?: boolean;
-      }
-
-      export interface AIGenerated {
-        /**
-         * Whether the disclosure can be edited on X.
-         */
-        canEdit?: boolean;
-
-        /**
-         * Source of the AI-generated media disclosure.
-         */
-        detectionSource?: string;
-
-        /**
-         * True when X labels the tweet as containing AI-generated media.
-         */
-        hasAiGeneratedMedia?: boolean;
-      }
-    }
-
-    /**
-     * Normalized media attached to a tweet.
-     */
-    export interface Media {
-      /**
-       * Media preview URL
-       */
-      mediaUrl: string;
-
-      type: 'photo' | 'video' | 'animated_gif';
-
-      /**
-       * X media link from the tweet
-       */
-      url: string;
-
-      /**
-       * Available video encodings, ordered as returned
-       */
-      videoVariants?: Array<Media.VideoVariant>;
-    }
-
-    export namespace Media {
-      export interface VideoVariant {
-        contentType: string;
-
-        url: string;
-
-        bitrate?: number;
-      }
-    }
-  }
-
-  /**
-   * Quoted or retweeted tweet context. Every object includes id, text, and
-   * engagement metrics. A zero metric can mean X did not report the count. Author,
-   * media, and conversation fields appear when available.
-   */
-  export interface RetweetedTweet {
-    id: string;
-
-    bookmarkCount: number;
-
-    likeCount: number;
-
-    quoteCount: number;
-
-    replyCount: number;
-
-    retweetCount: number;
-
-    text: string;
-
-    viewCount: number;
-
-    /**
-     * X user profile with bio, follower counts, and verification status.
-     */
-    author?: Shared.UserProfile;
-
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    contentDisclosure?: RetweetedTweet.ContentDisclosure;
-
-    conversationId?: string;
-
-    createdAt?: string;
-
-    displayTextRange?: Array<number>;
-
-    entities?: { [key: string]: unknown };
-
-    inReplyToId?: string;
-
-    inReplyToUserId?: string;
-
-    inReplyToUsername?: string;
-
-    isLimitedReply?: boolean;
-
-    isNoteTweet?: boolean;
-
-    isQuoteStatus?: boolean;
-
-    isReply?: boolean;
-
-    lang?: string;
-
-    media?: Array<RetweetedTweet.Media>;
-
-    source?: string;
-
-    type?: string;
-
-    url?: string;
-  }
-
-  export namespace RetweetedTweet {
-    /**
-     * Content disclosure metadata shown by X when a tweet is labeled as paid
-     * partnership content or AI-generated media.
-     */
-    export interface ContentDisclosure {
-      advertising?: ContentDisclosure.Advertising;
-
-      aiGenerated?: ContentDisclosure.AIGenerated;
-    }
-
-    export namespace ContentDisclosure {
-      export interface Advertising {
-        /**
-         * True when X labels the tweet as paid promotion content.
-         */
-        isPaidPromotion?: boolean;
-      }
-
-      export interface AIGenerated {
-        /**
-         * Whether the disclosure can be edited on X.
-         */
-        canEdit?: boolean;
-
-        /**
-         * Source of the AI-generated media disclosure.
-         */
-        detectionSource?: string;
-
-        /**
-         * True when X labels the tweet as containing AI-generated media.
-         */
-        hasAiGeneratedMedia?: boolean;
-      }
-    }
-
-    /**
-     * Normalized media attached to a tweet.
-     */
-    export interface Media {
-      /**
-       * Media preview URL
-       */
-      mediaUrl: string;
-
-      type: 'photo' | 'video' | 'animated_gif';
-
-      /**
-       * X media link from the tweet
-       */
-      url: string;
-
-      /**
-       * Available video encodings, ordered as returned
-       */
-      videoVariants?: Array<Media.VideoVariant>;
-    }
-
-    export namespace Media {
-      export interface VideoVariant {
-        contentType: string;
-
-        url: string;
-
-        bitrate?: number;
-      }
-    }
+    bitrate?: number;
   }
 }
 

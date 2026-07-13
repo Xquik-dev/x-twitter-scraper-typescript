@@ -17,10 +17,7 @@ export class Account extends APIResource {
    * ```
    */
   retrieve(options?: RequestOptions): APIPromise<AccountRetrieveResponse> {
-    return this._client.get('/account', {
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.get('/account', options);
   }
 
   /**
@@ -37,11 +34,7 @@ export class Account extends APIResource {
     body: AccountSetXUsernameParams,
     options?: RequestOptions,
   ): APIPromise<AccountSetXUsernameResponse> {
-    return this._client.put('/account/x-identity', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.put('/account/x-identity', { body, ...options });
   }
 
   /**
@@ -58,11 +51,7 @@ export class Account extends APIResource {
     body: AccountUpdateLocaleParams,
     options?: RequestOptions,
   ): APIPromise<AccountUpdateLocaleResponse> {
-    return this._client.patch('/account', {
-      body,
-      ...options,
-      __security: { apiKeyAuth: true, oauthBearerAuth: true },
-    });
+    return this._client.patch('/account', { body, ...options });
   }
 }
 
@@ -70,8 +59,8 @@ export interface AccountRetrieveResponse {
   monitorBilling: AccountRetrieveResponse.MonitorBilling;
 
   /**
-   * @deprecated Deprecated. Monitor slots are unlimited, so this is always
-   * Number.MAX_SAFE_INTEGER.
+   * @deprecated Monitor slots are unlimited. Use monitorBilling.unlimitedSlots
+   * instead.
    */
   monitorsAllowed: number;
 
