@@ -1,22 +1,38 @@
 name: Release Doctor
+
 on:
   pull_request:
     branches:
       - main
+    paths:
+      - ".github/scripts/verify-release-context.sh"
+      - ".github/workflows/publish-npm.yml"
+      - ".github/workflows/release-doctor.yml"
+      - "bin/check-release-environment"
+      - "bin/publish-npm"
+      - "package.json"
   workflow_dispatch:
 
-jobs:
-  release_doctor:
-    name: release doctor
-    runs-on: ubuntu-latest
-    if: github.repository == 'Xquik-dev/x-twitter-scraper-typescript' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || startsWith(github.head_ref, 'release-please') || github.head_ref == 'next')
+permissions: {}
 
+jobs:
+  release-doctor:
+    if: github.repository == 'Xquik-dev/x-twitter-scraper-typescript'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v6
+      - name: Check out source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: "24.18.0"
+          package-manager-cache: false
 
       - name: Check release environment
-        run: |
-          bash ./bin/check-release-environment
-        env:
-          NPM_TOKEN: ${{ secrets.X_TWITTER_SCRAPER_NPM_TOKEN || secrets.NPM_TOKEN }}
-
+        run: bash ./bin/check-release-environment

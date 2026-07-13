@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-set -eux
-
-npm config set '//registry.npmjs.org/:_authToken' "$NPM_TOKEN"
+set -euo pipefail
 
 pnpm build
 cd dist
@@ -10,6 +8,34 @@ cd dist
 # Get package name and version from package.json
 PACKAGE_NAME="$(jq -r -e '.name' ./package.json)"
 VERSION="$(jq -r -e '.version' ./package.json)"
+SOURCE_VERSION="$(jq -r -e '.version' ../package.json)"
+
+if [[ "$PACKAGE_NAME" != "x-twitter-scraper" ]]; then
+  echo "Refusing to publish unexpected package ${PACKAGE_NAME}." >&2
+  exit 1
+fi
+
+if [[ "$VERSION" != "$SOURCE_VERSION" ]]; then
+  echo "Built version ${VERSION} does not match source version ${SOURCE_VERSION}." >&2
+  exit 1
+fi
+
+for package_file in package.json README.md; do
+  if ! grep -Fq "Not affiliated with X Corp." "$package_file"; then
+    echo "${package_file} must include the X Corp. non-affiliation notice." >&2
+    exit 1
+  fi
+done
+
+npm pack --dry-run --json >/dev/null
+
+if PUBLISHED_VERSION="$(npm view "${PACKAGE_NAME}@${VERSION}" version 2>/dev/null)"; then
+  if [[ "$PUBLISHED_VERSION" != "$VERSION" ]]; then
+    echo "The registry returned an unexpected version." >&2
+    exit 1
+  fi
+  exit 0
+fi
 
 # Get latest version from npm
 #
@@ -57,5 +83,5 @@ else
   TAG="latest"
 fi
 
-# Publish with npm provenance from GitHub Actions OIDC.
-npm publish --provenance --tag "$TAG"
+# npm exchanges the GitHub Actions OIDC token for short-lived publish access.
+npm publish --access public --provenance --tag "$TAG"
