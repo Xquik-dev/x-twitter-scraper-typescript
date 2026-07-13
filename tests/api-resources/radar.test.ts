@@ -4,12 +4,12 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
+  bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
 describe('resource radar', () => {
-  // Mock server tests are disabled
-  test.skip('retrieveTrendingTopics', async () => {
+  test('retrieveTrendingTopics', async () => {
     const responsePromise = client.radar.retrieveTrendingTopics();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -20,8 +20,7 @@ describe('resource radar', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveTrendingTopics: request options and params are passed correctly', async () => {
+  test('retrieveTrendingTopics: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.radar.retrieveTrendingTopics(

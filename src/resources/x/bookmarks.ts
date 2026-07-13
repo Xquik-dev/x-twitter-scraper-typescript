@@ -40,8 +40,14 @@ export class Bookmarks extends APIResource {
 export interface BookmarkRetrieveFoldersResponse {
   folders: Array<BookmarkRetrieveFoldersResponse.Folder>;
 
+  /**
+   * Always false for the current bookmark folder route
+   */
   has_next_page: boolean;
 
+  /**
+   * Always empty for the current bookmark folder route
+   */
   next_cursor: string;
 }
 

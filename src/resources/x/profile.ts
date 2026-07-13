@@ -2,9 +2,8 @@
 
 import { APIResource } from '../../core/resource';
 import { APIPromise } from '../../core/api-promise';
-import { type Uploadable } from '../../core/uploads';
 import { RequestOptions } from '../../internal/request-options';
-import { multipartFormRequestOptions } from '../../internal/uploads';
+import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
 
 /**
  * X write actions (tweets, likes, follows, DMs)
@@ -35,7 +34,7 @@ export class Profile extends APIResource {
    * ```ts
    * const response = await client.x.profile.updateAvatar({
    *   account: '@elonmusk',
-   *   file: fs.createReadStream('path/to/file'),
+   *   url: 'https://example.com/avatar.png',
    * });
    * ```
    */
@@ -45,7 +44,7 @@ export class Profile extends APIResource {
   ): APIPromise<ProfileUpdateAvatarResponse> {
     return this._client.patch(
       '/x/profile/avatar',
-      multipartFormRequestOptions({ body, ...options }, this._client),
+      maybeMultipartFormRequestOptions({ body, ...options }, this._client),
     );
   }
 
@@ -56,7 +55,7 @@ export class Profile extends APIResource {
    * ```ts
    * const response = await client.x.profile.updateBanner({
    *   account: '@elonmusk',
-   *   file: fs.createReadStream('path/to/file'),
+   *   url: 'https://example.com/banner.png',
    * });
    * ```
    */
@@ -66,7 +65,7 @@ export class Profile extends APIResource {
   ): APIPromise<ProfileUpdateBannerResponse> {
     return this._client.patch(
       '/x/profile/banner',
-      multipartFormRequestOptions({ body, ...options }, this._client),
+      maybeMultipartFormRequestOptions({ body, ...options }, this._client),
     );
   }
 }
@@ -109,26 +108,26 @@ export interface ProfileUpdateParams {
 
 export interface ProfileUpdateAvatarParams {
   /**
-   * X account (@username or ID) for avatar update
+   * X account (@username or ID) receiving avatar from URL
    */
   account: string;
 
   /**
-   * Avatar image (max 716KB)
+   * HTTPS URL to the avatar image to download
    */
-  file: Uploadable;
+  url: string;
 }
 
 export interface ProfileUpdateBannerParams {
   /**
-   * X account (@username or ID) for banner update
+   * X account (@username or ID) receiving banner from URL
    */
   account: string;
 
   /**
-   * Banner image (max 2MB)
+   * HTTPS URL to the banner image to download
    */
-  file: Uploadable;
+  url: string;
 }
 
 export declare namespace Profile {

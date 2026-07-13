@@ -30,7 +30,7 @@ export class Tickets extends APIResource {
    * @example
    * ```ts
    * const ticket = await client.support.tickets.retrieve(
-   *   'messages_value',
+   *   'tkt_a1b2c3d4e5f6a1b2c3d4e5f6',
    * );
    * ```
    */
@@ -43,9 +43,10 @@ export class Tickets extends APIResource {
    *
    * @example
    * ```ts
-   * const ticket = await client.support.tickets.update('id', {
-   *   status: 'resolved',
-   * });
+   * const ticket = await client.support.tickets.update(
+   *   'tkt_a1b2c3d4e5f6a1b2c3d4e5f6',
+   *   { status: 'resolved' },
+   * );
    * ```
    */
   update(id: string, body: TicketUpdateParams, options?: RequestOptions): APIPromise<TicketUpdateResponse> {
@@ -69,9 +70,10 @@ export class Tickets extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.support.tickets.reply('id', {
-   *   body: 'Thank you for the update.',
-   * });
+   * const response = await client.support.tickets.reply(
+   *   'tkt_a1b2c3d4e5f6a1b2c3d4e5f6',
+   *   { body: 'Thank you for the update.' },
+   * );
    * ```
    */
   reply(id: string, body: TicketReplyParams, options?: RequestOptions): APIPromise<TicketReplyResponse> {

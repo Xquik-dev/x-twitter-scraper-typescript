@@ -16,7 +16,7 @@ export class Accounts extends APIResource {
    * ```ts
    * const account = await client.x.accounts.create({
    *   email: 'user@example.com',
-   *   password: 's3cur3Pa$$w0rd',
+   *   password: '<ACCOUNT_PASSWORD>',
    *   username: 'elonmusk',
    * });
    * ```
@@ -82,8 +82,8 @@ export class Accounts extends APIResource {
    * @example
    * ```ts
    * const response = await client.x.accounts.reauth('id', {
-   *   password: 'password_value',
-   *   totp_secret: 'totp_secret_value',
+   *   password: '<ACCOUNT_PASSWORD>',
+   *   totp_secret: '<TOTP_SECRET>',
    * });
    * ```
    */
@@ -93,7 +93,7 @@ export class Accounts extends APIResource {
 }
 
 /**
- * Linked X account summary with username and connection status.
+ * Linked X account summary with connection status, health, and timestamp metadata.
  */
 export interface XAccount {
   id: string;
@@ -101,23 +101,26 @@ export interface XAccount {
   createdAt: string;
 
   /**
-   * Derived login/cookie health. `healthy` = cookies valid. `needsReauth` = user
-   * must submit fresh credentials. `locked` = X locked the account; unlock on x.com
-   * first. `suspended` = X banned the account. `recovering` = past cooldown, will
-   * auto-retry on next use. `temporaryIssue` = transient backend problem; retry
-   * shortly.
+   * Derived connection health. `healthy` = ready. `needsReauth` = reconnect the
+   * account. `locked` = unlock the account on x.com first. `suspended` = X
+   * suspended the account. `recovering` = retry is available after cooldown.
+   * `temporaryIssue` = retry shortly.
    */
   health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
 
   status: string;
 
+  updatedAt: string;
+
   xUserId: string;
 
   xUsername: string;
+
+  cookiesObtainedAt?: string;
 }
 
 /**
- * Full X account details including proxy, cookies, and update timestamp.
+ * Connected X account details with health and timestamp metadata.
  */
 export interface XAccountDetail {
   id: string;
@@ -134,17 +137,11 @@ export interface XAccountDetail {
 
   cookiesObtainedAt?: string;
 
-  proxyCountry?: string;
-
   updatedAt?: string;
 }
 
 /**
- * Sanitized X account summary returned by connect and reauth. Includes an optional
- * `loginCountry` field surfaced only when the selected login region was
- * temporarily unavailable and the login used a one-time US session for this
- * one-time action. Future activity continues to use the selected `proxy_country`;
- * the field is omitted on normal logins.
+ * Sanitized X account summary returned by connect and reauth.
  */
 export interface AccountCreateResponse {
   id: string;
@@ -158,13 +155,6 @@ export interface AccountCreateResponse {
   xUserId: string;
 
   xUsername: string;
-
-  /**
-   * ISO-3166-1 alpha-2 country code of the login service session used for this
-   * login. Present only when the US fallback was triggered because the selected
-   * login region was temporarily unavailable. Omitted otherwise.
-   */
-  loginCountry?: string;
 }
 
 export interface AccountListResponse {
@@ -183,11 +173,7 @@ export interface AccountBulkRetryResponse {
 }
 
 /**
- * Sanitized X account summary returned by connect and reauth. Includes an optional
- * `loginCountry` field surfaced only when the selected login region was
- * temporarily unavailable and the login used a one-time US session for this
- * one-time action. Future activity continues to use the selected `proxy_country`;
- * the field is omitted on normal logins.
+ * Sanitized X account summary returned by connect and reauth.
  */
 export interface AccountReauthResponse {
   id: string;
@@ -201,13 +187,6 @@ export interface AccountReauthResponse {
   xUserId: string;
 
   xUsername: string;
-
-  /**
-   * ISO-3166-1 alpha-2 country code of the login service session used for this
-   * login. Present only when the US fallback was triggered because the selected
-   * login region was temporarily unavailable. Omitted otherwise.
-   */
-  loginCountry?: string;
 }
 
 export interface AccountCreateParams {
@@ -227,11 +206,6 @@ export interface AccountCreateParams {
   username: string;
 
   /**
-   * Proxy country code
-   */
-  proxy_country?: string;
-
-  /**
    * TOTP secret for 2FA
    */
   totp_secret?: string;
@@ -247,11 +221,6 @@ export interface AccountReauthParams {
    * Email for the X account (updates stored email)
    */
   email?: string;
-
-  /**
-   * Two-letter country code for login proxy region
-   */
-  proxy_country?: string;
 
   /**
    * TOTP secret for 2FA re-authentication

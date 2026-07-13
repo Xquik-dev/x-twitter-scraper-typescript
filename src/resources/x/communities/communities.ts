@@ -3,7 +3,13 @@
 import { APIResource } from '../../../core/resource';
 import * as Shared from '../../shared';
 import * as JoinAPI from './join';
-import { Join, JoinCreateParams, JoinDeleteAllParams } from './join';
+import {
+  Join,
+  JoinCreateParams,
+  JoinCreateResponse,
+  JoinDeleteAllParams,
+  JoinDeleteAllResponse,
+} from './join';
 import * as TweetsAPI from './tweets';
 import { TweetListByCommunityParams, TweetListParams, Tweets } from './tweets';
 import { APIPromise } from '../../../core/api-promise';
@@ -98,12 +104,15 @@ export class Communities extends APIResource {
   }
 
   /**
-   * Search for communities by keyword
+   * Returns tweets, not community records. Requires a Community ID.
    *
    * @example
    * ```ts
    * const paginatedTweets =
-   *   await client.x.communities.retrieveSearch({ q: 'q' });
+   *   await client.x.communities.retrieveSearch({
+   *     communityId: '321669910225',
+   *     q: 'q',
+   *   });
    * ```
    */
   retrieveSearch(
@@ -112,17 +121,6 @@ export class Communities extends APIResource {
   ): APIPromise<Shared.PaginatedTweets> {
     return this._client.get('/x/communities/search', { query, ...options });
   }
-}
-
-/**
- * Result of a community join or leave action.
- */
-export interface CommunityActionResult {
-  communityId: string;
-
-  communityName: string;
-
-  success: true;
 }
 
 export interface CommunityCreateResponse {
@@ -164,10 +162,27 @@ export namespace CommunityRetrieveInfoResponse {
      */
     created_at?: string;
 
+    creator?: Community.Creator;
+
     /**
      * About text for the community
      */
     description?: string;
+
+    /**
+     * Invitation policy
+     */
+    invites_policy?: string;
+
+    /**
+     * Whether the authenticated viewer is a member
+     */
+    is_member?: boolean;
+
+    /**
+     * Whether the community is marked sensitive
+     */
+    is_nsfw?: boolean;
 
     /**
      * Join policy (open or restricted)
@@ -195,12 +210,27 @@ export namespace CommunityRetrieveInfoResponse {
     primary_topic?: Community.PrimaryTopic;
 
     /**
+     * Authenticated viewer's community role
+     */
+    role?: string;
+
+    /**
      * Community rules
      */
     rules?: Array<Community.Rule>;
   }
 
   export namespace Community {
+    export interface Creator {
+      id: string;
+
+      username: string;
+
+      verified: boolean;
+
+      name?: string;
+    }
+
     /**
      * Primary topic
      */
@@ -254,6 +284,13 @@ export interface CommunityRetrieveMembersParams {
    * Pagination cursor
    */
   cursor?: string;
+
+  /**
+   * Items per page (20-200, default 20). This is an upper bound for paid
+   * authenticated calls: available usage balance can reduce the returned page size, and
+   * zero affordable results returns 402 insufficient_credits.
+   */
+  pageSize?: number;
 }
 
 export interface CommunityRetrieveModeratorsParams {
@@ -265,6 +302,11 @@ export interface CommunityRetrieveModeratorsParams {
 
 export interface CommunityRetrieveSearchParams {
   /**
+   * Numeric ID of the community whose posts to search
+   */
+  communityId: string;
+
+  /**
    * Search query
    */
   q: string;
@@ -275,9 +317,18 @@ export interface CommunityRetrieveSearchParams {
   cursor?: string;
 
   /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * the available usage balance covers fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
+
+  /**
    * Sort order (Latest or Top)
    */
-  queryType?: string;
+  queryType?: 'Latest' | 'Top';
 }
 
 Communities.Join = Join;
@@ -285,7 +336,6 @@ Communities.Tweets = Tweets;
 
 export declare namespace Communities {
   export {
-    type CommunityActionResult as CommunityActionResult,
     type CommunityCreateResponse as CommunityCreateResponse,
     type CommunityDeleteResponse as CommunityDeleteResponse,
     type CommunityRetrieveInfoResponse as CommunityRetrieveInfoResponse,
@@ -298,6 +348,8 @@ export declare namespace Communities {
 
   export {
     Join as Join,
+    type JoinCreateResponse as JoinCreateResponse,
+    type JoinDeleteAllResponse as JoinDeleteAllResponse,
     type JoinCreateParams as JoinCreateParams,
     type JoinDeleteAllParams as JoinDeleteAllParams,
   };

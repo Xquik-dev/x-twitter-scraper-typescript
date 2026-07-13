@@ -56,6 +56,12 @@ export class Account extends APIResource {
 }
 
 export interface AccountRetrieveResponse {
+  monitorBilling: AccountRetrieveResponse.MonitorBilling;
+
+  /**
+   * @deprecated Monitor slots are unlimited. Use monitorBilling.unlimitedSlots
+   * instead.
+   */
   monitorsAllowed: number;
 
   monitorsUsed: number;
@@ -63,17 +69,78 @@ export interface AccountRetrieveResponse {
   plan: 'active' | 'inactive';
 
   creditInfo?: AccountRetrieveResponse.CreditInfo;
+
+  /**
+   * Linked X username, omitted when no X account is connected.
+   */
+  xUsername?: string;
 }
 
 export namespace AccountRetrieveResponse {
+  export interface MonitorBilling {
+    /**
+     * Estimated daily usage for currently active monitors.
+     */
+    activeDailyEstimate: string;
+
+    /**
+     * Usage charged each hour for currently active monitors.
+     */
+    activeHourlyBurn: string;
+
+    /**
+     * Estimated daily usage for 1 active instant monitor.
+     */
+    creditsPerActiveMonitorDay: string;
+
+    /**
+     * Hourly usage charged for 1 active instant monitor.
+     */
+    creditsPerActiveMonitorHour: string;
+
+    /**
+     * Webhook and event deliveries are included in monitor billing.
+     */
+    eventsIncluded: boolean;
+
+    /**
+     * Active monitors check every 1 second.
+     */
+    instantCheckIntervalSeconds: number;
+
+    /**
+     * Monitor slot count is unlimited.
+     */
+    unlimitedSlots: boolean;
+  }
+
   export interface CreditInfo {
+    /**
+     * Dollar amount charged when automatic top-up runs.
+     */
+    autoTopupAmountDollars: number;
+
     autoTopupEnabled: boolean;
 
-    balance: number;
+    /**
+     * Bigint string threshold that triggers automatic top-up when enabled.
+     */
+    autoTopupThreshold: string;
 
-    lifetimePurchased: number;
+    /**
+     * Bigint string to preserve precision above Number.MAX_SAFE_INTEGER.
+     */
+    balance: string;
 
-    lifetimeUsed: number;
+    /**
+     * Total purchased usage as a bigint string.
+     */
+    lifetimePurchased: string;
+
+    /**
+     * Total consumed usage as a bigint string.
+     */
+    lifetimeUsed: string;
   }
 }
 

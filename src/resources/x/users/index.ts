@@ -9,6 +9,9 @@ export {
 } from './follow';
 export {
   Users,
+  type UserRemoveFollowerResponse,
+  type UserRetrieveBatchResponse,
+  type UserRemoveFollowerParams,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,
@@ -16,6 +19,7 @@ export {
   type UserRetrieveLikesParams,
   type UserRetrieveMediaParams,
   type UserRetrieveMentionsParams,
+  type UserRetrieveRepliesParams,
   type UserRetrieveSearchParams,
   type UserRetrieveTweetsParams,
   type UserRetrieveVerifiedFollowersParams,

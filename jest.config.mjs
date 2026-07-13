@@ -16,6 +16,7 @@ const config = {
     '<rootDir>/packages/',
   ],
   testPathIgnorePatterns: ['scripts'],
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
 };
 
 export default config;

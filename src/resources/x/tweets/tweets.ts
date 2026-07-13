@@ -166,7 +166,7 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Search tweets with X query operators and pagination
+   * Search tweets by query, Tweet ID, X status URL, or account date window
    *
    * @example
    * ```ts
@@ -181,22 +181,18 @@ export class Tweets extends APIResource {
 }
 
 /**
- * Author of a tweet with follower count and verification status.
+ * Tweet author profile. The lookup route always includes follower count and
+ * verification state. Other profile fields appear when available.
  */
-export interface TweetAuthor {
-  id: string;
-
+export interface TweetAuthor extends Shared.UserProfile {
   followers: number;
 
-  username: string;
-
   verified: boolean;
-
-  profilePicture?: string;
 }
 
 /**
- * Full tweet with text, engagement metrics, media, and metadata.
+ * Full tweet with text, engagement metrics, media, and metadata. A zero metric can
+ * mean X did not report the count.
  */
 export interface TweetDetail {
   id: string;
@@ -216,6 +212,18 @@ export interface TweetDetail {
   viewCount: number;
 
   /**
+   * Tweet author profile. The lookup route always includes follower count and
+   * verification state. Other profile fields appear when available.
+   */
+  author?: TweetAuthor;
+
+  /**
+   * Content disclosure metadata shown by X when a tweet is labeled as paid
+   * partnership content or AI-generated media.
+   */
+  contentDisclosure?: Shared.ContentDisclosure;
+
+  /**
    * ID of the root tweet in the conversation thread
    */
   conversationId?: string;
@@ -223,9 +231,34 @@ export interface TweetDetail {
   createdAt?: string;
 
   /**
+   * Start and end offsets for rendered tweet text
+   */
+  displayTextRange?: Array<number>;
+
+  /**
    * Parsed entities from the tweet text (URLs, mentions, hashtags, media)
    */
   entities?: { [key: string]: unknown };
+
+  /**
+   * Tweet ID being replied to
+   */
+  inReplyToId?: string;
+
+  /**
+   * User ID being replied to
+   */
+  inReplyToUserId?: string;
+
+  /**
+   * Username being replied to
+   */
+  inReplyToUsername?: string;
+
+  /**
+   * Whether replies are limited for this tweet
+   */
+  isLimitedReply?: boolean;
 
   /**
    * Whether this is a Note Tweet (long-form post, up to 25,000 characters)
@@ -243,45 +276,70 @@ export interface TweetDetail {
   isReply?: boolean;
 
   /**
-   * Attached media items, omitted when the tweet has no media
+   * Tweet language code
    */
-  media?: Array<TweetDetail.Media>;
+  lang?: string;
 
   /**
-   * The quoted tweet object, present when isQuoteStatus is true
+   * Attached media items, omitted when the tweet has no media
    */
-  quoted_tweet?: { [key: string]: unknown };
+  media?: Array<Shared.TweetMedia>;
+
+  /**
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
+   */
+  quoted_tweet?: Shared.EmbeddedTweet;
+
+  /**
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
+   */
+  retweeted_tweet?: Shared.EmbeddedTweet;
 
   /**
    * Client application used to post this tweet
    */
   source?: string;
-}
 
-export namespace TweetDetail {
-  export interface Media {
-    mediaUrl?: string;
+  /**
+   * Tweet result type
+   */
+  type?: string;
 
-    type?: 'photo' | 'video' | 'animated_gif';
-
-    url?: string;
-  }
+  /**
+   * Tweet permalink URL
+   */
+  url?: string;
 }
 
 export interface TweetCreateResponse {
+  charged: boolean;
+
+  /**
+   * Usage charged for this tweet.
+   */
+  chargedCredits: string;
+
   success: true;
 
   tweetId: string;
+
+  writeActionId?: string;
 }
 
 export interface TweetRetrieveResponse {
   /**
-   * Full tweet with text, engagement metrics, media, and metadata.
+   * Full tweet with text, engagement metrics, media, and metadata. A zero metric can
+   * mean X did not report the count.
    */
   tweet: TweetDetail;
 
   /**
-   * Author of a tweet with follower count and verification status.
+   * Tweet author profile. The lookup route always includes follower count and
+   * verification state. Other profile fields appear when available.
    */
   author?: TweetAuthor;
 }
@@ -303,14 +361,10 @@ export interface TweetCreateParams {
   is_note_tweet?: boolean;
 
   /**
-   * Array of media URLs to attach (mutually exclusive with media_ids)
+   * Array of public media URLs to attach. Supports up to 4 images or exactly 1 MP4
+   * video up to 100 MB. Each URL must be publicly reachable.
    */
   media?: Array<string>;
-
-  /**
-   * Array of media IDs to attach (mutually exclusive with media)
-   */
-  media_ids?: Array<string>;
 
   reply_to_tweet_id?: string;
 
@@ -339,13 +393,57 @@ export interface TweetGetFavoritersParams {
    * Pagination cursor for favoriters
    */
   cursor?: string;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). The
+   * response can contain fewer profiles because the source returned fewer or
+   * the available usage balance covers fewer results. Keep requesting next_cursor while
+   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export interface TweetGetQuotesParams {
   /**
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines.
+   */
+  anyWords?: string;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines.
+   */
+  cashtags?: string;
+
+  /**
+   * Conversation ID filter.
+   */
+  conversationId?: string;
+
+  /**
    * Pagination cursor for quote tweets
    */
   cursor?: string;
+
+  /**
+   * Exact phrase to match.
+   */
+  exactPhrase?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   */
+  excludeWords?: string;
+
+  /**
+   * Filter by author username.
+   */
+  fromUser?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines.
+   */
+  hashtags?: string;
 
   /**
    * Include reply quotes (default false)
@@ -353,21 +451,235 @@ export interface TweetGetQuotesParams {
   includeReplies?: boolean;
 
   /**
+   * Only replies to this tweet ID.
+   */
+  inReplyToTweetId?: string;
+
+  /**
+   * Language code filter, e.g. en or tr.
+   */
+  language?: string;
+
+  /**
+   * Filter by media type.
+   */
+  mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
+
+  /**
+   * Filter tweets mentioning a username.
+   */
+  mentioning?: string;
+
+  /**
+   * Minimum likes threshold.
+   */
+  minFaves?: number;
+
+  /**
+   * Minimum quote count threshold.
+   */
+  minQuotes?: number;
+
+  /**
+   * Minimum replies threshold.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum retweets threshold.
+   */
+  minRetweets?: number;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * the available usage balance covers fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
+
+  /**
+   * Quote mode.
+   */
+  quotes?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only quotes of this tweet ID.
+   */
+  quotesOfTweetId?: string;
+
+  /**
+   * Reply mode.
+   */
+  replies?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Retweet mode.
+   */
+  retweets?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only retweets of this tweet ID.
+   */
+  retweetsOfTweetId?: string;
+
+  /**
+   * Start date in YYYY-MM-DD format.
+   */
+  sinceDate?: string;
+
+  /**
    * Unix timestamp - return quotes posted after this time
    */
   sinceTime?: string;
 
   /**
+   * Filter replies sent to a username.
+   */
+  toUser?: string;
+
+  /**
+   * End date in YYYY-MM-DD format.
+   */
+  untilDate?: string;
+
+  /**
    * Unix timestamp - return quotes posted before this time
    */
   untilTime?: string;
+
+  /**
+   * URL substring or domain filter.
+   */
+  url?: string;
+
+  /**
+   * Only return tweets from verified authors.
+   */
+  verifiedOnly?: boolean;
 }
 
 export interface TweetGetRepliesParams {
   /**
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines.
+   */
+  anyWords?: string;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines.
+   */
+  cashtags?: string;
+
+  /**
+   * Conversation ID filter.
+   */
+  conversationId?: string;
+
+  /**
    * Pagination cursor for tweet replies
    */
   cursor?: string;
+
+  /**
+   * Exact phrase to match.
+   */
+  exactPhrase?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   */
+  excludeWords?: string;
+
+  /**
+   * Filter by author username.
+   */
+  fromUser?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines.
+   */
+  hashtags?: string;
+
+  /**
+   * Only replies to this tweet ID.
+   */
+  inReplyToTweetId?: string;
+
+  /**
+   * Language code filter, e.g. en or tr.
+   */
+  language?: string;
+
+  /**
+   * Filter by media type.
+   */
+  mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
+
+  /**
+   * Filter tweets mentioning a username.
+   */
+  mentioning?: string;
+
+  /**
+   * Minimum likes threshold.
+   */
+  minFaves?: number;
+
+  /**
+   * Minimum quote count threshold.
+   */
+  minQuotes?: number;
+
+  /**
+   * Minimum replies threshold.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum retweets threshold.
+   */
+  minRetweets?: number;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * the available usage balance covers fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
+
+  /**
+   * Quote mode.
+   */
+  quotes?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only quotes of this tweet ID.
+   */
+  quotesOfTweetId?: string;
+
+  /**
+   * Reply mode.
+   */
+  replies?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Retweet mode.
+   */
+  retweets?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only retweets of this tweet ID.
+   */
+  retweetsOfTweetId?: string;
+
+  /**
+   * Start date in YYYY-MM-DD format.
+   */
+  sinceDate?: string;
 
   /**
    * Unix timestamp - return replies posted after this time
@@ -375,9 +687,29 @@ export interface TweetGetRepliesParams {
   sinceTime?: string;
 
   /**
+   * Filter replies sent to a username.
+   */
+  toUser?: string;
+
+  /**
+   * End date in YYYY-MM-DD format.
+   */
+  untilDate?: string;
+
+  /**
    * Unix timestamp - return replies posted before this time
    */
   untilTime?: string;
+
+  /**
+   * URL substring or domain filter.
+   */
+  url?: string;
+
+  /**
+   * Only return tweets from verified authors.
+   */
+  verifiedOnly?: boolean;
 }
 
 export interface TweetGetRetweetersParams {
@@ -385,6 +717,14 @@ export interface TweetGetRetweetersParams {
    * Pagination cursor for retweeters
    */
   cursor?: string;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). The
+   * response can contain fewer profiles because the source returned fewer or
+   * the available usage balance covers fewer results. Keep requesting next_cursor while
+   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export interface TweetGetThreadParams {
@@ -392,6 +732,15 @@ export interface TweetGetThreadParams {
    * Pagination cursor for thread tweets
    */
   cursor?: string;
+
+  /**
+   * Maximum items requested from this page (1-100, default 20). The response can
+   * contain fewer items because the source returned fewer, filters removed items, or
+   * the available usage balance covers fewer results. Keep requesting next_cursor while
+   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * aliases remain accepted.
+   */
+  pageSize?: number;
 }
 
 export interface TweetSearchParams {
@@ -401,29 +750,188 @@ export interface TweetSearchParams {
   q: string;
 
   /**
+   * Raw advanced search query appended as-is.
+   */
+  advancedQuery?: string;
+
+  /**
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines.
+   */
+  anyWords?: string;
+
+  /**
+   * Geo bounding box, e.g. -74.1 40.6 -73.9 40.8.
+   */
+  boundingBox?: string;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines.
+   */
+  cashtags?: string;
+
+  /**
+   * Conversation ID filter.
+   */
+  conversationId?: string;
+
+  /**
    * Pagination cursor from previous response
    */
   cursor?: string;
 
   /**
+   * Exact phrase to match.
+   */
+  exactPhrase?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   */
+  excludeWords?: string;
+
+  /**
+   * Filter by author username.
+   */
+  fromUser?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines.
+   */
+  hashtags?: string;
+
+  /**
+   * Only replies to this tweet ID.
+   */
+  inReplyToTweetId?: string;
+
+  /**
+   * Language code filter, e.g. en or tr.
+   */
+  language?: string;
+
+  /**
    * Max tweets to return (server paginates internally). Omit for single page (~20).
+   * This is an upper bound for paid authenticated calls: available usage balance can
+   * reduce the returned page size, and zero affordable results returns 402
+   * insufficient_credits.
    */
   limit?: number;
 
   /**
-   * Sort order — Latest (chronological) or Top (engagement-ranked)
+   * Search within a list ID.
+   */
+  listId?: string;
+
+  /**
+   * Filter by media type.
+   */
+  mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
+
+  /**
+   * Filter tweets mentioning a username.
+   */
+  mentioning?: string;
+
+  /**
+   * Minimum likes threshold.
+   */
+  minFaves?: number;
+
+  /**
+   * Minimum quote count threshold.
+   */
+  minQuotes?: number;
+
+  /**
+   * Minimum replies threshold.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum retweets threshold.
+   */
+  minRetweets?: number;
+
+  /**
+   * Search within a place ID.
+   */
+  place?: string;
+
+  /**
+   * Search within a country code.
+   */
+  placeCountry?: string;
+
+  /**
+   * Geo point radius, e.g. -73.99 40.73 25mi.
+   */
+  pointRadius?: string;
+
+  /**
+   * Sort order - Latest (chronological) or Top (engagement-ranked)
    */
   queryType?: 'Latest' | 'Top';
 
   /**
-   * ISO 8601 timestamp — only return tweets after this time
+   * Quote mode.
+   */
+  quotes?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only quotes of this tweet ID.
+   */
+  quotesOfTweetId?: string;
+
+  /**
+   * Reply mode.
+   */
+  replies?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Retweet mode.
+   */
+  retweets?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only retweets of this tweet ID.
+   */
+  retweetsOfTweetId?: string;
+
+  /**
+   * Start date in YYYY-MM-DD format.
+   */
+  sinceDate?: string;
+
+  /**
+   * ISO 8601 timestamp - only return tweets after this time
    */
   sinceTime?: string;
 
   /**
-   * ISO 8601 timestamp — only return tweets before this time
+   * Filter replies sent to a username.
+   */
+  toUser?: string;
+
+  /**
+   * End date in YYYY-MM-DD format.
+   */
+  untilDate?: string;
+
+  /**
+   * ISO 8601 timestamp - only return tweets before this time
    */
   untilTime?: string;
+
+  /**
+   * URL substring or domain filter.
+   */
+  url?: string;
+
+  /**
+   * Only return tweets from verified authors.
+   */
+  verifiedOnly?: boolean;
 }
 
 Tweets.Like = Like;

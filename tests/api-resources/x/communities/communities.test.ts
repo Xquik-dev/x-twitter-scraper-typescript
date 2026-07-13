@@ -4,12 +4,12 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
+  bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
 describe('resource communities', () => {
-  // Mock server tests are disabled
-  test.skip('create: only required params', async () => {
+  test('create: only required params', async () => {
     const responsePromise = client.x.communities.create({ account: '@elonmusk', name: 'Example Name' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -20,8 +20,7 @@ describe('resource communities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('create: required and optional params', async () => {
+  test('create: required and optional params', async () => {
     const response = await client.x.communities.create({
       account: '@elonmusk',
       name: 'Example Name',
@@ -29,8 +28,7 @@ describe('resource communities', () => {
     });
   });
 
-  // Mock server tests are disabled
-  test.skip('delete: only required params', async () => {
+  test('delete: only required params', async () => {
     const responsePromise = client.x.communities.delete('id', {
       account: '@elonmusk',
       community_name: 'Tesla Fans',
@@ -44,16 +42,14 @@ describe('resource communities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('delete: required and optional params', async () => {
+  test('delete: required and optional params', async () => {
     const response = await client.x.communities.delete('id', {
       account: '@elonmusk',
       community_name: 'Tesla Fans',
     });
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveInfo', async () => {
+  test('retrieveInfo', async () => {
     const responsePromise = client.x.communities.retrieveInfo('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -64,8 +60,7 @@ describe('resource communities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveMembers', async () => {
+  test('retrieveMembers', async () => {
     const responsePromise = client.x.communities.retrieveMembers('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -76,16 +71,18 @@ describe('resource communities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveMembers: request options and params are passed correctly', async () => {
+  test('retrieveMembers: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
-      client.x.communities.retrieveMembers('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
+      client.x.communities.retrieveMembers(
+        'id',
+        { cursor: 'cursor', pageSize: 20 },
+        { path: '/_stainless_unknown_path' },
+      ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveModerators', async () => {
+  test('retrieveModerators', async () => {
     const responsePromise = client.x.communities.retrieveModerators('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -96,8 +93,7 @@ describe('resource communities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveModerators: request options and params are passed correctly', async () => {
+  test('retrieveModerators: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.communities.retrieveModerators(
@@ -108,9 +104,8 @@ describe('resource communities', () => {
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveSearch: only required params', async () => {
-    const responsePromise = client.x.communities.retrieveSearch({ q: 'q' });
+  test('retrieveSearch: only required params', async () => {
+    const responsePromise = client.x.communities.retrieveSearch({ communityId: '321669910225', q: 'q' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -120,12 +115,13 @@ describe('resource communities', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveSearch: required and optional params', async () => {
+  test('retrieveSearch: required and optional params', async () => {
     const response = await client.x.communities.retrieveSearch({
+      communityId: '321669910225',
       q: 'q',
       cursor: 'cursor',
-      queryType: 'queryType',
+      pageSize: 1,
+      queryType: 'Latest',
     });
   });
 });
