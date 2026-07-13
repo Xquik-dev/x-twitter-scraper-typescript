@@ -13,12 +13,13 @@ export class Dm extends APIResource {
    * ```ts
    * const response = await client.x.dm.retrieveHistory(
    *   'userId',
+   *   { account: 'account' },
    * );
    * ```
    */
   retrieveHistory(
     userID: string,
-    query: DmRetrieveHistoryParams | null | undefined = {},
+    query: DmRetrieveHistoryParams,
     options?: RequestOptions,
   ): APIPromise<DmRetrieveHistoryResponse> {
     return this._client.get(path`/x/dm/${userID}/history`, { query, ...options });
@@ -33,7 +34,6 @@ export class Dm extends APIResource {
    *   account: '@elonmusk',
    *   text: 'Example text content',
    *   media_ids: ['1234567890123456789'],
-   *   reply_to_message_id: '1234567890123456789',
    * });
    * ```
    */
@@ -54,11 +54,17 @@ export namespace DmRetrieveHistoryResponse {
   export interface Message {
     id: string;
 
+    receiverId: string;
+
+    senderId: string;
+
     createdAt?: string;
 
-    receiverId?: string;
-
-    senderId?: string;
+    /**
+     * URL of attached media (image, GIF, or video). Omitted when the message has no
+     * media attachment.
+     */
+    mediaUrl?: string;
 
     text?: string;
   }
@@ -71,6 +77,12 @@ export interface DmSendResponse {
 }
 
 export interface DmRetrieveHistoryParams {
+  /**
+   * X handle (without the `@` prefix) of the connected X account used to read the
+   * conversation. The account must be a participant in the conversation.
+   */
+  account: string;
+
   /**
    * Pagination cursor for DM history
    */
@@ -90,9 +102,10 @@ export interface DmSendParams {
 
   text: string;
 
+  /**
+   * Optional array containing exactly 1 uploaded media ID.
+   */
   media_ids?: Array<string>;
-
-  reply_to_message_id?: string;
 }
 
 export declare namespace Dm {

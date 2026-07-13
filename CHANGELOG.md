@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.4.0 (2026-07-14)
+
+Full Changelog: [v0.3.3...v0.4.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.3.3...v0.4.0)
+
+### Features
+
+* expand the generated SDK to the finalized 122-operation API contract
+* add guest wallet creation, Bearer-authenticated status, and top-up methods
+* add keyword monitor management, balance checkout status, webhook resume, write action status, account connection challenge, follower removal, and user replies methods
+
+### Security
+
+* remove browser session cookie authentication from the SDK
+* keep authentication headers redacted from debug logs
+* remove sensitive implementation and exact internal usage details from public comments
+
+### Bug Fixes
+
+* accept guest wallet credentials through the documented `bearerToken` client option
+* activate generated resource request tests with a local deterministic mock transport
+
+### BREAKING CHANGES
+
+* remove `client.apiKeys.create`, `client.apiKeys.list`, and `client.apiKeys.revoke`
+* remove the session-only `client.credits.quickTopupBalance` method
+* remove the stale empty `Bot` resource
+
 ## 0.3.3 (2026-05-10)
 
 Full Changelog: [v0.3.2...v0.3.3](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.3.2...v0.3.3)

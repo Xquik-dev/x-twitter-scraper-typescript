@@ -1,6 +1,11 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 export {
+  AccountConnectionChallenges,
+  type AccountConnectionChallengeSubmitResponse,
+  type AccountConnectionChallengeSubmitParams,
+} from './account-connection-challenges';
+export {
   Accounts,
   type XAccount,
   type XAccountDetail,
@@ -15,7 +20,6 @@ export {
 export { Bookmarks, type BookmarkRetrieveFoldersResponse, type BookmarkListParams } from './bookmarks';
 export {
   Communities,
-  type CommunityActionResult,
   type CommunityCreateResponse,
   type CommunityDeleteResponse,
   type CommunityRetrieveInfoResponse,
@@ -74,6 +78,9 @@ export {
 } from './tweets/index';
 export {
   Users,
+  type UserRemoveFollowerResponse,
+  type UserRetrieveBatchResponse,
+  type UserRemoveFollowerParams,
   type UserRetrieveBatchParams,
   type UserRetrieveFollowersParams,
   type UserRetrieveFollowersYouKnowParams,
@@ -81,10 +88,12 @@ export {
   type UserRetrieveLikesParams,
   type UserRetrieveMediaParams,
   type UserRetrieveMentionsParams,
+  type UserRetrieveRepliesParams,
   type UserRetrieveSearchParams,
   type UserRetrieveTweetsParams,
   type UserRetrieveVerifiedFollowersParams,
 } from './users/index';
+export { WriteActions, type WriteActionRetrieveResponse } from './write-actions';
 export {
   X,
   type XGetArticleResponse,

@@ -4,12 +4,12 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
+  bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
 describe('resource compose', () => {
-  // Mock server tests are disabled
-  test.skip('create: only required params', async () => {
+  test('create: only required params', async () => {
     const responsePromise = client.compose.create({ step: 'compose' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -20,8 +20,7 @@ describe('resource compose', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('create: required and optional params', async () => {
+  test('create: required and optional params', async () => {
     const response = await client.compose.create({
       step: 'compose',
       additionalContext: 'https://x.com/elonmusk/status/1234567890',

@@ -1,7 +1,6 @@
 # X (Twitter) Scraper TypeScript SDK: Tweet Search, Profile Tweets, Followers & Posting
 
-> **Xquik is an independent third-party service.** Not affiliated with X Corp.
-> "Twitter" and "X" are trademarks of X Corp.
+> Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg?url=https%3A%2F%2Fgithub.com%2FXquik-dev%2Fx-twitter-scraper-typescript)](https://deepwiki.com/Xquik-dev/x-twitter-scraper-typescript)
 [![Skills.sh x-twitter-scraper Skill](https://skills.sh/b/xquik-dev/x-twitter-scraper)](https://skills.sh/xquik-dev/x-twitter-scraper)
@@ -10,7 +9,7 @@
 
 Xquik TypeScript SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, MCP, and posting automation.
 
-Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
+Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining custom collection infrastructure.
 
 [SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Server](https://xquik.com/mcp) | [Python SDK](https://github.com/Xquik-dev/x-twitter-scraper-python)
 
@@ -102,6 +101,21 @@ const paginatedTweets: XTwitterScraper.PaginatedTweets = await client.x.tweets.s
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
+
+### Guest wallet authentication
+
+Guest wallet keys work through the public Bearer flow. Pass the key through the
+`bearerToken` option, then poll status or create a confirmed top-up checkout.
+
+```ts
+const guestClient = new XTwitterScraper({
+  bearerToken: process.env['XQUIK_GUEST_API_KEY'],
+});
+
+const wallet = await guestClient.guestWallets.retrieveStatus();
+```
+
+Keep guest keys out of source code, URLs, and logs.
 
 ## File uploads
 

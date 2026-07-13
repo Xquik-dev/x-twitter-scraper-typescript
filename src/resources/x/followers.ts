@@ -36,12 +36,12 @@ export interface FollowerCheckResponse {
 
 export interface FollowerCheckParams {
   /**
-   * Username to check (without @)
+   * Source username, @username, or X or Twitter profile URL
    */
   source: string;
 
   /**
-   * Target username (without @)
+   * Target username, @username, or X or Twitter profile URL
    */
   target: string;
 }

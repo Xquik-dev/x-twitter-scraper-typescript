@@ -15,8 +15,13 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: release-doctor-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release-doctor:
+    name: Validate Release
     if: github.repository == 'Xquik-dev/x-twitter-scraper-typescript'
     runs-on: ubuntu-24.04
     timeout-minutes: 5

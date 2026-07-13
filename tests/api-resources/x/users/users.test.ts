@@ -4,12 +4,12 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
+  bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
 describe('resource users', () => {
-  // Mock server tests are disabled
-  test.skip('retrieve', async () => {
+  test('retrieve', async () => {
     const responsePromise = client.x.users.retrieve('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -20,8 +20,22 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveBatch: only required params', async () => {
+  test('removeFollower: only required params', async () => {
+    const responsePromise = client.x.users.removeFollower('id', { account: '@elonmusk' });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('removeFollower: required and optional params', async () => {
+    const response = await client.x.users.removeFollower('id', { account: '@elonmusk' });
+  });
+
+  test('retrieveBatch: only required params', async () => {
     const responsePromise = client.x.users.retrieveBatch({ ids: 'ids' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -32,13 +46,11 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveBatch: required and optional params', async () => {
+  test('retrieveBatch: required and optional params', async () => {
     const response = await client.x.users.retrieveBatch({ ids: 'ids' });
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveFollowers', async () => {
+  test('retrieveFollowers', async () => {
     const responsePromise = client.x.users.retrieveFollowers('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -49,20 +61,23 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveFollowers: request options and params are passed correctly', async () => {
+  test('retrieveFollowers: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.users.retrieveFollowers(
         'id',
-        { cursor: 'cursor', pageSize: 0 },
+        {
+          after: 'after',
+          cursor: 'cursor',
+          limit: 0,
+          pageSize: 20,
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveFollowersYouKnow', async () => {
+  test('retrieveFollowersYouKnow', async () => {
     const responsePromise = client.x.users.retrieveFollowersYouKnow('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -73,20 +88,18 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveFollowersYouKnow: request options and params are passed correctly', async () => {
+  test('retrieveFollowersYouKnow: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.users.retrieveFollowersYouKnow(
         'id',
-        { cursor: 'cursor' },
+        { cursor: 'cursor', pageSize: 20 },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveFollowing', async () => {
+  test('retrieveFollowing', async () => {
     const responsePromise = client.x.users.retrieveFollowing('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -97,20 +110,23 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveFollowing: request options and params are passed correctly', async () => {
+  test('retrieveFollowing: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.users.retrieveFollowing(
         'id',
-        { cursor: 'cursor', pageSize: 0 },
+        {
+          after: 'after',
+          cursor: 'cursor',
+          limit: 0,
+          pageSize: 20,
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveLikes', async () => {
+  test('retrieveLikes', async () => {
     const responsePromise = client.x.users.retrieveLikes('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -121,16 +137,46 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveLikes: request options and params are passed correctly', async () => {
+  test('retrieveLikes: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
-      client.x.users.retrieveLikes('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
+      client.x.users.retrieveLikes(
+        'id',
+        {
+          anyWords: 'anyWords',
+          cashtags: 'cashtags',
+          conversationId: 'conversationId',
+          cursor: 'cursor',
+          exactPhrase: 'exactPhrase',
+          excludeWords: 'excludeWords',
+          fromUser: 'fromUser',
+          hashtags: 'hashtags',
+          inReplyToTweetId: 'inReplyToTweetId',
+          language: 'language',
+          mediaType: 'images',
+          mentioning: 'mentioning',
+          minFaves: 0,
+          minQuotes: 0,
+          minReplies: 0,
+          minRetweets: 0,
+          pageSize: 1,
+          quotes: 'include',
+          quotesOfTweetId: 'quotesOfTweetId',
+          replies: 'include',
+          retweets: 'include',
+          retweetsOfTweetId: 'retweetsOfTweetId',
+          sinceDate: '2019-12-27',
+          toUser: 'toUser',
+          untilDate: '2019-12-27',
+          url: 'url',
+          verifiedOnly: true,
+        },
+        { path: '/_stainless_unknown_path' },
+      ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveMedia', async () => {
+  test('retrieveMedia', async () => {
     const responsePromise = client.x.users.retrieveMedia('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -141,16 +187,46 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveMedia: request options and params are passed correctly', async () => {
+  test('retrieveMedia: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
-      client.x.users.retrieveMedia('id', { cursor: 'cursor' }, { path: '/_stainless_unknown_path' }),
+      client.x.users.retrieveMedia(
+        'id',
+        {
+          anyWords: 'anyWords',
+          cashtags: 'cashtags',
+          conversationId: 'conversationId',
+          cursor: 'cursor',
+          exactPhrase: 'exactPhrase',
+          excludeWords: 'excludeWords',
+          fromUser: 'fromUser',
+          hashtags: 'hashtags',
+          inReplyToTweetId: 'inReplyToTweetId',
+          language: 'language',
+          mediaType: 'images',
+          mentioning: 'mentioning',
+          minFaves: 0,
+          minQuotes: 0,
+          minReplies: 0,
+          minRetweets: 0,
+          pageSize: 1,
+          quotes: 'include',
+          quotesOfTweetId: 'quotesOfTweetId',
+          replies: 'include',
+          retweets: 'include',
+          retweetsOfTweetId: 'retweetsOfTweetId',
+          sinceDate: '2019-12-27',
+          toUser: 'toUser',
+          untilDate: '2019-12-27',
+          url: 'url',
+          verifiedOnly: true,
+        },
+        { path: '/_stainless_unknown_path' },
+      ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveMentions', async () => {
+  test('retrieveMentions', async () => {
     const responsePromise = client.x.users.retrieveMentions('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -161,24 +237,99 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveMentions: request options and params are passed correctly', async () => {
+  test('retrieveMentions: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.users.retrieveMentions(
         'id',
         {
+          anyWords: 'anyWords',
+          cashtags: 'cashtags',
+          conversationId: 'conversationId',
           cursor: 'cursor',
+          exactPhrase: 'exactPhrase',
+          excludeWords: 'excludeWords',
+          fromUser: 'fromUser',
+          hashtags: 'hashtags',
+          inReplyToTweetId: 'inReplyToTweetId',
+          language: 'language',
+          mediaType: 'images',
+          mentioning: 'mentioning',
+          minFaves: 0,
+          minQuotes: 0,
+          minReplies: 0,
+          minRetweets: 0,
+          pageSize: 1,
+          quotes: 'include',
+          quotesOfTweetId: 'quotesOfTweetId',
+          replies: 'include',
+          retweets: 'include',
+          retweetsOfTweetId: 'retweetsOfTweetId',
+          sinceDate: '2019-12-27',
           sinceTime: 'sinceTime',
+          toUser: 'toUser',
+          untilDate: '2019-12-27',
           untilTime: 'untilTime',
+          url: 'url',
+          verifiedOnly: true,
         },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveSearch: only required params', async () => {
+  test('retrieveReplies', async () => {
+    const responsePromise = client.x.users.retrieveReplies('id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('retrieveReplies: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.x.users.retrieveReplies(
+        'id',
+        {
+          anyWords: 'anyWords',
+          cashtags: 'cashtags',
+          conversationId: 'conversationId',
+          cursor: 'cursor',
+          exactPhrase: 'exactPhrase',
+          excludeWords: 'excludeWords',
+          fromUser: 'fromUser',
+          hashtags: 'hashtags',
+          includeParentTweet: true,
+          inReplyToTweetId: 'inReplyToTweetId',
+          language: 'language',
+          mediaType: 'images',
+          mentioning: 'mentioning',
+          minFaves: 0,
+          minQuotes: 0,
+          minReplies: 0,
+          minRetweets: 0,
+          pageSize: 1,
+          quotes: 'include',
+          quotesOfTweetId: 'quotesOfTweetId',
+          replies: 'include',
+          retweets: 'include',
+          retweetsOfTweetId: 'retweetsOfTweetId',
+          sinceDate: '2019-12-27',
+          toUser: 'toUser',
+          untilDate: '2019-12-27',
+          url: 'url',
+          verifiedOnly: true,
+        },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
+  test('retrieveSearch: only required params', async () => {
     const responsePromise = client.x.users.retrieveSearch({ q: 'q' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -189,13 +340,11 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveSearch: required and optional params', async () => {
+  test('retrieveSearch: required and optional params', async () => {
     const response = await client.x.users.retrieveSearch({ q: 'q', cursor: 'cursor' });
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveTweets', async () => {
+  test('retrieveTweets', async () => {
     const responsePromise = client.x.users.retrieveTweets('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -206,24 +355,48 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveTweets: request options and params are passed correctly', async () => {
+  test('retrieveTweets: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.users.retrieveTweets(
         'id',
         {
+          anyWords: 'anyWords',
+          cashtags: 'cashtags',
+          conversationId: 'conversationId',
           cursor: 'cursor',
+          exactPhrase: 'exactPhrase',
+          excludeWords: 'excludeWords',
+          fromUser: 'fromUser',
+          hashtags: 'hashtags',
           includeParentTweet: true,
           includeReplies: true,
+          inReplyToTweetId: 'inReplyToTweetId',
+          language: 'language',
+          mediaType: 'images',
+          mentioning: 'mentioning',
+          minFaves: 0,
+          minQuotes: 0,
+          minReplies: 0,
+          minRetweets: 0,
+          pageSize: 1,
+          quotes: 'include',
+          quotesOfTweetId: 'quotesOfTweetId',
+          replies: 'include',
+          retweets: 'include',
+          retweetsOfTweetId: 'retweetsOfTweetId',
+          sinceDate: '2019-12-27',
+          toUser: 'toUser',
+          untilDate: '2019-12-27',
+          url: 'url',
+          verifiedOnly: true,
         },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveVerifiedFollowers', async () => {
+  test('retrieveVerifiedFollowers', async () => {
     const responsePromise = client.x.users.retrieveVerifiedFollowers('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -234,13 +407,12 @@ describe('resource users', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieveVerifiedFollowers: request options and params are passed correctly', async () => {
+  test('retrieveVerifiedFollowers: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.users.retrieveVerifiedFollowers(
         'id',
-        { cursor: 'cursor' },
+        { cursor: 'cursor', pageSize: 20 },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);

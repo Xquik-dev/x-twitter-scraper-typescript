@@ -4,15 +4,15 @@ import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
+  bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
 describe('resource accounts', () => {
-  // Mock server tests are disabled
-  test.skip('create: only required params', async () => {
+  test('create: only required params', async () => {
     const responsePromise = client.x.accounts.create({
       email: 'user@example.com',
-      password: 's3cur3Pa$$w0rd',
+      password: '<ACCOUNT_PASSWORD>',
       username: 'elonmusk',
     });
     const rawResponse = await responsePromise.asResponse();
@@ -24,19 +24,16 @@ describe('resource accounts', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('create: required and optional params', async () => {
+  test('create: required and optional params', async () => {
     const response = await client.x.accounts.create({
       email: 'user@example.com',
-      password: 's3cur3Pa$$w0rd',
+      password: '<ACCOUNT_PASSWORD>',
       username: 'elonmusk',
-      proxy_country: 'US',
       totp_secret: 'JBSWY3DPEHPK3PXP',
     });
   });
 
-  // Mock server tests are disabled
-  test.skip('retrieve', async () => {
+  test('retrieve', async () => {
     const responsePromise = client.x.accounts.retrieve('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -47,8 +44,7 @@ describe('resource accounts', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('list', async () => {
+  test('list', async () => {
     const responsePromise = client.x.accounts.list();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -59,8 +55,7 @@ describe('resource accounts', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('delete', async () => {
+  test('delete', async () => {
     const responsePromise = client.x.accounts.delete('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -71,8 +66,7 @@ describe('resource accounts', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('bulkRetry', async () => {
+  test('bulkRetry', async () => {
     const responsePromise = client.x.accounts.bulkRetry();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -83,9 +77,8 @@ describe('resource accounts', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('reauth: only required params', async () => {
-    const responsePromise = client.x.accounts.reauth('id', { password: 'password_value' });
+  test('reauth: only required params', async () => {
+    const responsePromise = client.x.accounts.reauth('id', { password: '<ACCOUNT_PASSWORD>' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -95,13 +88,11 @@ describe('resource accounts', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Mock server tests are disabled
-  test.skip('reauth: required and optional params', async () => {
+  test('reauth: required and optional params', async () => {
     const response = await client.x.accounts.reauth('id', {
-      password: 'password_value',
+      password: '<ACCOUNT_PASSWORD>',
       email: 'user@example.com',
-      proxy_country: 'US',
-      totp_secret: 'totp_secret_value',
+      totp_secret: '<TOTP_SECRET>',
     });
   });
 });

@@ -77,6 +77,18 @@ export class Webhooks extends APIResource {
   }
 
   /**
+   * Test and resume webhook endpoint
+   *
+   * @example
+   * ```ts
+   * const response = await client.webhooks.resume('id');
+   * ```
+   */
+  resume(id: string, options?: RequestOptions): APIPromise<WebhookResumeResponse> {
+    return this._client.post(path`/webhooks/${id}/resume`, options);
+  }
+
+  /**
    * Test webhook endpoint
    *
    * @example
@@ -116,12 +128,28 @@ export interface Delivery {
 export interface Webhook {
   id: string;
 
+  /**
+   * Consecutive failed delivery attempts since the last success.
+   */
+  consecutiveFailures: number;
+
   createdAt: string;
+
+  /**
+   * Endpoint delivery state. needs_attention means delivery stopped after repeated
+   * failures.
+   */
+  deliveryStatus: 'active' | 'paused' | 'needs_attention';
 
   /**
    * Array of event types to subscribe to.
    */
   eventTypes: Array<Shared.EventType>;
+
+  /**
+   * Consecutive delivery failures that pause the endpoint.
+   */
+  failureHardCap: number;
 
   isActive: boolean;
 
@@ -138,6 +166,9 @@ export interface WebhookCreateResponse {
    */
   eventTypes: Array<Shared.EventType>;
 
+  /**
+   * Plaintext HMAC signing secret returned only at creation.
+   */
   secret: string;
 
   url: string;
@@ -153,6 +184,17 @@ export interface WebhookDeactivateResponse {
 
 export interface WebhookListDeliveriesResponse {
   deliveries: Array<Delivery>;
+}
+
+export interface WebhookResumeResponse {
+  statusCode: number;
+
+  success: boolean;
+
+  /**
+   * Webhook endpoint registered to receive event deliveries.
+   */
+  webhook: Webhook;
 }
 
 export interface WebhookTestResponse {
@@ -194,6 +236,7 @@ export declare namespace Webhooks {
     type WebhookListResponse as WebhookListResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
+    type WebhookResumeResponse as WebhookResumeResponse,
     type WebhookTestResponse as WebhookTestResponse,
     type WebhookCreateParams as WebhookCreateParams,
     type WebhookUpdateParams as WebhookUpdateParams,

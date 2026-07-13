@@ -4,8 +4,8 @@ title: Xquik TypeScript SDK for the X (Twitter) Scraper API
 type: software
 authors:
   - name: Xquik
-version: 0.3.0
-date-released: 2026-04-25
+version: 0.4.0
+date-released: 2026-07-14
 url: https://github.com/Xquik-dev/x-twitter-scraper-typescript
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-typescript
 license: Apache-2.0

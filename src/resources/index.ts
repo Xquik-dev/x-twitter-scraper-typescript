@@ -2,14 +2,6 @@
 
 export * from './shared';
 export {
-  APIKeys,
-  type APIKey,
-  type APIKeyCreateResponse,
-  type APIKeyListResponse,
-  type APIKeyRevokeResponse,
-  type APIKeyCreateParams,
-} from './api-keys';
-export {
   Account,
   type AccountRetrieveResponse,
   type AccountSetXUsernameResponse,
@@ -21,7 +13,10 @@ export { Compose, type ComposeCreateResponse, type ComposeCreateParams } from '.
 export {
   Credits,
   type CreditRetrieveBalanceResponse,
+  type CreditRetrieveTopupStatusResponse,
   type CreditTopupBalanceResponse,
+  type CreditRedirectTopupCheckoutParams,
+  type CreditRetrieveTopupStatusParams,
   type CreditTopupBalanceParams,
 } from './credits';
 export {
@@ -59,6 +54,15 @@ export {
   type ExtractionRunParams,
 } from './extractions';
 export {
+  GuestWallets,
+  type GuestWalletAmount,
+  type GuestWalletCreateResponse,
+  type GuestWalletRetrieveStatusResponse,
+  type GuestWalletTopupResponse,
+  type GuestWalletCreateParams,
+  type GuestWalletTopupParams,
+} from './guest-wallets';
+export {
   Monitors,
   type Monitor,
   type MonitorCreateResponse,
@@ -66,7 +70,7 @@ export {
   type MonitorDeactivateResponse,
   type MonitorCreateParams,
   type MonitorUpdateParams,
-} from './monitors';
+} from './monitors/monitors';
 export {
   Radar,
   type RadarItem,
@@ -84,7 +88,7 @@ export {
   type StyleAnalyzeParams,
   type StyleCompareParams,
 } from './styles';
-export { Subscribe, type SubscribeCreateResponse } from './subscribe';
+export { Subscribe, type SubscribeCreateResponse, type SubscribeCreateParams } from './subscribe';
 export { Support } from './support/support';
 export { Trends, type TrendListResponse, type TrendListParams } from './trends';
 export {
@@ -95,6 +99,7 @@ export {
   type WebhookListResponse,
   type WebhookDeactivateResponse,
   type WebhookListDeliveriesResponse,
+  type WebhookResumeResponse,
   type WebhookTestResponse,
   type WebhookCreateParams,
   type WebhookUpdateParams,
