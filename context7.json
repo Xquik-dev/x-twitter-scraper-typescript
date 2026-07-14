@@ -1,10 +1,11 @@
 {
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "Xquik TypeScript SDK",
-  "description": "Xquik TypeScript and Node.js SDK for X/Twitter workflows with typed REST methods for tweet search, user lookup, monitors, webhooks, MCP, and extractions. Not affiliated with X Corp.",
+  "description": "Xquik TypeScript and Node.js REST SDK for X/Twitter workflows with typed methods for tweet search, user lookup, monitors, webhooks, and extractions. Not affiliated with X Corp.",
   "branch": "main",
   "rules": [
-    "Use README.md first for install, API key setup, TypeScript and JavaScript examples, webhooks, MCP, and common workflows.",
+    "Use README.md first for install, API key setup, TypeScript and JavaScript examples, webhooks, and common workflows.",
+    "For remote agent access, link to https://docs.xquik.com/mcp/overview. The MCP server is separate from this REST SDK and prefers OAuth 2.1.",
     "Use api.md for the generated resource map, method names, request parameters, response types, and endpoint coverage.",
     "Use package.json and the npm package x-twitter-scraper for package metadata, exports, and supported runtimes.",
     "Prefer X_TWITTER_SCRAPER_API_KEY environment configuration; never put API keys in source files or examples.",

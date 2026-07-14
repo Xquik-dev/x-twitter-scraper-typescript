@@ -25,7 +25,6 @@
     "api-client",
     "webhooks",
     "monitoring",
-    "mcp",
     "social-media-api"
   ],
   "license": "Apache-2.0",

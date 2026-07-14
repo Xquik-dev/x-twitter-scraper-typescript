@@ -7,11 +7,11 @@
 
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 
-Xquik TypeScript SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, MCP, and posting automation.
+Xquik TypeScript SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, and posting automation.
 
 Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining custom collection infrastructure.
 
-[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Server](https://xquik.com/mcp) | [Python SDK](https://github.com/Xquik-dev/x-twitter-scraper-python)
+[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [OAuth-First MCP Guide](https://docs.xquik.com/mcp/overview) | [Python SDK](https://github.com/Xquik-dev/x-twitter-scraper-python)
 
 It is generated with [Stainless](https://www.stainless.com/).
 
@@ -25,7 +25,9 @@ Create monitors for X accounts, receive HMAC-signed webhook events, and query ev
 
 ## AI Agent Workflows With MCP
 
-Connect agent systems to Xquik through the MCP server while keeping custom product code on the typed REST SDK.
+Keep application code on the typed REST SDK. For MCP clients, add
+`https://xquik.com/mcp` and complete OAuth 2.1 in the browser. API keys remain a
+fallback for noninteractive clients.
 
 ## Giveaway Draws & Extractions
 
@@ -59,7 +61,7 @@ Start with the [REST API overview](https://docs.xquik.com/api-reference/overview
 
 ### Can this work with AI agents?
 
-Yes. Use the SDK in your app code and the [MCP server](https://xquik.com/mcp) for MCP-compatible agent clients.
+Yes. Use the SDK in your app code and follow the [MCP guide](https://docs.xquik.com/mcp/overview) for agent clients.
 
 ## Installation
 
