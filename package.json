@@ -52,7 +52,7 @@
   "dependencies": {},
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",
-    "@swc/core": "1.15.46",
+    "@swc/core": "1.15.43",
     "@swc/jest": "0.2.39",
     "@types/jest": "30.0.0",
     "@types/node": "26.1.1",
