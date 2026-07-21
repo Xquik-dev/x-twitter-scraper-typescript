@@ -2,7 +2,9 @@
 
 import { APIResource } from '../../core/resource';
 import { APIPromise } from '../../core/api-promise';
+import { buildHeaders } from '../../internal/headers';
 import { RequestOptions } from '../../internal/request-options';
+import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
 import { path } from '../../internal/utils/path';
 
 /**
@@ -20,8 +22,22 @@ export class Tickets extends APIResource {
    * });
    * ```
    */
-  create(body: TicketCreateParams, options?: RequestOptions): APIPromise<TicketCreateResponse> {
-    return this._client.post('/support/tickets', { body, ...options });
+  create(params: TicketCreateParams, options?: RequestOptions): APIPromise<TicketCreateResponse> {
+    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    return this._client.post(
+      '/support/tickets',
+      maybeMultipartFormRequestOptions(
+        {
+          body,
+          ...options,
+          headers: buildHeaders([
+            { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+            options?.headers,
+          ]),
+        },
+        this._client,
+      ),
+    );
   }
 
   /**
@@ -76,13 +92,37 @@ export class Tickets extends APIResource {
    * );
    * ```
    */
-  reply(id: string, body: TicketReplyParams, options?: RequestOptions): APIPromise<TicketReplyResponse> {
-    return this._client.post(path`/support/tickets/${id}/messages`, { body, ...options });
+  reply(id: string, params: TicketReplyParams, options?: RequestOptions): APIPromise<TicketReplyResponse> {
+    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    return this._client.post(
+      path`/support/tickets/${id}/messages`,
+      maybeMultipartFormRequestOptions(
+        {
+          body,
+          ...options,
+          headers: buildHeaders([
+            { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+            options?.headers,
+          ]),
+        },
+        this._client,
+      ),
+    );
   }
 }
 
 export interface TicketCreateResponse {
+  attachments?: Array<TicketCreateResponse.Attachment>;
+
   publicId?: string;
+}
+
+export namespace TicketCreateResponse {
+  export interface Attachment {
+    publicId: string;
+
+    status: 'pending' | 'ready' | 'failed';
+  }
 }
 
 export interface TicketRetrieveResponse {
@@ -101,11 +141,38 @@ export interface TicketRetrieveResponse {
 
 export namespace TicketRetrieveResponse {
   export interface Message {
+    attachments?: Array<Message.Attachment>;
+
     body?: string;
 
     createdAt?: string;
 
     sender?: string;
+  }
+
+  export namespace Message {
+    export interface Attachment {
+      contentType:
+        | 'image/jpeg'
+        | 'image/png'
+        | 'image/gif'
+        | 'image/webp'
+        | 'video/mp4'
+        | 'video/quicktime'
+        | 'video/webm';
+
+      filename: string;
+
+      kind: 'image' | 'video';
+
+      publicId: string;
+
+      sizeBytes: number;
+
+      status: 'pending' | 'ready' | 'failed';
+
+      url: string;
+    }
   }
 }
 
@@ -136,13 +203,35 @@ export namespace TicketListResponse {
 }
 
 export interface TicketReplyResponse {
+  attachments?: Array<TicketReplyResponse.Attachment>;
+
   publicId?: string;
 }
 
+export namespace TicketReplyResponse {
+  export interface Attachment {
+    publicId: string;
+
+    status: 'pending' | 'ready' | 'failed';
+  }
+}
+
 export interface TicketCreateParams {
+  /**
+   * Body param
+   */
   body: string;
 
+  /**
+   * Body param
+   */
   subject: string;
+
+  /**
+   * Header param: Generate one random value per ticket or reply. Reuse it only when
+   * retrying identical text and attachments. Never log this value.
+   */
+  'Idempotency-Key'?: string;
 }
 
 export interface TicketUpdateParams {
@@ -150,7 +239,16 @@ export interface TicketUpdateParams {
 }
 
 export interface TicketReplyParams {
+  /**
+   * Body param
+   */
   body: string;
+
+  /**
+   * Header param: Generate one random value per ticket or reply. Reuse it only when
+   * retrying identical text and attachments. Never log this value.
+   */
+  'Idempotency-Key'?: string;
 }
 
 export declare namespace Tickets {

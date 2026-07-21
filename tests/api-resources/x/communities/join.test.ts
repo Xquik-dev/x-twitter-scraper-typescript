@@ -11,7 +11,10 @@ const client = new XTwitterScraper({
 describe('resource join', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.x.communities.join.create('id', { account: '@elonmusk' });
+    const responsePromise = client.x.communities.join.create('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,12 +26,18 @@ describe('resource join', () => {
 
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
-    const response = await client.x.communities.join.create('id', { account: '@elonmusk' });
+    const response = await client.x.communities.join.create('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 
   // Mock server tests are disabled
   test.skip('deleteAll: only required params', async () => {
-    const responsePromise = client.x.communities.join.deleteAll('id', { account: '@elonmusk' });
+    const responsePromise = client.x.communities.join.deleteAll('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -40,6 +49,9 @@ describe('resource join', () => {
 
   // Mock server tests are disabled
   test.skip('deleteAll: required and optional params', async () => {
-    const response = await client.x.communities.join.deleteAll('id', { account: '@elonmusk' });
+    const response = await client.x.communities.join.deleteAll('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 });

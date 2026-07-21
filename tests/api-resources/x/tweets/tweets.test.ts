@@ -11,7 +11,10 @@ const client = new XTwitterScraper({
 describe('resource tweets', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.x.tweets.create({ account: '@elonmusk' });
+    const responsePromise = client.x.tweets.create({
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -25,7 +28,7 @@ describe('resource tweets', () => {
   test.skip('create: required and optional params', async () => {
     const response = await client.x.tweets.create({
       account: '@elonmusk',
-      attachment_url: 'https://x.com/elonmusk/status/1234567890',
+      'Idempotency-Key': 'Idempotency-Key',
       community_id: '1500000000000000000',
       is_note_tweet: false,
       media: ['https://example.com/video.mp4'],
@@ -65,7 +68,10 @@ describe('resource tweets', () => {
 
   // Mock server tests are disabled
   test.skip('delete: only required params', async () => {
-    const responsePromise = client.x.tweets.delete('id', { account: '@elonmusk' });
+    const responsePromise = client.x.tweets.delete('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -77,7 +83,10 @@ describe('resource tweets', () => {
 
   // Mock server tests are disabled
   test.skip('delete: required and optional params', async () => {
-    const response = await client.x.tweets.delete('id', { account: '@elonmusk' });
+    const response = await client.x.tweets.delete('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 
   // Mock server tests are disabled
