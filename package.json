@@ -60,7 +60,7 @@
     "eslint-plugin-prettier": "5.5.6",
     "eslint-plugin-unused-imports": "4.4.1",
     "jest": "30.4.2",
-    "prettier": "3.1.1",
+    "prettier": "3.9.5",
     "publint": "0.3.21",
     "ts-node": "10.9.2",
     "tsc-multi": "https://github.com/stainless-api/tsc-multi/releases/download/v1.1.11/tsc-multi.tgz",
