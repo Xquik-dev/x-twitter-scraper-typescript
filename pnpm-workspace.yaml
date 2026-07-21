@@ -1,5 +1,6 @@
-onlyBuiltDependencies:
-  - '@swc/core'
+allowBuilds:
+  '@swc/core': true
+  unrs-resolver: false
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - x-twitter-scraper
