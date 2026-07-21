@@ -184,11 +184,7 @@ export class Tweets extends APIResource {
  * Tweet author profile. The lookup route always includes follower count and
  * verification state. Other profile fields appear when available.
  */
-export interface TweetAuthor extends Shared.UserProfile {
-  followers: number;
-
-  verified: boolean;
-}
+export interface TweetAuthor extends Shared.UserProfile {}
 
 /**
  * Full tweet with text, engagement metrics, media, and metadata. A zero metric can

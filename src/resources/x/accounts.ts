@@ -15,9 +15,10 @@ export class Accounts extends APIResource {
    * @example
    * ```ts
    * const account = await client.x.accounts.create({
-   *   email: 'user@example.com',
-   *   password: 's3cur3Pa$$w0rd',
-   *   username: 'elonmusk',
+   *   email: 'account@example.invalid',
+   *   password: '<ACCOUNT_PASSWORD>',
+   *   username: 'your_x_username',
+   *   totp_secret: '<TOTP_SECRET>',
    * });
    * ```
    */
@@ -82,8 +83,9 @@ export class Accounts extends APIResource {
    * @example
    * ```ts
    * const response = await client.x.accounts.reauth('id', {
-   *   password: 'password_value',
-   *   totp_secret: 'totp_secret_value',
+   *   password: '<ACCOUNT_PASSWORD>',
+   *   email: 'account@example.invalid',
+   *   totp_secret: '<TOTP_SECRET>',
    * });
    * ```
    */
@@ -101,10 +103,10 @@ export interface XAccount {
   createdAt: string;
 
   /**
-   * Derived login/cookie health. `healthy` = cookies valid. `needsReauth` = user
-   * must submit fresh credentials. `locked` = X locked the account; unlock on x.com
+   * Derived connection health. `healthy` = session active. `needsReauth` = user must
+   * submit fresh credentials. `locked` = X locked the account; unlock on x.com
    * first. `suspended` = X banned the account. `recovering` = past cooldown, will
-   * auto-retry on next use. `temporaryIssue` = transient backend problem; retry
+   * auto-retry on next use. `temporaryIssue` = temporary connection problem; retry
    * shortly.
    */
   health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
@@ -121,7 +123,7 @@ export interface XAccount {
 }
 
 /**
- * Full X account details with status, cookies, and update timestamp.
+ * Connected X account details with health and timestamp metadata.
  */
 export interface XAccountDetail {
   id: string;

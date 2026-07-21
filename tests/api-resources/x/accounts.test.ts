@@ -12,9 +12,9 @@ describe('resource accounts', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
     const responsePromise = client.x.accounts.create({
-      email: 'user@example.com',
-      password: 's3cur3Pa$$w0rd',
-      username: 'elonmusk',
+      email: 'account@example.invalid',
+      password: '<ACCOUNT_PASSWORD>',
+      username: 'your_x_username',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -28,10 +28,10 @@ describe('resource accounts', () => {
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
     const response = await client.x.accounts.create({
-      email: 'user@example.com',
-      password: 's3cur3Pa$$w0rd',
-      username: 'elonmusk',
-      totp_secret: 'JBSWY3DPEHPK3PXP',
+      email: 'account@example.invalid',
+      password: '<ACCOUNT_PASSWORD>',
+      username: 'your_x_username',
+      totp_secret: '<TOTP_SECRET>',
     });
   });
 
@@ -85,7 +85,7 @@ describe('resource accounts', () => {
 
   // Mock server tests are disabled
   test.skip('reauth: only required params', async () => {
-    const responsePromise = client.x.accounts.reauth('id', { password: 'password_value' });
+    const responsePromise = client.x.accounts.reauth('id', { password: '<ACCOUNT_PASSWORD>' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -98,9 +98,9 @@ describe('resource accounts', () => {
   // Mock server tests are disabled
   test.skip('reauth: required and optional params', async () => {
     const response = await client.x.accounts.reauth('id', {
-      password: 'password_value',
-      email: 'user@example.com',
-      totp_secret: 'totp_secret_value',
+      password: '<ACCOUNT_PASSWORD>',
+      email: 'account@example.invalid',
+      totp_secret: '<TOTP_SECRET>',
     });
   });
 });
