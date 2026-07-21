@@ -10,7 +10,11 @@ const client = new XTwitterScraper({
 
 describe('resource communities', () => {
   test('create: only required params', async () => {
-    const responsePromise = client.x.communities.create({ account: '@elonmusk', name: 'Example Name' });
+    const responsePromise = client.x.communities.create({
+      account: '@elonmusk',
+      name: 'Example Name',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -24,6 +28,7 @@ describe('resource communities', () => {
     const response = await client.x.communities.create({
       account: '@elonmusk',
       name: 'Example Name',
+      'Idempotency-Key': 'Idempotency-Key',
       description: 'A community for Tesla enthusiasts',
     });
   });
@@ -32,6 +37,7 @@ describe('resource communities', () => {
     const responsePromise = client.x.communities.delete('id', {
       account: '@elonmusk',
       community_name: 'Tesla Fans',
+      'Idempotency-Key': 'Idempotency-Key',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -46,6 +52,7 @@ describe('resource communities', () => {
     const response = await client.x.communities.delete('id', {
       account: '@elonmusk',
       community_name: 'Tesla Fans',
+      'Idempotency-Key': 'Idempotency-Key',
     });
   });
 

@@ -32,6 +32,7 @@ describe('resource dm', () => {
     const responsePromise = client.x.dm.send('userId', {
       account: '@elonmusk',
       text: 'Example text content',
+      'Idempotency-Key': 'Idempotency-Key',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -46,6 +47,7 @@ describe('resource dm', () => {
     const response = await client.x.dm.send('userId', {
       account: '@elonmusk',
       text: 'Example text content',
+      'Idempotency-Key': 'Idempotency-Key',
       media_ids: ['1234567890123456789'],
     });
   });

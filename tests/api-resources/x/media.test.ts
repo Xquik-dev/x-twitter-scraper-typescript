@@ -24,6 +24,7 @@ describe('resource media', () => {
     const responsePromise = client.x.media.upload({
       account: '@elonmusk',
       url: 'https://example.com/image.png',
+      'Idempotency-Key': 'Idempotency-Key',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -38,6 +39,7 @@ describe('resource media', () => {
     const response = await client.x.media.upload({
       account: '@elonmusk',
       url: 'https://example.com/image.png',
+      'Idempotency-Key': 'Idempotency-Key',
     });
   });
 });

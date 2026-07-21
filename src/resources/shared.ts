@@ -175,8 +175,27 @@ export interface Error {
     | 'x_user_lookup_failed'
     | 'x_write_ambiguous'
     | 'x_write_failed'
-    | 'x_write_unconfirmed'
     | Error.StructuredError;
+
+  /**
+   * Human-readable error guidance.
+   */
+  message?: string;
+
+  /**
+   * Machine-readable reason for a login cooldown.
+   */
+  reason?: string;
+
+  /**
+   * Required wait in seconds.
+   */
+  retryAfter?: number;
+
+  /**
+   * Required wait in milliseconds.
+   */
+  retryAfterMs?: number;
 }
 
 export namespace Error {
@@ -247,8 +266,7 @@ export namespace Error {
       | 'x_transient_error'
       | 'x_user_lookup_failed'
       | 'x_write_ambiguous'
-      | 'x_write_failed'
-      | 'x_write_unconfirmed';
+      | 'x_write_failed';
 
     message: string;
 
