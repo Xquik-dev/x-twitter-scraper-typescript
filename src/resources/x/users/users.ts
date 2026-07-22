@@ -599,7 +599,7 @@ export interface UserRetrieveFollowersYouKnowParams {
 
 export interface UserRetrieveFollowingParams {
   /**
-   * Legacy cursor alias. Prefer cursor.
+   * Deprecated following cursor alias. Prefer cursor.
    */
   after?: string;
 
@@ -1101,7 +1101,7 @@ export interface UserRetrieveRepliesParams {
   hashtags?: string;
 
   /**
-   * Include parent tweet for replies
+   * Include each reply's parent tweet.
    */
   includeParentTweet?: boolean;
 

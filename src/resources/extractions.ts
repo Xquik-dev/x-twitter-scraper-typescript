@@ -453,7 +453,7 @@ export interface ExtractionEstimateCostParams {
   retweetsOfTweetId?: string;
 
   /**
-   * Required for tweet_search_extractor & community_search.
+   * Query used to price tweet_search_extractor or community_search.
    */
   searchQuery?: string;
 
@@ -463,18 +463,18 @@ export interface ExtractionEstimateCostParams {
   sinceDate?: string;
 
   /**
-   * Required for community_post_extractor & community_search.
+   * Community ID used to price community_post_extractor or community_search.
    */
   targetCommunityId?: string;
 
   /**
-   * Required for list_follower_explorer, list_member_extractor &
+   * List ID used to price list_follower_explorer, list_member_extractor, or
    * list_post_extractor.
    */
   targetListId?: string;
 
   /**
-   * Required for space_explorer.
+   * Space ID used to price space_explorer.
    */
   targetSpaceId?: string;
 

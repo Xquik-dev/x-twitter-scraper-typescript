@@ -286,7 +286,7 @@ export namespace GuestWalletTopupResponse {
 
 export interface GuestWalletCreateParams {
   /**
-   * Body param: Confirmed USD amount in cents.
+   * Body param: USD cents accepted for this checkout.
    */
   amount_minor: number;
 
@@ -305,7 +305,7 @@ export interface GuestWalletCreateParams {
 
 export interface GuestWalletTopupParams {
   /**
-   * Body param: Confirmed USD amount in cents.
+   * Body param: USD cents accepted for this checkout.
    */
   amount_minor: number;
 
