@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.1 (2026-07-22)
+
+Full Changelog: [v0.5.0...v0.5.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.5.0...v0.5.1)
+
+### Chores
+
+* sync generated SDK contracts ([ff8612e](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ff8612e3b474a71aabae2f709ae93a487d5ad69d))
+* verify final public contract ([bcd7c6a](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/bcd7c6adecf0e4f1dd42025a3c9615c3abcd4223))
+
 ## 0.5.0 (2026-07-22)
 
 Full Changelog: [v0.4.1...v0.5.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.4.1...v0.5.0)
