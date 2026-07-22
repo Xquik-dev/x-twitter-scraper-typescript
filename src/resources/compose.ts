@@ -265,7 +265,7 @@ export declare namespace ComposeCreateParams {
     hasLink?: boolean;
 
     /**
-     * @deprecated Accepted for backward compatibility. Text checks ignore this field.
+     * @deprecated Ignored. Remove this field. Use hasLink for a separate link card.
      */
     hasMedia?: boolean;
 
