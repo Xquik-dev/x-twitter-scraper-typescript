@@ -7,14 +7,13 @@ import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 /**
- * Real-time X account monitoring
+ * X account monitoring with 1-second checks
  */
 export class Keywords extends APIResource {
   /**
-   * Creates an instant keyword monitor. Keyword monitors are unlimited. Active
-   * monitors check every 1 second and cost 21 credits per hour. Events and webhook
-   * deliveries are included. Creation requires available credits for the first
-   * hourly charge.
+   * Creates a keyword monitor. Keyword monitors are unlimited. Active monitors check
+   * every 1 second and cost 21 credits per hour. Events and webhook deliveries are
+   * included. Creation requires available credits for the first hourly charge.
    *
    * @example
    * ```ts
