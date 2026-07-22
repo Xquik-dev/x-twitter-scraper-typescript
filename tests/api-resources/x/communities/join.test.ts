@@ -10,7 +10,10 @@ const client = new XTwitterScraper({
 
 describe('resource join', () => {
   test('create: only required params', async () => {
-    const responsePromise = client.x.communities.join.create('id', { account: '@elonmusk' });
+    const responsePromise = client.x.communities.join.create('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,11 +24,17 @@ describe('resource join', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.communities.join.create('id', { account: '@elonmusk' });
+    const response = await client.x.communities.join.create('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 
   test('deleteAll: only required params', async () => {
-    const responsePromise = client.x.communities.join.deleteAll('id', { account: '@elonmusk' });
+    const responsePromise = client.x.communities.join.deleteAll('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -36,6 +45,9 @@ describe('resource join', () => {
   });
 
   test('deleteAll: required and optional params', async () => {
-    const response = await client.x.communities.join.deleteAll('id', { account: '@elonmusk' });
+    const response = await client.x.communities.join.deleteAll('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 });
