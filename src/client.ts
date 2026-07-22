@@ -918,7 +918,7 @@ export class XTwitterScraper {
    */
   radar: API.Radar = new API.Radar(this);
   /**
-   * Real-time X account monitoring
+   * X account monitoring with 1-second checks
    */
   monitors: API.Monitors = new API.Monitors(this);
   /**

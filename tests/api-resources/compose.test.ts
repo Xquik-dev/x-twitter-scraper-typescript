@@ -10,7 +10,7 @@ const client = new XTwitterScraper({
 
 describe('resource compose', () => {
   test('create: only required params', async () => {
-    const responsePromise = client.compose.create({ step: 'compose' });
+    const responsePromise = client.compose.create({ step: 'compose', topic: 'PostgreSQL query planning' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,16 +23,9 @@ describe('resource compose', () => {
   test('create: required and optional params', async () => {
     const response = await client.compose.create({
       step: 'compose',
-      additionalContext: 'https://x.com/elonmusk/status/1234567890',
-      callToAction: 'Follow for more',
-      draft: "AI is changing everything. Here's why.",
+      topic: 'PostgreSQL query planning',
       goal: 'engagement',
-      hasLink: false,
-      hasMedia: false,
-      mediaType: 'none',
-      styleUsername: 'elonmusk',
-      tone: 'professional',
-      topic: 'AI trends in 2025',
+      styleUsername: 'x',
     });
   });
 });
