@@ -11,9 +11,9 @@ const client = new XTwitterScraper({
 describe('resource accounts', () => {
   test('create: only required params', async () => {
     const responsePromise = client.x.accounts.create({
-      email: 'user@example.com',
+      email: 'account@example.invalid',
       password: '<ACCOUNT_PASSWORD>',
-      username: 'elonmusk',
+      username: 'your_x_username',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -26,10 +26,10 @@ describe('resource accounts', () => {
 
   test('create: required and optional params', async () => {
     const response = await client.x.accounts.create({
-      email: 'user@example.com',
+      email: 'account@example.invalid',
       password: '<ACCOUNT_PASSWORD>',
-      username: 'elonmusk',
-      totp_secret: 'JBSWY3DPEHPK3PXP',
+      username: 'your_x_username',
+      totp_secret: '<TOTP_SECRET>',
     });
   });
 
@@ -91,7 +91,7 @@ describe('resource accounts', () => {
   test('reauth: required and optional params', async () => {
     const response = await client.x.accounts.reauth('id', {
       password: '<ACCOUNT_PASSWORD>',
-      email: 'user@example.com',
+      email: 'account@example.invalid',
       totp_secret: '<TOTP_SECRET>',
     });
   });

@@ -27,6 +27,7 @@ describe('resource tickets', () => {
     const response = await client.support.tickets.create({
       body: 'I am unable to connect my X account. Please help.',
       subject: 'Cannot connect X account',
+      'Idempotency-Key': 'Idempotency-Key',
     });
   });
 
@@ -87,6 +88,7 @@ describe('resource tickets', () => {
   test('reply: required and optional params', async () => {
     const response = await client.support.tickets.reply('tkt_a1b2c3d4e5f6a1b2c3d4e5f6', {
       body: 'Thank you for the update.',
+      'Idempotency-Key': 'Idempotency-Key',
     });
   });
 });

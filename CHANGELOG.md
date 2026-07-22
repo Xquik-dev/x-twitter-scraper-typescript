@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0 (2026-07-22)
+
+Full Changelog: [v0.4.1...v0.5.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.4.1...v0.5.0)
+
+### Features
+
+* **api:** propagate durable write actions ([0835f87](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/0835f87e0edba954fb8750309b513c0816d501bc))
+* **api:** propagate production write-action contract ([ad78ad8](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ad78ad8e0451978401b84f08ce4642b63f40f6e8))
+* **api:** propagate production write-action contract ([ec2b71f](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ec2b71f72d487ab00c8c834d2127925872eb5641))
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([d42ba4e](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/d42ba4e6e0447d9e8874675e11295c0bf67d2ca5))
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([6b97180](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/6b97180dc5ede2286094d7dc4dd99e75a6b4235f))
+
 ## 0.4.0 (2026-07-14)
 
 Full Changelog: [v0.3.3...v0.4.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.3.3...v0.4.0)

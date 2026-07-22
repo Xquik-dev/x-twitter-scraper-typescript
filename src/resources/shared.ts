@@ -149,6 +149,39 @@ export interface Error {
     | 'unauthenticated'
     | 'unsupported_field'
     | 'user_not_found'
+    | 'body_too_large'
+    | 'checkout_unavailable'
+    | 'connection_challenge_expired'
+    | 'connection_challenge_inactive'
+    | 'draft_not_found'
+    | 'favoriters_unavailable'
+    | 'forbidden'
+    | 'guest_wallet_unavailable'
+    | 'guest_wallets_disabled'
+    | 'guest_wallets_unavailable'
+    | 'idempotency_conflict'
+    | 'idempotency_key_conflict'
+    | 'invalid_community_id'
+    | 'invalid_idempotency_key'
+    | 'invalid_list_id'
+    | 'invalid_payment_amount'
+    | 'invalid_range'
+    | 'login_rate_limited'
+    | 'missing_idempotency_key'
+    | 'missing_ids'
+    | 'no_cached_style'
+    | 'passkey_required'
+    | 'rate_limited'
+    | 'read_request_timeout'
+    | 'replies_incomplete'
+    | 'support_media_rate_limit'
+    | 'support_request_rate_limit'
+    | 'too_many_ids'
+    | 'unknown_field'
+    | 'unsupported_media_type'
+    | 'webhook_inactive'
+    | 'write_tracking_unavailable'
+    | 'x_write_unconfirmed'
     | 'x_account_feature_required'
     | 'x_account_protected'
     | 'x_account_suspended'
@@ -175,8 +208,27 @@ export interface Error {
     | 'x_user_lookup_failed'
     | 'x_write_ambiguous'
     | 'x_write_failed'
-    | 'x_write_unconfirmed'
     | Error.StructuredError;
+
+  /**
+   * Human-readable error guidance.
+   */
+  message?: string;
+
+  /**
+   * Machine-readable reason for a login cooldown.
+   */
+  reason?: string;
+
+  /**
+   * Seconds until the next permitted request.
+   */
+  retryAfter?: number;
+
+  /**
+   * Required wait in milliseconds.
+   */
+  retryAfterMs?: number;
 }
 
 export namespace Error {
@@ -222,6 +274,39 @@ export namespace Error {
       | 'unauthenticated'
       | 'unsupported_field'
       | 'user_not_found'
+      | 'body_too_large'
+      | 'checkout_unavailable'
+      | 'connection_challenge_expired'
+      | 'connection_challenge_inactive'
+      | 'draft_not_found'
+      | 'favoriters_unavailable'
+      | 'forbidden'
+      | 'guest_wallet_unavailable'
+      | 'guest_wallets_disabled'
+      | 'guest_wallets_unavailable'
+      | 'idempotency_conflict'
+      | 'idempotency_key_conflict'
+      | 'invalid_community_id'
+      | 'invalid_idempotency_key'
+      | 'invalid_list_id'
+      | 'invalid_payment_amount'
+      | 'invalid_range'
+      | 'login_rate_limited'
+      | 'missing_idempotency_key'
+      | 'missing_ids'
+      | 'no_cached_style'
+      | 'passkey_required'
+      | 'rate_limited'
+      | 'read_request_timeout'
+      | 'replies_incomplete'
+      | 'support_media_rate_limit'
+      | 'support_request_rate_limit'
+      | 'too_many_ids'
+      | 'unknown_field'
+      | 'unsupported_media_type'
+      | 'webhook_inactive'
+      | 'write_tracking_unavailable'
+      | 'x_write_unconfirmed'
       | 'x_account_feature_required'
       | 'x_account_protected'
       | 'x_account_suspended'
@@ -247,8 +332,7 @@ export namespace Error {
       | 'x_transient_error'
       | 'x_user_lookup_failed'
       | 'x_write_ambiguous'
-      | 'x_write_failed'
-      | 'x_write_unconfirmed';
+      | 'x_write_failed';
 
     message: string;
 
@@ -359,7 +443,7 @@ export interface SearchTweet {
   createdAt?: string;
 
   /**
-   * Start and end offsets for rendered tweet text
+   * Rendered text's start and end offsets.
    */
   displayTextRange?: Array<number>;
 
@@ -370,17 +454,17 @@ export interface SearchTweet {
   entities?: { [key: string]: unknown };
 
   /**
-   * Tweet ID being replied to
+   * ID of the tweet this result replies to.
    */
   inReplyToId?: string;
 
   /**
-   * User ID being replied to
+   * ID of the user this result replies to.
    */
   inReplyToUserId?: string;
 
   /**
-   * Username being replied to
+   * Username this result replies to.
    */
   inReplyToUsername?: string;
 
@@ -405,7 +489,7 @@ export interface SearchTweet {
   isReply?: boolean;
 
   /**
-   * Tweet language code
+   * Search result language code.
    */
   lang?: string;
 
@@ -436,7 +520,7 @@ export interface SearchTweet {
   type?: string;
 
   /**
-   * Tweet permalink URL
+   * Search result permalink.
    */
   url?: string;
 }

@@ -16,7 +16,7 @@ export class AccountConnectionChallenges extends APIResource {
    * ```ts
    * const response =
    *   await client.x.accountConnectionChallenges.submit('id', {
-   *     email_code: '123456',
+   *     email_code: '<EMAIL_VERIFICATION_CODE>',
    *   });
    * ```
    */

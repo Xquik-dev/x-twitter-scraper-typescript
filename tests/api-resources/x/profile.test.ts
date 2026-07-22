@@ -10,7 +10,10 @@ const client = new XTwitterScraper({
 
 describe('resource profile', () => {
   test('update: only required params', async () => {
-    const responsePromise = client.x.profile.update({ account: '@elonmusk' });
+    const responsePromise = client.x.profile.update({
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -23,6 +26,7 @@ describe('resource profile', () => {
   test('update: required and optional params', async () => {
     const response = await client.x.profile.update({
       account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
       description: 'description_value',
       location: 'location_value',
       name: 'Example Name',
@@ -34,6 +38,7 @@ describe('resource profile', () => {
     const responsePromise = client.x.profile.updateAvatar({
       account: '@elonmusk',
       url: 'https://example.com/avatar.png',
+      'Idempotency-Key': 'Idempotency-Key',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -48,6 +53,7 @@ describe('resource profile', () => {
     const response = await client.x.profile.updateAvatar({
       account: '@elonmusk',
       url: 'https://example.com/avatar.png',
+      'Idempotency-Key': 'Idempotency-Key',
     });
   });
 
@@ -55,6 +61,7 @@ describe('resource profile', () => {
     const responsePromise = client.x.profile.updateBanner({
       account: '@elonmusk',
       url: 'https://example.com/banner.png',
+      'Idempotency-Key': 'Idempotency-Key',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -69,6 +76,7 @@ describe('resource profile', () => {
     const response = await client.x.profile.updateBanner({
       account: '@elonmusk',
       url: 'https://example.com/banner.png',
+      'Idempotency-Key': 'Idempotency-Key',
     });
   });
 });

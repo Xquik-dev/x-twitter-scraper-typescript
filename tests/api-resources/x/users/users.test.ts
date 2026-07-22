@@ -21,7 +21,10 @@ describe('resource users', () => {
   });
 
   test('removeFollower: only required params', async () => {
-    const responsePromise = client.x.users.removeFollower('id', { account: '@elonmusk' });
+    const responsePromise = client.x.users.removeFollower('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -32,7 +35,10 @@ describe('resource users', () => {
   });
 
   test('removeFollower: required and optional params', async () => {
-    const response = await client.x.users.removeFollower('id', { account: '@elonmusk' });
+    const response = await client.x.users.removeFollower('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 
   test('retrieveBatch: only required params', async () => {

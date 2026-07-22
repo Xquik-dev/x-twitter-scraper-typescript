@@ -10,7 +10,10 @@ const client = new XTwitterScraper({
 
 describe('resource follow', () => {
   test('create: only required params', async () => {
-    const responsePromise = client.x.users.follow.create('id', { account: '@elonmusk' });
+    const responsePromise = client.x.users.follow.create('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,11 +24,17 @@ describe('resource follow', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.users.follow.create('id', { account: '@elonmusk' });
+    const response = await client.x.users.follow.create('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 
   test('deleteAll: only required params', async () => {
-    const responsePromise = client.x.users.follow.deleteAll('id', { account: '@elonmusk' });
+    const responsePromise = client.x.users.follow.deleteAll('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -36,6 +45,9 @@ describe('resource follow', () => {
   });
 
   test('deleteAll: required and optional params', async () => {
-    const response = await client.x.users.follow.deleteAll('id', { account: '@elonmusk' });
+    const response = await client.x.users.follow.deleteAll('id', {
+      account: '@elonmusk',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
   });
 });
