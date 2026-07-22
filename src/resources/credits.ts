@@ -146,7 +146,7 @@ export interface CreditRedirectTopupCheckoutParams {
 
 export interface CreditRetrieveTopupStatusParams {
   /**
-   * Billing session ID returned by the top-up billing flow.
+   * Top-up session ID to inspect.
    */
   session_id: string;
 }

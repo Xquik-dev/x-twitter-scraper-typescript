@@ -112,12 +112,15 @@ export class Tickets extends APIResource {
 }
 
 export interface TicketCreateResponse {
-  attachments?: Array<TicketCreateResponse.Attachment>;
+  attachments: Array<TicketCreateResponse.Attachment>;
 
-  publicId?: string;
+  publicId: string;
 }
 
 export namespace TicketCreateResponse {
+  /**
+   * Attachment identifier and initial processing state.
+   */
   export interface Attachment {
     publicId: string;
 
@@ -151,7 +154,13 @@ export namespace TicketRetrieveResponse {
   }
 
   export namespace Message {
+    /**
+     * Downloadable image or video attached to a support message.
+     */
     export interface Attachment {
+      /**
+       * Validated media type.
+       */
       contentType:
         | 'image/jpeg'
         | 'image/png'
@@ -163,12 +172,18 @@ export namespace TicketRetrieveResponse {
 
       filename: string;
 
+      /**
+       * Attachment media class.
+       */
       kind: 'image' | 'video';
 
       publicId: string;
 
       sizeBytes: number;
 
+      /**
+       * Storage processing state.
+       */
       status: 'pending' | 'ready' | 'failed';
 
       url: string;
@@ -203,12 +218,15 @@ export namespace TicketListResponse {
 }
 
 export interface TicketReplyResponse {
-  attachments?: Array<TicketReplyResponse.Attachment>;
+  attachments: Array<TicketReplyResponse.Attachment>;
 
-  publicId?: string;
+  publicId: string;
 }
 
 export namespace TicketReplyResponse {
+  /**
+   * Attachment identifier and initial processing state.
+   */
   export interface Attachment {
     publicId: string;
 
