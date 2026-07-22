@@ -9,14 +9,17 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Compose extends APIResource {
   /**
-   * Compose, refine, or score a tweet
+   * Run one step of Xquik's three-step writing workflow. Compose returns questions
+   * and editorial rules. Refine returns goal-specific guidance. Score applies
+   * deterministic text checks. It does not predict reach or expose X ranking
+   * weights.
    *
    * @example
    * ```ts
    * const compose = await client.compose.create({
    *   step: 'compose',
+   *   topic: 'PostgreSQL query planning',
    *   goal: 'engagement',
-   *   topic: 'AI trends in 2025',
    * });
    * ```
    */
@@ -25,85 +28,249 @@ export class Compose extends APIResource {
   }
 }
 
-export interface ComposeCreateResponse {
-  /**
-   * AI feedback on the draft
-   */
-  feedback?: string;
+export type ComposeCreateResponse =
+  | ComposeCreateResponse.ComposePrepareResult
+  | ComposeCreateResponse.ComposeRefineResult
+  | ComposeCreateResponse.ComposeScoreResult;
 
-  /**
-   * Engagement score (0-100)
-   */
-  score?: number;
+export namespace ComposeCreateResponse {
+  export interface ComposePrepareResult {
+    /**
+     * Xquik editorial heuristics, ordered for the goal.
+     */
+    contentRules: Array<ComposePrepareResult.ContentRule>;
 
-  /**
-   * Improvement suggestions
-   */
-  suggestions?: Array<string>;
+    /**
+     * Published engagement signal names. Production multipliers are not published.
+     */
+    engagementMultipliers: Array<ComposePrepareResult.EngagementMultiplier>;
 
-  /**
-   * Generated or refined tweet text
-   */
-  text?: string;
+    /**
+     * Publication limit for timing and decay claims.
+     */
+    engagementVelocity: string;
 
-  [k: string]: unknown;
+    followUpQuestions: Array<string>;
+
+    /**
+     * X post intent seeded with the topic.
+     */
+    intentUrl: string;
+
+    nextStep: string;
+
+    /**
+     * Published signal names with unpublished weights as null.
+     */
+    scorerWeights: Array<ComposePrepareResult.ScorerWeight>;
+
+    /**
+     * Signal source and evidence limits.
+     */
+    source: string;
+
+    /**
+     * Negative engagement predictions in the public model.
+     */
+    topPenalties: Array<string>;
+
+    /**
+     * Style analyses saved to the account.
+     */
+    savedStyles?: Array<ComposePrepareResult.SavedStyle>;
+
+    /**
+     * Next action when no cached style is available.
+     */
+    styleNote?: string;
+
+    /**
+     * Cached examples for the requested style username.
+     */
+    styleTweets?: Array<string>;
+  }
+
+  export namespace ComposePrepareResult {
+    export interface ContentRule {
+      rule: string;
+    }
+
+    export interface EngagementMultiplier {
+      /**
+       * Human-readable published signal name.
+       */
+      action: string;
+
+      multiplier: 'Production weight not published by X';
+    }
+
+    export interface ScorerWeight {
+      /**
+       * Signal direction and publication limit.
+       */
+      context: string;
+
+      /**
+       * Signal name from X's public ranking repository.
+       */
+      signal: string;
+
+      /**
+       * X does not publish the production weight.
+       */
+      weight: null;
+    }
+
+    export interface SavedStyle {
+      tweetCount: number;
+
+      username: string;
+    }
+  }
+
+  export interface ComposeRefineResult {
+    /**
+     * Goal, tone, media, and editorial guidance.
+     */
+    compositionGuidance: Array<string>;
+
+    examplePatterns: Array<ComposeRefineResult.ExamplePattern>;
+
+    /**
+     * X post intent seeded with the topic.
+     */
+    intentUrl: string;
+
+    nextStep: string;
+  }
+
+  export namespace ComposeRefineResult {
+    export interface ExamplePattern {
+      description: string;
+
+      pattern: string;
+    }
+  }
+
+  export interface ComposeScoreResult {
+    /**
+     * Deterministic editorial checks. Not a reach prediction.
+     */
+    checklist: Array<ComposeScoreResult.Checklist>;
+
+    nextStep: string;
+
+    passed: boolean;
+
+    passedCount: number;
+
+    topSuggestion: string;
+
+    totalChecks: 9;
+
+    /**
+     * Present only when every check passes.
+     */
+    intentUrl?: string;
+  }
+
+  export namespace ComposeScoreResult {
+    export interface Checklist {
+      factor: string;
+
+      passed: boolean;
+
+      /**
+       * Present only when the check fails.
+       */
+      suggestion?: string;
+    }
+  }
 }
 
-export interface ComposeCreateParams {
-  /**
-   * Workflow step
-   */
-  step: 'compose' | 'refine' | 'score';
+export type ComposeCreateParams =
+  | ComposeCreateParams.ComposePrepareRequest
+  | ComposeCreateParams.ComposeRefineRequest
+  | ComposeCreateParams.ComposeScoreRequest;
 
-  /**
-   * Extra context or URLs (refine)
-   */
-  additionalContext?: string;
+export declare namespace ComposeCreateParams {
+  export interface ComposePrepareRequest {
+    step: 'compose';
 
-  /**
-   * Desired call to action (refine)
-   */
-  callToAction?: string;
+    /**
+     * Subject for the post.
+     */
+    topic: string;
 
-  /**
-   * Tweet draft text to evaluate (score)
-   */
-  draft?: string;
+    /**
+     * Editorial goal used to order the rules and questions.
+     */
+    goal?: 'engagement' | 'followers' | 'authority' | 'conversation';
 
-  /**
-   * Optimization goal
-   */
-  goal?: 'engagement' | 'followers' | 'authority' | 'conversation';
+    /**
+     * Username from a style analysis saved to this account.
+     */
+    styleUsername?: string;
 
-  /**
-   * Whether a link is attached (score)
-   */
-  hasLink?: boolean;
+    [k: string]: unknown;
+  }
 
-  /**
-   * Whether media is attached (score)
-   */
-  hasMedia?: boolean;
+  export interface ComposeRefineRequest {
+    /**
+     * Editorial goal for the guidance.
+     */
+    goal: 'engagement' | 'followers' | 'authority' | 'conversation';
 
-  /**
-   * Media type (refine)
-   */
-  mediaType?: 'photo' | 'video' | 'none';
+    step: 'refine';
 
-  /**
-   * Cached style username for voice matching (compose)
-   */
-  styleUsername?: string;
+    /**
+     * Requested writing tone.
+     */
+    tone: string;
 
-  /**
-   * Desired tone (refine)
-   */
-  tone?: string;
+    /**
+     * Subject for the post.
+     */
+    topic: string;
 
-  /**
-   * Tweet topic (compose, refine)
-   */
-  topic?: string;
+    /**
+     * Audience, constraints, sources, or other writing context.
+     */
+    additionalContext?: string;
+
+    /**
+     * Specific action the draft should request.
+     */
+    callToAction?: string;
+
+    /**
+     * Planned media type.
+     */
+    mediaType?: 'photo' | 'video' | 'none';
+
+    [k: string]: unknown;
+  }
+
+  export interface ComposeScoreRequest {
+    /**
+     * Full post text for deterministic editorial checks.
+     */
+    draft: string;
+
+    step: 'score';
+
+    /**
+     * True when a separate link card is attached.
+     */
+    hasLink?: boolean;
+
+    /**
+     * @deprecated Ignored. Remove this field. Use hasLink for a separate link card.
+     */
+    hasMedia?: boolean;
+
+    [k: string]: unknown;
+  }
 }
 
 export declare namespace Compose {

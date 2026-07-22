@@ -89,12 +89,12 @@ export namespace AccountRetrieveResponse {
     activeHourlyBurn: string;
 
     /**
-     * Estimated daily usage for 1 active instant monitor.
+     * Rounded daily estimate for 1 active monitor.
      */
     creditsPerActiveMonitorDay: string;
 
     /**
-     * Hourly usage charged for 1 active instant monitor.
+     * Hourly credits charged for 1 active monitor.
      */
     creditsPerActiveMonitorHour: string;
 

@@ -18,15 +18,16 @@ import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 /**
- * Real-time X account monitoring
+ * X account monitoring with 1-second checks
  */
 export class Monitors extends APIResource {
   keywords: KeywordsAPI.Keywords = new KeywordsAPI.Keywords(this._client);
 
   /**
-   * Creates an instant monitor. Monitors are unlimited. Active monitors check every
-   * 1 second. Events and webhook deliveries are included. Creation requires an
-   * available usage balance.
+   * Creates an account monitor. Monitors are unlimited. Active monitors check every
+   * 1 second and cost 21 credits per hour. Events and webhook deliveries are
+   * included. Creation requires available credits for the first hourly charge and
+   * username lookup.
    *
    * @example
    * ```ts
