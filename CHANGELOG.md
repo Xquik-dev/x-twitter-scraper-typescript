@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.2 (2026-07-23)
+
+Full Changelog: [v0.5.1...v0.5.2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.5.1...v0.5.2)
+
+### Documentation
+
+* map common X data tasks ([#11](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/11)) ([f4fa511](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/f4fa5119c650a2ce80681af2a5a8555f1879e897))
+
 ## 0.5.1 (2026-07-22)
 
 Full Changelog: [v0.5.0...v0.5.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.5.0...v0.5.1)
