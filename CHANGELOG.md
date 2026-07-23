@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 (2026-07-23)
+
+Full Changelog: [v0.5.2...v0.6.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.5.2...v0.6.0)
+
+### Features
+
+* bundle Xquik Skills for Pi ([ab5118d](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ab5118db657bffb27f1041e68969ae70fd2e2b16))
+
 ## 0.5.2 (2026-07-23)
 
 Full Changelog: [v0.5.1...v0.5.2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.5.1...v0.5.2)
