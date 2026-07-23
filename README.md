@@ -8,13 +8,24 @@
 
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 
-Xquik TypeScript SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, and posting automation.
+Xquik TypeScript SDK and agent Skill package for the X (Twitter) Scraper API. Use typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, and posting automation.
 
 Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining custom collection infrastructure.
 
 [SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [OAuth-First MCP Guide](https://docs.xquik.com/mcp/overview) | [Python SDK](https://github.com/Xquik-dev/x-twitter-scraper-python)
 
 It is generated with [Stainless](https://www.stainless.com/).
+
+## Pi Coding Agent Package
+
+Install the bundled Xquik Skills directly from npm:
+
+```sh
+pi install npm:x-twitter-scraper
+```
+
+Pi loads the packaged X API and social research Skills. The typed SDK remains
+available from the same npm package.
 
 ## Common X Data Tasks
 
@@ -70,7 +81,8 @@ Run giveaway draws, export winners, and launch extraction jobs for replies, repo
 
 - Package: [npm `x-twitter-scraper`](https://www.npmjs.com/package/x-twitter-scraper)
 - Source: [Xquik-dev/x-twitter-scraper-typescript](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
-- License: Apache-2.0
+- SDK license: Apache-2.0
+- Bundled Skill license: MIT
 - Citation metadata: [CITATION.cff](CITATION.cff)
 
 ## FAQ
@@ -85,7 +97,9 @@ Start with the [REST API overview](https://docs.xquik.com/api-reference/overview
 
 ### Can this work with AI agents?
 
-Yes. Use the SDK in your app code and follow the [MCP guide](https://docs.xquik.com/mcp/overview) for agent clients.
+Yes. Install the bundled Skills with `pi install npm:x-twitter-scraper`. Use
+the SDK in application code. Follow the
+[MCP guide](https://docs.xquik.com/mcp/overview) for MCP clients.
 
 ## Installation
 

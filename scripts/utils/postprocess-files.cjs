@@ -45,9 +45,10 @@ async function postprocess() {
       default: './index.mjs',
     },
   };
+  const nonModuleDirectories = new Set(['assets', 'bin', 'internal', 'skills', 'src']);
 
   for (const entry of await fs.promises.readdir(distDir, { withFileTypes: true })) {
-    if (entry.isDirectory() && entry.name !== 'src' && entry.name !== 'internal' && entry.name !== 'bin') {
+    if (entry.isDirectory() && !nonModuleDirectories.has(entry.name)) {
       const subpath = './' + entry.name;
       newExports[subpath + '/*.mjs'] = {
         default: subpath + '/*.mjs',
