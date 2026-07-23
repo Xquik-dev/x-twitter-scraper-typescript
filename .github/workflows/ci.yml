@@ -33,6 +33,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Check license notices
+        uses: fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5 # v6.0.0
+
       - name: Set up Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -46,6 +49,9 @@ jobs:
 
       - name: Bootstrap
         run: ./scripts/bootstrap
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level high
 
       - name: Check types
         run: ./scripts/lint
@@ -74,8 +80,8 @@ jobs:
       - name: Bootstrap
         run: ./scripts/bootstrap
 
-      - name: Check build
-        run: ./scripts/build
+      - name: Check reproducible build
+        run: pnpm run check:reproducible
 
   test:
     timeout-minutes: 10

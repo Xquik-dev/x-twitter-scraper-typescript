@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 X Twitter Scraper
+# SPDX-License-Identifier: Apache-2.0
+
+version = 1
+
+[[annotations]]
+path = [
+  "*",
+  ".devcontainer/**",
+  ".github/**",
+  "assets/**",
+  "bin/**",
+  "examples/**",
+  "scripts/**",
+  "src/**",
+  "tests/**",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 X Twitter Scraper"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["skills/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Xquik"
+SPDX-License-Identifier = "MIT"

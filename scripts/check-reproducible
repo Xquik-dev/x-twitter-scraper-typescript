@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+reproducibility_directory="$(mktemp -d)"
+trap 'rm -rf "$reproducibility_directory"' EXIT
+mkdir "$reproducibility_directory/first" "$reproducibility_directory/second"
+
+pnpm build
+(cd dist && npm pack --silent --pack-destination "$reproducibility_directory/first" >/dev/null)
+
+pnpm build
+(cd dist && npm pack --silent --pack-destination "$reproducibility_directory/second" >/dev/null)
+
+first_archive="$(find "$reproducibility_directory/first" -type f -name '*.tgz' -print -quit)"
+second_archive="$(find "$reproducibility_directory/second" -type f -name '*.tgz' -print -quit)"
+
+if [[ -z "$first_archive" || -z "$second_archive" ]]; then
+  echo "Package build did not produce both archives." >&2
+  exit 1
+fi
+
+cmp "$first_archive" "$second_archive"
+echo "Package archives are reproducible."

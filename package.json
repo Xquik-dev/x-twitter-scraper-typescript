@@ -49,6 +49,7 @@
   "scripts": {
     "test": "./scripts/test",
     "build": "./scripts/build",
+    "check:reproducible": "./scripts/check-reproducible",
     "prepublishOnly": "echo 'to publish, run pnpm build && (cd dist; pnpm publish)' && exit 1",
     "format": "./scripts/format",
     "prepare": "if ./scripts/utils/check-is-in-git-install.sh; then ./scripts/build && ./scripts/utils/git-swap.sh; fi",
