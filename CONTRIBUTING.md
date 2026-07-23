@@ -12,6 +12,22 @@ $ pnpm build
 
 This will install all the required dependencies and build output files to `dist/`.
 
+## Contribution Requirements
+
+Follow the shared [Xquik contribution policy](https://github.com/Xquik-dev/.github/blob/main/CONTRIBUTING.md).
+
+Submit non-trivial changes through pull requests.
+
+A person other than the author must approve each non-trivial change.
+
+Sign every commit using the Developer Certificate of Origin:
+
+```sh
+git commit -s
+```
+
+Start with issues labeled `good first issue` when seeking a small task.
+
 ## Modifying/Adding code
 
 Most of the SDK is generated code. Modifications to code will be persisted between generations, but may
@@ -69,6 +85,18 @@ $ pnpm link --global x-twitter-scraper
 $ pnpm run test
 ```
 
+Tests enforce at least 90% statement coverage.
+
+Tests enforce at least 80% branch coverage.
+
+Add regression tests for every corrected defect.
+
+Run the reproducibility check before requesting review:
+
+```sh
+$ pnpm run check:reproducible
+```
+
 ## Linting and formatting
 
 This repository uses [prettier](https://www.npmjs.com/package/prettier) and
@@ -99,3 +127,5 @@ You can release to package managers by using [the `Publish NPM` GitHub action](h
 
 If you need to manually release a package, you can run the `bin/publish-npm` script with an `NPM_TOKEN` set on
 the environment.
+
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

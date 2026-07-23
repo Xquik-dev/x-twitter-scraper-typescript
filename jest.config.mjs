@@ -1,5 +1,16 @@
 /** @type {import('jest').Config} */
 const config = {
+  collectCoverage: true,
+  collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
+  coverageReporters: ['text', 'text-summary'],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 90,
+      lines: 90,
+      statements: 90,
+    },
+  },
   testEnvironment: 'node',
   transform: {
     '^.+\\.(t|j)sx?$': ['@swc/jest', { sourceMaps: 'inline' }],

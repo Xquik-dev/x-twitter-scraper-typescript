@@ -84,6 +84,8 @@ Run giveaway draws, export winners, and launch extraction jobs for replies, repo
 - SDK license: Apache-2.0
 - Bundled Skill license: MIT
 - Citation metadata: [CITATION.cff](CITATION.cff)
+- Security boundary and reporting: [SECURITY.md](SECURITY.md)
+- OpenSSF evidence and current limitations: [OPENSSF.md](OPENSSF.md)
 
 ## FAQ
 
