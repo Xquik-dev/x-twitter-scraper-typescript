@@ -1,7 +1,7 @@
 {
   "name": "x-twitter-scraper",
   "version": "0.5.2",
-  "description": "TypeScript SDK for Xquik API workflows. Xquik is an independent third-party service. Not affiliated with X Corp. \"Twitter\" and \"X\" are trademarks of X Corp.",
+  "description": "Xquik TypeScript SDK & agent Skills for X/Twitter data, automation, MCP & webhooks. Not affiliated with X Corp.",
   "author": "Xquik <support@xquik.com>",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -20,6 +20,7 @@
     "twitter-scraper",
     "x-twitter-scraper",
     "xquik",
+    "pi-package",
     "typescript-sdk",
     "nodejs",
     "api-client",
@@ -27,6 +28,12 @@
     "monitoring",
     "social-media-api"
   ],
+  "pi": {
+    "skills": [
+      "./skills"
+    ],
+    "image": "https://raw.githubusercontent.com/Xquik-dev/x-twitter-scraper-typescript/main/assets/pi-package.png"
+  },
   "license": "Apache-2.0",
   "engines": {
     "node": ">=20.0.0"
