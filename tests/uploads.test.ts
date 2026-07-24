@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import fs from 'fs';
 import type { ResponseLike } from 'x-twitter-scraper/internal/to-file';
 import { toFile } from 'x-twitter-scraper/core/uploads';

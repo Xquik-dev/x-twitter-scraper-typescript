@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { fromBase64, toBase64 } from 'x-twitter-scraper/internal/utils/base64';
 
 describe.each(['Buffer', 'atob'])('with %s', (mode) => {

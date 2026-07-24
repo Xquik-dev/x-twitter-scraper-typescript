@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { createPathTagFunction, encodeURIPath } from 'x-twitter-scraper/internal/utils/path';
 import { inspect } from 'node:util';
 import { runInNewContext } from 'node:vm';

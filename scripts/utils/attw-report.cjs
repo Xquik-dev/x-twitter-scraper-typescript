@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const fs = require('fs');
 const problems = Object.values(JSON.parse(fs.readFileSync('.attw.json', 'utf-8')).problems)
   .flat()

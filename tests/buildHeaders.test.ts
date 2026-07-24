@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { inspect } from 'node:util';
 import { buildHeaders, type HeadersLike, type NullableHeaders } from 'x-twitter-scraper/internal/headers';
 

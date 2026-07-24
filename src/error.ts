@@ -1,2 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 /** @deprecated Import from ./core/error instead */
 export * from './core/error';
