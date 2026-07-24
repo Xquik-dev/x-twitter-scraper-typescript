@@ -16,6 +16,12 @@ Use it to get tweets from profiles, search tweets by keyword or operator query, 
 
 It is generated with [Stainless](https://www.stainless.com/).
 
+## Choose the TypeScript SDK
+
+Choose this package for Node.js, Bun, Deno, and supported browsers.
+Use generated request and response types throughout application code.
+Install bundled Skills only when an agent needs Xquik task guidance.
+
 ## Pi Coding Agent Package
 
 Install the bundled Xquik Skills directly from npm:
@@ -43,11 +49,13 @@ Use the linked TypeScript API map for typed method names.
 
 ## Tweet Search, Profile Tweets & User Lookup
 
-Build TypeScript services that search tweets, get tweets from profiles, fetch user profiles, check follower relationships, export followers, download media, and inspect timeline data through one typed REST client.
+Use generated types in Node.js, Bun, Deno, or supported browsers.
+Share request and response types across application boundaries.
 
 ## Real-Time Monitoring & Webhooks
 
-Create monitors for X accounts, receive HMAC-signed webhook events, and query event history from the same SDK surface.
+Verify HMAC signatures before routing monitor events to typed handlers.
+Query event history from the same client.
 
 ## AI Agent Workflows With MCP
 
@@ -66,7 +74,8 @@ ChatGPT custom apps require OAuth.
 
 ## Giveaway Draws & Extractions
 
-Run giveaway draws, export winners, and launch extraction jobs for replies, reposts, quotes, followers, lists, communities, threads, articles, and tweet search.
+Launch draws and extractions from server-side workers.
+Load completed results into typed application workflows.
 
 ## Xquik SDK vs Building From Scratch
 
