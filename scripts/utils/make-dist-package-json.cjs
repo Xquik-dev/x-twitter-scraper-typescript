@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 const pkgJson = require(process.env['PKG_JSON_PATH'] || '../../package.json');
 
 function processExportMap(m) {

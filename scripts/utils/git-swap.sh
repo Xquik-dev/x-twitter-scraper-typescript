@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -exuo pipefail
 # the package is published to NPM from ./dist
 # we want the final file structure for git installs to match the npm installs, so we

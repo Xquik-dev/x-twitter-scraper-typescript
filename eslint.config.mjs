@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 // @ts-check
 import tseslint from 'typescript-eslint';
 import unusedImports from 'eslint-plugin-unused-imports';

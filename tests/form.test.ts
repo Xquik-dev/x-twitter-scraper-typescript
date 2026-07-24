@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { multipartFormRequestOptions, createForm } from 'x-twitter-scraper/internal/uploads';
 import { toFile } from 'x-twitter-scraper/core/uploads';
 

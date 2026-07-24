@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Xquik contributors
+//
+// SPDX-License-Identifier: Apache-2.0
+
 import { readEnv } from 'x-twitter-scraper/internal/utils/env';
 import { isRunningInBrowser } from 'x-twitter-scraper/internal/detect-platform';
 
