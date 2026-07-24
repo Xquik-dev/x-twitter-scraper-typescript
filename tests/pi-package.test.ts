@@ -6,6 +6,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 type PackageManifest = {
+  bugs: {
+    url: string;
+  };
   keywords: string[];
   pi: {
     image: string;
@@ -15,13 +18,17 @@ type PackageManifest = {
 
 const packageRoot = resolve(__dirname, '..');
 
-describe('Pi package', () => {
+const manifest = JSON.parse(readFileSync(resolve(packageRoot, 'package.json'), 'utf8')) as PackageManifest;
+
+describe('package metadata', () => {
+  test('preserves support and removed resource contracts', () => {
+    expect.assertions(2);
+    expect(manifest.bugs.url).toBe('https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues');
+    expect(existsSync(resolve(packageRoot, 'src/resources/integrations'))).toBe(false);
+  });
+
   test('declares the packaged Skills', () => {
     expect.assertions(7);
-    const manifest = JSON.parse(
-      readFileSync(resolve(packageRoot, 'package.json'), 'utf8'),
-    ) as PackageManifest;
-
     expect(manifest.keywords).toContain('pi-package');
     expect(manifest.pi.skills).toEqual(['./skills']);
     expect(manifest.pi.image).toBe(
