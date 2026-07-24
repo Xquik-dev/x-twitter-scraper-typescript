@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.1 (2026-07-24)
+
+Full Changelog: [v0.6.0...v0.6.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.6.0...v0.6.1)
+
+### Chores
+
+* add per-file license evidence ([f212f91](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/f212f915fc75595d1f404bd65abb8a189ea1ba4e))
+* enforce OpenSSF Gold quality gates ([a89c2b2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/a89c2b2d1ad3ffc0286d14506986525559bba7d7))
+
+
+### Documentation
+
+* clarify repository discovery ([4d847a9](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/4d847a9dfdc07433cca2ee584e0d118091c4ac3c))
+
 ## 0.6.0 (2026-07-23)
 
 Full Changelog: [v0.5.2...v0.6.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.5.2...v0.6.0)
