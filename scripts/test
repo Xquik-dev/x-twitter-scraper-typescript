@@ -8,6 +8,8 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+echo "==> Checking types"
+./node_modules/typescript/bin/tsc --project tsconfig.json --noEmit
 
 
 echo "==> Running tests"
