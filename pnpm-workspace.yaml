@@ -3,13 +3,14 @@ allowBuilds:
   unrs-resolver: false
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
+  - brace-expansion
   - x-twitter-scraper
 overrides:
   '@babel/core': 7.29.7
   '@istanbuljs/load-nyc-config>js-yaml': 3.15.0
   'anymatch>picomatch': 2.3.2
+  'brace-expansion': 5.0.8
   'flat-cache>flatted': 3.4.2
   'glob@10.5.0>minimatch': 9.0.9
   'micromatch>picomatch': 2.3.2
-  'minimatch@9.0.9>brace-expansion': 2.1.2
   'ts-node>diff': 4.0.4
