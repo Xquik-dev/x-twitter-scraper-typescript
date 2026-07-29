@@ -37,12 +37,26 @@ export interface RadarItem {
 
   createdAt: string;
 
+  /**
+   * BCP-47 language code. und means the source did not identify a language.
+   */
   language: string;
 
   /**
    * Source-specific fields. Shape varies per source:
    *
-   * - reddit: { subreddit: string, author: string }
+   * - reddit: { author, authorId?, subreddit, subredditId?, subredditSubscribers?,
+   *   sourceFormat, score?, upvoteRatio?, estimatedUpvotes?, estimatedDownvotes?,
+   *   numberComments?, numberCrossposts?, selftext?, contentUrl?, domain?,
+   *   postHint?, linkFlairText?, distinguished?, totalAwardsReceived?, viewCount?,
+   *   editedAt?, galleryImageUrls?, redditVideo?, archived?, contestMode?,
+   *   isCrosspostable?, isMeta?, isNsfw?, isOriginalContent?, isRobotIndexable?,
+   *   isSelf?, isSpoiler?, isVideo?, locked?, stickied? }. `score` is Reddit's
+   *   public net score. Exact public upvote and downvote counts are not available.
+   *   Estimated counts derive from the public score and upvote ratio, which Reddit
+   *   may fuzz. Comment bodies are not included. Current items combine public
+   *   listing discovery with server-rendered post data and use `sourceFormat: html`;
+   *   `json` and `rss` remain for legacy rows.
    * - github: { starsToday: number }
    * - hacker_news: { points: number, numberComments: number }
    * - google_trends: { approxTraffic: number }
@@ -50,9 +64,14 @@ export interface RadarItem {
    * - wikipedia: { views: number }
    * - trustmrr: { mrr, growthPercent, last30Days, total, customers,
    *   activeSubscriptions, onSale, xHandle?, category?, askingPrice?, country?,
-   *   growthMrrPercent?, multiple?, paymentProvider?, rank? }
+   *   foundedDate?, googleSearchImpressionsLast30Days?, growthMrrPercent?,
+   *   multiple?, paymentProvider?, profitMarginLast30Days?, rank?,
+   *   revenuePerVisitor?, targetAudience?, visitorsLast30Days? } For the startup
+   *   growth source, xHandle is the founder's X username without @. The rank field
+   *   is the source's revenue rank. Result order represents reported 30-day
+   *   revenue-growth rank.
    */
-  metadata: { [key: string]: unknown };
+  metadata: RadarItem.Metadata;
 
   publishedAt: string;
 
@@ -71,9 +90,70 @@ export interface RadarItem {
 
   description?: string;
 
+  /**
+   * Source image. Startup growth items return the logo here.
+   */
   imageUrl?: string;
 
   url?: string;
+}
+
+export namespace RadarItem {
+  /**
+   * Source-specific fields. Shape varies per source:
+   *
+   * - reddit: { author, authorId?, subreddit, subredditId?, subredditSubscribers?,
+   *   sourceFormat, score?, upvoteRatio?, estimatedUpvotes?, estimatedDownvotes?,
+   *   numberComments?, numberCrossposts?, selftext?, contentUrl?, domain?,
+   *   postHint?, linkFlairText?, distinguished?, totalAwardsReceived?, viewCount?,
+   *   editedAt?, galleryImageUrls?, redditVideo?, archived?, contestMode?,
+   *   isCrosspostable?, isMeta?, isNsfw?, isOriginalContent?, isRobotIndexable?,
+   *   isSelf?, isSpoiler?, isVideo?, locked?, stickied? }. `score` is Reddit's
+   *   public net score. Exact public upvote and downvote counts are not available.
+   *   Estimated counts derive from the public score and upvote ratio, which Reddit
+   *   may fuzz. Comment bodies are not included. Current items combine public
+   *   listing discovery with server-rendered post data and use `sourceFormat: html`;
+   *   `json` and `rss` remain for legacy rows.
+   * - github: { starsToday: number }
+   * - hacker_news: { points: number, numberComments: number }
+   * - google_trends: { approxTraffic: number }
+   * - polymarket: { volume24hr: number }
+   * - wikipedia: { views: number }
+   * - trustmrr: { mrr, growthPercent, last30Days, total, customers,
+   *   activeSubscriptions, onSale, xHandle?, category?, askingPrice?, country?,
+   *   foundedDate?, googleSearchImpressionsLast30Days?, growthMrrPercent?,
+   *   multiple?, paymentProvider?, profitMarginLast30Days?, rank?,
+   *   revenuePerVisitor?, targetAudience?, visitorsLast30Days? } For the startup
+   *   growth source, xHandle is the founder's X username without @. The rank field
+   *   is the source's revenue rank. Result order represents reported 30-day
+   *   revenue-growth rank.
+   */
+  export interface Metadata {
+    author?: string;
+
+    contentUrl?: string;
+
+    estimatedDownvotes?: number;
+
+    estimatedUpvotes?: number;
+
+    numberComments?: number;
+
+    score?: number;
+
+    selftext?: string;
+
+    /**
+     * Current items use html. json and rss are retained for legacy rows.
+     */
+    sourceFormat?: 'html' | 'json' | 'rss';
+
+    subreddit?: string;
+
+    upvoteRatio?: number;
+
+    [k: string]: unknown;
+  }
 }
 
 export interface RadarRetrieveTrendingTopicsResponse {

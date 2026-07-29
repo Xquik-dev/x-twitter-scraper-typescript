@@ -408,7 +408,7 @@ Types:
 
 Methods:
 
-- <code title="post /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">create</a>({ ...params }) -> AccountCreateResponse</code>
+- <code title="post /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">create</a>({ ...params }) -> unknown</code>
 - <code title="get /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">retrieve</a>(id) -> XAccountDetail</code>
 - <code title="get /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">list</a>() -> AccountListResponse</code>
 - <code title="delete /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">delete</a>(id) -> AccountDeleteResponse</code>
@@ -424,6 +424,16 @@ Types:
 Methods:
 
 - <code title="post /x/account-connection-challenges/{id}/submit">client.x.accountConnectionChallenges.<a href="./src/resources/x/account-connection-challenges.ts">submit</a>(id, { ...params }) -> AccountConnectionChallengeSubmitResponse</code>
+
+## AccountConnectionAttempts
+
+Types:
+
+- <code><a href="./src/resources/x/account-connection-attempts.ts">AccountConnectionAttemptRetrieveResponse</a></code>
+
+Methods:
+
+- <code title="get /x/account-connection-attempts/{id}">client.x.accountConnectionAttempts.<a href="./src/resources/x/account-connection-attempts.ts">retrieve</a>(id) -> AccountConnectionAttemptRetrieveResponse</code>
 
 ## Bookmarks
 
