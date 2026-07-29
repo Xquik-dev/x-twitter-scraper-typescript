@@ -17,6 +17,7 @@ describe('resource accounts', () => {
     const responsePromise = client.x.accounts.create({
       email: 'account@example.invalid',
       password: '<ACCOUNT_PASSWORD>',
+      totp_secret: '<TOTP_SECRET>',
       username: 'your_x_username',
     });
     const rawResponse = await responsePromise.asResponse();
@@ -32,8 +33,8 @@ describe('resource accounts', () => {
     const response = await client.x.accounts.create({
       email: 'account@example.invalid',
       password: '<ACCOUNT_PASSWORD>',
-      username: 'your_x_username',
       totp_secret: '<TOTP_SECRET>',
+      username: 'your_x_username',
     });
   });
 

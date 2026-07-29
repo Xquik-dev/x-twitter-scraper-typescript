@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 (2026-07-29)
+
+Full Changelog: [v0.6.2...v0.7.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.6.2...v0.7.0)
+
+### Features
+
+* **api:** api update ([88d6bd0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/88d6bd0144e12dbe9137181104795e0cd26cb44e))
+* **api:** api update ([8dd7565](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/8dd7565b670085b6ad7c09fc6dbcae0352aba9b7))
+
 ## 0.6.2 (2026-07-24)
 
 Full Changelog: [v0.6.1...v0.6.2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.6.1...v0.6.2)
