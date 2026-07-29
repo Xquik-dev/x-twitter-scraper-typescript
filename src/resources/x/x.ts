@@ -2,6 +2,11 @@
 
 import { APIResource } from '../../core/resource';
 import * as Shared from '../shared';
+import * as AccountConnectionAttemptsAPI from './account-connection-attempts';
+import {
+  AccountConnectionAttemptRetrieveResponse,
+  AccountConnectionAttempts,
+} from './account-connection-attempts';
 import * as AccountConnectionChallengesAPI from './account-connection-challenges';
 import {
   AccountConnectionChallengeSubmitParams,
@@ -118,6 +123,8 @@ export class X extends APIResource {
   accounts: AccountsAPI.Accounts = new AccountsAPI.Accounts(this._client);
   accountConnectionChallenges: AccountConnectionChallengesAPI.AccountConnectionChallenges =
     new AccountConnectionChallengesAPI.AccountConnectionChallenges(this._client);
+  accountConnectionAttempts: AccountConnectionAttemptsAPI.AccountConnectionAttempts =
+    new AccountConnectionAttemptsAPI.AccountConnectionAttempts(this._client);
   bookmarks: BookmarksAPI.Bookmarks = new BookmarksAPI.Bookmarks(this._client);
   lists: ListsAPI.Lists = new ListsAPI.Lists(this._client);
 
@@ -387,6 +394,7 @@ X.Profile = Profile;
 X.Communities = Communities;
 X.Accounts = Accounts;
 X.AccountConnectionChallenges = AccountConnectionChallenges;
+X.AccountConnectionAttempts = AccountConnectionAttempts;
 X.Bookmarks = Bookmarks;
 X.Lists = Lists;
 
@@ -499,6 +507,11 @@ export declare namespace X {
     AccountConnectionChallenges as AccountConnectionChallenges,
     type AccountConnectionChallengeSubmitResponse as AccountConnectionChallengeSubmitResponse,
     type AccountConnectionChallengeSubmitParams as AccountConnectionChallengeSubmitParams,
+  };
+
+  export {
+    AccountConnectionAttempts as AccountConnectionAttempts,
+    type AccountConnectionAttemptRetrieveResponse as AccountConnectionAttemptRetrieveResponse,
   };
 
   export {

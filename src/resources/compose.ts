@@ -9,10 +9,10 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Compose extends APIResource {
   /**
-   * Run one step of Xquik's three-step writing workflow. Compose returns questions
-   * and editorial rules. Refine returns goal-specific guidance. Score applies
-   * deterministic text checks. It does not predict reach or expose X ranking
-   * weights.
+   * Run one step of Xquik's three-step writing workflow. Compose returns questions,
+   * editorial rules, and source-specific Radar recommendations. Refine returns
+   * goal-specific guidance. Score applies deterministic text checks. It does not
+   * predict reach or expose X ranking weights.
    *
    * @example
    * ```ts
@@ -60,6 +60,11 @@ export namespace ComposeCreateResponse {
     nextStep: string;
 
     /**
+     * Sources and guidance for researching a fresh post angle.
+     */
+    radarRecommendations: Array<ComposePrepareResult.RadarRecommendation>;
+
+    /**
      * Published signal names with unpublished weights as null.
      */
     scorerWeights: Array<ComposePrepareResult.ScorerWeight>;
@@ -102,6 +107,25 @@ export namespace ComposeCreateResponse {
       action: string;
 
       multiplier: 'Production weight not published by X';
+    }
+
+    export interface RadarRecommendation {
+      /**
+       * Radar endpoint for this source.
+       */
+      endpoint: string;
+
+      /**
+       * Source-specific drafting guidance.
+       */
+      guidance: string;
+
+      source: 'reddit' | 'github' | 'trustmrr' | 'hacker_news' | 'google_trends' | 'wikipedia' | 'polymarket';
+
+      /**
+       * Current-topic research this source supports.
+       */
+      useFor: string;
     }
 
     export interface ScorerWeight {

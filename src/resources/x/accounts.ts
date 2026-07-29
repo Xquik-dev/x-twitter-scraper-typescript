@@ -17,12 +17,12 @@ export class Accounts extends APIResource {
    * const account = await client.x.accounts.create({
    *   email: 'account@example.invalid',
    *   password: '<ACCOUNT_PASSWORD>',
-   *   username: 'your_x_username',
    *   totp_secret: '<TOTP_SECRET>',
+   *   username: 'your_x_username',
    * });
    * ```
    */
-  create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
+  create(body: AccountCreateParams, options?: RequestOptions): APIPromise<unknown> {
     return this._client.post('/x/accounts', { body, ...options });
   }
 
@@ -105,9 +105,9 @@ export interface XAccount {
   /**
    * Derived connection health. `healthy` = session active. `needsReauth` = user must
    * submit fresh credentials. `locked` = X locked the account; unlock on x.com
-   * first. `suspended` = X banned the account. `recovering` = past cooldown, will
-   * auto-retry on next use. `temporaryIssue` = temporary connection problem; retry
-   * shortly.
+   * first. `suspended` = X banned the account. `recovering` = cooldown ended; the
+   * account can reconnect on its next use. `temporaryIssue` = temporary connection
+   * problem; wait before the next use.
    */
   health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
 
@@ -143,22 +143,7 @@ export interface XAccountDetail {
   updatedAt?: string;
 }
 
-/**
- * Sanitized X account summary returned by connect and reauth.
- */
-export interface AccountCreateResponse {
-  id: string;
-
-  createdAt: string;
-
-  health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
-
-  status: string;
-
-  xUserId: string;
-
-  xUsername: string;
-}
+export type AccountCreateResponse = unknown;
 
 export interface AccountListResponse {
   accounts: Array<XAccount>;
@@ -204,14 +189,14 @@ export interface AccountCreateParams {
   password: string;
 
   /**
+   * Authenticator App TOTP secret required for durable login
+   */
+  totp_secret: string;
+
+  /**
    * X username
    */
   username: string;
-
-  /**
-   * TOTP secret for 2FA
-   */
-  totp_secret?: string;
 }
 
 export interface AccountReauthParams {
@@ -226,7 +211,7 @@ export interface AccountReauthParams {
   email?: string;
 
   /**
-   * TOTP secret for 2FA re-authentication
+   * Replacement Authenticator App TOTP secret. Omit it to reuse the saved secret.
    */
   totp_secret?: string;
 }

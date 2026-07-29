@@ -1,6 +1,10 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 export {
+  AccountConnectionAttempts,
+  type AccountConnectionAttemptRetrieveResponse,
+} from './account-connection-attempts';
+export {
   AccountConnectionChallenges,
   type AccountConnectionChallengeSubmitResponse,
   type AccountConnectionChallengeSubmitParams,
