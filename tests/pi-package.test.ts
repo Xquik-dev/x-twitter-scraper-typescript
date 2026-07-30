@@ -16,9 +16,19 @@ type PackageManifest = {
   };
 };
 
+type SkillMetadata = {
+  version: string;
+};
+
 const packageRoot = resolve(__dirname, '..');
 
 const manifest = JSON.parse(readFileSync(resolve(packageRoot, 'package.json'), 'utf8')) as PackageManifest;
+const skillRoot = resolve(packageRoot, 'skills/x-twitter-scraper');
+const skill = readFileSync(resolve(skillRoot, 'SKILL.md'), 'utf8');
+const skillMetadata = JSON.parse(readFileSync(resolve(skillRoot, 'metadata.json'), 'utf8')) as SkillMetadata;
+const mcpSetup = readFileSync(resolve(skillRoot, 'references/mcp-setup.md'), 'utf8');
+const mcpTools = readFileSync(resolve(skillRoot, 'references/mcp-tools.md'), 'utf8');
+const xApiTypes = readFileSync(resolve(skillRoot, 'references/types-x-api.md'), 'utf8');
 
 describe('package metadata', () => {
   test('preserves support and removed resource contracts', () => {
@@ -38,5 +48,17 @@ describe('package metadata', () => {
     expect(existsSync(resolve(packageRoot, 'skills/xquik-social-research/SKILL.md'))).toBe(true);
     expect(existsSync(resolve(packageRoot, 'skills/x-twitter-scraper/LICENSE'))).toBe(true);
     expect(existsSync(resolve(packageRoot, 'assets/pi-package.png'))).toBe(true);
+  });
+
+  test('bundles the current MCP Skill contract', () => {
+    expect.assertions(8);
+    expect(skillMetadata.version).toBe('2.6.0');
+    expect(skill).toMatch(/^version: ['"]2\.6\.0['"]$/mu);
+    expect(skill).not.toContain('2.5.6');
+    expect(mcpSetup).toContain('MCP `2026-07-28`');
+    expect(mcpSetup).toContain('server/discover');
+    expect(mcpTools).toContain('Current MCP SDKs');
+    expect(mcpTools).toContain('Modern calls need no initialization session.');
+    expect(xApiTypes).toContain('author?: TweetAuthor');
   });
 });
