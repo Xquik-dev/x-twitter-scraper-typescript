@@ -8,6 +8,15 @@
 * clarify which credential, checkout, and guest-wallet operations stay outside MCP
 * refresh the bundled SkillSpector v2.3.7 evidence with 0 findings
 
+## 0.7.1 (2026-07-30)
+
+Full Changelog: [v0.7.0...v0.7.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.7.0...v0.7.1)
+
+### Documentation
+
+* refresh bundled Skill audit evidence ([821b5c2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/821b5c29f987822970505e4ede777fc81fabaf4f))
+* sync MCP 2026 Skill ([db5ba8d](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/db5ba8de038019e8d020510c2f7398d90a8ec767))
+
 ## 0.7.0 (2026-07-29)
 
 Full Changelog: [v0.6.2...v0.7.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.6.2...v0.7.0)
