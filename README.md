@@ -33,6 +33,9 @@ pi install npm:x-twitter-scraper
 Pi loads the packaged X API and social research Skills. The typed SDK remains
 available from the same npm package.
 
+The bundled X API Skill is v2.6.0. It documents MCP `2026-07-28` discovery,
+stateless calls, legacy compatibility, and safe read-data richness.
+
 ## Common X Data Tasks
 
 Use the linked TypeScript API map for typed method names.
@@ -64,6 +67,9 @@ Keep application code on the typed REST SDK. For MCP clients, add
 path](https://docs.xquik.com/mcp/overview#client-compatibility). OAuth-capable
 clients complete OAuth 2.1 in the browser. API-key fallback is client-specific.
 ChatGPT custom apps require OAuth.
+
+Current MCP SDKs use `server/discover`. Modern clients skip `initialize` and
+session IDs.
 
 > **Codex OAuth compatibility:** Affected Codex releases discard the RFC 9207
 > `iss` callback value even though Xquik returns it. If Codex reports
