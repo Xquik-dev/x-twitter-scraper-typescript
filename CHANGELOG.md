@@ -5,6 +5,8 @@
 ### Documentation
 
 * sync bundled Xquik Skill 2.6.0 with MCP 2026-07-28 discovery and safe read richness
+* clarify which credential, checkout, and guest-wallet operations stay outside MCP
+* refresh the bundled SkillSpector v2.3.7 evidence with 0 findings
 
 ## 0.7.0 (2026-07-29)
 

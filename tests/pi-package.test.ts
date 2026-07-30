@@ -28,6 +28,7 @@ const skill = readFileSync(resolve(skillRoot, 'SKILL.md'), 'utf8');
 const skillMetadata = JSON.parse(readFileSync(resolve(skillRoot, 'metadata.json'), 'utf8')) as SkillMetadata;
 const mcpSetup = readFileSync(resolve(skillRoot, 'references/mcp-setup.md'), 'utf8');
 const mcpTools = readFileSync(resolve(skillRoot, 'references/mcp-tools.md'), 'utf8');
+const skillSpectorReport = readFileSync(resolve(skillRoot, 'skillspector-report.md'), 'utf8');
 const xApiTypes = readFileSync(resolve(skillRoot, 'references/types-x-api.md'), 'utf8');
 
 describe('package metadata', () => {
@@ -51,7 +52,7 @@ describe('package metadata', () => {
   });
 
   test('bundles the current MCP Skill contract', () => {
-    expect.assertions(8);
+    expect.assertions(11);
     expect(skillMetadata.version).toBe('2.6.0');
     expect(skill).toMatch(/^version: ['"]2\.6\.0['"]$/mu);
     expect(skill).not.toContain('2.5.6');
@@ -59,6 +60,9 @@ describe('package metadata', () => {
     expect(mcpSetup).toContain('server/discover');
     expect(mcpTools).toContain('Current MCP SDKs');
     expect(mcpTools).toContain('Modern calls need no initialization session.');
+    expect(mcpTools).toContain('credential, checkout, or guest-wallet operations');
+    expect(skillSpectorReport).toContain('**Scanned:** 2026-07-30');
+    expect(skillSpectorReport).toContain('- Findings: 0');
     expect(xApiTypes).toContain('author?: TweetAuthor');
   });
 });
