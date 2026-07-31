@@ -666,11 +666,6 @@ export namespace CommunityRetrieveInfoResponse {
     invites_policy?: string;
 
     /**
-     * Whether the authenticated viewer is a member
-     */
-    is_member?: boolean;
-
-    /**
      * Whether the community is marked sensitive
      */
     is_nsfw?: boolean;
@@ -699,11 +694,6 @@ export namespace CommunityRetrieveInfoResponse {
      * Primary topic
      */
     primary_topic?: Community.PrimaryTopic;
-
-    /**
-     * Authenticated viewer's community role
-     */
-    role?: string;
 
     /**
      * Community rules
@@ -824,10 +814,8 @@ export interface CommunityRetrieveSearchParams {
   cursor?: string;
 
   /**
-   * Maximum items requested from this page (1-100, default 20). The response can
-   * contain fewer items because the source returned fewer, filters removed items, or
-   * the available usage balance covers fewer results. Keep requesting next_cursor while
-   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+   * results. Continue while has_next_page is true. Deprecated limit and count
    * aliases remain accepted.
    */
   pageSize?: number;

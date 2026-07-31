@@ -133,28 +133,28 @@ export namespace TicketCreateResponse {
 }
 
 export interface TicketRetrieveResponse {
-  createdAt?: string;
+  createdAt: string;
 
-  messages?: Array<TicketRetrieveResponse.Message>;
+  messages: Array<TicketRetrieveResponse.Message>;
 
-  publicId?: string;
+  publicId: string;
 
-  status?: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
 
-  subject?: string;
+  subject: string;
 
-  updatedAt?: string;
+  updatedAt: string;
 }
 
 export namespace TicketRetrieveResponse {
   export interface Message {
-    attachments?: Array<Message.Attachment>;
+    attachments: Array<Message.Attachment>;
 
-    body?: string;
+    body: string;
 
-    createdAt?: string;
+    createdAt: string;
 
-    sender?: string;
+    sender: 'user' | 'support' | 'system';
   }
 
   export namespace Message {
@@ -196,28 +196,28 @@ export namespace TicketRetrieveResponse {
 }
 
 export interface TicketUpdateResponse {
-  publicId?: string;
+  publicId: string;
 
-  status?: string;
+  status: 'open' | 'resolved' | 'closed';
 }
 
 export interface TicketListResponse {
-  tickets?: Array<TicketListResponse.Ticket>;
+  tickets: Array<TicketListResponse.Ticket>;
 }
 
 export namespace TicketListResponse {
   export interface Ticket {
-    createdAt?: string;
+    createdAt: string;
 
-    messageCount?: number;
+    messageCount: number;
 
-    publicId?: string;
+    publicId: string;
 
-    status?: string;
+    status: 'open' | 'in_progress' | 'resolved' | 'closed';
 
-    subject?: string;
+    subject: string;
 
-    updatedAt?: string;
+    updatedAt: string;
   }
 }
 
