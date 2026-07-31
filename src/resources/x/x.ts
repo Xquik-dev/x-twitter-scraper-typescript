@@ -86,6 +86,7 @@ import {
   TweetGetFavoritersParams,
   TweetGetQuotesParams,
   TweetGetRepliesParams,
+  TweetGetRepliesResponse,
   TweetGetRetweetersParams,
   TweetGetThreadParams,
   TweetListParams,
@@ -278,8 +279,6 @@ export namespace XGetArticleResponse {
 
     username: string;
 
-    canDm?: boolean;
-
     createdAt?: string;
 
     description?: string;
@@ -346,9 +345,24 @@ export namespace XGetTrendsResponse {
 
     description?: string;
 
+    /**
+     * Promotion identifier from X. Null for organic trends.
+     */
+    promotedContent?: string | null;
+
     query?: string;
 
     rank?: number;
+
+    /**
+     * Approximate public post volume when X supplies it.
+     */
+    tweetVolume?: number | null;
+
+    /**
+     * X search URL for the trend.
+     */
+    url?: string;
   }
 }
 
@@ -421,6 +435,7 @@ export declare namespace X {
     type TweetCreateResponse as TweetCreateResponse,
     type TweetRetrieveResponse as TweetRetrieveResponse,
     type TweetDeleteResponse as TweetDeleteResponse,
+    type TweetGetRepliesResponse as TweetGetRepliesResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
     type TweetDeleteParams as TweetDeleteParams,

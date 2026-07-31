@@ -37,9 +37,24 @@ export namespace TrendListResponse {
 
     description?: string;
 
+    /**
+     * Promotion identifier from X. Null for organic trends.
+     */
+    promotedContent?: string | null;
+
     query?: string;
 
     rank?: number;
+
+    /**
+     * Approximate public post volume when X supplies it.
+     */
+    tweetVolume?: number | null;
+
+    /**
+     * X search URL for the trend.
+     */
+    url?: string;
   }
 }
 

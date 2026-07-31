@@ -237,6 +237,7 @@ Types:
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetCreateResponse</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetRetrieveResponse</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetDeleteResponse</a></code>
+- <code><a href="./src/resources/x/tweets/tweets.ts">TweetGetRepliesResponse</a></code>
 
 Methods:
 
@@ -246,7 +247,7 @@ Methods:
 - <code title="delete /x/tweets/{id}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">delete</a>(id, { ...params }) -> TweetDeleteResponse</code>
 - <code title="get /x/tweets/{id}/favoriters">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getFavoriters</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/tweets/{id}/quotes">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getQuotes</a>(id, { ...params }) -> PaginatedTweets</code>
-- <code title="get /x/tweets/{id}/replies">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getReplies</a>(id, { ...params }) -> PaginatedTweets</code>
+- <code title="get /x/tweets/{id}/replies">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getReplies</a>(id, { ...params }) -> TweetGetRepliesResponse</code>
 - <code title="get /x/tweets/{id}/retweeters">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getRetweeters</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/tweets/{id}/thread">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">getThread</a>(id, { ...params }) -> PaginatedTweets</code>
 - <code title="get /x/tweets/search">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">search</a>({ ...params }) -> PaginatedTweets</code>
@@ -408,7 +409,7 @@ Types:
 
 Methods:
 
-- <code title="post /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">create</a>({ ...params }) -> unknown</code>
+- <code title="post /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">create</a>({ ...params }) -> AccountCreateResponse</code>
 - <code title="get /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">retrieve</a>(id) -> XAccountDetail</code>
 - <code title="get /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">list</a>() -> AccountListResponse</code>
 - <code title="delete /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">delete</a>(id) -> AccountDeleteResponse</code>

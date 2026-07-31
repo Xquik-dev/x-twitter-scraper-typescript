@@ -43,7 +43,7 @@ export interface AccountConnectionChallengeSubmitResponse {
 
   health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
 
-  status: string;
+  status: 'active';
 
   xUserId: string;
 
