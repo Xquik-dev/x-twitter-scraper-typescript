@@ -21,6 +21,7 @@ export {
   type TweetCreateResponse,
   type TweetRetrieveResponse,
   type TweetDeleteResponse,
+  type TweetGetRepliesResponse,
   type TweetCreateParams,
   type TweetListParams,
   type TweetDeleteParams,

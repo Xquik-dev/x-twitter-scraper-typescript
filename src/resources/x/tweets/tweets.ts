@@ -127,24 +127,21 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Returns visible replies. For an unfiltered first page, Xquik compares a terminal
-   * page with the post's reported reply count. If the page is visibly incomplete,
-   * the endpoint returns 424 `replies_incomplete` instead of presenting partial
-   * coverage as complete. Use tweet search with a `conversation_id:{id}` query as
-   * the broader fallback.
+   * Returns direct replies. Complete mode merges available timeline views, supported
+   * rankings, every forward cursor module, labeled hidden-content branches,
+   * exact-parent time partitions scaled to the reported reply count, and search. It
+   * separates nested replies and returns 424 below 80% coverage.
    *
    * @example
    * ```ts
-   * const paginatedTweets = await client.x.tweets.getReplies(
-   *   'id',
-   * );
+   * const response = await client.x.tweets.getReplies('id');
    * ```
    */
   getReplies(
     id: string,
     query: TweetGetRepliesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<TweetGetRepliesResponse> {
     return this._client.get(path`/x/tweets/${id}/replies`, { query, ...options });
   }
 
@@ -203,7 +200,11 @@ export class Tweets extends APIResource {
  * Tweet author profile. The lookup route always includes follower count and
  * verification state. Other profile fields appear when available.
  */
-export interface TweetAuthor extends Shared.UserProfile {}
+export interface TweetAuthor extends Shared.UserProfile {
+  followers: number;
+
+  verified: boolean;
+}
 
 /**
  * Full tweet with text, engagement metrics, media, and metadata. A zero metric can
@@ -227,10 +228,25 @@ export interface TweetDetail {
   viewCount: number;
 
   /**
+   * Article metadata attached to a tweet.
+   */
+  article?: TweetDetail.Article;
+
+  /**
    * Tweet author profile. The lookup route always includes follower count and
    * verification state. Other profile fields appear when available.
    */
   author?: TweetAuthor;
+
+  /**
+   * Public card metadata attached to a tweet.
+   */
+  card?: TweetDetail.Card;
+
+  /**
+   * Community Note presentation metadata returned by X.
+   */
+  communityNote?: TweetDetail.CommunityNote;
 
   /**
    * Content disclosure metadata shown by X when a tweet is labeled as paid
@@ -249,6 +265,11 @@ export interface TweetDetail {
    * Start and end offsets for rendered tweet text
    */
   displayTextRange?: Array<number>;
+
+  /**
+   * Edit history metadata returned by X.
+   */
+  edit?: TweetDetail.Edit;
 
   /**
    * Parsed entities from the tweet text (URLs, mentions, hashtags, media)
@@ -290,6 +311,8 @@ export interface TweetDetail {
    */
   isReply?: boolean;
 
+  isTranslatable?: boolean;
+
   /**
    * Tweet language code
    */
@@ -299,6 +322,23 @@ export interface TweetDetail {
    * Attached media items, omitted when the tweet has no media
    */
   media?: Array<Shared.TweetMedia>;
+
+  /**
+   * Complete Note Tweet content and rich-text metadata.
+   */
+  noteTweet?: TweetDetail.NoteTweet;
+
+  /**
+   * Public place metadata attached to a tweet.
+   */
+  place?: TweetDetail.Place;
+
+  possiblySensitive?: boolean;
+
+  /**
+   * Engagement counts retained from a prior tweet edit.
+   */
+  previousCounts?: TweetDetail.PreviousCounts;
 
   /**
    * Quoted or retweeted tweet context. Every object includes id, text, and
@@ -328,6 +368,125 @@ export interface TweetDetail {
    * Tweet permalink URL
    */
   url?: string;
+
+  viewState?: string;
+}
+
+export namespace TweetDetail {
+  /**
+   * Article metadata attached to a tweet.
+   */
+  export interface Article {
+    id?: string;
+
+    coverMediaUrl?: string;
+
+    previewText?: string;
+
+    title?: string;
+  }
+
+  /**
+   * Public card metadata attached to a tweet.
+   */
+  export interface Card {
+    id?: string;
+
+    bindingValues?: { [key: string]: unknown };
+
+    name?: string;
+
+    url?: string;
+  }
+
+  /**
+   * Community Note presentation metadata returned by X.
+   */
+  export interface CommunityNote {
+    id?: string;
+
+    destinationUrl?: string;
+
+    footer?: string;
+
+    shortTitle?: string;
+
+    subtitle?: string;
+
+    title?: string;
+
+    visualStyle?: string;
+  }
+
+  /**
+   * Edit history metadata returned by X.
+   */
+  export interface Edit {
+    editableUntilMsecs?: string;
+
+    editTweetIds?: Array<string>;
+  }
+
+  /**
+   * Complete Note Tweet content and rich-text metadata.
+   */
+  export interface NoteTweet {
+    text: string;
+
+    id?: string;
+
+    entities?: { [key: string]: unknown };
+
+    isExpandable?: boolean;
+
+    richtextTags?: Array<NoteTweet.RichtextTag>;
+  }
+
+  export namespace NoteTweet {
+    export interface RichtextTag {
+      fromIndex: number;
+
+      toIndex: number;
+
+      types: Array<string>;
+    }
+  }
+
+  /**
+   * Public place metadata attached to a tweet.
+   */
+  export interface Place {
+    id?: string;
+
+    boundingBox?: { [key: string]: unknown };
+
+    country?: string;
+
+    countryCode?: string;
+
+    fullName?: string;
+
+    name?: string;
+
+    placeType?: string;
+
+    url?: string;
+  }
+
+  /**
+   * Engagement counts retained from a prior tweet edit.
+   */
+  export interface PreviousCounts {
+    bookmarkCount?: number;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+  }
 }
 
 /**
@@ -830,6 +989,210 @@ export namespace TweetDeleteResponse {
   }
 }
 
+/**
+ * Reply rows. Complete mode also returns nested replies and coverage diagnostics.
+ * Keep nested replies separate from direct coverage.
+ */
+export interface TweetGetRepliesResponse extends Shared.PaginatedTweets {
+  /**
+   * Evidence for direct-reply coverage and collector behavior.
+   */
+  diagnostic?: TweetGetRepliesResponse.Diagnostic;
+
+  /**
+   * Nested replies. Excluded from direct coverage.
+   */
+  nested_replies?: Array<Shared.SearchTweet>;
+}
+
+export namespace TweetGetRepliesResponse {
+  /**
+   * Evidence for direct-reply coverage and collector behavior.
+   */
+  export interface Diagnostic {
+    /**
+     * Whether coverage met the target without truncation.
+     */
+    complete: boolean;
+
+    /**
+     * Unique direct replies as a percentage of the reported count.
+     */
+    coveragePercentage: number;
+
+    /**
+     * Cursor requests that failed.
+     */
+    cursorFailures: number;
+
+    /**
+     * Duplicate tweet IDs removed across pages and strategies.
+     */
+    duplicateCount: number;
+
+    /**
+     * Empty pages rejected because they did not make progress.
+     */
+    emptyFalseProgressPages: number;
+
+    /**
+     * Malformed response items rejected.
+     */
+    malformedCount: number;
+
+    /**
+     * Expected response modules or fields missing from X.
+     */
+    missingResponseModulesOrFields: Array<string>;
+
+    /**
+     * Unique nested replies kept outside direct coverage.
+     */
+    nestedReplyCount: number;
+
+    /**
+     * Total pages attempted across all strategies.
+     */
+    pagesAttempted: number;
+
+    /**
+     * Recommended next action when coverage is incomplete.
+     */
+    recommendedFallback: string;
+
+    /**
+     * Repeated cursors rejected to prevent loops.
+     */
+    repeatedCursorCount: number;
+
+    /**
+     * Reply count reported on the source post.
+     */
+    reportedReplyCount: number;
+
+    /**
+     * Whether the requested row limit truncated safe results.
+     */
+    responseTruncated: boolean;
+
+    /**
+     * Field-presence counts across the collected direct replies.
+     */
+    richness: Diagnostic.Richness;
+
+    /**
+     * Per-strategy pagination and contribution evidence.
+     */
+    strategiesAttempted: Array<Diagnostic.StrategiesAttempted>;
+
+    /**
+     * Minimum direct replies required for the coverage target.
+     */
+    targetDirectReplies: number;
+
+    /**
+     * Unique replies whose parent ID equals the source post ID.
+     */
+    uniqueDirectReplies: number;
+
+    /**
+     * Tweets rejected because they belonged elsewhere.
+     */
+    unrelatedCount: number;
+  }
+
+  export namespace Diagnostic {
+    /**
+     * Field-presence counts across the collected direct replies.
+     */
+    export interface Richness {
+      /**
+       * Replies with article content.
+       */
+      article: number;
+
+      /**
+       * Replies with author details.
+       */
+      author: number;
+
+      /**
+       * Replies with card metadata.
+       */
+      card: number;
+
+      /**
+       * Replies with community-note data.
+       */
+      communityNote: number;
+
+      /**
+       * Replies with a creation timestamp.
+       */
+      createdAt: number;
+
+      /**
+       * Replies with engagement counts.
+       */
+      engagementCounts: number;
+
+      /**
+       * Replies with entity metadata.
+       */
+      entities: number;
+
+      /**
+       * Replies with a language value.
+       */
+      language: number;
+
+      /**
+       * Replies with media metadata.
+       */
+      media: number;
+
+      /**
+       * Replies with quoted or reposted tweet data.
+       */
+      quotedOrRepostedTweet: number;
+
+      /**
+       * Replies with text.
+       */
+      text: number;
+
+      /**
+       * Total unique direct replies evaluated for richness.
+       */
+      totalReplies: number;
+
+      /**
+       * Replies with a canonical URL.
+       */
+      url: number;
+    }
+
+    export interface StrategiesAttempted {
+      name: string;
+
+      newDirectReplies: number;
+
+      newNestedReplies: number;
+
+      pagesAttempted: number;
+
+      stopReason:
+        | 'deadline'
+        | 'empty_pages'
+        | 'error'
+        | 'missing_cursor'
+        | 'no_next_page'
+        | 'page_cap'
+        | 'repeated_cursor';
+    }
+  }
+}
+
 export interface TweetCreateParams {
   /**
    * Body param: X account (@username or account ID)
@@ -997,10 +1360,8 @@ export interface TweetGetQuotesParams {
   minRetweets?: number;
 
   /**
-   * Maximum items requested from this page (1-100, default 20). The response can
-   * contain fewer items because the source returned fewer, filters removed items, or
-   * remaining credits cover fewer results. Keep requesting next_cursor while
-   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+   * results. Continue while has_next_page is true. Deprecated limit and count
    * aliases remain accepted.
    */
   pageSize?: number;
@@ -1119,6 +1480,13 @@ export interface TweetGetRepliesParams {
   language?: string;
 
   /**
+   * With mode=complete, maximum combined direct and nested reply rows (1-25000).
+   * Without complete mode, this is the deprecated pageSize alias and uses the normal
+   * 1-100 page range.
+   */
+  limit?: number;
+
+  /**
    * Filter by media type.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
@@ -1149,10 +1517,14 @@ export interface TweetGetRepliesParams {
   minRetweets?: number;
 
   /**
-   * Maximum items requested from this page (1-100, default 20). The response can
-   * contain fewer items because the source returned fewer, filters removed items, or
-   * remaining credits cover fewer results. Keep requesting next_cursor while
-   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * Set complete for maximum-coverage collection. Complete mode accepts only limit.
+   * Remove cursor, pageSize, count, time ranges, and tweet filters.
+   */
+  mode?: 'complete';
+
+  /**
+   * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+   * results. Continue while has_next_page is true. Deprecated limit and count
    * aliases remain accepted.
    */
   pageSize?: number;
@@ -1240,10 +1612,8 @@ export interface TweetGetThreadParams {
   cursor?: string;
 
   /**
-   * Maximum items requested from this page (1-100, default 20). The response can
-   * contain fewer items because the source returned fewer, filters removed items, or
-   * remaining credits cover fewer results. Keep requesting next_cursor while
-   * has_next_page is true, even when a page is empty. The deprecated limit and count
+   * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+   * results. Continue while has_next_page is true. Deprecated limit and count
    * aliases remain accepted.
    */
   pageSize?: number;
@@ -1450,6 +1820,7 @@ export declare namespace Tweets {
     type TweetCreateResponse as TweetCreateResponse,
     type TweetRetrieveResponse as TweetRetrieveResponse,
     type TweetDeleteResponse as TweetDeleteResponse,
+    type TweetGetRepliesResponse as TweetGetRepliesResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
     type TweetDeleteParams as TweetDeleteParams,

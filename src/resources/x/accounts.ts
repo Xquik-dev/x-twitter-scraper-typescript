@@ -22,7 +22,7 @@ export class Accounts extends APIResource {
    * });
    * ```
    */
-  create(body: AccountCreateParams, options?: RequestOptions): APIPromise<unknown> {
+  create(body: AccountCreateParams, options?: RequestOptions): APIPromise<AccountCreateResponse> {
     return this._client.post('/x/accounts', { body, ...options });
   }
 
@@ -143,7 +143,63 @@ export interface XAccountDetail {
   updatedAt?: string;
 }
 
-export type AccountCreateResponse = unknown;
+/**
+ * Sanitized X account summary returned by connect and reauth.
+ */
+export type AccountCreateResponse =
+  | AccountCreateResponse.SanitizedXAccount
+  | AccountCreateResponse.XAccountConnectionAttemptPending
+  | AccountCreateResponse.XAccountConnectionChallenge;
+
+export namespace AccountCreateResponse {
+  /**
+   * Sanitized X account summary returned by connect and reauth.
+   */
+  export interface SanitizedXAccount {
+    id: string;
+
+    createdAt: string;
+
+    health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
+
+    status: 'active';
+
+    xUserId: string;
+
+    xUsername: string;
+  }
+
+  /**
+   * The connection is still in progress.
+   */
+  export interface XAccountConnectionAttemptPending {
+    id: string;
+
+    object: 'x_account_connection_attempt';
+
+    pollAfterMs: number;
+
+    status: 'pending';
+  }
+
+  /**
+   * Resumable account connection challenge. Submit the email code to finish the same
+   * connection attempt.
+   */
+  export interface XAccountConnectionChallenge {
+    id: string;
+
+    expiresAt: string;
+
+    message: string;
+
+    object: 'x_account_connection_challenge';
+
+    status: 'requires_email_code';
+
+    username: string;
+  }
+}
 
 export interface AccountListResponse {
   accounts: Array<XAccount>;
@@ -170,7 +226,7 @@ export interface AccountReauthResponse {
 
   health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
 
-  status: string;
+  status: 'active';
 
   xUserId: string;
 

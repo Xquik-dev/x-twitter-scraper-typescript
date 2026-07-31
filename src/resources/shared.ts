@@ -20,11 +20,6 @@ export namespace ContentDisclosure {
 
   export interface AIGenerated {
     /**
-     * Whether the disclosure can be edited on X.
-     */
-    canEdit?: boolean;
-
-    /**
      * Source of the AI-generated media disclosure.
      */
     detectionSource?: string;
@@ -59,9 +54,24 @@ export interface EmbeddedTweet {
   viewCount: number;
 
   /**
+   * Article metadata attached to a tweet.
+   */
+  article?: EmbeddedTweet.Article;
+
+  /**
    * X user profile with bio, follower counts, and verification status.
    */
   author?: UserProfile;
+
+  /**
+   * Public card metadata attached to a tweet.
+   */
+  card?: EmbeddedTweet.Card;
+
+  /**
+   * Community Note presentation metadata returned by X.
+   */
+  communityNote?: EmbeddedTweet.CommunityNote;
 
   /**
    * Content disclosure metadata shown by X when a tweet is labeled as paid
@@ -74,6 +84,11 @@ export interface EmbeddedTweet {
   createdAt?: string;
 
   displayTextRange?: Array<number>;
+
+  /**
+   * Edit history metadata returned by X.
+   */
+  edit?: EmbeddedTweet.Edit;
 
   entities?: { [key: string]: unknown };
 
@@ -91,15 +106,167 @@ export interface EmbeddedTweet {
 
   isReply?: boolean;
 
+  isTranslatable?: boolean;
+
   lang?: string;
 
   media?: Array<TweetMedia>;
+
+  /**
+   * Complete Note Tweet content and rich-text metadata.
+   */
+  noteTweet?: EmbeddedTweet.NoteTweet;
+
+  /**
+   * Public place metadata attached to a tweet.
+   */
+  place?: EmbeddedTweet.Place;
+
+  possiblySensitive?: boolean;
+
+  /**
+   * Engagement counts retained from a prior tweet edit.
+   */
+  previousCounts?: EmbeddedTweet.PreviousCounts;
+
+  /**
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
+   */
+  quoted_tweet?: EmbeddedTweet;
+
+  /**
+   * Quoted or retweeted tweet context. Every object includes id, text, and
+   * engagement metrics. A zero metric can mean X did not report the count. Author,
+   * media, and conversation fields appear when available.
+   */
+  retweeted_tweet?: EmbeddedTweet;
 
   source?: string;
 
   type?: string;
 
   url?: string;
+
+  viewState?: string;
+}
+
+export namespace EmbeddedTweet {
+  /**
+   * Article metadata attached to a tweet.
+   */
+  export interface Article {
+    id?: string;
+
+    coverMediaUrl?: string;
+
+    previewText?: string;
+
+    title?: string;
+  }
+
+  /**
+   * Public card metadata attached to a tweet.
+   */
+  export interface Card {
+    id?: string;
+
+    bindingValues?: { [key: string]: unknown };
+
+    name?: string;
+
+    url?: string;
+  }
+
+  /**
+   * Community Note presentation metadata returned by X.
+   */
+  export interface CommunityNote {
+    id?: string;
+
+    destinationUrl?: string;
+
+    footer?: string;
+
+    shortTitle?: string;
+
+    subtitle?: string;
+
+    title?: string;
+
+    visualStyle?: string;
+  }
+
+  /**
+   * Edit history metadata returned by X.
+   */
+  export interface Edit {
+    editableUntilMsecs?: string;
+
+    editTweetIds?: Array<string>;
+  }
+
+  /**
+   * Complete Note Tweet content and rich-text metadata.
+   */
+  export interface NoteTweet {
+    text: string;
+
+    id?: string;
+
+    entities?: { [key: string]: unknown };
+
+    isExpandable?: boolean;
+
+    richtextTags?: Array<NoteTweet.RichtextTag>;
+  }
+
+  export namespace NoteTweet {
+    export interface RichtextTag {
+      fromIndex: number;
+
+      toIndex: number;
+
+      types: Array<string>;
+    }
+  }
+
+  /**
+   * Public place metadata attached to a tweet.
+   */
+  export interface Place {
+    id?: string;
+
+    boundingBox?: { [key: string]: unknown };
+
+    country?: string;
+
+    countryCode?: string;
+
+    fullName?: string;
+
+    name?: string;
+
+    placeType?: string;
+
+    url?: string;
+  }
+
+  /**
+   * Engagement counts retained from a prior tweet edit.
+   */
+  export interface PreviousCounts {
+    bookmarkCount?: number;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+  }
 }
 
 /**
@@ -374,11 +541,10 @@ export type EventType =
   | 'profile.unavailable.changed';
 
 /**
- * Paginated tweet results. The item count can be lower than pageSize when the
- * source returns fewer tweets, filters remove tweets, or remaining credits cover
- * fewer results. Follow next_cursor while has_next_page is true. An empty page can
- * still have has_next_page true after filtering. Zero affordable results returns
- * 402 insufficient_credits.
+ * Paginated tweets. Source visibility, filters, or remaining credits can reduce
+ * results. An empty filtered page can still have has_next_page true. Follow
+ * next_cursor while has_next_page is true. Zero affordable results returns 402
+ * insufficient_credits.
  */
 export interface PaginatedTweets {
   has_next_page: boolean;
@@ -425,9 +591,24 @@ export interface SearchTweet {
   viewCount: number;
 
   /**
+   * Article metadata attached to a tweet.
+   */
+  article?: SearchTweet.Article;
+
+  /**
    * X user profile with bio, follower counts, and verification status.
    */
   author?: UserProfile;
+
+  /**
+   * Public card metadata attached to a tweet.
+   */
+  card?: SearchTweet.Card;
+
+  /**
+   * Community Note presentation metadata returned by X.
+   */
+  communityNote?: SearchTweet.CommunityNote;
 
   /**
    * Content disclosure metadata shown by X when a tweet is labeled as paid
@@ -446,6 +627,11 @@ export interface SearchTweet {
    * Rendered text's start and end offsets.
    */
   displayTextRange?: Array<number>;
+
+  /**
+   * Edit history metadata returned by X.
+   */
+  edit?: SearchTweet.Edit;
 
   /**
    * Parsed search-result entities including URLs, mentions, hashtags, and media
@@ -488,6 +674,8 @@ export interface SearchTweet {
    */
   isReply?: boolean;
 
+  isTranslatable?: boolean;
+
   /**
    * Search result language code.
    */
@@ -497,6 +685,23 @@ export interface SearchTweet {
    * Search-result media attachments, omitted when no media is present
    */
   media?: Array<TweetMedia>;
+
+  /**
+   * Complete Note Tweet content and rich-text metadata.
+   */
+  noteTweet?: SearchTweet.NoteTweet;
+
+  /**
+   * Public place metadata attached to a tweet.
+   */
+  place?: SearchTweet.Place;
+
+  possiblySensitive?: boolean;
+
+  /**
+   * Engagement counts retained from a prior tweet edit.
+   */
+  previousCounts?: SearchTweet.PreviousCounts;
 
   /**
    * Quoted or retweeted tweet context. Every object includes id, text, and
@@ -523,6 +728,125 @@ export interface SearchTweet {
    * Search result permalink.
    */
   url?: string;
+
+  viewState?: string;
+}
+
+export namespace SearchTweet {
+  /**
+   * Article metadata attached to a tweet.
+   */
+  export interface Article {
+    id?: string;
+
+    coverMediaUrl?: string;
+
+    previewText?: string;
+
+    title?: string;
+  }
+
+  /**
+   * Public card metadata attached to a tweet.
+   */
+  export interface Card {
+    id?: string;
+
+    bindingValues?: { [key: string]: unknown };
+
+    name?: string;
+
+    url?: string;
+  }
+
+  /**
+   * Community Note presentation metadata returned by X.
+   */
+  export interface CommunityNote {
+    id?: string;
+
+    destinationUrl?: string;
+
+    footer?: string;
+
+    shortTitle?: string;
+
+    subtitle?: string;
+
+    title?: string;
+
+    visualStyle?: string;
+  }
+
+  /**
+   * Edit history metadata returned by X.
+   */
+  export interface Edit {
+    editableUntilMsecs?: string;
+
+    editTweetIds?: Array<string>;
+  }
+
+  /**
+   * Complete Note Tweet content and rich-text metadata.
+   */
+  export interface NoteTweet {
+    text: string;
+
+    id?: string;
+
+    entities?: { [key: string]: unknown };
+
+    isExpandable?: boolean;
+
+    richtextTags?: Array<NoteTweet.RichtextTag>;
+  }
+
+  export namespace NoteTweet {
+    export interface RichtextTag {
+      fromIndex: number;
+
+      toIndex: number;
+
+      types: Array<string>;
+    }
+  }
+
+  /**
+   * Public place metadata attached to a tweet.
+   */
+  export interface Place {
+    id?: string;
+
+    boundingBox?: { [key: string]: unknown };
+
+    country?: string;
+
+    countryCode?: string;
+
+    fullName?: string;
+
+    name?: string;
+
+    placeType?: string;
+
+    url?: string;
+  }
+
+  /**
+   * Engagement counts retained from a prior tweet edit.
+   */
+  export interface PreviousCounts {
+    bookmarkCount?: number;
+
+    likeCount?: number;
+
+    quoteCount?: number;
+
+    replyCount?: number;
+
+    retweetCount?: number;
+  }
 }
 
 /**
@@ -542,12 +866,120 @@ export interface TweetMedia {
   url: string;
 
   /**
+   * X media entity ID.
+   */
+  id?: string;
+
+  /**
+   * Whether X permits direct media download.
+   */
+  allowDownload?: boolean;
+
+  /**
+   * Accessibility text supplied for the media.
+   */
+  altText?: string;
+
+  /**
+   * Video aspect ratio as width and height.
+   */
+  aspectRatio?: Array<number>;
+
+  /**
+   * Media availability state reported by X.
+   */
+  availabilityStatus?: string;
+
+  /**
+   * Display-friendly media URL reported by X.
+   */
+  displayUrl?: string;
+
+  /**
+   * Video duration in milliseconds.
+   */
+  durationMillis?: number;
+
+  /**
+   * Expanded X media URL.
+   */
+  expandedUrl?: string;
+
+  /**
+   * Face-aware crop rectangles grouped by media size.
+   */
+  faceRects?: { [key: string]: Array<TweetMedia.FaceRect> };
+
+  /**
+   * Suggested image crops reported by X.
+   */
+  focusRects?: Array<TweetMedia.FocusRect>;
+
+  /**
+   * Original media height.
+   */
+  height?: number;
+
+  /**
+   * Media entity offsets in the tweet text.
+   */
+  indices?: Array<number>;
+
+  /**
+   * Stable X media key.
+   */
+  mediaKey?: string;
+
+  /**
+   * Whether X reports the media as monetizable.
+   */
+  monetizable?: boolean;
+
+  /**
+   * Named media renditions and resize modes.
+   */
+  sizes?: { [key: string]: TweetMedia.Sizes };
+
+  /**
    * Available video encodings, ordered as returned
    */
   videoVariants?: Array<TweetMedia.VideoVariant>;
+
+  /**
+   * Original media width.
+   */
+  width?: number;
 }
 
 export namespace TweetMedia {
+  export interface FaceRect {
+    h: number;
+
+    w: number;
+
+    x: number;
+
+    y: number;
+  }
+
+  export interface FocusRect {
+    h: number;
+
+    w: number;
+
+    x: number;
+
+    y: number;
+  }
+
+  export interface Sizes {
+    h: number;
+
+    resize: string;
+
+    w: number;
+  }
+
   export interface VideoVariant {
     contentType: string;
 
@@ -567,9 +999,14 @@ export interface UserProfile {
 
   username: string;
 
+  /**
+   * Organization affiliation label shown on an X profile.
+   */
+  affiliatesHighlightedLabel?: UserProfile.AffiliatesHighlightedLabel;
+
   automatedBy?: string;
 
-  canDm?: boolean;
+  businessAccountAffiliatesCount?: number;
 
   /**
    * Community role when returned by community member reads
@@ -579,6 +1016,8 @@ export interface UserProfile {
   coverPicture?: string;
 
   createdAt?: string;
+
+  creatorSubscriptionsCount?: number;
 
   description?: string;
 
@@ -590,12 +1029,28 @@ export interface UserProfile {
 
   hasCustomTimelines?: boolean;
 
+  hasGraduatedAccess?: boolean;
+
+  hasHiddenSubscriptionsOnProfile?: boolean;
+
+  /**
+   * Profile highlight availability and count metadata.
+   */
+  highlightsInfo?: UserProfile.HighlightsInfo;
+
+  /**
+   * Identity verification metadata displayed by X.
+   */
+  identityVerification?: UserProfile.IdentityVerification;
+
   isAutomated?: boolean;
 
   /**
    * Whether X shows a blue verification badge
    */
   isBlueVerified?: boolean;
+
+  isProfileTranslatable?: boolean;
 
   isTranslator?: boolean;
 
@@ -607,6 +1062,8 @@ export interface UserProfile {
   location?: string;
 
   mediaCount?: number;
+
+  parodyCommentaryFanLabel?: string;
 
   pinnedTweetIds?: Array<string>;
 
@@ -622,7 +1079,17 @@ export interface UserProfile {
    */
   profileBannerUrl?: string;
 
+  profileDescriptionLanguage?: string;
+
+  profileImageShape?: string;
+
+  profileInterstitialType?: string;
+
   profilePicture?: string;
+
+  profileSortEnabled?: boolean;
+
+  profileTranslatorType?: string;
 
   /**
    * Whether the profile protects its posts
@@ -630,6 +1097,8 @@ export interface UserProfile {
   protected?: boolean;
 
   statusesCount?: number;
+
+  superFollowEligible?: boolean;
 
   unavailable?: boolean;
 
@@ -641,15 +1110,44 @@ export interface UserProfile {
 
   verifiedType?: string;
 
-  /**
-   * Whether this profile follows the authenticated viewer
-   */
-  viewerFollowedBy?: boolean;
-
-  /**
-   * Whether the authenticated viewer follows this profile
-   */
-  viewerFollowing?: boolean;
-
   withheldInCountries?: Array<string>;
+}
+
+export namespace UserProfile {
+  /**
+   * Organization affiliation label shown on an X profile.
+   */
+  export interface AffiliatesHighlightedLabel {
+    badgeUrl?: string;
+
+    description?: string;
+
+    url?: string;
+
+    urlType?: string;
+
+    userLabelDisplayType?: string;
+
+    userLabelType?: string;
+  }
+
+  /**
+   * Profile highlight availability and count metadata.
+   */
+  export interface HighlightsInfo {
+    canHighlightTweets?: boolean;
+
+    highlightedTweets?: string;
+  }
+
+  /**
+   * Identity verification metadata displayed by X.
+   */
+  export interface IdentityVerification {
+    description?: string;
+
+    isIdentityVerified?: boolean;
+
+    verifiedSinceMsec?: string;
+  }
 }
