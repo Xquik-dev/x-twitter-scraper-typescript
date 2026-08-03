@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+set -euo pipefail
+
+pnpm build
+cd dist
+
+package_name="$(jq -r -e '.name' package.json)"
+package_version="$(jq -r -e '.version' package.json)"
+source_version="$(jq -r -e '.version' ../package.json)"
+
+if [[ "$package_name" != "x-twitter-scraper" ]]; then
+  echo "Refusing to package unexpected project ${package_name}." >&2
+  exit 1
+fi
+
+if [[ "$package_version" != "$source_version" ]]; then
+  echo "Built version ${package_version} does not match source version ${source_version}." >&2
+  exit 1
+fi
+
+for package_file in package.json README.md; do
+  if ! grep -Fq "Not affiliated with X Corp." "$package_file"; then
+    echo "${package_file} must include the X Corp. non-affiliation notice." >&2
+    exit 1
+  fi
+done
+
+npm pack --dry-run --json >/dev/null

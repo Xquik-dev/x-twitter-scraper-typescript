@@ -3,7 +3,7 @@ name: Publish npm
 on:
   push:
     tags:
-      - "v*.*.*"
+      - 'v*.*.*'
 
 permissions: {}
 
@@ -19,8 +19,10 @@ jobs:
     timeout-minutes: 20
     environment: npm
     permissions:
+      artifact-metadata: write
+      attestations: write
       contents: read
-      id-token: write # Required for npm trusted publishing and provenance.
+      id-token: write
     steps:
       - name: Check out the release tag
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -31,14 +33,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24.18.0"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '24.18.0'
+          registry-url: 'https://registry.npmjs.org'
           package-manager-cache: false
 
       - name: Set up pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
         with:
-          version: "11.15.1"
+          version: '11.15.1'
           run_install: false
 
       - name: Verify release context
@@ -62,5 +64,109 @@ jobs:
       - name: Verify reproducible package
         run: pnpm run check:reproducible
 
-      - name: Build, inspect, and publish
-        run: bash ./bin/publish-npm
+      - name: Build and inspect the package
+        run: bash ./bin/prepare-npm-release
+
+      - name: Pack the release artifact
+        id: package
+        working-directory: dist
+        run: |
+          set -euo pipefail
+
+          package_name="$(jq -r -e '.name' package.json)"
+          package_version="$(jq -r -e '.version' package.json)"
+          package_file="$(npm pack --json --pack-destination "$RUNNER_TEMP" | jq -r -e '.[0].filename')"
+          package_path="$RUNNER_TEMP/$package_file"
+
+          test -f "$package_path"
+          {
+            echo "name=$package_name"
+            echo "version=$package_version"
+            echo "path=$package_path"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Attest the release artifact
+        uses: actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d # v4.2.1
+        with:
+          subject-path: ${{ steps.package.outputs.path }}
+
+      - name: Export the signed provenance
+        id: provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_PATH: ${{ steps.package.outputs.path }}
+        run: |
+          set -euo pipefail
+
+          provenance_directory="$RUNNER_TEMP/provenance"
+          mkdir -p "$provenance_directory"
+          (
+            cd "$provenance_directory"
+            gh attestation download "$PACKAGE_PATH" --repo "$GITHUB_REPOSITORY"
+          )
+
+          provenance_source="$(find "$provenance_directory" -maxdepth 1 -type f -name 'sha256*.jsonl' -print -quit)"
+          test -n "$provenance_source"
+          provenance_path="${PACKAGE_PATH}.intoto.jsonl"
+          cp "$provenance_source" "$provenance_path"
+          echo "path=$provenance_path" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to npm
+        env:
+          PACKAGE_NAME: ${{ steps.package.outputs.name }}
+          PACKAGE_PATH: ${{ steps.package.outputs.path }}
+          PACKAGE_VERSION: ${{ steps.package.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          published_version="$(npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version 2>/dev/null || true)"
+          if [[ -n "$published_version" ]]; then
+            if [[ "$published_version" != "$PACKAGE_VERSION" ]]; then
+              echo "The registry returned an unexpected version." >&2
+              exit 1
+            fi
+
+            echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is already published."
+            exit 0
+          fi
+
+          npm publish "$PACKAGE_PATH" --access public --provenance --tag latest
+
+      - name: Stage signed release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: signed-release-assets
+          path: |
+            ${{ steps.package.outputs.path }}
+            ${{ steps.provenance.outputs.path }}
+          if-no-files-found: error
+          retention-days: 1
+
+  release-assets:
+    name: Publish Release Assets
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download signed release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: signed-release-assets
+          path: signed-release-assets
+
+      - name: Publish signed release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t assets < <(find signed-release-assets -maxdepth 1 -type f -print)
+          if [[ "${#assets[@]}" -ne 2 ]]; then
+            echo "Expected one package and one provenance file." >&2
+            exit 1
+          fi
+
+          gh release upload "$GITHUB_REF_NAME" "${assets[@]}" --clobber

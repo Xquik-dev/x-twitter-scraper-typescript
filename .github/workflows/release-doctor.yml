@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - ".github/scripts/verify-release-context.sh"
-      - ".github/workflows/publish-npm.yml"
-      - ".github/workflows/release-doctor.yml"
-      - "bin/check-release-environment"
-      - "bin/publish-npm"
-      - "package.json"
+      - '.github/scripts/verify-release-context.sh'
+      - '.github/workflows/publish-npm.yml'
+      - '.github/workflows/release-doctor.yml'
+      - 'bin/check-release-environment'
+      - 'bin/prepare-npm-release'
+      - 'package.json'
   workflow_dispatch:
 
 permissions: {}
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: "24.18.0"
+          node-version: '24.18.0'
           package-manager-cache: false
 
       - name: Check release environment
