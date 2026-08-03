@@ -12,15 +12,22 @@ fi
 for required in \
   "environment: npm" \
   "id-token: write" \
+  "attestations: write" \
+  "artifact-metadata: write" \
   "EXPECTED_PACKAGE_NAME: x-twitter-scraper" \
-  "bash ./bin/publish-npm"; do
+  "bash ./bin/prepare-npm-release" \
+  "actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d" \
+  "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a" \
+  "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c" \
+  "gh release upload" \
+  "npm publish"; do
   if ! grep -Fq "$required" "$workflow"; then
     errors+=("publish-npm.yml is missing: ${required}")
   fi
 done
 
 for forbidden in "NPM_TOKEN" "NODE_AUTH_TOKEN" "workflow_dispatch"; do
-  if grep -Fq "$forbidden" "$workflow" bin/publish-npm; then
+  if grep -Fq "$forbidden" "$workflow" bin/prepare-npm-release; then
     errors+=("release path must not contain: ${forbidden}")
   fi
 done
