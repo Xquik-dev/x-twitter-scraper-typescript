@@ -61,8 +61,8 @@ export class Credits extends APIResource {
   }
 
   /**
-   * Create a Stripe Checkout session only after the user confirms. The request never
-   * completes payment or adds credits by itself.
+   * Create a hosted checkout only after the user confirms. The request never
+   * completes payment or adds credits.
    *
    * @example
    * ```ts
@@ -126,13 +126,13 @@ export interface CreditRetrieveTopupStatusResponse {
 
 export interface CreditTopupBalanceResponse {
   /**
-   * Stable first-party Xquik redirect URL for the active Stripe Checkout session.
+   * Stable Xquik redirect URL for the active checkout.
    */
   redirect_url: string;
 
   /**
-   * Same stable first-party Xquik redirect URL as redirect_url. The response never
-   * exposes a raw Stripe Checkout URL.
+   * Same stable Xquik redirect URL as redirect_url. The response never exposes the
+   * hosted checkout URL.
    */
   url: string;
 }

@@ -11,11 +11,9 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class GuestWallets extends APIResource {
   /**
-   * Create a one-use Stripe-hosted checkout after the user explicitly confirms a
-   * $10-$250 USD amount. This request creates no charge by itself. The user opens
-   * checkout_url on Stripe. This endpoint returns the paid-read API key without
-   * requiring an Xquik account, email, dashboard, or Xquik web page. An idempotent
-   * replay returns the same key.
+   * Create a one-use hosted checkout after the user confirms $10-$250 USD. The
+   * request creates no charge. It returns a paid-read API key without an Xquik
+   * account. Replays return the same key.
    *
    * @example
    * ```ts
@@ -37,10 +35,9 @@ export class GuestWallets extends APIResource {
   }
 
   /**
-   * Poll after Stripe payment. Use usable to decide whether paid reads can run. An
-   * active wallet can remain usable while a top-up is pending. A new wallet becomes
-   * usable only after verified webhook fulfillment. Send the guest key as
-   * Authorization: Bearer.
+   * Poll after payment. Use usable to decide whether paid reads can run. An active
+   * wallet can remain usable while a top-up is pending. A new wallet becomes usable
+   * only after payment is verified. Send the guest key as Authorization: Bearer.
    *
    * @example
    * ```ts
@@ -52,10 +49,9 @@ export class GuestWallets extends APIResource {
   }
 
   /**
-   * Create a one-use Stripe-hosted checkout for an existing paid-read guest key
-   * after the user explicitly confirms a $10-$250 USD amount. The key remains the
-   * same. This request creates no charge by itself and never redirects through an
-   * Xquik web page.
+   * Create a one-use hosted checkout after the user confirms a $10-$250 USD amount
+   * for an existing paid-read guest key. The key remains the same. This request
+   * creates no charge and never redirects through Xquik.
    *
    * @example
    * ```ts
@@ -109,7 +105,7 @@ export interface GuestWalletCreateResponse {
   authorization: GuestWalletCreateResponse.Authorization;
 
   /**
-   * Raw Stripe-hosted checkout URL for user interaction.
+   * Hosted checkout URL for user interaction.
    */
   checkout_url: string;
 
@@ -125,7 +121,10 @@ export interface GuestWalletCreateResponse {
    */
   expires_at: string;
 
-  instructions: 'Give checkout_url to the user. They must complete payment on Stripe. Never submit payment for them. After payment, poll status_url every poll_after_seconds until latest_purchase.status is no longer pending.';
+  /**
+   * Hosted checkout and status polling instructions.
+   */
+  instructions: string;
 
   /**
    * Wait at least this long before polling status_url.
@@ -223,7 +222,7 @@ export namespace GuestWalletRetrieveStatusResponse {
 }
 
 /**
- * Pending Stripe checkout and guest wallet purchase details.
+ * Pending hosted checkout and guest wallet purchase details.
  */
 export interface GuestWalletTopupResponse {
   account_required: false;
@@ -234,7 +233,7 @@ export interface GuestWalletTopupResponse {
   amount: GuestWalletAmount;
 
   /**
-   * Raw Stripe-hosted checkout URL for user interaction.
+   * Hosted checkout URL for user interaction.
    */
   checkout_url: string;
 
@@ -248,7 +247,10 @@ export interface GuestWalletTopupResponse {
    */
   expires_at: string;
 
-  instructions: 'Give checkout_url to the user. They must complete payment on Stripe. Never submit payment for them. After payment, poll status_url every poll_after_seconds until latest_purchase.status is no longer pending.';
+  /**
+   * Hosted checkout and status polling instructions.
+   */
+  instructions: string;
 
   /**
    * Wait at least this long before polling status_url.
