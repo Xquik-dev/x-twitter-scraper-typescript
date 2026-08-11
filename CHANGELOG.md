@@ -8,6 +8,14 @@
 * clarify which credential, checkout, and guest-wallet operations stay outside MCP
 * refresh the bundled SkillSpector v2.3.7 evidence with 0 findings
 
+## 0.8.4 (2026-08-11)
+
+Full Changelog: [v0.8.3...v0.8.4](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.8.3...v0.8.4)
+
+### Bug Fixes
+
+* target repository for release asset uploads ([#50](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/50)) ([afc1b32](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/afc1b326f738e4013f16cc9477a8ebe8316000cb))
+
 ## 0.8.3 (2026-08-11)
 
 Full Changelog: [v0.8.2...v0.8.3](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.8.2...v0.8.3)
