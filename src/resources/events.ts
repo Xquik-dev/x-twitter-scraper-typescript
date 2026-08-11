@@ -125,7 +125,7 @@ export interface EventListResponse {
 
 export interface EventListParams {
   /**
-   * Cursor for keyset pagination from prior response next_cursor
+   * Previous nextCursor.
    */
   cursor?: string;
 
@@ -133,6 +133,11 @@ export interface EventListParams {
    * Filter events by type
    */
   eventType?: Shared.EventType;
+
+  /**
+   * Keyword monitor ID.
+   */
+  keywordMonitorId?: string;
 
   /**
    * Maximum number of items to return (1-100, default 50). For paid per-result
@@ -143,7 +148,7 @@ export interface EventListParams {
   limit?: number;
 
   /**
-   * Filter events by monitor ID
+   * Account monitor ID.
    */
   monitorId?: string;
 }

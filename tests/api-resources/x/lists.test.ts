@@ -27,7 +27,24 @@ describe('resource lists', () => {
     await expect(
       client.x.lists.retrieveFollowers(
         'id',
-        { cursor: 'cursor', pageSize: 20 },
+        {
+          bioContains: 'bioContains',
+          cursor: 'cursor',
+          hasLocation: true,
+          hasWebsite: true,
+          locationContains: 'locationContains',
+          maxFollowers: 0,
+          maxFollowing: 0,
+          maxStatuses: 0,
+          minAccountAgeDays: 0,
+          minFollowers: 0,
+          minFollowing: 0,
+          minStatuses: 0,
+          pageSize: 20,
+          usernameContains: 'usernameContains',
+          verifiedOnly: true,
+          verifiedType: 'verifiedType',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
@@ -51,7 +68,24 @@ describe('resource lists', () => {
     await expect(
       client.x.lists.retrieveMembers(
         'id',
-        { cursor: 'cursor', pageSize: 20 },
+        {
+          bioContains: 'bioContains',
+          cursor: 'cursor',
+          hasLocation: true,
+          hasWebsite: true,
+          locationContains: 'locationContains',
+          maxFollowers: 0,
+          maxFollowing: 0,
+          maxStatuses: 0,
+          minAccountAgeDays: 0,
+          minFollowers: 0,
+          minFollowing: 0,
+          minStatuses: 0,
+          pageSize: 20,
+          usernameContains: 'usernameContains',
+          verifiedOnly: true,
+          verifiedType: 'verifiedType',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);

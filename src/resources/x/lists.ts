@@ -66,29 +66,168 @@ export class Lists extends APIResource {
 
 export interface ListRetrieveFollowersParams {
   /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
    * Pagination cursor for list followers
    */
   cursor?: string;
 
   /**
-   * Maximum user profiles requested from this page (20-200, default 200). The
-   * response can contain fewer profiles because the source returned fewer or
-   * remaining credits cover fewer results. Keep requesting next_cursor while
-   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). Source,
+   * filters, or credits can return fewer profiles. Keep requesting next_cursor while
+   * has_next_page is true. Deprecated aliases remain accepted.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface ListRetrieveMembersParams {
+  /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
   /**
    * Pagination cursor for list members
    */
   cursor?: string;
 
   /**
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
    * Members per page (20-200, default 20)
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface ListRetrieveTweetsParams {

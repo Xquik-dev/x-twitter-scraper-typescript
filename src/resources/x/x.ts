@@ -88,6 +88,7 @@ import {
   TweetListParams,
   TweetRetrieveResponse,
   TweetSearchParams,
+  TweetSearchResponse,
   Tweets,
 } from './tweets/tweets';
 import * as UsersAPI from './users/users';
@@ -97,8 +98,10 @@ import {
   UserRetrieveBatchParams,
   UserRetrieveBatchResponse,
   UserRetrieveFollowersParams,
+  UserRetrieveFollowersResponse,
   UserRetrieveFollowersYouKnowParams,
   UserRetrieveFollowingParams,
+  UserRetrieveFollowingResponse,
   UserRetrieveLikesParams,
   UserRetrieveMediaParams,
   UserRetrieveMentionsParams,
@@ -106,6 +109,7 @@ import {
   UserRetrieveSearchParams,
   UserRetrieveTweetsParams,
   UserRetrieveVerifiedFollowersParams,
+  UserRetrieveVerifiedFollowersResponse,
   Users,
 } from './users/users';
 import { APIPromise } from '../../core/api-promise';
@@ -432,6 +436,7 @@ export declare namespace X {
     type TweetRetrieveResponse as TweetRetrieveResponse,
     type TweetDeleteResponse as TweetDeleteResponse,
     type TweetGetRepliesResponse as TweetGetRepliesResponse,
+    type TweetSearchResponse as TweetSearchResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
     type TweetDeleteParams as TweetDeleteParams,
@@ -447,6 +452,9 @@ export declare namespace X {
     Users as Users,
     type UserRemoveFollowerResponse as UserRemoveFollowerResponse,
     type UserRetrieveBatchResponse as UserRetrieveBatchResponse,
+    type UserRetrieveFollowersResponse as UserRetrieveFollowersResponse,
+    type UserRetrieveFollowingResponse as UserRetrieveFollowingResponse,
+    type UserRetrieveVerifiedFollowersResponse as UserRetrieveVerifiedFollowersResponse,
     type UserRemoveFollowerParams as UserRemoveFollowerParams,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,

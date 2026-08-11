@@ -1,5 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
+export { Attachments, type AttachmentDownloadParams } from './attachments';
 export { Support } from './support';
 export {
   Tickets,

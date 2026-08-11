@@ -774,9 +774,64 @@ export interface CommunityDeleteParams {
 
 export interface CommunityRetrieveMembersParams {
   /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
    * Pagination cursor
    */
   cursor?: string;
+
+  /**
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
 
   /**
    * Items per page (20-200, default 20). This is an upper bound for paid
@@ -784,13 +839,98 @@ export interface CommunityRetrieveMembersParams {
    * zero affordable results returns 402 insufficient_credits.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface CommunityRetrieveModeratorsParams {
   /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
    * Pagination cursor for community moderators
    */
   cursor?: string;
+
+  /**
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface CommunityRetrieveSearchParams {

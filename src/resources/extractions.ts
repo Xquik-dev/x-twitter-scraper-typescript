@@ -97,8 +97,9 @@ export class Extractions extends APIResource {
    * });
    * ```
    */
-  run(body: ExtractionRunParams, options?: RequestOptions): APIPromise<ExtractionRunResponse> {
-    return this._client.post('/extractions', { body, ...options });
+  run(params: ExtractionRunParams, options?: RequestOptions): APIPromise<ExtractionRunResponse> {
+    const { dry_run, ...body } = params;
+    return this._client.post('/extractions', { query: { dry_run }, body, ...options });
   }
 }
 
@@ -178,6 +179,7 @@ export interface ExtractionEstimateCostResponse {
   source:
     | 'followers'
     | 'following'
+    | 'collection'
     | 'paginationCap'
     | 'posts'
     | 'quoteCount'
@@ -190,54 +192,54 @@ export interface ExtractionEstimateCostResponse {
 }
 
 export interface ExtractionRunResponse {
-  id: string;
+  allowed: boolean;
 
-  status: 'running';
+  creditsAvailable: string;
 
-  /**
-   * Identifier for the extraction tool used to run a job.
-   */
-  toolType:
-    | 'article_extractor'
-    | 'community_extractor'
-    | 'community_moderator_explorer'
-    | 'community_post_extractor'
-    | 'community_search'
-    | 'favoriters'
-    | 'follower_explorer'
-    | 'following_explorer'
-    | 'list_follower_explorer'
-    | 'list_member_extractor'
-    | 'list_post_extractor'
-    | 'mention_extractor'
-    | 'people_search'
-    | 'post_extractor'
-    | 'quote_extractor'
-    | 'reply_extractor'
-    | 'repost_extractor'
-    | 'space_explorer'
-    | 'thread_extractor'
-    | 'tweet_search_extractor'
-    | 'user_likes'
-    | 'user_media'
-    | 'verified_follower_explorer';
+  creditsRequired: string;
+
+  estimatedResults: number;
+
+  source: string;
+
+  resolvedXUserId?: string;
 }
 
 export interface ExtractionRetrieveParams {
   /**
-   * Cursor for keyset pagination from prior response next_cursor
+   * Previous nextCursor.
    */
   cursor?: string;
+
+  /**
+   * Preserve source keys or convert result field names.
+   */
+  fieldStyle?: 'source' | 'camelCase' | 'snake_case';
+
+  /**
+   * Use outputMode=raw instead.
+   */
+  includeRaw?: boolean;
 
   /**
    * Maximum number of results to return (1-1000, default 100)
    */
   limit?: number;
+
+  /**
+   * Select compact, full, or raw-compatible result fields.
+   */
+  outputMode?: 'compact' | 'full' | 'raw';
+
+  /**
+   * Keep enrichment nested or merge it into each result.
+   */
+  outputPreset?: 'nested' | 'flat';
 }
 
 export interface ExtractionListParams {
   /**
-   * Cursor for keyset pagination from prior response next_cursor
+   * Previous nextCursor.
    */
   cursor?: string;
 
@@ -313,194 +315,512 @@ export interface ExtractionEstimateCostParams {
     | 'verified_follower_explorer';
 
   /**
-   * Raw advanced query string appended to the estimate (tweet_search_extractor)
+   * Raw advanced search query appended as-is (tweet_search_extractor)
    */
   advancedQuery?: string;
 
   /**
-   * Alternative words or quoted phrases for estimated results. Separate with spaces,
-   * commas, or lines.
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines. (tweet_search_extractor)
    */
   anyWords?: string;
 
   /**
-   * Geo bounding box used for estimation, e.g. -74.1 40.6 -73.9 40.8
-   * (tweet_search_extractor)
+   * Bio terms separated by commas or lines.
+   */
+  bioContains?: string;
+
+  /**
+   * Return only Blue-verified Tweet authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
    */
   boundingBox?: string;
 
   /**
-   * Cashtags applied to the estimate, separated by spaces, commas, or lines.
+   * Match the Tweet card name.
+   */
+  cardName?: string;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
    */
   cashtags?: string;
 
   /**
-   * Conversation ID filter used for estimation (tweet_search_extractor)
+   * Reply collection strategy.
+   */
+  collectionStrategy?: 'auto' | 'complete' | 'direct' | 'search' | 'thread';
+
+  /**
+   * Conversation ID filter (tweet_search_extractor)
    */
   conversationId?: string;
 
   /**
-   * Exact phrase filter for search estimation
+   * Merge duplicate results across collection targets.
+   */
+  dedupeAcrossTargets?: boolean;
+
+  /**
+   * Keep target duplicates, first rows, or merged overlap.
+   */
+  dedupeMode?: 'none' | 'first' | 'merge';
+
+  /**
+   * Exact phrase to match (tweet_search_extractor)
    */
   exactPhrase?: string;
 
   /**
-   * Words or quoted phrases excluded from estimated results. Separate with spaces,
-   * commas, or lines.
+   * Exclude replies from the source author.
+   */
+  excludeOriginalAuthor?: boolean;
+
+  /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   * (tweet_search_extractor)
    */
   excludeWords?: string;
 
   /**
-   * Estimate only tweets from this author username (tweet_search_extractor)
+   * Filter by author username (tweet_search_extractor)
    */
   fromUser?: string;
 
   /**
-   * Hashtags applied to the estimate, separated by spaces, commas, or lines.
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
    */
   hashtags?: string;
 
   /**
-   * Estimate only replies to this tweet ID (tweet_search_extractor)
+   * Require a profile location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Return only replies with media.
+   */
+  hasMediaOnly?: boolean;
+
+  /**
+   * Require a profile website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Include the source post in reply results.
+   */
+  includeOriginalPost?: boolean;
+
+  /**
+   * Add matching search terms to collection metadata.
+   */
+  includeSearchTerms?: boolean;
+
+  /**
+   * Add source target metadata to each result.
+   */
+  includeTargetMetadata?: boolean;
+
+  /**
+   * Only replies to this tweet ID (tweet_search_extractor)
    */
   inReplyToTweetId?: string;
 
   /**
-   * Language code used for estimate filtering (tweet_search_extractor)
+   * Language code filter (tweet_search_extractor)
    */
   language?: string;
 
   /**
-   * Estimate search results within this list ID (tweet_search_extractor)
+   * Search within a list ID (tweet_search_extractor)
    */
   listId?: string;
 
   /**
-   * Media type used for estimate filtering (tweet_search_extractor)
+   * Required profile location text.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum nested reply depth.
+   */
+  maxDepth?: number;
+
+  /**
+   * Maximum follower count for profile results.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count for profile results.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum results collected for each target.
+   */
+  maxItemsPerTarget?: number;
+
+  /**
+   * Maximum Tweet like count.
+   */
+  maxLikes?: number;
+
+  /**
+   * Reply pages collected for each target.
+   */
+  maxPagesPerTarget?: number;
+
+  /**
+   * Maximum post count for profile results.
+   */
+  maxPosts?: number;
+
+  /**
+   * Maximum Tweet quote count.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum Tweet reply count.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum Tweet repost count.
+   */
+  maxRetweets?: number;
+
+  /**
+   * Media type filter (tweet_search_extractor)
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
 
   /**
-   * Estimate tweets mentioning this username (tweet_search_extractor)
+   * Filter tweets mentioning a username (tweet_search_extractor)
    */
   mentioning?: string;
 
   /**
-   * Minimum likes threshold for estimated results (tweet_search_extractor)
+   * Minimum profile age in days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum Tweet bookmark count.
+   */
+  minBookmarks?: number;
+
+  /**
+   * Minimum likes threshold (tweet_search_extractor)
    */
   minFaves?: number;
 
   /**
-   * Minimum quote count threshold for estimated results (tweet_search_extractor)
+   * Minimum follower count for profile results.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count for profile results.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count for profile results.
+   */
+  minPosts?: number;
+
+  /**
+   * Minimum quote count threshold (tweet_search_extractor)
    */
   minQuotes?: number;
 
   /**
-   * Minimum replies threshold for estimated results (tweet_search_extractor)
+   * Minimum replies threshold (tweet_search_extractor)
    */
   minReplies?: number;
 
   /**
-   * Minimum retweets threshold for estimated results (tweet_search_extractor)
+   * Minimum retweets threshold (tweet_search_extractor)
    */
   minRetweets?: number;
 
   /**
-   * Estimate search results within this place ID (tweet_search_extractor)
+   * Minimum Tweet view count.
+   */
+  minViews?: number;
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
+
+  /**
+   * Shortcut for dedupeMode=merge.
+   */
+  overlapMode?: boolean;
+
+  /**
+   * Search within a place ID (tweet_search_extractor)
    */
   place?: string;
 
   /**
-   * Estimate search results within this country code (tweet_search_extractor)
+   * Search within a country code (tweet_search_extractor)
    */
   placeCountry?: string;
 
   /**
-   * Geo point radius used for estimation, e.g. -73.99 40.73 25mi
-   * (tweet_search_extractor)
+   * Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
    */
   pointRadius?: string;
 
   /**
-   * Quote mode used for estimation (tweet_search_extractor)
+   * Search ranking applied to every query.
+   */
+  queryType?: 'Latest' | 'Top' | 'Both';
+
+  /**
+   * Quote mode (tweet_search_extractor)
    */
   quotes?: 'include' | 'exclude' | 'only';
 
   /**
-   * Estimate only quotes of this tweet ID (tweet_search_extractor)
+   * Only quotes of this tweet ID (tweet_search_extractor)
    */
   quotesOfTweetId?: string;
 
   /**
-   * Reply mode used for estimation (tweet_search_extractor)
+   * Profile relations processed within one job.
+   */
+  relationTargets?: Array<ExtractionEstimateCostParams.RelationTarget>;
+
+  /**
+   * Reply mode (tweet_search_extractor)
    */
   replies?: 'include' | 'exclude' | 'only';
 
   /**
-   * Maximum number of results to estimate. When set, the estimate caps projected
-   * results to this value.
+   * Maximum number of results to extract. When set, the extraction stops after
+   * reaching this limit.
    */
   resultsLimit?: number;
 
   /**
-   * Retweet mode used for estimation (tweet_search_extractor)
+   * Retweet mode (tweet_search_extractor)
    */
   retweets?: 'include' | 'exclude' | 'only';
 
   /**
-   * Estimate only retweets of this tweet ID (tweet_search_extractor)
+   * Only retweets of this tweet ID (tweet_search_extractor)
    */
   retweetsOfTweetId?: string;
 
   /**
-   * Query used to price tweet_search_extractor or community_search.
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
+   * Reply depth scope.
+   */
+  scope?: 'all' | 'direct' | 'nested';
+
+  /**
+   * Search queries processed as one collection job.
+   */
+  searchQueries?: Array<string>;
+
+  /**
+   * Required for tweet_search_extractor & community_search.
    */
   searchQuery?: string;
 
   /**
-   * Estimate start date in YYYY-MM-DD format (tweet_search_extractor)
+   * Start date YYYY-MM-DD (tweet_search_extractor)
    */
   sinceDate?: string;
 
   /**
-   * Community ID used to price community_post_extractor or community_search.
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
+   * Reply start time as ISO 8601 or Unix seconds.
+   */
+  sinceTime?: string | number;
+
+  /**
+   * Reply result order.
+   */
+  sort?: 'relevance' | 'latest' | 'oldest' | 'likes';
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
+
+  /**
+   * Resume one reply target from this cursor.
+   */
+  startCursor?: string;
+
+  /**
+   * Required for community_post_extractor & community_search.
    */
   targetCommunityId?: string;
 
   /**
-   * List ID used to price list_follower_explorer, list_member_extractor, or
+   * Community IDs processed as one collection job.
+   */
+  targetCommunityIds?: Array<string>;
+
+  /**
+   * Required for list_follower_explorer, list_member_extractor &
    * list_post_extractor.
    */
   targetListId?: string;
 
   /**
-   * Space ID used to price space_explorer.
+   * List IDs processed as one collection job.
+   */
+  targetListIds?: Array<string>;
+
+  /**
+   * Mixed targets auto-routed within one job.
+   */
+  targets?: Array<string | ExtractionEstimateCostParams.UnionMember1>;
+
+  /**
+   * Required for space_explorer.
    */
   targetSpaceId?: string;
 
   targetTweetId?: string;
 
+  /**
+   * Tweet IDs processed as one collection job.
+   */
+  targetTweetIds?: Array<string>;
+
   targetUsername?: string;
 
   /**
-   * Estimate replies sent to this username (tweet_search_extractor)
+   * Usernames processed as one collection job.
+   */
+  targetUsernames?: Array<string>;
+
+  /**
+   * Filter replies sent to a username (tweet_search_extractor)
    */
   toUser?: string;
 
   /**
-   * Estimate end date in YYYY-MM-DD format (tweet_search_extractor)
+   * End date YYYY-MM-DD (tweet_search_extractor)
    */
   untilDate?: string;
 
   /**
-   * URL substring or domain filter used for estimation (tweet_search_extractor)
+   * Reply end time as ISO 8601 or Unix seconds.
+   */
+  untilTime?: string | number;
+
+  /**
+   * URL substring or domain filter (tweet_search_extractor)
    */
   url?: string;
 
   /**
-   * Estimate only verified authors (tweet_search_extractor)
+   * Required username text.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only verified authors (tweet_search_extractor)
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Exact profile verification type.
+   */
+  verifiedType?: string;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
+}
+
+export namespace ExtractionEstimateCostParams {
+  /**
+   * One target and relation in a mixed profile collection.
+   */
+  export interface RelationTarget {
+    relation:
+      | 'community_members'
+      | 'followers'
+      | 'following'
+      | 'list_followers'
+      | 'list_members'
+      | 'verified_followers';
+
+    value: string;
+  }
+
+  export interface UnionMember1 {
+    kind:
+      | 'favoriters'
+      | 'list'
+      | 'profile'
+      | 'profile_likes'
+      | 'profile_media'
+      | 'profile_replies'
+      | 'quotes'
+      | 'replies'
+      | 'retweeters'
+      | 'search'
+      | 'thread'
+      | 'tweet';
+
+    value: string;
+  }
 }
 
 export interface ExtractionExportResultsParams {
@@ -508,11 +828,101 @@ export interface ExtractionExportResultsParams {
    * Export file format
    */
   format: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
+
+  /**
+   * Require a non-empty description.
+   */
+  hasDescription?: boolean;
+
+  /**
+   * Require a non-empty location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Require media.
+   */
+  hasMedia?: boolean;
+
+  /**
+   * Filter by language code.
+   */
+  lang?: string;
+
+  /**
+   * Maximum follower count.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count.
+   */
+  maxPosts?: number;
+
+  /**
+   * Minimum follower count.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum like count.
+   */
+  minLikes?: number;
+
+  /**
+   * Minimum post count.
+   */
+  minPosts?: number;
+
+  /**
+   * Minimum reply count.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum repost count.
+   */
+  minRetweets?: number;
+
+  /**
+   * Minimum view count.
+   */
+  minViews?: number;
+
+  /**
+   * Search exported result text.
+   */
+  search?: string;
+
+  /**
+   * Include results on or after this date.
+   */
+  sinceDate?: string;
+
+  /**
+   * Include results on or before this date.
+   */
+  untilDate?: string;
+
+  /**
+   * Filter by verified status.
+   */
+  verified?: boolean;
 }
 
 export interface ExtractionRunParams {
   /**
-   * Identifier for the extraction tool used to run a job.
+   * Body param: Identifier for the extraction tool used to run a job.
    */
   toolType:
     | 'article_extractor'
@@ -540,192 +950,526 @@ export interface ExtractionRunParams {
     | 'verified_follower_explorer';
 
   /**
-   * Raw advanced search query appended as-is (tweet_search_extractor)
+   * Query param: Estimate cost without creating an extraction.
+   */
+  dry_run?: boolean;
+
+  /**
+   * Body param: Raw advanced search query appended as-is (tweet_search_extractor)
    */
   advancedQuery?: string;
 
   /**
-   * Words or quoted phrases where any one can match. Separate with spaces, commas,
-   * or lines. (tweet_search_extractor)
+   * Body param: Words or quoted phrases where any one can match. Separate with
+   * spaces, commas, or lines. (tweet_search_extractor)
    */
   anyWords?: string;
 
   /**
-   * Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
+   * Body param: Bio terms separated by commas or lines.
+   */
+  bioContains?: string;
+
+  /**
+   * Body param: Return only Blue-verified Tweet authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Body param: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8
+   * (tweet_search_extractor)
    */
   boundingBox?: string;
 
   /**
-   * Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+   * Body param: Match the Tweet card name.
+   */
+  cardName?: string;
+
+  /**
+   * Body param: Cashtags separated by spaces, commas, or lines.
+   * (tweet_search_extractor)
    */
   cashtags?: string;
 
   /**
-   * Conversation ID filter (tweet_search_extractor)
+   * Body param: Reply collection strategy.
+   */
+  collectionStrategy?: 'auto' | 'complete' | 'direct' | 'search' | 'thread';
+
+  /**
+   * Body param: Conversation ID filter (tweet_search_extractor)
    */
   conversationId?: string;
 
   /**
-   * Exact phrase to match (tweet_search_extractor)
+   * Body param: Merge duplicate results across collection targets.
+   */
+  dedupeAcrossTargets?: boolean;
+
+  /**
+   * Body param: Keep target duplicates, first rows, or merged overlap.
+   */
+  dedupeMode?: 'none' | 'first' | 'merge';
+
+  /**
+   * Body param: Exact phrase to match (tweet_search_extractor)
    */
   exactPhrase?: string;
 
   /**
-   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
-   * (tweet_search_extractor)
+   * Body param: Exclude replies from the source author.
+   */
+  excludeOriginalAuthor?: boolean;
+
+  /**
+   * Body param: Exclude a source application.
+   */
+  excludeSource?: string;
+
+  /**
+   * Body param: Words or quoted phrases to exclude. Separate with spaces, commas, or
+   * lines. (tweet_search_extractor)
    */
   excludeWords?: string;
 
   /**
-   * Filter by author username (tweet_search_extractor)
+   * Body param: Filter by author username (tweet_search_extractor)
    */
   fromUser?: string;
 
   /**
-   * Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+   * Body param: Match latitude, longitude, and radius.
+   */
+  geocode?: string;
+
+  /**
+   * Body param: Hashtags separated by spaces, commas, or lines.
+   * (tweet_search_extractor)
    */
   hashtags?: string;
 
   /**
-   * Only replies to this tweet ID (tweet_search_extractor)
+   * Body param: Require a profile location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Body param: Return only replies with media.
+   */
+  hasMediaOnly?: boolean;
+
+  /**
+   * Body param: Require a profile website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Body param: Include the source post in reply results.
+   */
+  includeOriginalPost?: boolean;
+
+  /**
+   * Body param: Add matching search terms to collection metadata.
+   */
+  includeSearchTerms?: boolean;
+
+  /**
+   * Body param: Add source target metadata to each result.
+   */
+  includeTargetMetadata?: boolean;
+
+  /**
+   * Body param: Only replies to this tweet ID (tweet_search_extractor)
    */
   inReplyToTweetId?: string;
 
   /**
-   * Language code filter (tweet_search_extractor)
+   * Body param: Language code filter (tweet_search_extractor)
    */
   language?: string;
 
   /**
-   * Search within a list ID (tweet_search_extractor)
+   * Body param: Search within a list ID (tweet_search_extractor)
    */
   listId?: string;
 
   /**
-   * Media type filter (tweet_search_extractor)
+   * Body param: Required profile location text.
+   */
+  locationContains?: string;
+
+  /**
+   * Body param: Maximum nested reply depth.
+   */
+  maxDepth?: number;
+
+  /**
+   * Body param: Maximum follower count for profile results.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Body param: Maximum following count for profile results.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Body param: Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Body param: Maximum results collected for each target.
+   */
+  maxItemsPerTarget?: number;
+
+  /**
+   * Body param: Maximum Tweet like count.
+   */
+  maxLikes?: number;
+
+  /**
+   * Body param: Reply pages collected for each target.
+   */
+  maxPagesPerTarget?: number;
+
+  /**
+   * Body param: Maximum post count for profile results.
+   */
+  maxPosts?: number;
+
+  /**
+   * Body param: Maximum Tweet quote count.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Body param: Maximum Tweet reply count.
+   */
+  maxReplies?: number;
+
+  /**
+   * Body param: Maximum Tweet repost count.
+   */
+  maxRetweets?: number;
+
+  /**
+   * Body param: Media type filter (tweet_search_extractor)
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
 
   /**
-   * Filter tweets mentioning a username (tweet_search_extractor)
+   * Body param: Filter tweets mentioning a username (tweet_search_extractor)
    */
   mentioning?: string;
 
   /**
-   * Minimum likes threshold (tweet_search_extractor)
+   * Body param: Minimum profile age in days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Body param: Minimum Tweet bookmark count.
+   */
+  minBookmarks?: number;
+
+  /**
+   * Body param: Minimum likes threshold (tweet_search_extractor)
    */
   minFaves?: number;
 
   /**
-   * Minimum quote count threshold (tweet_search_extractor)
+   * Body param: Minimum follower count for profile results.
+   */
+  minFollowers?: number;
+
+  /**
+   * Body param: Minimum following count for profile results.
+   */
+  minFollowing?: number;
+
+  /**
+   * Body param: Minimum post count for profile results.
+   */
+  minPosts?: number;
+
+  /**
+   * Body param: Minimum quote count threshold (tweet_search_extractor)
    */
   minQuotes?: number;
 
   /**
-   * Minimum replies threshold (tweet_search_extractor)
+   * Body param: Minimum replies threshold (tweet_search_extractor)
    */
   minReplies?: number;
 
   /**
-   * Minimum retweets threshold (tweet_search_extractor)
+   * Body param: Minimum retweets threshold (tweet_search_extractor)
    */
   minRetweets?: number;
 
   /**
-   * Search within a place ID (tweet_search_extractor)
+   * Body param: Minimum Tweet view count.
+   */
+  minViews?: number;
+
+  /**
+   * Body param: Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Body param: Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Body param: Only return news results.
+   */
+  news?: boolean;
+
+  /**
+   * Body param: Shortcut for dedupeMode=merge.
+   */
+  overlapMode?: boolean;
+
+  /**
+   * Body param: Search within a place ID (tweet_search_extractor)
    */
   place?: string;
 
   /**
-   * Search within a country code (tweet_search_extractor)
+   * Body param: Search within a country code (tweet_search_extractor)
    */
   placeCountry?: string;
 
   /**
-   * Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
+   * Body param: Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
    */
   pointRadius?: string;
 
   /**
-   * Quote mode (tweet_search_extractor)
+   * Body param: Search ranking applied to every query.
+   */
+  queryType?: 'Latest' | 'Top' | 'Both';
+
+  /**
+   * Body param: Quote mode (tweet_search_extractor)
    */
   quotes?: 'include' | 'exclude' | 'only';
 
   /**
-   * Only quotes of this tweet ID (tweet_search_extractor)
+   * Body param: Only quotes of this tweet ID (tweet_search_extractor)
    */
   quotesOfTweetId?: string;
 
   /**
-   * Reply mode (tweet_search_extractor)
+   * Body param: Profile relations processed within one job.
+   */
+  relationTargets?: Array<ExtractionRunParams.RelationTarget>;
+
+  /**
+   * Body param: Reply mode (tweet_search_extractor)
    */
   replies?: 'include' | 'exclude' | 'only';
 
   /**
-   * Maximum number of results to extract. When set, the extraction stops after
-   * reaching this limit.
+   * Body param: Maximum number of results to extract. When set, the extraction stops
+   * after reaching this limit.
    */
   resultsLimit?: number;
 
   /**
-   * Retweet mode (tweet_search_extractor)
+   * Body param: Retweet mode (tweet_search_extractor)
    */
   retweets?: 'include' | 'exclude' | 'only';
 
   /**
-   * Only retweets of this tweet ID (tweet_search_extractor)
+   * Body param: Only retweets of this tweet ID (tweet_search_extractor)
    */
   retweetsOfTweetId?: string;
 
   /**
-   * Required for tweet_search_extractor & community_search.
+   * Body param: Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
+   * Body param: Reply depth scope.
+   */
+  scope?: 'all' | 'direct' | 'nested';
+
+  /**
+   * Body param: Search queries processed as one collection job.
+   */
+  searchQueries?: Array<string>;
+
+  /**
+   * Body param: Required for tweet_search_extractor & community_search.
    */
   searchQuery?: string;
 
   /**
-   * Start date YYYY-MM-DD (tweet_search_extractor)
+   * Body param: Start date YYYY-MM-DD (tweet_search_extractor)
    */
   sinceDate?: string;
 
   /**
-   * Required for community_post_extractor & community_search.
+   * Body param: Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
+   * Body param: Reply start time as ISO 8601 or Unix seconds.
+   */
+  sinceTime?: string | number;
+
+  /**
+   * Body param: Reply result order.
+   */
+  sort?: 'relevance' | 'latest' | 'oldest' | 'likes';
+
+  /**
+   * Body param: Match the source application.
+   */
+  source?: string;
+
+  /**
+   * Body param: Resume one reply target from this cursor.
+   */
+  startCursor?: string;
+
+  /**
+   * Body param: Required for community_post_extractor & community_search.
    */
   targetCommunityId?: string;
 
   /**
-   * Required for list_follower_explorer, list_member_extractor &
+   * Body param: Community IDs processed as one collection job.
+   */
+  targetCommunityIds?: Array<string>;
+
+  /**
+   * Body param: Required for list_follower_explorer, list_member_extractor &
    * list_post_extractor.
    */
   targetListId?: string;
 
   /**
-   * Required for space_explorer.
+   * Body param: List IDs processed as one collection job.
+   */
+  targetListIds?: Array<string>;
+
+  /**
+   * Body param: Mixed targets auto-routed within one job.
+   */
+  targets?: Array<string | ExtractionRunParams.UnionMember1>;
+
+  /**
+   * Body param: Required for space_explorer.
    */
   targetSpaceId?: string;
 
+  /**
+   * Body param
+   */
   targetTweetId?: string;
 
+  /**
+   * Body param: Tweet IDs processed as one collection job.
+   */
+  targetTweetIds?: Array<string>;
+
+  /**
+   * Body param
+   */
   targetUsername?: string;
 
   /**
-   * Filter replies sent to a username (tweet_search_extractor)
+   * Body param: Usernames processed as one collection job.
+   */
+  targetUsernames?: Array<string>;
+
+  /**
+   * Body param: Filter replies sent to a username (tweet_search_extractor)
    */
   toUser?: string;
 
   /**
-   * End date YYYY-MM-DD (tweet_search_extractor)
+   * Body param: End date YYYY-MM-DD (tweet_search_extractor)
    */
   untilDate?: string;
 
   /**
-   * URL substring or domain filter (tweet_search_extractor)
+   * Body param: Reply end time as ISO 8601 or Unix seconds.
+   */
+  untilTime?: string | number;
+
+  /**
+   * Body param: URL substring or domain filter (tweet_search_extractor)
    */
   url?: string;
 
   /**
-   * Only verified authors (tweet_search_extractor)
+   * Body param: Required username text.
+   */
+  usernameContains?: string;
+
+  /**
+   * Body param: Only verified authors (tweet_search_extractor)
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Body param: Exact profile verification type.
+   */
+  verifiedType?: string;
+
+  /**
+   * Body param: Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Body param: Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
+}
+
+export namespace ExtractionRunParams {
+  /**
+   * One target and relation in a mixed profile collection.
+   */
+  export interface RelationTarget {
+    relation:
+      | 'community_members'
+      | 'followers'
+      | 'following'
+      | 'list_followers'
+      | 'list_members'
+      | 'verified_followers';
+
+    value: string;
+  }
+
+  export interface UnionMember1 {
+    kind:
+      | 'favoriters'
+      | 'list'
+      | 'profile'
+      | 'profile_likes'
+      | 'profile_media'
+      | 'profile_replies'
+      | 'quotes'
+      | 'replies'
+      | 'retweeters'
+      | 'search'
+      | 'thread'
+      | 'tweet';
+
+    value: string;
+  }
 }
 
 export declare namespace Extractions {

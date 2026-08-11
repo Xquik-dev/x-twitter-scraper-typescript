@@ -116,6 +116,16 @@ export interface Monitor {
   username: string;
 
   xUserId: string;
+
+  /**
+   * When Xquik automatically paused this monitor.
+   */
+  pausedAt?: string;
+
+  /**
+   * Why Xquik automatically paused this monitor.
+   */
+  pausedReason?: 'x_user_not_found';
 }
 
 export interface MonitorCreateResponse {
