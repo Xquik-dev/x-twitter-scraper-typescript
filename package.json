@@ -1,6 +1,6 @@
 {
   "name": "x-twitter-scraper",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Xquik TypeScript SDK & agent Skills for X/Twitter data, automation, MCP & webhooks. Not affiliated with X Corp.",
   "author": "Xquik <support@xquik.com>",
   "types": "dist/index.d.ts",
