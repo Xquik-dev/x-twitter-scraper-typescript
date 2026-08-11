@@ -136,9 +136,7 @@ const client = new XTwitterScraper({
   apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
 });
 
-const paginatedTweets = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
-
-console.log(paginatedTweets.has_next_page);
+const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
 ```
 
 ### Request & Response types

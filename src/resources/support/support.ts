@@ -5,6 +5,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../core/resource';
+import * as AttachmentsAPI from './attachments';
+import { AttachmentDownloadParams, Attachments } from './attachments';
 import * as TicketsAPI from './tickets';
 import {
   TicketCreateParams,
@@ -19,12 +21,16 @@ import {
 } from './tickets';
 
 export class Support extends APIResource {
+  attachments: AttachmentsAPI.Attachments = new AttachmentsAPI.Attachments(this._client);
   tickets: TicketsAPI.Tickets = new TicketsAPI.Tickets(this._client);
 }
 
+Support.Attachments = Attachments;
 Support.Tickets = Tickets;
 
 export declare namespace Support {
+  export { Attachments as Attachments, type AttachmentDownloadParams as AttachmentDownloadParams };
+
   export {
     Tickets as Tickets,
     type TicketCreateResponse as TicketCreateResponse,

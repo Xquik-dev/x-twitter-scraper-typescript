@@ -131,10 +131,9 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Returns direct replies. Complete mode merges available timeline views, supported
-   * rankings, every forward cursor module, labeled hidden-content branches,
-   * exact-parent time partitions scaled to the reported reply count, and search. It
-   * separates nested replies and returns 424 below 80% coverage.
+   * Returns direct replies. Omit mode for automatic maximum coverage with resumable
+   * pagination. Complete mode returns nested replies, diagnostics, and 424 when
+   * direct coverage stays below 80%.
    *
    * @example
    * ```ts
@@ -186,16 +185,14 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * Search tweets by query, Tweet ID, X status URL, or account date window
+   * No-mode search maximizes coverage.
    *
    * @example
    * ```ts
-   * const paginatedTweets = await client.x.tweets.search({
-   *   q: 'q',
-   * });
+   * const response = await client.x.tweets.search({ q: 'q' });
    * ```
    */
-  search(query: TweetSearchParams, options?: RequestOptions): APIPromise<Shared.PaginatedTweets> {
+  search(query: TweetSearchParams, options?: RequestOptions): APIPromise<TweetSearchResponse> {
     return this._client.get('/x/tweets/search', { query, ...options });
   }
 }
@@ -994,8 +991,9 @@ export namespace TweetDeleteResponse {
 }
 
 /**
- * Reply rows. Complete mode also returns nested replies and coverage diagnostics.
- * Keep nested replies separate from direct coverage.
+ * Direct reply rows. No-mode requests use resumable automatic coverage. Complete
+ * mode also returns nested replies and coverage diagnostics. Keep nested replies
+ * separate from direct coverage.
  */
 export interface TweetGetRepliesResponse extends Shared.PaginatedTweets {
   /**
@@ -1197,6 +1195,119 @@ export namespace TweetGetRepliesResponse {
   }
 }
 
+/**
+ * No-mode search, user Tweet, user reply, and direct reply reads use automatic
+ * coverage. Shape, filters, aliases, and billing stay compatible. Unprefixed
+ * cursors remain legacy. Follow next_cursor while has_next_page is true. An empty
+ * filtered page can still have has_next_page true.
+ */
+export type TweetSearchResponse = Shared.PaginatedTweets | TweetSearchResponse.TweetSearchCoverageResponse;
+
+export namespace TweetSearchResponse {
+  /**
+   * No-mode search, user Tweet, user reply, and direct reply reads use automatic
+   * coverage. Shape, filters, aliases, and billing stay compatible. Unprefixed
+   * cursors remain legacy. Follow next_cursor while has_next_page is true. An empty
+   * filtered page can still have has_next_page true.
+   */
+  export interface TweetSearchCoverageResponse
+    extends Omit<Shared.PaginatedTweets, 'has_next_page' | 'next_cursor'> {
+    /**
+     * Coverage evidence across parallel search strategies.
+     */
+    diagnostic: TweetSearchCoverageResponse.Diagnostic;
+
+    has_next_page?: false;
+
+    next_cursor?: '';
+  }
+
+  export namespace TweetSearchCoverageResponse {
+    /**
+     * Coverage evidence across parallel search strategies.
+     */
+    export interface Diagnostic {
+      /**
+       * True when every strategy exhausted its source.
+       */
+      complete: boolean;
+
+      cursorFailureCount: number;
+
+      deadlineReached: boolean;
+
+      duplicateCount: number;
+
+      failedStrategyCount: number;
+
+      malformedCount: number;
+
+      pagesFetched: number;
+
+      /**
+       * Whether bounded time windows ran in parallel.
+       */
+      partitioned: boolean;
+
+      /**
+       * Whether credits or the requested limit reduced output.
+       */
+      responseTruncated: boolean;
+
+      resultLimitReached: boolean;
+
+      returnedTweets: number;
+
+      stalledStrategyCount: number;
+
+      strategies: Array<Diagnostic.Strategy>;
+
+      strategyCount: number;
+
+      uniqueTweets: number;
+    }
+
+    export namespace Diagnostic {
+      export interface Strategy {
+        duplicateCount: number;
+
+        pagesFetched: number;
+
+        queryType: 'Latest' | 'Top';
+
+        stopReason:
+          | 'cursor_failure'
+          | 'deadline'
+          | 'exhausted'
+          | 'failed'
+          | 'page_limit'
+          | 'result_limit'
+          | 'stalled';
+
+        strategy: number;
+
+        uniqueAdded: number;
+
+        /**
+         * Non-overlapping time partition used by one strategy.
+         */
+        window?: Strategy.Window;
+      }
+
+      export namespace Strategy {
+        /**
+         * Non-overlapping time partition used by one strategy.
+         */
+        export interface Window {
+          sinceTime: string;
+
+          untilTime: string;
+        }
+      }
+    }
+  }
+}
+
 export interface TweetCreateParams {
   /**
    * Body param: X account (@username or account ID)
@@ -1263,17 +1374,86 @@ export interface TweetDeleteParams {
 
 export interface TweetGetFavoritersParams {
   /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
    * Pagination cursor for favoriters
    */
   cursor?: string;
 
   /**
-   * Maximum user profiles requested from this page (20-200, default 200). The
-   * response can contain fewer profiles because the source returned fewer or
-   * the available usage balance covers fewer results. Keep requesting next_cursor while
-   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). Source,
+   * filters, or credits can return fewer profiles. Keep requesting next_cursor while
+   * has_next_page is true. Deprecated aliases remain accepted.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface TweetGetQuotesParams {
@@ -1282,6 +1462,16 @@ export interface TweetGetQuotesParams {
    * or lines.
    */
   anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -1304,6 +1494,11 @@ export interface TweetGetQuotesParams {
   exactPhrase?: string;
 
   /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
+
+  /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
    */
   excludeWords?: string;
@@ -1312,6 +1507,11 @@ export interface TweetGetQuotesParams {
    * Filter by author username.
    */
   fromUser?: string;
+
+  /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
 
   /**
    * Hashtags separated by spaces, commas, or lines.
@@ -1334,6 +1534,31 @@ export interface TweetGetQuotesParams {
   language?: string;
 
   /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
+
+  /**
    * Filter by media type.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
@@ -1342,6 +1567,11 @@ export interface TweetGetQuotesParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -1362,6 +1592,26 @@ export interface TweetGetQuotesParams {
    * Minimum retweets threshold.
    */
   minRetweets?: number;
+
+  /**
+   * Minimum view count threshold.
+   */
+  minViews?: number;
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
 
   /**
    * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
@@ -1396,14 +1646,29 @@ export interface TweetGetQuotesParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
 
   /**
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
    * Unix timestamp - return quotes posted after this time
    */
   sinceTime?: string;
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -1429,6 +1694,16 @@ export interface TweetGetQuotesParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 export interface TweetGetRepliesParams {
@@ -1437,6 +1712,16 @@ export interface TweetGetRepliesParams {
    * or lines.
    */
   anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -1449,7 +1734,8 @@ export interface TweetGetRepliesParams {
   conversationId?: string;
 
   /**
-   * Pagination cursor for tweet replies
+   * Cursor from the previous response. Xquik cursors resume automatic coverage.
+   * Existing unprefixed cursors keep legacy standard behavior.
    */
   cursor?: string;
 
@@ -1457,6 +1743,16 @@ export interface TweetGetRepliesParams {
    * Exact phrase to match.
    */
   exactPhrase?: string;
+
+  /**
+   * Exclude replies written by the source-post author.
+   */
+  excludeOriginalAuthor?: boolean;
+
+  /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
 
   /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
@@ -1469,9 +1765,24 @@ export interface TweetGetRepliesParams {
   fromUser?: string;
 
   /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
+
+  /**
    * Hashtags separated by spaces, commas, or lines.
    */
   hashtags?: string;
+
+  /**
+   * Only return replies containing media.
+   */
+  hasMediaOnly?: boolean;
+
+  /**
+   * Include the source post and count it toward limit.
+   */
+  includeOriginalPost?: boolean;
 
   /**
    * Only replies to this tweet ID.
@@ -1484,11 +1795,41 @@ export interface TweetGetRepliesParams {
   language?: string;
 
   /**
-   * With mode=complete, maximum combined direct and nested reply rows (1-25000).
-   * Without complete mode, this is the deprecated pageSize alias and uses the normal
-   * 1-100 page range.
+   * With mode=complete, maximum combined direct and nested reply rows (1-25000,
+   * default 25000). Automatic pages accept 1-300. Standard pages accept 1-100.
+   * Prefer pageSize outside complete mode.
    */
   limit?: number;
+
+  /**
+   * Maximum reply depth from the source post.
+   */
+  maxDepth?: number;
+
+  /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
 
   /**
    * Filter by media type.
@@ -1499,6 +1840,11 @@ export interface TweetGetRepliesParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -1521,15 +1867,36 @@ export interface TweetGetRepliesParams {
   minRetweets?: number;
 
   /**
-   * Set complete for maximum-coverage collection. Complete mode accepts only limit.
-   * Remove cursor, pageSize, count, time ranges, and tweet filters.
+   * Minimum view count threshold.
    */
-  mode?: 'complete';
+  minViews?: number;
 
   /**
-   * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-   * results. Continue while has_next_page is true. Deprecated limit and count
-   * aliases remain accepted.
+   * Optional advanced override. Omit mode for automatic maximum direct reply
+   * coverage with pagination. Standard keeps legacy pagination. Complete returns
+   * direct and nested replies with diagnostics, scope, depth, sorting, and
+   * original-post controls.
+   */
+  mode?: 'standard' | 'complete';
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
+
+  /**
+   * Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
+   * Continue while has_next_page is true. Deprecated aliases remain accepted.
    */
   pageSize?: number;
 
@@ -1559,14 +1926,39 @@ export interface TweetGetRepliesParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
+   * Select all replies, direct replies, or nested replies.
+   */
+  scope?: 'all' | 'direct' | 'nested';
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
 
   /**
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
    * Unix timestamp - return replies posted after this time
    */
   sinceTime?: string;
+
+  /**
+   * Sort the selected replies before applying limit.
+   */
+  sort?: 'relevance' | 'latest' | 'oldest' | 'likes';
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -1592,21 +1984,100 @@ export interface TweetGetRepliesParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 export interface TweetGetRetweetersParams {
+  /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
   /**
    * Pagination cursor for retweeters
    */
   cursor?: string;
 
   /**
-   * Maximum user profiles requested from this page (20-200, default 200). The
-   * response can contain fewer profiles because the source returned fewer or
-   * the available usage balance covers fewer results. Keep requesting next_cursor while
-   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). Source,
+   * filters, or credits can return fewer profiles. Keep requesting next_cursor while
+   * has_next_page is true. Deprecated aliases remain accepted.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface TweetGetThreadParams {
@@ -1625,7 +2096,7 @@ export interface TweetGetThreadParams {
 
 export interface TweetSearchParams {
   /**
-   * Search query (keywords,
+   * Query, Tweet ID, or status URL. Valid inline bounds apply per page.
    */
   q: string;
 
@@ -1641,9 +2112,19 @@ export interface TweetSearchParams {
   anyWords?: string;
 
   /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
    * Geo bounding box, e.g. -74.1 40.6 -73.9 40.8.
    */
   boundingBox?: string;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -1656,7 +2137,8 @@ export interface TweetSearchParams {
   conversationId?: string;
 
   /**
-   * Pagination cursor from previous response
+   * Cursor from the previous response. Xquik cursors resume automatic coverage.
+   * Existing unprefixed cursors keep legacy standard behavior.
    */
   cursor?: string;
 
@@ -1664,6 +2146,11 @@ export interface TweetSearchParams {
    * Exact phrase to match.
    */
   exactPhrase?: string;
+
+  /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
 
   /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
@@ -1674,6 +2161,11 @@ export interface TweetSearchParams {
    * Filter by author username.
    */
   fromUser?: string;
+
+  /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
 
   /**
    * Hashtags separated by spaces, commas, or lines.
@@ -1691,10 +2183,9 @@ export interface TweetSearchParams {
   language?: string;
 
   /**
-   * Max tweets to return (server paginates internally). Omit for single page (~20).
-   * This is an upper bound for paid authenticated calls: available usage balance can
-   * reduce the returned page size, and zero affordable results returns 402
-   * insufficient_credits.
+   * Result upper bound. Omit it for the existing 20-row page size. Explicit coverage
+   * defaults to 2000 and allows 10000. For paid requests, remaining credits can
+   * reduce results. Zero affordable results returns 402.
    */
   limit?: number;
 
@@ -1702,6 +2193,31 @@ export interface TweetSearchParams {
    * Search within a list ID.
    */
   listId?: string;
+
+  /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
 
   /**
    * Filter by media type.
@@ -1712,6 +2228,11 @@ export interface TweetSearchParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -1732,6 +2253,32 @@ export interface TweetSearchParams {
    * Minimum retweets threshold.
    */
   minRetweets?: number;
+
+  /**
+   * Minimum view count threshold.
+   */
+  minViews?: number;
+
+  /**
+   * Omit mode for resumable maximum coverage. Standard keeps legacy pagination.
+   * Coverage returns diagnostics once and rejects cursors.
+   */
+  mode?: 'standard' | 'coverage';
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
 
   /**
    * Search within a place ID.
@@ -1779,14 +2326,29 @@ export interface TweetSearchParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
 
   /**
-   * ISO 8601 timestamp - only return tweets after this time
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
+   * Inclusive ISO bound.
    */
   sinceTime?: string;
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -1799,7 +2361,7 @@ export interface TweetSearchParams {
   untilDate?: string;
 
   /**
-   * ISO 8601 timestamp - only return tweets before this time
+   * Exclusive ISO bound.
    */
   untilTime?: string;
 
@@ -1812,6 +2374,16 @@ export interface TweetSearchParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 Tweets.Like = Like;
@@ -1825,6 +2397,7 @@ export declare namespace Tweets {
     type TweetRetrieveResponse as TweetRetrieveResponse,
     type TweetDeleteResponse as TweetDeleteResponse,
     type TweetGetRepliesResponse as TweetGetRepliesResponse,
+    type TweetSearchResponse as TweetSearchResponse,
     type TweetCreateParams as TweetCreateParams,
     type TweetListParams as TweetListParams,
     type TweetDeleteParams as TweetDeleteParams,

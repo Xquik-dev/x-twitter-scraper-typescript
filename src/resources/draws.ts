@@ -196,7 +196,7 @@ export interface DrawRunResponse {
 
 export interface DrawListParams {
   /**
-   * Cursor for keyset pagination from prior response next_cursor
+   * Previous nextCursor.
    */
   cursor?: string;
 
@@ -211,7 +211,8 @@ export interface DrawListParams {
 
 export interface DrawExportParams {
   /**
-   * Export output format
+   * Export output format. PDF entry exports include up to 10,000 rows. Other entry
+   * formats include up to 100,000 rows.
    */
   format: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
 

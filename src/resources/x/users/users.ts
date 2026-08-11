@@ -80,15 +80,16 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const paginatedUsers =
-   *   await client.x.users.retrieveFollowers('id');
+   * const response = await client.x.users.retrieveFollowers(
+   *   'id',
+   * );
    * ```
    */
   retrieveFollowers(
     id: string,
     query: UserRetrieveFollowersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  ): APIPromise<UserRetrieveFollowersResponse> {
     return this._client.get(path`/x/users/${id}/followers`, { query, ...options });
   }
 
@@ -114,15 +115,16 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const paginatedUsers =
-   *   await client.x.users.retrieveFollowing('id');
+   * const response = await client.x.users.retrieveFollowing(
+   *   'id',
+   * );
    * ```
    */
   retrieveFollowing(
     id: string,
     query: UserRetrieveFollowingParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  ): APIPromise<UserRetrieveFollowingResponse> {
     return this._client.get(path`/x/users/${id}/following`, { query, ...options });
   }
 
@@ -180,7 +182,9 @@ export class Users extends APIResource {
   }
 
   /**
-   * Returns the user's timeline with replies included by default.
+   * Returns target-authored posts and replies. Omit mode for automatic maximum
+   * coverage. Pass next_cursor unchanged. Unprefixed cursors stay legacy. Excludes
+   * other-author context.
    *
    * @example
    * ```ts
@@ -214,7 +218,8 @@ export class Users extends APIResource {
   }
 
   /**
-   * List recent tweets posted by a user
+   * Omit mode for automatic maximum coverage. Pass next_cursor unchanged. Unprefixed
+   * cursors use legacy pagination. Shape and billing stay the same.
    *
    * @example
    * ```ts
@@ -236,7 +241,7 @@ export class Users extends APIResource {
    *
    * @example
    * ```ts
-   * const paginatedUsers =
+   * const response =
    *   await client.x.users.retrieveVerifiedFollowers('id');
    * ```
    */
@@ -244,7 +249,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveVerifiedFollowersParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedUsers> {
+  ): APIPromise<UserRetrieveVerifiedFollowersResponse> {
     return this._client.get(path`/x/users/${id}/verified-followers`, { query, ...options });
   }
 }
@@ -538,6 +543,288 @@ export interface UserRetrieveBatchResponse {
   users: Array<Shared.UserProfile>;
 }
 
+/**
+ * Paginated user profiles. No-mode follower, following, and verified follower
+ * requests merge independent views automatically. Response fields, page size,
+ * aliases, filters, and per-returned-profile billing stay unchanged. Existing
+ * unprefixed cursors retain legacy behavior. Follow next_cursor while
+ * has_next_page is true.
+ */
+export type UserRetrieveFollowersResponse =
+  | Shared.PaginatedUsers
+  | UserRetrieveFollowersResponse.UserListCoverageResponse;
+
+export namespace UserRetrieveFollowersResponse {
+  /**
+   * Paginated user profiles. No-mode follower, following, and verified follower
+   * requests merge independent views automatically. Response fields, page size,
+   * aliases, filters, and per-returned-profile billing stay unchanged. Existing
+   * unprefixed cursors retain legacy behavior. Follow next_cursor while
+   * has_next_page is true.
+   */
+  export interface UserListCoverageResponse
+    extends Omit<Shared.PaginatedUsers, 'has_next_page' | 'next_cursor'> {
+    /**
+     * Coverage evidence across parallel relationship strategies.
+     */
+    diagnostic: UserListCoverageResponse.Diagnostic;
+
+    has_next_page?: false;
+
+    next_cursor?: '';
+  }
+
+  export namespace UserListCoverageResponse {
+    /**
+     * Coverage evidence across parallel relationship strategies.
+     */
+    export interface Diagnostic {
+      /**
+       * True when every strategy exhausted its source.
+       */
+      complete: boolean;
+
+      cursorFailureCount: number;
+
+      deadlineReached: boolean;
+
+      duplicateCount: number;
+
+      failedStrategyCount: number;
+
+      malformedCount: number;
+
+      pagesFetched: number;
+
+      /**
+       * Whether credits or the requested limit reduced output.
+       */
+      responseTruncated: boolean;
+
+      resultLimitReached: boolean;
+
+      returnedUsers: number;
+
+      stalledStrategyCount: number;
+
+      strategies: Array<Diagnostic.Strategy>;
+
+      strategyCount: number;
+
+      uniqueUsers: number;
+    }
+
+    export namespace Diagnostic {
+      export interface Strategy {
+        duplicateCount: number;
+
+        pagesFetched: number;
+
+        stopReason:
+          | 'cursor_failure'
+          | 'deadline'
+          | 'exhausted'
+          | 'failed'
+          | 'page_limit'
+          | 'result_limit'
+          | 'stalled';
+
+        strategy: number;
+
+        uniqueAdded: number;
+      }
+    }
+  }
+}
+
+/**
+ * Paginated user profiles. No-mode follower, following, and verified follower
+ * requests merge independent views automatically. Response fields, page size,
+ * aliases, filters, and per-returned-profile billing stay unchanged. Existing
+ * unprefixed cursors retain legacy behavior. Follow next_cursor while
+ * has_next_page is true.
+ */
+export type UserRetrieveFollowingResponse =
+  | Shared.PaginatedUsers
+  | UserRetrieveFollowingResponse.UserListCoverageResponse;
+
+export namespace UserRetrieveFollowingResponse {
+  /**
+   * Paginated user profiles. No-mode follower, following, and verified follower
+   * requests merge independent views automatically. Response fields, page size,
+   * aliases, filters, and per-returned-profile billing stay unchanged. Existing
+   * unprefixed cursors retain legacy behavior. Follow next_cursor while
+   * has_next_page is true.
+   */
+  export interface UserListCoverageResponse
+    extends Omit<Shared.PaginatedUsers, 'has_next_page' | 'next_cursor'> {
+    /**
+     * Coverage evidence across parallel relationship strategies.
+     */
+    diagnostic: UserListCoverageResponse.Diagnostic;
+
+    has_next_page?: false;
+
+    next_cursor?: '';
+  }
+
+  export namespace UserListCoverageResponse {
+    /**
+     * Coverage evidence across parallel relationship strategies.
+     */
+    export interface Diagnostic {
+      /**
+       * True when every strategy exhausted its source.
+       */
+      complete: boolean;
+
+      cursorFailureCount: number;
+
+      deadlineReached: boolean;
+
+      duplicateCount: number;
+
+      failedStrategyCount: number;
+
+      malformedCount: number;
+
+      pagesFetched: number;
+
+      /**
+       * Whether credits or the requested limit reduced output.
+       */
+      responseTruncated: boolean;
+
+      resultLimitReached: boolean;
+
+      returnedUsers: number;
+
+      stalledStrategyCount: number;
+
+      strategies: Array<Diagnostic.Strategy>;
+
+      strategyCount: number;
+
+      uniqueUsers: number;
+    }
+
+    export namespace Diagnostic {
+      export interface Strategy {
+        duplicateCount: number;
+
+        pagesFetched: number;
+
+        stopReason:
+          | 'cursor_failure'
+          | 'deadline'
+          | 'exhausted'
+          | 'failed'
+          | 'page_limit'
+          | 'result_limit'
+          | 'stalled';
+
+        strategy: number;
+
+        uniqueAdded: number;
+      }
+    }
+  }
+}
+
+/**
+ * Paginated user profiles. No-mode follower, following, and verified follower
+ * requests merge independent views automatically. Response fields, page size,
+ * aliases, filters, and per-returned-profile billing stay unchanged. Existing
+ * unprefixed cursors retain legacy behavior. Follow next_cursor while
+ * has_next_page is true.
+ */
+export type UserRetrieveVerifiedFollowersResponse =
+  | Shared.PaginatedUsers
+  | UserRetrieveVerifiedFollowersResponse.UserListCoverageResponse;
+
+export namespace UserRetrieveVerifiedFollowersResponse {
+  /**
+   * Paginated user profiles. No-mode follower, following, and verified follower
+   * requests merge independent views automatically. Response fields, page size,
+   * aliases, filters, and per-returned-profile billing stay unchanged. Existing
+   * unprefixed cursors retain legacy behavior. Follow next_cursor while
+   * has_next_page is true.
+   */
+  export interface UserListCoverageResponse
+    extends Omit<Shared.PaginatedUsers, 'has_next_page' | 'next_cursor'> {
+    /**
+     * Coverage evidence across parallel relationship strategies.
+     */
+    diagnostic: UserListCoverageResponse.Diagnostic;
+
+    has_next_page?: false;
+
+    next_cursor?: '';
+  }
+
+  export namespace UserListCoverageResponse {
+    /**
+     * Coverage evidence across parallel relationship strategies.
+     */
+    export interface Diagnostic {
+      /**
+       * True when every strategy exhausted its source.
+       */
+      complete: boolean;
+
+      cursorFailureCount: number;
+
+      deadlineReached: boolean;
+
+      duplicateCount: number;
+
+      failedStrategyCount: number;
+
+      malformedCount: number;
+
+      pagesFetched: number;
+
+      /**
+       * Whether credits or the requested limit reduced output.
+       */
+      responseTruncated: boolean;
+
+      resultLimitReached: boolean;
+
+      returnedUsers: number;
+
+      stalledStrategyCount: number;
+
+      strategies: Array<Diagnostic.Strategy>;
+
+      strategyCount: number;
+
+      uniqueUsers: number;
+    }
+
+    export namespace Diagnostic {
+      export interface Strategy {
+        duplicateCount: number;
+
+        pagesFetched: number;
+
+        stopReason:
+          | 'cursor_failure'
+          | 'deadline'
+          | 'exhausted'
+          | 'failed'
+          | 'page_limit'
+          | 'result_limit'
+          | 'stalled';
+
+        strategy: number;
+
+        uniqueAdded: number;
+      }
+    }
+  }
+}
+
 export interface UserRemoveFollowerParams {
   /**
    * Body param: X account identifier (@username or account ID)
@@ -568,37 +855,182 @@ export interface UserRetrieveFollowersParams {
   after?: string;
 
   /**
-   * Pagination cursor for followers list
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
+   * Cursor from the previous response. Xquik cursors resume automatic coverage.
+   * Existing unprefixed cursors keep legacy standard behavior.
    */
   cursor?: string;
 
   /**
-   * Legacy integer page size alias for following lists. Prefer pageSize.
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Legacy page-size alias outside explicit coverage mode. Coverage accepts 1-10000.
+   * Prefer pageSize.
    */
   limit?: number;
 
   /**
-   * Maximum user profiles requested from this page (20-200, default 200). The
-   * response can contain fewer profiles because the source returned fewer or
-   * the available usage balance covers fewer results. Keep requesting next_cursor while
-   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Omit mode for resumable maximum coverage. Standard keeps legacy pagination.
+   * Coverage returns diagnostics once and rejects cursors.
+   */
+  mode?: 'standard' | 'coverage';
+
+  /**
+   * Maximum user profiles: automatic 300; standard 200. Sources return fewer
+   * profiles. Continue with has_next_page.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface UserRetrieveFollowersYouKnowParams {
+  /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
   /**
    * Pagination cursor for followers-you-know
    */
   cursor?: string;
 
   /**
-   * Maximum user profiles requested from this page (20-200, default 200). The
-   * response can contain fewer profiles because the source returned fewer or
-   * the available usage balance covers fewer results. Keep requesting next_cursor while
-   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Maximum user profiles requested from this page (20-200, default 200). Source,
+   * filters, or credits can return fewer profiles. Keep requesting next_cursor while
+   * has_next_page is true. Deprecated aliases remain accepted.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface UserRetrieveFollowingParams {
@@ -608,22 +1040,98 @@ export interface UserRetrieveFollowingParams {
   after?: string;
 
   /**
-   * Pagination cursor for following list
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
+   * Cursor from the previous response. Xquik cursors resume automatic coverage.
+   * Existing unprefixed cursors keep legacy standard behavior.
    */
   cursor?: string;
 
   /**
-   * Legacy page size alias. Prefer pageSize.
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Legacy page-size alias outside explicit coverage mode. Coverage accepts 1-10000.
+   * Prefer pageSize.
    */
   limit?: number;
 
   /**
-   * Maximum user profiles requested from this page (20-200, default 200). The
-   * response can contain fewer profiles because the source returned fewer or
-   * the available usage balance covers fewer results. Keep requesting next_cursor while
-   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Omit mode for resumable maximum coverage. Standard keeps legacy pagination.
+   * Coverage returns diagnostics once and rejects cursors.
+   */
+  mode?: 'standard' | 'coverage';
+
+  /**
+   * Maximum user profiles: automatic 300; standard 200. Sources return fewer
+   * profiles. Continue with has_next_page.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface UserRetrieveLikesParams {
@@ -632,6 +1140,16 @@ export interface UserRetrieveLikesParams {
    * or lines.
    */
   anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -654,6 +1172,11 @@ export interface UserRetrieveLikesParams {
   exactPhrase?: string;
 
   /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
+
+  /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
    */
   excludeWords?: string;
@@ -662,6 +1185,11 @@ export interface UserRetrieveLikesParams {
    * Filter by author username.
    */
   fromUser?: string;
+
+  /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
 
   /**
    * Hashtags separated by spaces, commas, or lines.
@@ -679,6 +1207,31 @@ export interface UserRetrieveLikesParams {
   language?: string;
 
   /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
+
+  /**
    * Filter by media type.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
@@ -687,6 +1240,11 @@ export interface UserRetrieveLikesParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -707,6 +1265,26 @@ export interface UserRetrieveLikesParams {
    * Minimum retweets threshold.
    */
   minRetweets?: number;
+
+  /**
+   * Minimum view count threshold.
+   */
+  minViews?: number;
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
 
   /**
    * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
@@ -741,9 +1319,24 @@ export interface UserRetrieveLikesParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
+
+  /**
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -764,6 +1357,16 @@ export interface UserRetrieveLikesParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 export interface UserRetrieveMediaParams {
@@ -772,6 +1375,16 @@ export interface UserRetrieveMediaParams {
    * or lines.
    */
   anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -794,6 +1407,11 @@ export interface UserRetrieveMediaParams {
   exactPhrase?: string;
 
   /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
+
+  /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
    */
   excludeWords?: string;
@@ -802,6 +1420,11 @@ export interface UserRetrieveMediaParams {
    * Filter by author username.
    */
   fromUser?: string;
+
+  /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
 
   /**
    * Hashtags separated by spaces, commas, or lines.
@@ -819,6 +1442,31 @@ export interface UserRetrieveMediaParams {
   language?: string;
 
   /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
+
+  /**
    * Filter by media type.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
@@ -827,6 +1475,11 @@ export interface UserRetrieveMediaParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -847,6 +1500,26 @@ export interface UserRetrieveMediaParams {
    * Minimum retweets threshold.
    */
   minRetweets?: number;
+
+  /**
+   * Minimum view count threshold.
+   */
+  minViews?: number;
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
 
   /**
    * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
@@ -881,9 +1554,24 @@ export interface UserRetrieveMediaParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
+
+  /**
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -904,6 +1592,16 @@ export interface UserRetrieveMediaParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 export interface UserRetrieveMentionsParams {
@@ -912,6 +1610,16 @@ export interface UserRetrieveMentionsParams {
    * or lines.
    */
   anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -934,6 +1642,11 @@ export interface UserRetrieveMentionsParams {
   exactPhrase?: string;
 
   /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
+
+  /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
    */
   excludeWords?: string;
@@ -942,6 +1655,11 @@ export interface UserRetrieveMentionsParams {
    * Filter by author username.
    */
   fromUser?: string;
+
+  /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
 
   /**
    * Hashtags separated by spaces, commas, or lines.
@@ -959,6 +1677,31 @@ export interface UserRetrieveMentionsParams {
   language?: string;
 
   /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
+
+  /**
    * Filter by media type.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
@@ -967,6 +1710,11 @@ export interface UserRetrieveMentionsParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -987,6 +1735,26 @@ export interface UserRetrieveMentionsParams {
    * Minimum retweets threshold.
    */
   minRetweets?: number;
+
+  /**
+   * Minimum view count threshold.
+   */
+  minViews?: number;
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
 
   /**
    * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
@@ -1021,14 +1789,29 @@ export interface UserRetrieveMentionsParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
 
   /**
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
    * Unix timestamp - return mentions after this time
    */
   sinceTime?: string;
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -1054,6 +1837,16 @@ export interface UserRetrieveMentionsParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 export interface UserRetrieveRepliesParams {
@@ -1062,6 +1855,16 @@ export interface UserRetrieveRepliesParams {
    * or lines.
    */
   anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -1074,7 +1877,8 @@ export interface UserRetrieveRepliesParams {
   conversationId?: string;
 
   /**
-   * Pagination cursor for user replies
+   * Cursor from the previous response. Xquik cursors resume automatic coverage.
+   * Existing unprefixed cursors keep legacy standard behavior.
    */
   cursor?: string;
 
@@ -1082,6 +1886,11 @@ export interface UserRetrieveRepliesParams {
    * Exact phrase to match.
    */
   exactPhrase?: string;
+
+  /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
 
   /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
@@ -1092,6 +1901,11 @@ export interface UserRetrieveRepliesParams {
    * Filter by author username.
    */
   fromUser?: string;
+
+  /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
 
   /**
    * Hashtags separated by spaces, commas, or lines.
@@ -1114,6 +1928,31 @@ export interface UserRetrieveRepliesParams {
   language?: string;
 
   /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
+
+  /**
    * Filter by media type.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
@@ -1122,6 +1961,11 @@ export interface UserRetrieveRepliesParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -1144,9 +1988,28 @@ export interface UserRetrieveRepliesParams {
   minRetweets?: number;
 
   /**
-   * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-   * results. Continue while has_next_page is true. Deprecated limit and count
-   * aliases remain accepted.
+   * Minimum view count threshold.
+   */
+  minViews?: number;
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
+
+  /**
+   * Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
+   * Continue while has_next_page is true. Deprecated aliases remain accepted.
    */
   pageSize?: number;
 
@@ -1176,9 +2039,24 @@ export interface UserRetrieveRepliesParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
+
+  /**
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -1199,6 +2077,16 @@ export interface UserRetrieveRepliesParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 export interface UserRetrieveSearchParams {
@@ -1208,9 +2096,79 @@ export interface UserRetrieveSearchParams {
   q: string;
 
   /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
    * Pagination cursor for user search
    */
   cursor?: string;
+
+  /**
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 export interface UserRetrieveTweetsParams {
@@ -1219,6 +2177,16 @@ export interface UserRetrieveTweetsParams {
    * or lines.
    */
   anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Match the Tweet card name.
+   */
+  cardName?: string;
 
   /**
    * Cashtags separated by spaces, commas, or lines.
@@ -1231,7 +2199,8 @@ export interface UserRetrieveTweetsParams {
   conversationId?: string;
 
   /**
-   * Pagination cursor for user tweets
+   * Cursor from the previous response. Xquik cursors resume automatic coverage.
+   * Existing unprefixed cursors keep legacy standard behavior.
    */
   cursor?: string;
 
@@ -1239,6 +2208,11 @@ export interface UserRetrieveTweetsParams {
    * Exact phrase to match.
    */
   exactPhrase?: string;
+
+  /**
+   * Exclude a source application.
+   */
+  excludeSource?: string;
 
   /**
    * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
@@ -1249,6 +2223,11 @@ export interface UserRetrieveTweetsParams {
    * Filter by author username.
    */
   fromUser?: string;
+
+  /**
+   * Match latitude, longitude, and radius.
+   */
+  geocode?: string;
 
   /**
    * Hashtags separated by spaces, commas, or lines.
@@ -1276,6 +2255,31 @@ export interface UserRetrieveTweetsParams {
   language?: string;
 
   /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Return Tweets older than this Tweet ID.
+   */
+  maxId?: string;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
+
+  /**
    * Filter by media type.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
@@ -1284,6 +2288,11 @@ export interface UserRetrieveTweetsParams {
    * Filter tweets mentioning a username.
    */
   mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
 
   /**
    * Minimum likes threshold.
@@ -1306,9 +2315,28 @@ export interface UserRetrieveTweetsParams {
   minRetweets?: number;
 
   /**
-   * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-   * results. Continue while has_next_page is true. Deprecated limit and count
-   * aliases remain accepted.
+   * Minimum view count threshold.
+   */
+  minViews?: number;
+
+  /**
+   * Only return native reposts.
+   */
+  nativeRetweets?: boolean;
+
+  /**
+   * Match a place name.
+   */
+  near?: string;
+
+  /**
+   * Only return news results.
+   */
+  news?: boolean;
+
+  /**
+   * Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
+   * Continue while has_next_page is true. Deprecated aliases remain accepted.
    */
   pageSize?: number;
 
@@ -1338,9 +2366,24 @@ export interface UserRetrieveTweetsParams {
   retweetsOfTweetId?: string;
 
   /**
+   * Enable the safe-search filter.
+   */
+  safe?: boolean;
+
+  /**
    * Start date in YYYY-MM-DD format.
    */
   sinceDate?: string;
+
+  /**
+   * Return Tweets newer than this Tweet ID.
+   */
+  sinceId?: string;
+
+  /**
+   * Match the source application.
+   */
+  source?: string;
 
   /**
    * Filter replies sent to a username.
@@ -1361,21 +2404,117 @@ export interface UserRetrieveTweetsParams {
    * Only return tweets from verified authors.
    */
   verifiedOnly?: boolean;
+
+  /**
+   * Set the radius for the near filter.
+   */
+  within?: string;
+
+  /**
+   * Match Tweets inside a recent time window.
+   */
+  withinTime?: string;
 }
 
 export interface UserRetrieveVerifiedFollowersParams {
   /**
-   * Pagination cursor for verified followers
+   * Legacy cursor alias. Prefer cursor.
+   */
+  after?: string;
+
+  /**
+   * Match any comma-separated or line-separated bio term, ignoring case.
+   */
+  bioContains?: string;
+
+  /**
+   * Cursor from the previous response. Xquik cursors resume automatic coverage.
+   * Existing unprefixed cursors keep legacy standard behavior.
    */
   cursor?: string;
 
   /**
-   * Maximum user profiles requested from this page (20-200, default 200). The
-   * response can contain fewer profiles because the source returned fewer or
-   * the available usage balance covers fewer results. Keep requesting next_cursor while
-   * has_next_page is true. The deprecated limit and count aliases remain accepted.
+   * Only return profiles with a location.
+   */
+  hasLocation?: boolean;
+
+  /**
+   * Only return profiles with a website.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Legacy page-size alias outside explicit coverage mode. Coverage accepts 1-10000.
+   * Prefer pageSize.
+   */
+  limit?: number;
+
+  /**
+   * Match a location substring, ignoring case.
+   */
+  locationContains?: string;
+
+  /**
+   * Maximum follower count. Missing counts pass this maximum.
+   */
+  maxFollowers?: number;
+
+  /**
+   * Maximum following count.
+   */
+  maxFollowing?: number;
+
+  /**
+   * Maximum post count. maxPosts is also accepted.
+   */
+  maxStatuses?: number;
+
+  /**
+   * Minimum account age in whole days.
+   */
+  minAccountAgeDays?: number;
+
+  /**
+   * Minimum follower count. Filtering happens before billing.
+   */
+  minFollowers?: number;
+
+  /**
+   * Minimum following count.
+   */
+  minFollowing?: number;
+
+  /**
+   * Minimum post count. minPosts is also accepted.
+   */
+  minStatuses?: number;
+
+  /**
+   * Omit mode for resumable maximum coverage. Standard keeps legacy pagination.
+   * Coverage returns diagnostics once and rejects cursors.
+   */
+  mode?: 'standard' | 'coverage';
+
+  /**
+   * Maximum user profiles: automatic 300; standard 200. Sources return fewer
+   * profiles. Continue with has_next_page.
    */
   pageSize?: number;
+
+  /**
+   * Match a username substring, ignoring case.
+   */
+  usernameContains?: string;
+
+  /**
+   * Only return verified profiles.
+   */
+  verifiedOnly?: boolean;
+
+  /**
+   * Match the verification type exactly, ignoring case.
+   */
+  verifiedType?: string;
 }
 
 Users.Follow = Follow;
@@ -1384,6 +2523,9 @@ export declare namespace Users {
   export {
     type UserRemoveFollowerResponse as UserRemoveFollowerResponse,
     type UserRetrieveBatchResponse as UserRetrieveBatchResponse,
+    type UserRetrieveFollowersResponse as UserRetrieveFollowersResponse,
+    type UserRetrieveFollowingResponse as UserRetrieveFollowingResponse,
+    type UserRetrieveVerifiedFollowersResponse as UserRetrieveVerifiedFollowersResponse,
     type UserRemoveFollowerParams as UserRemoveFollowerParams,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,

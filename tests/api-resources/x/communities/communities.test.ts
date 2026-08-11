@@ -87,7 +87,24 @@ describe('resource communities', () => {
     await expect(
       client.x.communities.retrieveMembers(
         'id',
-        { cursor: 'cursor', pageSize: 20 },
+        {
+          bioContains: 'bioContains',
+          cursor: 'cursor',
+          hasLocation: true,
+          hasWebsite: true,
+          locationContains: 'locationContains',
+          maxFollowers: 0,
+          maxFollowing: 0,
+          maxStatuses: 0,
+          minAccountAgeDays: 0,
+          minFollowers: 0,
+          minFollowing: 0,
+          minStatuses: 0,
+          pageSize: 20,
+          usernameContains: 'usernameContains',
+          verifiedOnly: true,
+          verifiedType: 'verifiedType',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
@@ -109,7 +126,23 @@ describe('resource communities', () => {
     await expect(
       client.x.communities.retrieveModerators(
         'id',
-        { cursor: 'cursor' },
+        {
+          bioContains: 'bioContains',
+          cursor: 'cursor',
+          hasLocation: true,
+          hasWebsite: true,
+          locationContains: 'locationContains',
+          maxFollowers: 0,
+          maxFollowing: 0,
+          maxStatuses: 0,
+          minAccountAgeDays: 0,
+          minFollowers: 0,
+          minFollowing: 0,
+          minStatuses: 0,
+          usernameContains: 'usernameContains',
+          verifiedOnly: true,
+          verifiedType: 'verifiedType',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);

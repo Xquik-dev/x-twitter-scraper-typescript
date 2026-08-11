@@ -307,6 +307,7 @@ export interface Error {
     | 'missing_params'
     | 'missing_query'
     | 'monitor_already_exists'
+    | 'monitor_profile_unavailable'
     | 'no_media'
     | 'no_credits'
     | 'no_subscription'
@@ -324,6 +325,8 @@ export interface Error {
     | 'checkout_unavailable'
     | 'connection_challenge_expired'
     | 'connection_challenge_inactive'
+    | 'coverage_cursor_gone'
+    | 'coverage_cursor_unavailable'
     | 'draft_not_found'
     | 'favoriters_unavailable'
     | 'forbidden'
@@ -333,6 +336,7 @@ export interface Error {
     | 'idempotency_conflict'
     | 'idempotency_key_conflict'
     | 'invalid_community_id'
+    | 'invalid_coverage_cursor'
     | 'invalid_idempotency_key'
     | 'invalid_list_id'
     | 'invalid_payment_amount'
@@ -432,6 +436,7 @@ export namespace Error {
       | 'missing_params'
       | 'missing_query'
       | 'monitor_already_exists'
+      | 'monitor_profile_unavailable'
       | 'no_media'
       | 'no_credits'
       | 'no_subscription'
@@ -449,6 +454,8 @@ export namespace Error {
       | 'checkout_unavailable'
       | 'connection_challenge_expired'
       | 'connection_challenge_inactive'
+      | 'coverage_cursor_gone'
+      | 'coverage_cursor_unavailable'
       | 'draft_not_found'
       | 'favoriters_unavailable'
       | 'forbidden'
@@ -458,6 +465,7 @@ export namespace Error {
       | 'idempotency_conflict'
       | 'idempotency_key_conflict'
       | 'invalid_community_id'
+      | 'invalid_coverage_cursor'
       | 'invalid_idempotency_key'
       | 'invalid_list_id'
       | 'invalid_payment_amount'
@@ -545,10 +553,10 @@ export type EventType =
   | 'profile.unavailable.changed';
 
 /**
- * Paginated tweets. Source visibility, filters, or remaining credits can reduce
- * results. An empty filtered page can still have has_next_page true. Follow
- * next_cursor while has_next_page is true. Zero affordable results returns 402
- * insufficient_credits.
+ * No-mode search, user Tweet, user reply, and direct reply reads use automatic
+ * coverage. Shape, filters, aliases, and billing stay compatible. Unprefixed
+ * cursors remain legacy. Follow next_cursor while has_next_page is true. An empty
+ * filtered page can still have has_next_page true.
  */
 export interface PaginatedTweets {
   has_next_page: boolean;
@@ -559,11 +567,11 @@ export interface PaginatedTweets {
 }
 
 /**
- * Paginated user profiles. The item count can be lower than pageSize when the
- * source returns fewer profiles or the available usage balance covers fewer results. Follow
- * next_cursor while has_next_page is true. A relationship can naturally contain
- * fewer profiles than requested. Zero affordable results returns 402
- * insufficient_credits.
+ * Paginated user profiles. No-mode follower, following, and verified follower
+ * requests merge independent views automatically. Response fields, page size,
+ * aliases, filters, and per-returned-profile billing stay unchanged. Existing
+ * unprefixed cursors retain legacy behavior. Follow next_cursor while
+ * has_next_page is true.
  */
 export interface PaginatedUsers {
   has_next_page: boolean;

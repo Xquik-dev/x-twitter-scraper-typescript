@@ -42,6 +42,7 @@ describe('resource events', () => {
         {
           cursor: 'cursor',
           eventType: 'tweet.new',
+          keywordMonitorId: 'keywordMonitorId',
           limit: 1,
           monitorId: 'monitorId',
         },
