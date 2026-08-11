@@ -7,9 +7,9 @@ minimumReleaseAgeExclude:
   - x-twitter-scraper
 overrides:
   '@babel/core': 7.29.7
-  '@istanbuljs/load-nyc-config>js-yaml': 3.15.0
+  '@istanbuljs/load-nyc-config>js-yaml': 3.15.1
   'anymatch>picomatch': 2.3.2
-  'brace-expansion': 5.0.8
+  'brace-expansion': 5.0.9
   'flat-cache>flatted': 3.4.2
   'glob@10.5.0>minimatch': 9.0.9
   'micromatch>picomatch': 2.3.2
