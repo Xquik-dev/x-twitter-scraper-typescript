@@ -2,4 +2,4 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-export const VERSION = '0.8.2'; // x-release-please-version
+export const VERSION = '0.8.3'; // x-release-please-version
