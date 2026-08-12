@@ -181,7 +181,9 @@ export class Tweets extends APIResource {
   }
 
   /**
-   * No-mode search maximizes coverage.
+   * No-mode search maximizes coverage. New cursorless `Latest` sessions return rows
+   * newest-first across cursor pages. Existing cursors preserve their established
+   * ordering.
    *
    * @example
    * ```ts
@@ -1570,7 +1572,7 @@ export interface TweetGetQuotesParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 
@@ -1843,7 +1845,7 @@ export interface TweetGetRepliesParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 
@@ -2078,9 +2080,120 @@ export interface TweetGetRetweetersParams {
 
 export interface TweetGetThreadParams {
   /**
+   * Words or quoted phrases where any one can match. Separate with spaces, commas,
+   * or lines.
+   */
+  anyWords?: string;
+
+  /**
+   * Only return tweets from Blue-verified authors.
+   */
+  blueVerifiedOnly?: boolean;
+
+  /**
+   * Cashtags separated by spaces, commas, or lines.
+   */
+  cashtags?: string;
+
+  /**
+   * Conversation ID filter.
+   */
+  conversationId?: string;
+
+  /**
    * Pagination cursor for thread tweets
    */
   cursor?: string;
+
+  /**
+   * Exact phrase to match.
+   */
+  exactPhrase?: string;
+
+  /**
+   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+   */
+  excludeWords?: string;
+
+  /**
+   * Filter by author username.
+   */
+  fromUser?: string;
+
+  /**
+   * Hashtags separated by spaces, commas, or lines.
+   */
+  hashtags?: string;
+
+  /**
+   * Only replies to this tweet ID.
+   */
+  inReplyToTweetId?: string;
+
+  /**
+   * Language code filter, e.g. en or tr.
+   */
+  language?: string;
+
+  /**
+   * Maximum likes threshold. maxLikes is also accepted.
+   */
+  maxFaves?: number;
+
+  /**
+   * Maximum quotes threshold.
+   */
+  maxQuotes?: number;
+
+  /**
+   * Maximum replies threshold.
+   */
+  maxReplies?: number;
+
+  /**
+   * Maximum retweets threshold.
+   */
+  maxRetweets?: number;
+
+  /**
+   * Filter by media type.
+   */
+  mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
+
+  /**
+   * Filter tweets mentioning a username.
+   */
+  mentioning?: string;
+
+  /**
+   * Minimum bookmark count threshold.
+   */
+  minBookmarks?: number;
+
+  /**
+   * Minimum likes threshold. minLikes is also accepted.
+   */
+  minFaves?: number;
+
+  /**
+   * Minimum quote count threshold.
+   */
+  minQuotes?: number;
+
+  /**
+   * Minimum replies threshold.
+   */
+  minReplies?: number;
+
+  /**
+   * Minimum retweets threshold.
+   */
+  minRetweets?: number;
+
+  /**
+   * Minimum view count threshold.
+   */
+  minViews?: number;
 
   /**
    * Maximum page items (1-100, default 20). Source, filters, or credits can reduce
@@ -2088,6 +2201,56 @@ export interface TweetGetThreadParams {
    * aliases remain accepted.
    */
   pageSize?: number;
+
+  /**
+   * Quote mode.
+   */
+  quotes?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only quotes of this tweet ID.
+   */
+  quotesOfTweetId?: string;
+
+  /**
+   * Reply mode.
+   */
+  replies?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Retweet mode.
+   */
+  retweets?: 'include' | 'exclude' | 'only';
+
+  /**
+   * Only retweets of this tweet ID.
+   */
+  retweetsOfTweetId?: string;
+
+  /**
+   * Start date in YYYY-MM-DD format.
+   */
+  sinceDate?: string;
+
+  /**
+   * Filter replies sent to a username.
+   */
+  toUser?: string;
+
+  /**
+   * End date in YYYY-MM-DD format.
+   */
+  untilDate?: string;
+
+  /**
+   * URL substring or domain filter.
+   */
+  url?: string;
+
+  /**
+   * Only return tweets from verified authors.
+   */
+  verifiedOnly?: boolean;
 }
 
 export interface TweetSearchParams {
@@ -2231,7 +2394,7 @@ export interface TweetSearchParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 

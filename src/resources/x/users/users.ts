@@ -1243,7 +1243,7 @@ export interface UserRetrieveLikesParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 
@@ -1478,7 +1478,7 @@ export interface UserRetrieveMediaParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 
@@ -1713,7 +1713,7 @@ export interface UserRetrieveMentionsParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 
@@ -1964,7 +1964,7 @@ export interface UserRetrieveRepliesParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 
@@ -2291,7 +2291,7 @@ export interface UserRetrieveTweetsParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold.
+   * Minimum likes threshold. minLikes is also accepted.
    */
   minFaves?: number;
 
