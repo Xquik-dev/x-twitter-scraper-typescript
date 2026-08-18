@@ -551,8 +551,7 @@ export interface UserRetrieveBatchResponse {
  * has_next_page is true.
  */
 export type UserRetrieveFollowersResponse =
-  | Shared.PaginatedUsers
-  | UserRetrieveFollowersResponse.UserListCoverageResponse;
+  Shared.PaginatedUsers | UserRetrieveFollowersResponse.UserListCoverageResponse;
 
 export namespace UserRetrieveFollowersResponse {
   /**
@@ -562,8 +561,10 @@ export namespace UserRetrieveFollowersResponse {
    * unprefixed cursors retain legacy behavior. Follow next_cursor while
    * has_next_page is true.
    */
-  export interface UserListCoverageResponse
-    extends Omit<Shared.PaginatedUsers, 'has_next_page' | 'next_cursor'> {
+  export interface UserListCoverageResponse extends Omit<
+    Shared.PaginatedUsers,
+    'has_next_page' | 'next_cursor'
+  > {
     /**
      * Coverage evidence across parallel relationship strategies.
      */
@@ -621,13 +622,7 @@ export namespace UserRetrieveFollowersResponse {
         pagesFetched: number;
 
         stopReason:
-          | 'cursor_failure'
-          | 'deadline'
-          | 'exhausted'
-          | 'failed'
-          | 'page_limit'
-          | 'result_limit'
-          | 'stalled';
+          'cursor_failure' | 'deadline' | 'exhausted' | 'failed' | 'page_limit' | 'result_limit' | 'stalled';
 
         strategy: number;
 
@@ -645,8 +640,7 @@ export namespace UserRetrieveFollowersResponse {
  * has_next_page is true.
  */
 export type UserRetrieveFollowingResponse =
-  | Shared.PaginatedUsers
-  | UserRetrieveFollowingResponse.UserListCoverageResponse;
+  Shared.PaginatedUsers | UserRetrieveFollowingResponse.UserListCoverageResponse;
 
 export namespace UserRetrieveFollowingResponse {
   /**
@@ -656,8 +650,10 @@ export namespace UserRetrieveFollowingResponse {
    * unprefixed cursors retain legacy behavior. Follow next_cursor while
    * has_next_page is true.
    */
-  export interface UserListCoverageResponse
-    extends Omit<Shared.PaginatedUsers, 'has_next_page' | 'next_cursor'> {
+  export interface UserListCoverageResponse extends Omit<
+    Shared.PaginatedUsers,
+    'has_next_page' | 'next_cursor'
+  > {
     /**
      * Coverage evidence across parallel relationship strategies.
      */
@@ -715,13 +711,7 @@ export namespace UserRetrieveFollowingResponse {
         pagesFetched: number;
 
         stopReason:
-          | 'cursor_failure'
-          | 'deadline'
-          | 'exhausted'
-          | 'failed'
-          | 'page_limit'
-          | 'result_limit'
-          | 'stalled';
+          'cursor_failure' | 'deadline' | 'exhausted' | 'failed' | 'page_limit' | 'result_limit' | 'stalled';
 
         strategy: number;
 
@@ -739,8 +729,7 @@ export namespace UserRetrieveFollowingResponse {
  * has_next_page is true.
  */
 export type UserRetrieveVerifiedFollowersResponse =
-  | Shared.PaginatedUsers
-  | UserRetrieveVerifiedFollowersResponse.UserListCoverageResponse;
+  Shared.PaginatedUsers | UserRetrieveVerifiedFollowersResponse.UserListCoverageResponse;
 
 export namespace UserRetrieveVerifiedFollowersResponse {
   /**
@@ -750,8 +739,10 @@ export namespace UserRetrieveVerifiedFollowersResponse {
    * unprefixed cursors retain legacy behavior. Follow next_cursor while
    * has_next_page is true.
    */
-  export interface UserListCoverageResponse
-    extends Omit<Shared.PaginatedUsers, 'has_next_page' | 'next_cursor'> {
+  export interface UserListCoverageResponse extends Omit<
+    Shared.PaginatedUsers,
+    'has_next_page' | 'next_cursor'
+  > {
     /**
      * Coverage evidence across parallel relationship strategies.
      */
@@ -809,13 +800,7 @@ export namespace UserRetrieveVerifiedFollowersResponse {
         pagesFetched: number;
 
         stopReason:
-          | 'cursor_failure'
-          | 'deadline'
-          | 'exhausted'
-          | 'failed'
-          | 'page_limit'
-          | 'result_limit'
-          | 'stalled';
+          'cursor_failure' | 'deadline' | 'exhausted' | 'failed' | 'page_limit' | 'result_limit' | 'stalled';
 
         strategy: number;
 
