@@ -1212,8 +1212,10 @@ export namespace TweetSearchResponse {
    * cursors remain legacy. Follow next_cursor while has_next_page is true. An empty
    * filtered page can still have has_next_page true.
    */
-  export interface TweetSearchCoverageResponse
-    extends Omit<Shared.PaginatedTweets, 'has_next_page' | 'next_cursor'> {
+  export interface TweetSearchCoverageResponse extends Omit<
+    Shared.PaginatedTweets,
+    'has_next_page' | 'next_cursor'
+  > {
     /**
      * Coverage evidence across parallel search strategies.
      */
@@ -1278,13 +1280,7 @@ export namespace TweetSearchResponse {
         queryType: 'Latest' | 'Top';
 
         stopReason:
-          | 'cursor_failure'
-          | 'deadline'
-          | 'exhausted'
-          | 'failed'
-          | 'page_limit'
-          | 'result_limit'
-          | 'stalled';
+          'cursor_failure' | 'deadline' | 'exhausted' | 'failed' | 'page_limit' | 'result_limit' | 'stalled';
 
         strategy: number;
 
