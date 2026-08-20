@@ -28,15 +28,14 @@ git commit -s
 
 Start with issues labeled `good first issue` when seeking a small task.
 
-## Modifying/Adding code
+## Modify or Add Code
 
-Most of the SDK is generated code. Modifications to code will be persisted between generations, but may
-result in merge conflicts between manual patches and changes from the generator. The generator will never
-modify the contents of the `src/lib/` and `examples/` directories.
+Most SDK code is generated. Manual patches persist but may conflict with later generations.
+The generator never changes `src/lib/` or `examples/`.
 
-## Adding and running examples
+## Add and Run Examples
 
-All files in the `examples/` directory are not modified by the generator and can be freely edited or added to.
+The generator leaves `examples/` unchanged. Edit or add files there.
 
 ```ts
 // add an example to examples/<your-example>.ts
@@ -85,9 +84,7 @@ $ pnpm link --global x-twitter-scraper
 $ pnpm run test
 ```
 
-Tests enforce at least 90% statement coverage.
-
-Tests enforce at least 80% branch coverage.
+Tests enforce 90% statement coverage and 80% branch coverage.
 
 Add regression tests for every corrected defect.
 
@@ -99,8 +96,8 @@ $ pnpm run check:reproducible
 
 ## Linting and formatting
 
-This repository uses [prettier](https://www.npmjs.com/package/prettier) and
-[eslint](https://www.npmjs.com/package/eslint) to format the code in the repository.
+Use [Prettier](https://www.npmjs.com/package/prettier) and
+[ESLint](https://www.npmjs.com/package/eslint) for formatting and linting.
 
 To lint:
 
@@ -116,7 +113,7 @@ $ pnpm fix
 
 ## Publishing and releases
 
-Changes made through the automated release pipeline publish to npm automatically.
+The automated release pipeline publishes changes to npm.
 
 ### Publish with a GitHub workflow
 
