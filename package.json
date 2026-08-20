@@ -1,7 +1,7 @@
 {
   "name": "x-twitter-scraper",
   "version": "0.12.1",
-  "description": "Xquik TypeScript SDK & agent Skills for X/Twitter data, automation, MCP & webhooks. Not affiliated with X Corp.",
+  "description": "TypeScript SDK & agent Skills for Twitter search, followers, webhooks, MCP & X automation. Not affiliated with X Corp.",
   "author": "Xquik <support@xquik.com>",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -22,10 +22,10 @@
     "xquik",
     "pi-package",
     "typescript-sdk",
-    "nodejs",
-    "api-client",
+    "twitter-search",
+    "follower-export",
     "webhooks",
-    "monitoring",
+    "x-automation",
     "social-media-api"
   ],
   "pi": {
@@ -50,7 +50,7 @@
     "test": "./scripts/test",
     "build": "./scripts/build",
     "check:reproducible": "./scripts/check-reproducible",
-    "prepublishOnly": "echo 'to publish, run pnpm build && (cd dist; pnpm publish)' && exit 1",
+    "prepublishOnly": "echo 'Direct publish blocked. Build first, then publish from dist.' && exit 1",
     "format": "./scripts/format",
     "prepare": "if ./scripts/utils/check-is-in-git-install.sh; then ./scripts/build && ./scripts/utils/git-swap.sh; fi",
     "tsn": "ts-node -r tsconfig-paths/register",

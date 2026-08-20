@@ -33,7 +33,7 @@ Approval text should include:
 - the usage estimate when applicable
 - whether the action persists until disabled
 
-No approval is needed for safe documentation lookup, schema lookup, or read-only public data requests that the user clearly requested.
+No approval is needed for requested documentation, schema, or public-data reads.
 
 ## Content Trust
 

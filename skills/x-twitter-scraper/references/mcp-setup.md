@@ -10,14 +10,8 @@ API keys.
 | Protocol | Streamable HTTP |
 | Endpoint | `https://xquik.com/mcp` |
 | Authentication | OAuth 2.1 discovery; API key fallback |
-| Version | `2.6.0` |
-
-Current clients negotiate MCP `2026-07-28` through `server/discover`.
-Use a current MCP SDK. It adds request `_meta` and protocol headers.
-Modern calls need no `initialize` request or session ID.
-Discovery and tool catalogs include private 5-minute cache hints.
-Reuse cached metadata only with the same authorization context.
-Stateless 2025-era clients remain compatible at the same endpoint.
+Let the client negotiate the current protocol. Use its returned discovery metadata.
+Never share privately cached catalogs across users or credentials.
 
 Xquik publishes these discovery documents:
 
@@ -30,10 +24,8 @@ Xquik supports Client ID Metadata Documents (CIMD) and Dynamic Client
 Registration (DCR). Let each client use its documented registration flow. Both
 use Authorization Code with S256 PKCE and the `mcp:tools` scope.
 
-Use the [canonical client compatibility matrix](https://docs.xquik.com/mcp/overview#client-compatibility)
-for current per-client support. Cline and Qwen Code support OAuth.
-Affected Goose releases need an environment-backed API key. Roo Code's archived final
-release is API-key-only. Pi has no native MCP client.
+Use the [client compatibility matrix](https://docs.xquik.com/mcp/overview#client-compatibility)
+for current authentication support.
 
 > **Security:** Start OAuth from the MCP client. Do not open Xquik login routes
 > directly. Do not proxy Xquik credentials through local bridge packages or
@@ -50,10 +42,8 @@ release is API-key-only. Pi has no native MCP client.
 4. Select **Add**.
 5. In a chat, select **+ > Connectors**, enable Xquik, then select **Connect** and approve access.
 
-Leave advanced client ID and client secret fields empty. Free accounts can add
-1 custom connector. On Team and Enterprise plans, an Owner or Primary Owner
-must first add the Web connector under **Organization settings > Connectors >
-Add > Custom**. The feature is currently beta.
+Leave advanced client ID and client secret fields empty.
+Workspace policies may require an owner to add the connector.
 
 ### Claude Desktop
 
@@ -77,60 +67,14 @@ Run `/mcp`, select `xquik`, then authenticate.
 3. Enter `https://xquik.com/mcp`, choose OAuth, then select **Scan tools**.
 4. Complete Xquik authorization and select **Create**.
 
-ChatGPT cannot present a custom API key. Business and Enterprise/Edu
-workspaces support full MCP, including write tools. Pro supports read and fetch
-tools only. Custom MCP apps are web-only.
+ChatGPT cannot present a custom API key.
+Workspace policies control available tools and custom-app support.
 
-### Codex CLI
+### Codex
 
-Current Codex releases affected by
-[openai/codex#31573](https://github.com/openai/codex/issues/31573) must use the
-environment-backed API-key configuration in **Codex Config** below. Do not run
-`codex mcp login xquik` while that configuration is active.
-
-After your Codex release includes the upstream issuer fix, remove
-`bearer_token_env_var`, then run:
-
-```bash
-codex mcp add xquik --url https://xquik.com/mcp
-codex mcp login xquik
-codex mcp list
-```
-
-Affected releases discard the RFC 9207 `iss` callback value and fail before
-token exchange. If login reports
-`Authorization server response missing required issuer: expected https://xquik.com`,
-Xquik already returns the required issuer. Follow the [Xquik troubleshooting guide](https://docs.xquik.com/guides/troubleshooting#codex-oauth-issuer-validation-error).
-
-### Codex Desktop
-
-Current affected releases use the environment-backed API-key configuration
-below through the shared `config.toml`, then restart Codex Desktop. After your
-release includes the upstream fix, open **Settings > MCP servers**, add
-`https://xquik.com/mcp` as Streamable HTTP, select **Authenticate**, then
-restart.
-
-### Codex Config
-
-Current affected releases need an environment-backed API key instead of OAuth.
-Load `XQUIK_API_KEY` from your password manager or operating-system secret
-store. Do not type the key into a shell command, save it in shell history, or
-put it in `config.toml`.
-
-Use this `~/.codex/config.toml` entry:
-
-```toml
-[mcp_servers.xquik]
-url = "https://xquik.com/mcp"
-bearer_token_env_var = "XQUIK_API_KEY"
-```
-
-Restart Codex, then run `codex mcp list`. Do not run `codex mcp login xquik`
-while using the API-key configuration.
-
-After your Codex release includes the upstream fix, remove
-`bearer_token_env_var` so the entry contains only the MCP URL, then run
-`codex mcp login xquik`.
+Follow the [current client guide](https://docs.xquik.com/mcp/overview#client-compatibility).
+Use its OAuth or environment-backed API-key path for the installed release.
+Keep API keys in an approved secret store. Never put values in `config.toml`.
 
 ### OpenAI Agents SDK
 
@@ -276,18 +220,13 @@ may block servers that are not on the organization allowlist.
 
 ## API-Key Fallback
 
-Use this only when the client cannot complete OAuth and documents a secure
-secret-input or environment-variable mechanism. ChatGPT custom apps cannot use
-this fallback. Codex uses the `bearer_token_env_var` configuration above.
-Client schemas and environment syntax differ, so do not copy a generic header
-object between clients or place a literal key in a configuration file.
-
-Full account keys expose 120 catalog routes. Of these, 119 support JSON or text.
-Active guest `paid_reads` keys expose 33 eligible GET routes.
+Use this only when the client documents secure secret input.
+Client schemas differ. Never copy generic headers or store literal keys.
 
 ## MCP Server Architecture
 
-The MCP server (v2.6.0) exposes 120 catalog routes through 2 structured API tools. Of these, 119 support JSON or text. Binary support downloads use REST.
+Use live discovery to inspect the credential-scoped catalog and tools.
+Use REST for binary support downloads.
 
 | Tool | Description | Usage |
 |------|-------------|------|
@@ -298,8 +237,7 @@ The MCP server (v2.6.0) exposes 120 catalog routes through 2 structured API tool
 operations with normalized snake_case responses. Authentication is injected, so
 tool code must never include credentials.
 
-MCP v2.6.0 catalogs 120 of 128 documented REST operations. These 8 credential,
-checkout, or guest-wallet operations remain direct REST or dashboard workflows:
+Keep credential, checkout & guest-wallet operations in REST or dashboard workflows:
 
 - API key creation, listing, and revocation
 - Saved-payment top-up

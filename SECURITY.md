@@ -14,15 +14,15 @@ Never post exploit details through public channels.
 
 Never post credentials, cookies, webhook secrets, or personal data.
 
-We will acknowledge reports within 3 business days.
+Maintainers acknowledge reports within 3 business days.
 
-We will validate and classify reports within 14 days.
+Maintainers validate and classify reports within 14 days.
 
-We will fix confirmed public vulnerabilities within 60 days.
+Maintainers fix confirmed public vulnerabilities within 60 days.
 
 Critical vulnerabilities receive immediate priority.
 
-We will coordinate disclosure timing with the reporter.
+Maintainers coordinate disclosure timing with the reporter.
 
 Public advisories will credit reporters unless they request anonymity.
 
@@ -36,7 +36,7 @@ It handles API keys, OAuth bearer tokens, uploads, retries, and response streams
 
 The default service endpoint uses HTTPS.
 
-Callers may explicitly provide another endpoint for testing or compatible services.
+Use custom endpoints only for isolated tests or compatible services.
 
 The SDK trusts the host runtime's TLS and cryptographic implementations.
 

@@ -14,18 +14,18 @@ package_version="$(jq -r -e '.version' package.json)"
 source_version="$(jq -r -e '.version' ../package.json)"
 
 if [[ "$package_name" != "x-twitter-scraper" ]]; then
-  echo "Refusing to package unexpected project ${package_name}." >&2
+  echo "Package name is unexpected: ${package_name}. Use x-twitter-scraper." >&2
   exit 1
 fi
 
 if [[ "$package_version" != "$source_version" ]]; then
-  echo "Built version ${package_version} does not match source version ${source_version}." >&2
+  echo "Built version mismatch: ${package_version}. Use ${source_version}." >&2
   exit 1
 fi
 
 for package_file in package.json README.md; do
   if ! grep -Fq "Not affiliated with X Corp." "$package_file"; then
-    echo "${package_file} must include the X Corp. non-affiliation notice." >&2
+    echo "${package_file} lacks the X Corp. notice. Add it." >&2
     exit 1
   fi
 done

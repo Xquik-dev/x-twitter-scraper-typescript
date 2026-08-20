@@ -28,9 +28,7 @@ The shared Xquik documentation site supports this released project.
 
 ## Gold Limitations
 
-The organization currently has one member.
-
-This project cannot yet prove these human Gold requirements:
+Public evidence does not yet prove these human Gold requirements:
 
 - A bus factor of 2 or more.
 - Two unassociated significant contributors.
@@ -38,7 +36,5 @@ This project cannot yet prove these human Gold requirements:
 - A human security review completed within the last 5 years.
 
 Do not mark these criteria as met without public evidence.
-
-Do not count this file as default-branch evidence before merging.
 
 Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

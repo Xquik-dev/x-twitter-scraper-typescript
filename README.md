@@ -1,26 +1,21 @@
-# X (Twitter) Scraper TypeScript SDK: Tweet Search, Profile Tweets, Followers & Posting
-
-> Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
+# Xquik TypeScript SDK: Twitter Search, Followers & X Automation
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13740/badge)](https://www.bestpractices.dev/projects/13740)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg?url=https%3A%2F%2Fgithub.com%2FXquik-dev%2Fx-twitter-scraper-typescript)](https://deepwiki.com/Xquik-dev/x-twitter-scraper-typescript)
-[![Skills.sh x-twitter-scraper Skill](https://skills.sh/b/xquik-dev/x-twitter-scraper)](https://skills.sh/xquik-dev/x-twitter-scraper)
 
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 
-Xquik TypeScript SDK and agent Skill package for the X (Twitter) Scraper API. Use typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, and posting automation.
+Use the Xquik TypeScript SDK for Twitter search, timelines, profiles & followers.
+Manage media, webhooks, MCP & X automation with generated types and agent Skills.
+It provides a Twitter API alternative through documented Xquik REST routes.
 
-Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining custom collection infrastructure.
-
-[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [OAuth-First MCP Guide](https://docs.xquik.com/mcp/overview) | [Python SDK](https://github.com/Xquik-dev/x-twitter-scraper-python)
+[TypeScript SDK Guide](https://docs.xquik.com/sdks/typescript) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 ## Choose the TypeScript SDK
 
-Choose this package for Node.js, Bun, Deno, and supported browsers.
-Use generated request and response types throughout application code.
-Install bundled Skills only when an agent needs Xquik task guidance.
+Choose this package for Node.js, Bun, Deno & supported browsers.
+Use generated types in applications. Install Skills only for agent guidance.
 
 ## Pi Coding Agent Package
 
@@ -30,67 +25,32 @@ Install the bundled Xquik Skills directly from npm:
 pi install npm:x-twitter-scraper
 ```
 
-Pi loads the packaged X API and social research Skills. The typed SDK remains
-available from the same npm package.
+Pi loads both packaged Skills. Import the typed SDK from the same npm package.
 
-The bundled X API Skill is v2.6.0. It documents MCP `2026-07-28` discovery,
-stateless calls, legacy compatibility, and safe read-data richness.
+## Common Twitter & X Tasks
 
-## Common X Data Tasks
+Map each task to its REST route.
 
-Use the linked TypeScript API map for typed method names.
-
-| Customer Question | REST Route | Workflow Note |
+| Task | REST Route | Usage |
 | --- | --- | --- |
-| How do I search tweets? | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
-| How do I read a profile timeline? | `GET /x/users/{id}/tweets` | Paginate bounded results. |
-| How do I scrape followers? | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
-| How do I scrape following accounts? | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
-| How do I read my home timeline? | `GET /x/timeline` | Approve this private read. |
-| How do I monitor an account? | `POST /monitors` | Deliver events through HMAC webhooks. |
-| How do I post or reply? | `POST /x/tweets` | Confirm the account and payload. |
-
-## Tweet Search, Profile Tweets & User Lookup
-
-Use generated types in Node.js, Bun, Deno, or supported browsers.
-Share request and response types across application boundaries.
-
-## Real-Time Monitoring & Webhooks
-
-Verify HMAC signatures before routing monitor events to typed handlers.
-Query event history from the same client.
+| Search tweets without the X API | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
+| Read an X profile timeline | `GET /x/users/{id}/tweets` | Paginate bounded results. |
+| Scrape Twitter followers | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
+| Scrape following accounts | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
+| Read a home timeline | `GET /x/timeline` | Approve this private read. |
+| Export large X datasets | `POST /extractions` | Poll status, then download results. |
+| Download or upload media | `/x/media/*` | Use typed file helpers. |
+| Monitor an account | `POST /monitors` | Deliver events through HMAC webhooks. |
+| Post or reply | `POST /x/tweets` | Confirm the account and payload. |
 
 ## AI Agent Workflows With MCP
 
-Keep application code on the typed REST SDK. For MCP clients, add
-`https://xquik.com/mcp`, then follow the [current client compatibility
-path](https://docs.xquik.com/mcp/overview#client-compatibility). OAuth-capable
-clients complete OAuth 2.1 in the browser. API-key fallback is client-specific.
-ChatGPT custom apps require OAuth.
-
-Current MCP SDKs use `server/discover`. Modern clients skip `initialize` and
-session IDs.
-
-> **Codex OAuth compatibility:** Affected Codex releases discard the RFC 9207
-> `iss` callback value even though Xquik returns it. If Codex reports
-> `Authorization server response missing required issuer: expected https://xquik.com`,
-> use `XQUIK_API_KEY` through the Codex `bearer_token_env_var` setting. Follow the
-> [Codex OAuth troubleshooting guide](https://docs.xquik.com/guides/troubleshooting#codex-oauth-issuer-validation-error)
-> and track [openai/codex#31573](https://github.com/openai/codex/issues/31573).
+Use the typed REST SDK in application code. Add `https://xquik.com/mcp` to MCP clients.
+Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authentication support.
 
 ## Giveaway Draws & Extractions
 
-Launch draws and extractions from server-side workers.
-Load completed results into typed application workflows.
-
-## Xquik SDK vs Building From Scratch
-
-| Need | Xquik TypeScript SDK | Building From Scratch |
-| --- | --- | --- |
-| Typed REST calls | Generated request and response types | Hand-maintained schemas |
-| Real-time events | Monitors plus HMAC webhooks | Separate queue and signing work |
-| AI agent access | REST SDK plus MCP server | Custom bridge layer |
-| X data workflows | Search, user lookup, draws, exports, and monitoring | Many separate integrations |
+Run giveaway draws and export extraction results from server-side workers.
 
 ## Package & Registry Trust
 
@@ -101,22 +61,6 @@ Load completed results into typed application workflows.
 - Citation metadata: [CITATION.cff](CITATION.cff)
 - Security boundary and reporting: [SECURITY.md](SECURITY.md)
 - OpenSSF evidence and current limitations: [OPENSSF.md](OPENSSF.md)
-
-## FAQ
-
-### Is this SDK only for browser apps?
-
-No. It is designed for server-side TypeScript and JavaScript runtimes.
-
-### Where are the REST endpoints documented?
-
-Start with the [REST API overview](https://docs.xquik.com/api-reference/overview), then use [api.md](api.md) for generated method names.
-
-### Can this work with AI agents?
-
-Yes. Install the bundled Skills with `pi install npm:x-twitter-scraper`. Use
-the SDK in application code. Follow the
-[MCP guide](https://docs.xquik.com/mcp/overview) for MCP clients.
 
 ## Installation
 

@@ -1,10 +1,8 @@
 # Xquik MCP Tools Reference
 
-The MCP server at `https://xquik.com/mcp` provides 2 structured API tools. The agent sends API requests through the server, which handles authentication and execution for `xquik.com/api/v1`.
+Connect to `https://xquik.com/mcp`. The server handles authentication and API execution.
 
-MCP v2.6.0 supports `2026-07-28` through `server/discover`.
-Current MCP SDKs add request metadata and headers automatically.
-Modern calls need no initialization session.
+Let the MCP client negotiate the current protocol and discovery flow.
 
 ## Contents
 
@@ -161,9 +159,7 @@ Use `POST /api/v1/extractions` ONLY for bulk data that simpler endpoints cannot 
 
 ## REST-only operations
 
-MCP v2.6.0 catalogs 120 of 128 REST operations.
-Of these, 119 support JSON or text. Binary support downloads use REST.
-These 8 credential, checkout, or guest-wallet operations remain outside MCP:
+Use REST for binary downloads and these credential, checkout, or guest-wallet operations:
 
 - API key creation
 - API key listing

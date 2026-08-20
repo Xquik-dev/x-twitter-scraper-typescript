@@ -2,19 +2,24 @@
 
 **Skill:** x-twitter-scraper
 **Source:** `skills/x-twitter-scraper`
-**Scanned:** 2026-07-30 03:38:37 UTC
+**Scanned:** 2026-08-20 UTC
 
 ## Static Scan
 
 - Scanner: SkillSpector v2.3.7
 - Mode: static analysis only (`--no-llm`)
-- Components scanned: 75
+- Components scanned: 76
 - Executable scripts: no
-- Risk score: 0/100
+- Risk score: 3/100
 - Severity: low
 - Recommendation: safe
-- Findings: 0
+- Findings: 1 non-applicable legal-text match
 
-No security issues were detected by the static scan.
+## Review
+
+EA3 matched an MIT warranty phrase in `LICENSE` line 16.
+The text is a legal warranty clause, not an agent instruction.
+The license must remain unchanged.
+No applicable findings remain.
 
 Refresh this report after each change to the skill directory.

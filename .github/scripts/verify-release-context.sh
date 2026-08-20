@@ -13,36 +13,36 @@ set -euo pipefail
 : "${EXPECTED_PACKAGE_NAME:?}"
 
 if [[ "$GITHUB_REF_TYPE" != "tag" ]]; then
-  echo "Release workflows require a tag event." >&2
+  echo "Release event is not a tag. Publish from a version tag." >&2
   exit 1
 fi
 
 if [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "Release tags must use vMAJOR.MINOR.PATCH." >&2
+  echo "Release tag is invalid. Use vMAJOR.MINOR.PATCH." >&2
   exit 1
 fi
 
 package_name="$(node -p "require('./package.json').name")"
 package_version="$(node -p "require('./package.json').version")"
 if [[ "$package_name" != "$EXPECTED_PACKAGE_NAME" ]]; then
-  echo "Package ${package_name} does not match ${EXPECTED_PACKAGE_NAME}." >&2
+  echo "Package name mismatch: ${package_name}. Use ${EXPECTED_PACKAGE_NAME}." >&2
   exit 1
 fi
 
 expected_tag="v${package_version}"
 if [[ "$GITHUB_REF_NAME" != "$expected_tag" ]]; then
-  echo "Tag ${GITHUB_REF_NAME} does not match package version ${package_version}." >&2
+  echo "Tag mismatch: ${GITHUB_REF_NAME}. Use ${expected_tag}." >&2
   exit 1
 fi
 
 tag_commit="$(git rev-parse "refs/tags/${GITHUB_REF_NAME}^{commit}")"
 if [[ "$tag_commit" != "$GITHUB_SHA" ]]; then
-  echo "The release tag does not resolve to the workflow commit." >&2
+  echo "Release tag targets another commit. Tag the workflow commit." >&2
   exit 1
 fi
 
 git fetch --no-tags origin "$DEFAULT_BRANCH"
 if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/${DEFAULT_BRANCH}"; then
-  echo "The release commit is not on ${DEFAULT_BRANCH}." >&2
+  echo "Release commit is outside ${DEFAULT_BRANCH}. Merge it first." >&2
   exit 1
 fi
