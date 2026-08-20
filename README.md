@@ -10,7 +10,7 @@ It provides a Twitter API alternative through documented Xquik REST routes.
 
 [TypeScript SDK Guide](https://docs.xquik.com/sdks/typescript) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
-It is generated with [Stainless](https://www.stainless.com/).
+[Stainless](https://www.stainless.com/) generates this SDK.
 
 ## Choose the TypeScript SDK
 
@@ -70,7 +70,7 @@ npm install x-twitter-scraper
 
 ## Usage
 
-The full API of this library can be found in [api.md](api.md).
+See [api.md](api.md) for the complete API.
 
 <!-- prettier-ignore -->
 ```js
@@ -83,9 +83,9 @@ const client = new XTwitterScraper({
 const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
 ```
 
-### Request & Response types
+### Request & Response Types
 
-This library includes TypeScript definitions for all request params and response fields. You may import and use them like so:
+The package includes types for every request parameter and response field. Import them directly:
 
 <!-- prettier-ignore -->
 ```ts
@@ -99,9 +99,9 @@ const params: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit:
 const paginatedTweets: XTwitterScraper.PaginatedTweets = await client.x.tweets.search(params);
 ```
 
-Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
+Editors show each method, parameter, and field description from its docstring.
 
-### Guest wallet authentication
+### Guest Wallet Authentication
 
 Guest wallet keys work through the public Bearer flow. Pass the key through the
 `bearerToken` option, then poll status or create a confirmed top-up checkout.
@@ -116,9 +116,9 @@ const wallet = await guestClient.guestWallets.retrieveStatus();
 
 Keep guest keys out of source code, URLs, and logs.
 
-## File uploads
+## File Uploads
 
-Request parameters that correspond to file uploads can be passed in many different forms:
+Pass file uploads in these forms:
 
 - `File` (or an object with the same structure)
 - a `fetch` `Response` (or an object with the same structure)
@@ -131,16 +131,16 @@ import XTwitterScraper, { toFile } from 'x-twitter-scraper';
 
 const client = new XTwitterScraper();
 
-// If you have access to Node `fs` we recommend using `fs.createReadStream()`:
+// Stream a local file with Node fs:
 await client.x.media.upload({ account: '@elonmusk', file: fs.createReadStream('/path/to/file') });
 
-// Or if you have the web `File` API you can pass a `File` instance:
+// Pass a web File:
 await client.x.media.upload({ account: '@elonmusk', file: new File(['my bytes'], 'file') });
 
-// You can also pass a `fetch` `Response`:
+// Pass a fetch Response:
 await client.x.media.upload({ account: '@elonmusk', file: await fetch('https://somesite/file') });
 
-// Finally, if none of the above are convenient, you can use our `toFile` helper:
+// Convert bytes with toFile:
 await client.x.media.upload({
   account: '@elonmusk',
   file: await toFile(Buffer.from('my bytes'), 'file'),
@@ -151,11 +151,9 @@ await client.x.media.upload({
 });
 ```
 
-## Handling errors
+## Handling Errors
 
-When the library is unable to connect to the API,
-or if the API returns a non-success status code (i.e., 4xx or 5xx response),
-a subclass of `APIError` will be thrown:
+The SDK throws an `APIError` subclass for connection failures and non-2xx responses:
 
 <!-- prettier-ignore -->
 ```ts
@@ -172,7 +170,7 @@ const paginatedTweets = await client.x.tweets
   });
 ```
 
-Error codes are as follows:
+The SDK uses these error classes:
 
 | Status Code | Error Type                 |
 | ----------- | -------------------------- |
@@ -187,11 +185,10 @@ Error codes are as follows:
 
 ### Retries
 
-Certain errors will be automatically retried 2 times by default, with a short exponential backoff.
-Connection errors (for example, due to a network connectivity problem), 408 Request Timeout, 409 Conflict,
-429 Rate Limit, and >=500 Internal errors will all be retried by default.
+The SDK retries connection errors and HTTP 408, 409, 429, and 5xx responses.
+It uses exponential backoff and attempts 2 retries by default.
 
-You can use the `maxRetries` option to configure or disable this:
+Set `maxRetries` to change or disable retries:
 
 <!-- prettier-ignore -->
 ```js
@@ -208,7 +205,7 @@ await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
 
 ### Timeouts
 
-Requests time out after 1 minute by default. You can configure this with a `timeout` option:
+Requests time out after 1 minute. Set a custom `timeout` when needed:
 
 <!-- prettier-ignore -->
 ```ts
@@ -225,17 +222,18 @@ await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
 
 On timeout, an `APIConnectionTimeoutError` is thrown.
 
-Note that requests which time out will be [retried twice by default](#retries).
+Timed-out requests follow the [default retry policy](#retries).
 
 ## Advanced Usage
 
-### Accessing raw Response data (e.g., headers)
+### Accessing Raw Response Data
 
-The "raw" `Response` returned by `fetch()` can be accessed through the `.asResponse()` method on the `APIPromise` type that all methods return.
-This method returns as soon as the headers for a successful response are received and does not consume the response body, so you are free to write custom parsing or streaming logic.
+Call `.asResponse()` on any returned `APIPromise` to access the raw `fetch()` response.
+It returns after receiving successful headers without consuming the body.
+Then parse or stream the body.
 
-You can also use the `.withResponse()` method to get the raw `Response` along with the parsed data.
-Unlike `.asResponse()` this method consumes the body, returning once it is parsed.
+Call `.withResponse()` to receive the raw response and parsed data together.
+This method consumes and parses the body before returning.
 
 <!-- prettier-ignore -->
 ```ts
@@ -287,11 +285,10 @@ may still be visible.
 
 #### Custom logger
 
-By default, this library logs to `globalThis.console`. You can also provide a custom logger.
-Most logging libraries are supported, including [pino](https://www.npmjs.com/package/pino), [winston](https://www.npmjs.com/package/winston), [bunyan](https://www.npmjs.com/package/bunyan), [consola](https://www.npmjs.com/package/consola), [signale](https://www.npmjs.com/package/signale), and [@std/log](https://jsr.io/@std/log). If your logger doesn't work, please open an issue.
+The SDK logs through `globalThis.console` by default. Pass a custom logger instead.
+It supports [pino](https://www.npmjs.com/package/pino), [winston](https://www.npmjs.com/package/winston), [bunyan](https://www.npmjs.com/package/bunyan), [consola](https://www.npmjs.com/package/consola), [signale](https://www.npmjs.com/package/signale), and [@std/log](https://jsr.io/@std/log).
 
-When providing a custom logger, the `logLevel` option still controls which messages are emitted, messages
-below the configured level will not be sent to your logger.
+The `logLevel` option still controls custom logger output.
 
 ```ts
 import XTwitterScraper from 'x-twitter-scraper';
@@ -307,13 +304,13 @@ const client = new XTwitterScraper({
 
 ### Making custom/undocumented requests
 
-This library is typed for convenient access to the documented API. If you need to access undocumented
-endpoints, params, or response properties, the library can still be used.
+The SDK types every documented endpoint, parameter, and response property.
+Use its lower-level methods for undocumented API features.
 
 #### Undocumented endpoints
 
-To make requests to undocumented endpoints, you can use `client.get`, `client.post`, and other HTTP verbs.
-Options on the client, such as retries, will be respected when making these requests.
+Use `client.get`, `client.post`, or another HTTP method for undocumented endpoints.
+Client options, including retries, apply to these requests.
 
 ```ts
 await client.post('/some/path', {
@@ -324,9 +321,8 @@ await client.post('/some/path', {
 
 #### Undocumented request params
 
-To make requests using undocumented parameters, you may use `// @ts-expect-error` on the undocumented
-parameter. This library doesn't validate at runtime that the request matches the type, so any extra values you
-send will be sent as-is.
+Add `// @ts-expect-error` to an undocumented parameter.
+The SDK sends extra values without runtime type validation.
 
 ```ts
 client.x.tweets.search({
@@ -336,23 +332,21 @@ client.x.tweets.search({
 });
 ```
 
-For requests with the `GET` verb, any extra params will be in the query, all other requests will send the
-extra param in the body.
+The SDK sends extra `GET` parameters in the query.
+It sends all other extra parameters in the body.
 
-If you want to explicitly send an extra argument, you can do so with the `query`, `body`, and `headers` request
-options.
+Send explicit extra arguments through the `query`, `body`, and `headers` options.
 
 #### Undocumented response properties
 
-To access undocumented response properties, you may access the response object with `// @ts-expect-error` on
-the response object, or cast the response object to the requisite type. Like the request params, we do not
-validate or strip extra properties from the response from the API.
+Add `// @ts-expect-error` to the response object or cast it to the required type.
+The SDK does not validate or remove extra API response properties.
 
 ### Customizing the fetch client
 
-By default, this library expects a global `fetch` function is defined.
+The SDK uses the global `fetch` function by default.
 
-If you want to use a different `fetch` function, you can either polyfill the global:
+Polyfill the global to use another `fetch` implementation:
 
 ```ts
 import fetch from 'my-fetch';
@@ -371,7 +365,7 @@ const client = new XTwitterScraper({ fetch });
 
 ### Fetch options
 
-If you want to set custom `fetch` options without overriding the `fetch` function, you can provide a `fetchOptions` object when instantiating the client or making a request. (Request-specific options override client options.)
+Set `fetchOptions` on the client or request without replacing `fetch`. Request options take precedence.
 
 ```ts
 import XTwitterScraper from 'x-twitter-scraper';
@@ -385,8 +379,7 @@ const client = new XTwitterScraper({
 
 #### Configuring proxies
 
-To modify proxy behavior, you can provide custom `fetchOptions` that add runtime-specific proxy
-options to requests:
+Add runtime-specific proxy settings through `fetchOptions`:
 
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/node.svg" align="top" width="18" height="21"> **Node** <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/docs/api/ProxyAgent.md#example---proxyagent-with-fetch)]</sup>
 
@@ -427,25 +420,21 @@ const client = new XTwitterScraper({
 });
 ```
 
-## Frequently Asked Questions
+## Semantic Versioning
 
-## Semantic versioning
+This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions:
 
-This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
+1. Static type changes that preserve runtime behavior.
+2. Changes to undocumented internals that remain technically public.
+3. Changes unlikely to affect normal use.
 
-1. Changes that only affect static types, without breaking runtime behavior.
-2. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals.)_
-3. Changes that we do not expect to impact the vast majority of users in practice.
-
-We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
-
-We are keen for your feedback; please open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-typescript/issues) with questions, bugs, or suggestions.
+Open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-typescript/issues) with questions, bugs, or suggestions.
 
 ## Requirements
 
-TypeScript >= 4.9 is supported.
+Requires TypeScript 4.9 or later.
 
-The following runtimes are supported:
+Supports these runtimes:
 
 - Web browsers (Up-to-date Chrome, Firefox, Safari, Edge, and more)
 - Node.js 20 LTS or later ([non-EOL](https://endoflife.date/nodejs)) versions.
@@ -456,9 +445,9 @@ The following runtimes are supported:
 - Jest 28 or greater with the `"node"` environment (`"jsdom"` is not supported at this time).
 - Nitro v2.6 or greater.
 
-Note that React Native is not supported at this time.
+React Native is not supported.
 
-If you are interested in other runtime environments, please open or upvote an issue on GitHub.
+Request another runtime in a GitHub issue.
 
 ## Contributing
 
