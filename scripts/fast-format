@@ -6,12 +6,7 @@
 
 set -euo pipefail
 
-echo "Script started with $# arguments"
-echo "Arguments: $*"
-echo "Script location: $(dirname "$0")"
-
 cd "$(dirname "$0")/.."
-echo "Changed to directory: $(pwd)"
 
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <file-with-paths> [additional-formatter-args...]"
@@ -20,8 +15,6 @@ if [ $# -eq 0 ]; then
 fi
 
 FILE_LIST="$1"
-
-echo "Looking for file: $FILE_LIST"
 
 if [ ! -f "$FILE_LIST" ]; then
     echo "Error: File '$FILE_LIST' not found"

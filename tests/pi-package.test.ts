@@ -52,15 +52,16 @@ describe('package metadata', () => {
   });
 
   test('bundles the current MCP Skill contract', () => {
-    expect.assertions(11);
+    expect.assertions(12);
     expect(skillMetadata.version).toBe('2.6.0');
     expect(skill).toMatch(/^version: ['"]2\.6\.0['"]$/mu);
     expect(skill).not.toContain('2.5.6');
     expect(mcpSetup).toContain('Let the client negotiate the current protocol.');
     expect(mcpSetup).toContain('Use live discovery');
-    expect(mcpTools).toContain('Let the MCP client negotiate the current protocol');
+    expect(mcpTools).toContain('Hosted MCP v2.6.0 supports `2026-07-28` through `server/discover`.');
     expect(mcpTools).toContain('Use `explore` first');
-    expect(mcpTools).toContain('credential, checkout, or guest-wallet operations');
+    expect(mcpTools).toContain('These 8 credential, checkout, or guest-wallet operations remain outside MCP');
+    expect(existsSync(resolve(skillRoot, 'references/types-mcp-search-tweets.md'))).toBe(false);
     expect(skillSpectorReport).toContain('**Scanned:** 2026-08-20');
     expect(skillSpectorReport).toContain('- Findings: 1 non-applicable legal-text match');
     expect(xApiTypes).toContain('author?: TweetAuthor');

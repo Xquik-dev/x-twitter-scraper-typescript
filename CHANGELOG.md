@@ -2,11 +2,15 @@
 
 ## Unreleased
 
+## 0.12.3 (2026-08-21)
+
+Full Changelog: [v0.12.2...v0.12.3](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.2...v0.12.3)
+
 ### Documentation
 
-* sync bundled Xquik Skill 2.6.0 with MCP 2026-07-28 discovery and safe read richness
-* clarify which credential, checkout, and guest-wallet operations stay outside MCP
-* refresh the bundled SkillSpector v2.3.7 evidence with 0 findings
+* remove obsolete operation-named MCP type pages
+* align bundled MCP guidance with the 2-tool hosted server
+* simplify SDK and contribution copy
 
 ## 0.12.2 (2026-08-20)
 

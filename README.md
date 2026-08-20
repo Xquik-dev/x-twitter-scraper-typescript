@@ -12,11 +12,6 @@ It provides a Twitter API alternative through documented Xquik REST routes.
 
 [Stainless](https://www.stainless.com/) generates this SDK.
 
-## Choose the TypeScript SDK
-
-Choose this package for Node.js, Bun, Deno & supported browsers.
-Use generated types in applications. Install Skills only for agent guidance.
-
 ## Pi Coding Agent Package
 
 Install the bundled Xquik Skills directly from npm:
@@ -31,26 +26,23 @@ Pi loads both packaged Skills. Import the typed SDK from the same npm package.
 
 Map each task to its REST route.
 
-| Task | REST Route | Usage |
-| --- | --- | --- |
-| Search tweets without the X API | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
-| Read an X profile timeline | `GET /x/users/{id}/tweets` | Paginate bounded results. |
-| Scrape Twitter followers | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
-| Scrape following accounts | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
-| Read a home timeline | `GET /x/timeline` | Approve this private read. |
-| Export large X datasets | `POST /extractions` | Poll status, then download results. |
-| Download or upload media | `/x/media/*` | Use typed file helpers. |
-| Monitor an account | `POST /monitors` | Deliver events through HMAC webhooks. |
-| Post or reply | `POST /x/tweets` | Confirm the account and payload. |
+| Task                            | REST Route                    | Usage                                     |
+| ------------------------------- | ----------------------------- | ----------------------------------------- |
+| Search tweets without the X API | `GET /x/tweets/search`        | Use keyword or advanced operator queries. |
+| Read an X profile timeline      | `GET /x/users/{id}/tweets`    | Paginate bounded results.                 |
+| Scrape Twitter followers        | `GET /x/users/{id}/followers` | Use an extraction for complete datasets.  |
+| Scrape following accounts       | `GET /x/users/{id}/following` | Use an extraction for complete datasets.  |
+| Read a home timeline            | `GET /x/timeline`             | Approve this private read.                |
+| Export large X datasets         | `POST /extractions`           | Poll status, then download results.       |
+| Download or upload media        | `/x/media/*`                  | Use typed file helpers.                   |
+| Monitor an account              | `POST /monitors`              | Deliver events through HMAC webhooks.     |
+| Run a giveaway draw             | `POST /draws`                 | Confirm the tweet and entry rules.        |
+| Post or reply                   | `POST /x/tweets`              | Confirm the account and payload.          |
 
 ## AI Agent Workflows With MCP
 
 Use the typed REST SDK in application code. Add `https://xquik.com/mcp` to MCP clients.
 Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authentication support.
-
-## Giveaway Draws & Extractions
-
-Run giveaway draws and export extraction results from server-side workers.
 
 ## Package & Registry Trust
 
