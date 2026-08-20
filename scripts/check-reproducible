@@ -22,7 +22,7 @@ first_archive="$(find "$reproducibility_directory/first" -type f -name '*.tgz' -
 second_archive="$(find "$reproducibility_directory/second" -type f -name '*.tgz' -print -quit)"
 
 if [[ -z "$first_archive" || -z "$second_archive" ]]; then
-  echo "Package build did not produce both archives." >&2
+  echo "Package archives are missing. Build both archives." >&2
   exit 1
 fi
 

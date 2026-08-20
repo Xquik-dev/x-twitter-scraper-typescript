@@ -1,19 +1,19 @@
 cff-version: 1.2.0
 message: If you use this SDK, cite it using this metadata.
-title: Xquik TypeScript SDK for the X (Twitter) Scraper API
+title: Xquik TypeScript SDK for Twitter Search & X Automation
 type: software
 authors:
   - name: Xquik
-version: 0.4.1
-date-released: 2026-07-21
+version: 0.12.1
+date-released: 2026-08-18
 url: https://github.com/Xquik-dev/x-twitter-scraper-typescript
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-typescript
 license: Apache-2.0
 keywords:
   - Xquik
-  - TypeScript
-  - SDK
-  - REST API
+  - TypeScript SDK
+  - Twitter search
+  - Twitter API
+  - X automation
   - webhooks
-  - X
-  - Twitter scraper
+  - follower export

@@ -57,7 +57,8 @@ Use Xquik MCP when an agent should inspect live endpoint metadata first.
 
 Connect through `https://xquik.com/mcp` using the documented remote setup.
 
-If Codex reports `Authorization server response missing required issuer: expected https://xquik.com`, do not repeat OAuth. Affected Codex releases discard the RFC 9207 `iss` value even though Xquik returns it. Use `XQUIK_API_KEY` through the Codex `bearer_token_env_var` setting, then follow the [Codex OAuth troubleshooting guide](https://docs.xquik.com/guides/troubleshooting#codex-oauth-issuer-validation-error). Track the client fix in [openai/codex#31573](https://github.com/openai/codex/issues/31573).
+Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current client authentication.
+Use an API-key fallback only when the guide requires it.
 
 Prefer REST when writing application code, backend jobs, or data pipelines.
 

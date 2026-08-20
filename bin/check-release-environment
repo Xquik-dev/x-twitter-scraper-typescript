@@ -6,7 +6,7 @@ errors=()
 workflow=".github/workflows/publish-npm.yml"
 
 if [[ "$(node -p "require('./package.json').name")" != "x-twitter-scraper" ]]; then
-  errors+=("package.json must identify the TypeScript SDK as x-twitter-scraper")
+  errors+=("Package name is wrong. Set package.json name to x-twitter-scraper")
 fi
 
 for required in \
@@ -23,13 +23,13 @@ for required in \
   "gh release upload" \
   "npm publish"; do
   if ! grep -Fq "$required" "$workflow"; then
-    errors+=("publish-npm.yml is missing: ${required}")
+    errors+=("Release workflow lacks ${required}. Restore it")
   fi
 done
 
 for forbidden in "NPM_TOKEN" "NODE_AUTH_TOKEN" "workflow_dispatch"; do
   if grep -Fq "$forbidden" "$workflow" bin/prepare-npm-release; then
-    errors+=("release path must not contain: ${forbidden}")
+    errors+=("Release path contains ${forbidden}. Remove it")
   fi
 done
 

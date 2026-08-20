@@ -122,7 +122,7 @@ jobs:
           published_version="$(npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version 2>/dev/null || true)"
           if [[ -n "$published_version" ]]; then
             if [[ "$published_version" != "$PACKAGE_VERSION" ]]; then
-              echo "The registry returned an unexpected version." >&2
+              echo "Registry version mismatch. Check the package version." >&2
               exit 1
             fi
 
@@ -166,7 +166,7 @@ jobs:
 
           mapfile -t assets < <(find signed-release-assets -maxdepth 1 -type f -print)
           if [[ "${#assets[@]}" -ne 2 ]]; then
-            echo "Expected one package and one provenance file." >&2
+            echo "Release asset count is wrong. Upload one package and one provenance file." >&2
             exit 1
           fi
 
