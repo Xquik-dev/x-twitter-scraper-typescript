@@ -1,4 +1,4 @@
-# Xquik Extraction Tools
+# Xquik extraction tools
 
 23 bulk data extraction tools. Each requires a specific target parameter.
 
@@ -14,20 +14,21 @@
 - [Exporting Results](#exporting-results)
 - [Estimating Usage](#estimating-usage)
 
-## Tool Types
+## Tool types
 
-### Tweet-Based (require `targetTweetId`)
+### Tweet-based (require `targetTweetId`)
 
-| Tool Type | Description |
-|-----------|-------------|
-| `reply_extractor` | Extract users who replied to a tweet |
-| `repost_extractor` | Extract users who retweeted a tweet |
-| `quote_extractor` | Extract users who quote-tweeted a tweet |
-| `thread_extractor` | Extract all tweets in a thread |
+| Tool Type           | Description                               |
+| ------------------- | ----------------------------------------- |
+| `reply_extractor`   | Extract users who replied to a tweet      |
+| `repost_extractor`  | Extract users who retweeted a tweet       |
+| `quote_extractor`   | Extract users who quote-tweeted a tweet   |
+| `thread_extractor`  | Extract all tweets in a thread            |
 | `article_extractor` | Extract article content linked in a tweet |
-| `favoriters` | Extract users who favorited a tweet |
+| `favoriters`        | Extract users who favorited a tweet       |
 
 **Example:**
+
 ```json
 {
   "toolType": "reply_extractor",
@@ -35,17 +36,18 @@
 }
 ```
 
-### User-Based (require `targetUsername`)
+### User-based (require `targetUsername`)
 
-| Tool Type | Description |
-|-----------|-------------|
-| `follower_explorer` | Extract followers of an account |
-| `following_explorer` | Extract accounts followed by a user |
+| Tool Type                    | Description                              |
+| ---------------------------- | ---------------------------------------- |
+| `follower_explorer`          | Extract followers of an account          |
+| `following_explorer`         | Extract accounts followed by a user      |
 | `verified_follower_explorer` | Extract verified followers of an account |
-| `mention_extractor` | Extract tweets mentioning an account |
-| `post_extractor` | Extract posts from an account |
+| `mention_extractor`          | Extract tweets mentioning an account     |
+| `post_extractor`             | Extract posts from an account            |
 
 **Example:**
+
 ```json
 {
   "toolType": "follower_explorer",
@@ -55,14 +57,15 @@
 
 The `@` prefix is automatically stripped if included.
 
-### User-Based by ID (require `targetUserId`)
+### User-based by ID (require `targetUserId`)
 
-| Tool Type | Description |
-|-----------|-------------|
-| `user_likes` | Extract tweets liked by a user |
+| Tool Type    | Description                      |
+| ------------ | -------------------------------- |
+| `user_likes` | Extract tweets liked by a user   |
 | `user_media` | Extract media tweets from a user |
 
 **Example:**
+
 ```json
 {
   "toolType": "user_likes",
@@ -70,16 +73,17 @@ The `@` prefix is automatically stripped if included.
 }
 ```
 
-### Community-Based (require `targetCommunityId`)
+### Community-based (require `targetCommunityId`)
 
-| Tool Type | Description |
-|-----------|-------------|
-| `community_extractor` | Extract members of a community |
-| `community_moderator_explorer` | Extract moderators of a community |
-| `community_post_extractor` | Extract posts from a community |
-| `community_search` | Search posts within a community (also requires `searchQuery`) |
+| Tool Type                      | Description                                                   |
+| ------------------------------ | ------------------------------------------------------------- |
+| `community_extractor`          | Extract members of a community                                |
+| `community_moderator_explorer` | Extract moderators of a community                             |
+| `community_post_extractor`     | Extract posts from a community                                |
+| `community_search`             | Search posts within a community (also requires `searchQuery`) |
 
 **Example:**
+
 ```json
 {
   "toolType": "community_extractor",
@@ -87,15 +91,16 @@ The `@` prefix is automatically stripped if included.
 }
 ```
 
-### List-Based (require `targetListId`)
+### List-based (require `targetListId`)
 
-| Tool Type | Description |
-|-----------|-------------|
-| `list_member_extractor` | Extract members of a list |
-| `list_post_extractor` | Extract posts from a list |
+| Tool Type                | Description                 |
+| ------------------------ | --------------------------- |
+| `list_member_extractor`  | Extract members of a list   |
+| `list_post_extractor`    | Extract posts from a list   |
 | `list_follower_explorer` | Extract followers of a list |
 
 **Example:**
+
 ```json
 {
   "toolType": "list_member_extractor",
@@ -103,13 +108,14 @@ The `@` prefix is automatically stripped if included.
 }
 ```
 
-### Space-Based (require `targetSpaceId`)
+### Space-based (require `targetSpaceId`)
 
-| Tool Type | Description |
-|-----------|-------------|
+| Tool Type        | Description                     |
+| ---------------- | ------------------------------- |
 | `space_explorer` | Extract participants of a Space |
 
 **Example:**
+
 ```json
 {
   "toolType": "space_explorer",
@@ -117,14 +123,15 @@ The `@` prefix is automatically stripped if included.
 }
 ```
 
-### Search-Based (require `searchQuery`)
+### Search-based (require `searchQuery`)
 
-| Tool Type | Description |
-|-----------|-------------|
-| `people_search` | Search for users by keyword |
+| Tool Type                | Description                                                         |
+| ------------------------ | ------------------------------------------------------------------- |
+| `people_search`          | Search for users by keyword                                         |
 | `tweet_search_extractor` | Search and extract tweets by keyword or hashtag (bulk, up to 1,000) |
 
 **Example (people search):**
+
 ```json
 {
   "toolType": "people_search",
@@ -133,6 +140,7 @@ The `@` prefix is automatically stripped if included.
 ```
 
 **Example (tweet search):**
+
 ```json
 {
   "toolType": "tweet_search_extractor",
@@ -141,30 +149,31 @@ The `@` prefix is automatically stripped if included.
 }
 ```
 
-### Tweet Search Filters
+### Tweet search filters
 
 The `tweet_search_extractor` tool type supports 16 additional filter fields that are converted to X search operators and combined with `searchQuery`:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `fromUser` | string | Author username |
-| `toUser` | string | Directed to user |
-| `mentioning` | string | Mentions user |
-| `language` | string | Language code (e.g., `en`) |
-| `sinceDate` | string | Start date (YYYY-MM-DD) |
-| `untilDate` | string | End date (YYYY-MM-DD) |
-| `mediaType` | string | `images`, `videos`, `gifs`, or `media` |
-| `minFaves` | number | Minimum likes |
-| `minRetweets` | number | Minimum retweets |
-| `minReplies` | number | Minimum replies |
-| `verifiedOnly` | boolean | Verified authors only |
-| `replies` | string | `include`, `exclude`, or `only` |
-| `retweets` | string | `include`, `exclude`, or `only` |
-| `exactPhrase` | string | Exact match text |
-| `excludeWords` | string | Comma-separated words to exclude |
-| `advancedQuery` | string | Raw X search operators appended to query |
+| Field           | Type    | Description                              |
+| --------------- | ------- | ---------------------------------------- |
+| `fromUser`      | string  | Author username                          |
+| `toUser`        | string  | Directed to user                         |
+| `mentioning`    | string  | Mentions user                            |
+| `language`      | string  | Language code (e.g., `en`)               |
+| `sinceDate`     | string  | Start date (YYYY-MM-DD)                  |
+| `untilDate`     | string  | End date (YYYY-MM-DD)                    |
+| `mediaType`     | string  | `images`, `videos`, `gifs`, or `media`   |
+| `minFaves`      | number  | Minimum likes                            |
+| `minRetweets`   | number  | Minimum retweets                         |
+| `minReplies`    | number  | Minimum replies                          |
+| `verifiedOnly`  | boolean | Verified authors only                    |
+| `replies`       | string  | `include`, `exclude`, or `only`          |
+| `retweets`      | string  | `include`, `exclude`, or `only`          |
+| `exactPhrase`   | string  | Exact match text                         |
+| `excludeWords`  | string  | Comma-separated words to exclude         |
+| `advancedQuery` | string  | Raw X search operators appended to query |
 
 **Example with filters:**
+
 ```json
 {
   "toolType": "tweet_search_extractor",
@@ -192,7 +201,7 @@ The `tweet_search_extractor` tool type supports 16 additional filter fields that
 
 Statuses: `pending`, `running`, `completed`, `failed`.
 
-## Retrieving Results
+## Retrieve results
 
 ```
 GET /extractions/{id}
@@ -204,7 +213,7 @@ Returns paginated results (up to 1,000 per page). Each result includes:
 - `xFollowersCount`, `xVerified`, `xProfileImageUrl`
 - `tweetId`, `tweetText`, `tweetCreatedAt` (for tweet-based extractions)
 
-## Exporting Results
+## Export results
 
 ```
 GET /extractions/{id}/export?format=csv
@@ -214,7 +223,7 @@ Formats: `csv`, `json`, `md`, `md-document`, `pdf`, `txt`, `xlsx`. 100,000 row l
 
 Exports include enrichment columns not present in the API response.
 
-## Estimating Usage
+## Estimate usage
 
 ```
 POST /extractions/estimate

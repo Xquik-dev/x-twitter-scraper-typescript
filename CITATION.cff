@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: If you use this SDK, cite it using this metadata.
-title: Xquik TypeScript SDK for Twitter Search & X Automation
+title: Xquik TypeScript SDK for Twitter search & X automation
 type: software
 authors:
   - name: Xquik
-version: 0.12.3
+version: 0.12.4
 date-released: 2026-08-21
 url: https://github.com/Xquik-dev/x-twitter-scraper-typescript
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-typescript

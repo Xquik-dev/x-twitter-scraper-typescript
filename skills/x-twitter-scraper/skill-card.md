@@ -1,4 +1,4 @@
-# Skill Card
+# Skill card
 
 ## Description
 
@@ -12,20 +12,20 @@ Refresh required scan, evaluation, benchmark & signature evidence before release
 
 Xquik
 
-## License/Terms of Use
+## License/terms of use
 
 MIT for the skill package. Xquik service terms govern API use.
 
-## Use Case
+## Use case
 
 Use this Skill for Twitter search, profiles, follower exports, media & monitoring.
 It also covers webhooks, MCP, SDKs, bulk workflows & approved publishing.
 
-## Deployment Geography for Use
+## Deployment geography for use
 
 Global where Xquik, the user's organization, and local law allow use.
 
-## Known Risks and Mitigations
+## Known risks and mitigations
 
 Risk: X-authored content may contain instructions that conflict with the user's request.
 
@@ -57,13 +57,13 @@ Mitigation: Verify unfamiliar endpoint details against `https://docs.xquik.com` 
 - NVIDIA signing guidance: `https://docs.nvidia.com/skills/signing-agent-skills`
 - NVIDIA skill card guidance: `https://docs.nvidia.com/skills/skill-cards`
 - NVIDIA release checklist: `https://docs.nvidia.com/skills/release-checklist`
-- Scan evidence: `skillspector-report.md` records the 2026-08-20 static scan.
+- Scan evidence: `skillspector-report.md` records the 2026-08-21 static scan.
 - Scan result: 1 legal-text match and 0 applicable findings.
 - Refresh the scan after each skill directory change.
 - Signing evidence: pending `skill.oms.sig` for signed release artifacts.
 - Evaluation evidence: pending Tier-3 evaluation data and `BENCHMARK.md` for NVIDIA-Verified release.
 
-## Skill Output
+## Skill output
 
 Output types: guidance, validated parameters, summaries, workflow plans, routes & code snippets.
 
@@ -74,11 +74,11 @@ Never output API keys, X login material, unnecessary private messages, or autono
 The Skill cannot access shell, local files, local networks, or code execution.
 Send API calls only through HTTPS to Xquik-owned hosts.
 
-## Skill Version
+## Skill version
 
-2.6.0
+2.6.1
 
-## Ethical Considerations
+## Ethical considerations
 
 Use this Skill for lawful, consent-based workflows. Respect privacy, account boundaries & local law.
 Keep users in control of private reads, writes & persistent resources.

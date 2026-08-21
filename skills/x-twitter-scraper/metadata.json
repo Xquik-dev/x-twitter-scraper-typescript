@@ -1,5 +1,5 @@
 {
-  "version": "2.6.0",
+  "version": "2.6.1",
   "organization": "Xquik",
   "homepage": "https://docs.xquik.com",
   "repository": "https://github.com/Xquik-dev/x-twitter-scraper",
@@ -8,13 +8,7 @@
   "security": {
     "defaultMode": "read-only-public-data",
     "credentialsHandled": ["xquik-api-key"],
-    "credentialsNeverHandled": [
-      "x-passwords",
-      "2fa-codes",
-      "cookies",
-      "session-tokens",
-      "recovery-codes"
-    ],
+    "credentialsNeverHandled": ["x-passwords", "2fa-codes", "cookies", "session-tokens", "recovery-codes"],
     "approvalRequiredFor": [
       "private-reads",
       "write-actions",

@@ -1,43 +1,43 @@
-# Xquik Giveaway Draws
+# Xquik giveaway draws
 
 Run transparent, auditable giveaway draws from tweet replies with configurable filters.
 
-## Create Draw
+## Create a draw
 
 `POST /draws` with a `tweetUrl` (required) and optional filters:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `tweetUrl` | string | **Required.** Full tweet URL: `https://x.com/user/status/ID` |
-| `winnerCount` | number | Winners to select (default 1) |
-| `backupCount` | number | Backup winners to select |
-| `uniqueAuthorsOnly` | boolean | Count only one entry per author |
-| `mustRetweet` | boolean | Require participants to have retweeted |
-| `mustFollowUsername` | string | Username participants must follow |
-| `filterMinFollowers` | number | Minimum follower count |
-| `filterAccountAgeDays` | number | Minimum account age in days |
-| `filterLanguage` | string | Language code (e.g., `"en"`) |
-| `requiredKeywords` | string[] | Words that must appear in the reply |
-| `requiredHashtags` | string[] | Hashtags that must appear (e.g., `["#giveaway"]`) |
-| `requiredMentions` | string[] | Usernames that must be mentioned (e.g., `["@xquik"]`) |
+| Field                  | Type     | Description                                                  |
+| ---------------------- | -------- | ------------------------------------------------------------ |
+| `tweetUrl`             | string   | **Required.** Full tweet URL: `https://x.com/user/status/ID` |
+| `winnerCount`          | number   | Winners to select (default 1)                                |
+| `backupCount`          | number   | Backup winners to select                                     |
+| `uniqueAuthorsOnly`    | boolean  | Count only one entry per author                              |
+| `mustRetweet`          | boolean  | Require participants to have retweeted                       |
+| `mustFollowUsername`   | string   | Username participants must follow                            |
+| `filterMinFollowers`   | number   | Minimum follower count                                       |
+| `filterAccountAgeDays` | number   | Minimum account age in days                                  |
+| `filterLanguage`       | string   | Language code (e.g., `"en"`)                                 |
+| `requiredKeywords`     | string[] | Words that must appear in the reply                          |
+| `requiredHashtags`     | string[] | Hashtags that must appear (e.g., `["#giveaway"]`)            |
+| `requiredMentions`     | string[] | Usernames that must be mentioned (e.g., `["@xquik"]`)        |
 
-## Complete Workflow
+## Complete workflow
 
 ```javascript
 // Step 1: Create draw with filters
-const draw = await xquikFetch("/draws", {
-  method: "POST",
+const draw = await xquikFetch('/draws', {
+  method: 'POST',
   body: JSON.stringify({
-    tweetUrl: "https://x.com/burakbayir/status/1893456789012345678",
+    tweetUrl: 'https://x.com/burakbayir/status/1893456789012345678',
     winnerCount: 3,
     backupCount: 2,
     uniqueAuthorsOnly: true,
     mustRetweet: true,
-    mustFollowUsername: "burakbayir",
+    mustFollowUsername: 'burakbayir',
     filterMinFollowers: 50,
     filterAccountAgeDays: 30,
-    filterLanguage: "en",
-    requiredHashtags: ["#giveaway"],
+    filterLanguage: 'en',
+    requiredHashtags: ['#giveaway'],
   }),
 });
 

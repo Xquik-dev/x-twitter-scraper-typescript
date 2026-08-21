@@ -1,4 +1,4 @@
-# Xquik TypeScript SDK: Twitter Search, Followers & X Automation
+# Xquik TypeScript SDK: Twitter search, followers & X automation
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13740/badge)](https://www.bestpractices.dev/projects/13740)
 
@@ -12,7 +12,7 @@ It provides a Twitter API alternative through documented Xquik REST routes.
 
 [Stainless](https://www.stainless.com/) generates this SDK.
 
-## Pi Coding Agent Package
+## Pi coding agent package
 
 Install the bundled Xquik Skills directly from npm:
 
@@ -22,9 +22,7 @@ pi install npm:x-twitter-scraper
 
 Pi loads both packaged Skills. Import the typed SDK from the same npm package.
 
-## Common Twitter & X Tasks
-
-Map each task to its REST route.
+## Common Twitter & X tasks
 
 | Task                            | REST Route                    | Usage                                     |
 | ------------------------------- | ----------------------------- | ----------------------------------------- |
@@ -39,12 +37,12 @@ Map each task to its REST route.
 | Run a giveaway draw             | `POST /draws`                 | Confirm the tweet and entry rules.        |
 | Post or reply                   | `POST /x/tweets`              | Confirm the account and payload.          |
 
-## AI Agent Workflows With MCP
+## AI agent workflows with MCP
 
 Use the typed REST SDK in application code. Add `https://xquik.com/mcp` to MCP clients.
 Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authentication support.
 
-## Package & Registry Trust
+## Package & registry trust
 
 - Package: [npm `x-twitter-scraper`](https://www.npmjs.com/package/x-twitter-scraper)
 - Source: [Xquik-dev/x-twitter-scraper-typescript](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
@@ -55,6 +53,8 @@ Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authenti
 - OpenSSF evidence and current limitations: [OPENSSF.md](OPENSSF.md)
 
 ## Installation
+
+Requires TypeScript 4.9 or later.
 
 ```sh
 npm install x-twitter-scraper
@@ -69,13 +69,13 @@ See [api.md](api.md) for the complete API.
 import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
-  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
+  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional; the client reads this variable.
 });
 
 const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
 ```
 
-### Request & Response Types
+### Request & response types
 
 The package includes types for every request parameter and response field. Import them directly:
 
@@ -84,7 +84,7 @@ The package includes types for every request parameter and response field. Impor
 import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
-  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // This is the default and can be omitted
+  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional; the client reads this variable.
 });
 
 const params: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit: 10 };
@@ -93,7 +93,7 @@ const paginatedTweets: XTwitterScraper.PaginatedTweets = await client.x.tweets.s
 
 Editors show each method, parameter, and field description from its docstring.
 
-### Guest Wallet Authentication
+### Guest wallet authentication
 
 Guest wallet keys work through the public Bearer flow. Pass the key through the
 `bearerToken` option, then poll status or create a confirmed top-up checkout.
@@ -108,7 +108,7 @@ const wallet = await guestClient.guestWallets.retrieveStatus();
 
 Keep guest keys out of source code, URLs, and logs.
 
-## File Uploads
+## File uploads
 
 Pass file uploads in these forms:
 
@@ -123,16 +123,16 @@ import XTwitterScraper, { toFile } from 'x-twitter-scraper';
 
 const client = new XTwitterScraper();
 
-// Stream a local file with Node fs:
+// Stream a local file with Node fs.
 await client.x.media.upload({ account: '@elonmusk', file: fs.createReadStream('/path/to/file') });
 
-// Pass a web File:
+// Pass a web File.
 await client.x.media.upload({ account: '@elonmusk', file: new File(['my bytes'], 'file') });
 
-// Pass a fetch Response:
+// Pass a fetch Response.
 await client.x.media.upload({ account: '@elonmusk', file: await fetch('https://somesite/file') });
 
-// Convert bytes with toFile:
+// Convert bytes with toFile.
 await client.x.media.upload({
   account: '@elonmusk',
   file: await toFile(Buffer.from('my bytes'), 'file'),
@@ -143,7 +143,7 @@ await client.x.media.upload({
 });
 ```
 
-## Handling Errors
+## Handling errors
 
 The SDK throws an `APIError` subclass for connection failures and non-2xx responses:
 
@@ -161,8 +161,6 @@ const paginatedTweets = await client.x.tweets
     }
   });
 ```
-
-The SDK uses these error classes:
 
 | Status Code | Error Type                 |
 | ----------- | -------------------------- |
@@ -184,12 +182,12 @@ Set `maxRetries` to change or disable retries:
 
 <!-- prettier-ignore -->
 ```js
-// Configure the default for all requests:
+// Change the default for all requests.
 const client = new XTwitterScraper({
-  maxRetries: 0, // default is 2
+  maxRetries: 0,
 });
 
-// Or, configure per-request:
+// Override one request.
 await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
   maxRetries: 5,
 });
@@ -201,12 +199,12 @@ Requests time out after 1 minute. Set a custom `timeout` when needed:
 
 <!-- prettier-ignore -->
 ```ts
-// Configure the default for all requests:
+// Change the default for all requests.
 const client = new XTwitterScraper({
-  timeout: 20 * 1000, // 20 seconds (default is 1 minute)
+  timeout: 20 * 1000,
 });
 
-// Override per-request:
+// Override one request.
 await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
   timeout: 5 * 1000,
 });
@@ -216,9 +214,7 @@ On timeout, an `APIConnectionTimeoutError` is thrown.
 
 Timed-out requests follow the [default retry policy](#retries).
 
-## Advanced Usage
-
-### Accessing Raw Response Data
+## Raw response data
 
 Call `.asResponse()` on any returned `APIPromise` to access the raw `fetch()` response.
 It returns after receiving successful headers without consuming the body.
@@ -242,13 +238,13 @@ console.log(raw.headers.get('X-My-Header'));
 console.log(paginatedTweets.has_next_page);
 ```
 
-### Logging
+## Logging
 
 > [!IMPORTANT]
 > All log messages are intended for debugging only. The format and content of log messages
 > may change between releases.
 
-#### Log levels
+### Log levels
 
 The log level can be configured in two ways:
 
@@ -275,7 +271,7 @@ At the `'debug'` level, all HTTP requests and responses are logged, including he
 Some authentication-related headers are redacted, but sensitive data in request and response bodies
 may still be visible.
 
-#### Custom logger
+### Custom logger
 
 The SDK logs through `globalThis.console` by default. Pass a custom logger instead.
 It supports [pino](https://www.npmjs.com/package/pino), [winston](https://www.npmjs.com/package/winston), [bunyan](https://www.npmjs.com/package/bunyan), [consola](https://www.npmjs.com/package/consola), [signale](https://www.npmjs.com/package/signale), and [@std/log](https://jsr.io/@std/log).
@@ -294,12 +290,12 @@ const client = new XTwitterScraper({
 });
 ```
 
-### Making custom/undocumented requests
+## Custom requests
 
 The SDK types every documented endpoint, parameter, and response property.
 Use its lower-level methods for undocumented API features.
 
-#### Undocumented endpoints
+### Undocumented endpoints
 
 Use `client.get`, `client.post`, or another HTTP method for undocumented endpoints.
 Client options, including retries, apply to these requests.
@@ -311,7 +307,7 @@ await client.post('/some/path', {
 });
 ```
 
-#### Undocumented request params
+### Undocumented request params
 
 Add `// @ts-expect-error` to an undocumented parameter.
 The SDK sends extra values without runtime type validation.
@@ -329,12 +325,12 @@ It sends all other extra parameters in the body.
 
 Send explicit extra arguments through the `query`, `body`, and `headers` options.
 
-#### Undocumented response properties
+### Undocumented response properties
 
 Add `// @ts-expect-error` to the response object or cast it to the required type.
 The SDK does not validate or remove extra API response properties.
 
-### Customizing the fetch client
+## Custom fetch client
 
 The SDK uses the global `fetch` function by default.
 
@@ -355,7 +351,7 @@ import fetch from 'my-fetch';
 const client = new XTwitterScraper({ fetch });
 ```
 
-### Fetch options
+## Fetch options
 
 Set `fetchOptions` on the client or request without replacing `fetch`. Request options take precedence.
 
@@ -369,7 +365,7 @@ const client = new XTwitterScraper({
 });
 ```
 
-#### Configuring proxies
+### Proxies
 
 Add runtime-specific proxy settings through `fetchOptions`:
 
@@ -412,7 +408,7 @@ const client = new XTwitterScraper({
 });
 ```
 
-## Semantic Versioning
+## Semantic versioning
 
 This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions:
 
@@ -422,14 +418,12 @@ This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these ex
 
 Open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-typescript/issues) with questions, bugs, or suggestions.
 
-## Requirements
-
-Requires TypeScript 4.9 or later.
+## Runtime support
 
 Supports these runtimes:
 
-- Web browsers (Up-to-date Chrome, Firefox, Safari, Edge, and more)
-- Node.js 20 LTS or later ([non-EOL](https://endoflife.date/nodejs)) versions.
+- Current Chrome, Firefox, Safari, Edge, and other web browsers.
+- [Maintained Node.js](https://endoflife.date/nodejs) 20 LTS or later.
 - Deno v1.28.0 or higher.
 - Bun 1.0 or later.
 - Cloudflare Workers.

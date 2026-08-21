@@ -1,10 +1,10 @@
-# Security Policy
+# Security policy
 
-## Supported Versions
+## Supported versions
 
 Security fixes target the latest published release.
 
-## Reporting A Vulnerability
+## Report a vulnerability
 
 Use this repository's private vulnerability reporting option.
 
@@ -26,7 +26,7 @@ Maintainers coordinate disclosure timing with the reporter.
 
 Public advisories will credit reporters unless they request anonymity.
 
-## Security Boundary
+## Security boundary
 
 This package includes the generated TypeScript SDK and bundled agent Skills.
 
@@ -44,7 +44,7 @@ The SDK does not operate X accounts or store credentials remotely.
 
 Xquik services enforce server-side authorization and write confirmations.
 
-## Threat Model
+## Threat model
 
 Protected assets include credentials, request bodies, response data, and package integrity.
 
@@ -67,7 +67,7 @@ Required mitigations include:
 - Run coverage, static analysis, audits, and reproducibility checks.
 - Publish through npm trusted publishing with provenance.
 
-## Response Process
+## Response process
 
 Keep exploit details inside GitHub's private vulnerability process.
 
