@@ -1,17 +1,17 @@
-# Xquik MCP Server Setup
+# Xquik MCP server setup
 
 Connect AI agents and IDEs to Xquik through Model Context Protocol. Add the
 remote URL and complete OAuth 2.1 in the browser. API-key fallback is
 client-specific. ChatGPT custom apps require OAuth and cannot present custom
 API keys.
 
-| Setting | Value |
-|---------|-------|
-| Protocol | Streamable HTTP |
-| Endpoint | `https://xquik.com/mcp` |
-| Authentication | OAuth 2.1 discovery; API key fallback |
-Let the client negotiate the current protocol. Use its returned discovery metadata.
-Never share privately cached catalogs across users or credentials.
+| Setting                                                                             | Value                                 |
+| ----------------------------------------------------------------------------------- | ------------------------------------- |
+| Protocol                                                                            | Streamable HTTP                       |
+| Endpoint                                                                            | `https://xquik.com/mcp`               |
+| Authentication                                                                      | OAuth 2.1 discovery; API key fallback |
+| Let the client negotiate the current protocol. Use its returned discovery metadata. |
+| Never share privately cached catalogs across users or credentials.                  |
 
 Xquik publishes these discovery documents:
 
@@ -103,7 +103,7 @@ async def run_xquik(api_key: str) -> str:
         return str(result.final_output)
 ```
 
-## Editors and Terminals
+## Editors & terminals
 
 ### Cursor
 
@@ -192,12 +192,12 @@ Or add it to `~/.gemini/settings.json` for user scope or
 
 ```json
 {
-      "mcpServers": {
-        "xquik": {
-          "type": "http",
-          "url": "https://xquik.com/mcp"
-        }
-      }
+  "mcpServers": {
+    "xquik": {
+      "type": "http",
+      "url": "https://xquik.com/mcp"
+    }
+  }
 }
 ```
 
@@ -218,20 +218,20 @@ save. This interactive path works across Copilot CLI command variants.
 In an interactive Copilot CLI session, run `/mcp auth xquik`. Enterprise policy
 may block servers that are not on the organization allowlist.
 
-## API-Key Fallback
+## API-key fallback
 
 Use this only when the client documents secure secret input.
 Client schemas differ. Never copy generic headers or store literal keys.
 
-## MCP Server Architecture
+## MCP server architecture
 
 Use live discovery to inspect the credential-scoped catalog and tools.
 Use REST for binary support downloads.
 
-| Tool | Description | Usage |
-|------|-------------|------|
-| `explore` | Search the API endpoint catalog (read-only, no network calls) | Included |
-| `xquik` | Send confirmed Xquik API requests | Varies by endpoint |
+| Tool      | Description                                                   | Usage              |
+| --------- | ------------------------------------------------------------- | ------------------ |
+| `explore` | Search the API endpoint catalog (read-only, no network calls) | Included           |
+| `xquik`   | Send confirmed Xquik API requests                             | Varies by endpoint |
 
 `explore` searches the credential-scoped catalog. `xquik` executes authenticated
 operations with normalized snake_case responses. Authentication is injected, so
@@ -248,18 +248,18 @@ Private reads, writes, monitors, webhooks, persistent resources, and metered bul
 jobs require the user's explicit approval. Plan and credit changes stay
 dashboard-only.
 
-## After Setup
+## After setup
 
 Use `explore` before unfamiliar operations. Use `xquik` only for the narrowest
 confirmed request.
 
-| Workflow | Steps |
-|----------|-------|
-| Search public posts | `explore` for the search route, then `xquik` with a bounded limit |
-| Set up alerts | Confirm target and ongoing usage, then create a monitor and webhook |
-| Run a giveaway | Confirm the source post, rules, and winner count, then create the draw |
-| Bulk extraction | Estimate, confirm the bound, create the job, then poll its status |
-| Publish a post | Confirm exact text and account, then execute the write |
+| Workflow            | Steps                                                                  |
+| ------------------- | ---------------------------------------------------------------------- |
+| Search public posts | `explore` for the search route, then `xquik` with a bounded limit      |
+| Set up alerts       | Confirm target and ongoing usage, then create a monitor and webhook    |
+| Run a giveaway      | Confirm the source post, rules, and winner count, then create the draw |
+| Bulk extraction     | Estimate, confirm the bound, create the job, then poll its status      |
+| Publish a post      | Confirm exact text and account, then execute the write                 |
 
 Handle failures from structured error fields:
 

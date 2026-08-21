@@ -1,10 +1,10 @@
-# SkillSpector Security Report
+# SkillSpector security report
 
 **Skill:** x-twitter-scraper
 **Source:** `skills/x-twitter-scraper`
-**Scanned:** 2026-08-20 21:00:43 UTC
+**Scanned:** 2026-08-21 03:35:02 UTC
 
-## Static Scan
+## Static scan
 
 - Scanner: SkillSpector v2.3.7
 - Mode: static analysis only (`--no-llm`)

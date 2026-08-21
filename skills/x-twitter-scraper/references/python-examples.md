@@ -1,4 +1,4 @@
-# Xquik Python Examples
+# Xquik Python examples
 
 Python equivalents of the JavaScript examples in SKILL.md.
 
@@ -26,7 +26,7 @@ BASE = "https://xquik.com/api/v1"
 HEADERS = {"x-api-key": API_KEY, "Content-Type": "application/json"}
 ```
 
-## Retry with Exponential Backoff
+## Retry with exponential backoff
 
 ```python
 import time, random
@@ -57,7 +57,7 @@ def xquik_fetch(path, method="GET", json_body=None, max_retries=3):
         time.sleep(delay)
 ```
 
-## Extraction Workflow
+## Extraction workflow
 
 ```python
 # Step 1: Estimate
@@ -99,7 +99,7 @@ while True:
 print(f"Extracted {len(results)} results")
 ```
 
-## Giveaway Draw
+## Giveaway draw
 
 ```python
 # Create draw with all filters
@@ -122,7 +122,7 @@ for winner in details["winners"]:
     print(f"{role} #{winner['position']}: @{winner['authorUsername']}")
 ```
 
-## Webhook Handler (Python Standard Library)
+## Webhook handler (Python standard library)
 
 ```python
 import hashlib

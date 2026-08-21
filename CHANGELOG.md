@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.12.4 (2026-08-21)
+
+Full Changelog: [v0.12.3...v0.12.4](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.3...v0.12.4)
+
+### Documentation
+
+* Tighten SDK and packaged Skill copy.
+
 ## 0.12.3 (2026-08-21)
 
 Full Changelog: [v0.12.2...v0.12.3](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.2...v0.12.3)
@@ -280,8 +288,6 @@ Full Changelog: [v0.1.0...v0.2.0](https://github.com/Xquik-dev/x-twitter-scraper
 * update SDK settings ([b9324fd](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/b9324fd6b20e25d1cc7df53abda2f076ba99718b))
 
 ## 0.1.0 (2026-03-30)
-
-Full Changelog: [v0.0.1...v0.1.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.0.1...v0.1.0)
 
 ### Features
 

@@ -19,7 +19,7 @@ Receive real-time event notifications at your HTTPS endpoints with HMAC-SHA256 s
 3. Save the `secret` from the response (shown only once)
 4. Build a handler that verifies signatures before processing
 
-## Webhook Payload
+## Webhook payload
 
 Every delivery is a `POST` request to your URL with a JSON body:
 
@@ -35,72 +35,69 @@ Every delivery is a `POST` request to your URL with a JSON body:
 }
 ```
 
-## Signature Verification
+## Signature verification
 
 The `X-Xquik-Signature` header contains: `sha256=` + HMAC-SHA256(secret, raw JSON body).
 
-### Node.js (Standard Library)
+### Node.js (standard library)
 
 ```javascript
-import { createHmac, timingSafeEqual } from "node:crypto";
-import { createServer } from "node:http";
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createServer } from 'node:http';
 
 // This is the per-webhook secret from the POST /webhooks response, not a Xquik account credential
 const WEBHOOK_SECRET = process.env.XQUIK_WEBHOOK_SECRET;
 
 function verifySignature(payload, signature, secret) {
-  if (typeof signature !== "string" || !secret) return false;
+  if (typeof signature !== 'string' || !secret) return false;
 
-  const expected = "sha256=" + createHmac("sha256", secret).update(payload).digest("hex");
-  const expectedBuffer = Buffer.from(expected, "utf8");
-  const signatureBuffer = Buffer.from(signature, "utf8");
+  const expected = 'sha256=' + createHmac('sha256', secret).update(payload).digest('hex');
+  const expectedBuffer = Buffer.from(expected, 'utf8');
+  const signatureBuffer = Buffer.from(signature, 'utf8');
 
-  return (
-    expectedBuffer.length === signatureBuffer.length &&
-    timingSafeEqual(expectedBuffer, signatureBuffer)
-  );
+  return expectedBuffer.length === signatureBuffer.length && timingSafeEqual(expectedBuffer, signatureBuffer);
 }
 
 const server = createServer((req, res) => {
-  if (req.method !== "POST" || req.url !== "/webhook") {
-    res.writeHead(404).end("Not found");
+  if (req.method !== 'POST' || req.url !== '/webhook') {
+    res.writeHead(404).end('Not found');
     return;
   }
 
   const chunks = [];
 
-  req.on("data", (chunk) => chunks.push(chunk));
-  req.on("end", () => {
-    const payload = Buffer.concat(chunks).toString("utf8");
-    const signature = req.headers["x-xquik-signature"];
+  req.on('data', (chunk) => chunks.push(chunk));
+  req.on('end', () => {
+    const payload = Buffer.concat(chunks).toString('utf8');
+    const signature = req.headers['x-xquik-signature'];
 
     if (!verifySignature(payload, signature, WEBHOOK_SECRET)) {
-      res.writeHead(401).end("Invalid signature");
+      res.writeHead(401).end('Invalid signature');
       return;
     }
 
     const event = JSON.parse(payload);
 
     switch (event.eventType) {
-      case "tweet.new":
+      case 'tweet.new':
         console.log(`New tweet from @${event.username}: ${event.data.text}`);
         break;
-      case "tweet.reply":
+      case 'tweet.reply':
         console.log(`Reply from @${event.username}: ${event.data.text}`);
         break;
-      case "tweet.retweet":
+      case 'tweet.retweet':
         console.log(`@${event.username} retweeted`);
         break;
     }
 
-    res.writeHead(200).end("OK");
+    res.writeHead(200).end('OK');
   });
 });
 
 server.listen(3000);
 ```
 
-### Python (Standard Library)
+### Python (standard library)
 
 ```python
 import hmac
@@ -199,7 +196,7 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-## Security Checklist
+## Security checklist
 
 - **Verify before processing.** Never process unverified payloads
 - **Use constant-time comparison.** `timingSafeEqual` (Node.js), `hmac.compare_digest` (Python), `hmac.Equal` (Go)
@@ -213,25 +210,25 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
 Webhook deliveries can retry on failure, delivering the same event multiple times. Deduplicate by hashing the raw payload:
 
 ```javascript
-import { createHash } from "node:crypto";
+import { createHash } from 'node:crypto';
 
 const processedPayloads = new Set(); // Use Redis/DB in production
 
-const payloadHash = createHash("sha256").update(payload).digest("hex");
+const payloadHash = createHash('sha256').update(payload).digest('hex');
 if (processedPayloads.has(payloadHash)) {
-  res.writeHead(200).end("Already processed");
+  res.writeHead(200).end('Already processed');
 } else {
   processedPayloads.add(payloadHash);
 }
 ```
 
-## Retry Policy
+## Retry policy
 
 Failed deliveries are retried up to 5 times with exponential backoff. Delivery statuses: `pending`, `delivered`, `failed`, `exhausted`.
 
 Check delivery status: `GET /webhooks/{id}/deliveries`.
 
-## Local Testing
+## Local testing
 
 Use a deployed HTTPS endpoint you control when testing webhook delivery. Do not install packages or proxy API keys from this skill.
 
