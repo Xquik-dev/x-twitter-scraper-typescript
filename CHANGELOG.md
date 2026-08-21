@@ -2,6 +2,50 @@
 
 ## Unreleased
 
+## 0.13.0 (2026-08-21)
+
+Full Changelog: [v0.12.4...v0.13.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.4...v0.13.0)
+
+### Features
+
+* **api:** align reply extraction contracts ([#29](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/29)) ([986132c](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/986132c28a0059bde23d727c323b99fec6ef4a60))
+* **api:** api update ([9d928b9](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/9d928b92168e9e8711bd2b1d6922c6d22fc96616))
+* **api:** api update ([1ba6110](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/1ba61100f91a5e080b41bc85cd2bdcfd3dd1d25f))
+* **api:** api update ([942874e](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/942874ee1a2882fc7777c33b2ada87502cb16c5e))
+* bundle Xquik Skills for Pi ([ab5118d](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ab5118db657bffb27f1041e68969ae70fd2e2b16))
+
+
+### Bug Fixes
+
+* remove stale TypeScript integrations resource ([3357f8b](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/3357f8bbe31a45167d812444ca35270f3c5c17c3))
+* target repository for release asset uploads ([#50](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/50)) ([afc1b32](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/afc1b326f738e4013f16cc9477a8ebe8316000cb))
+
+
+### Chores
+
+* add Context7 refresh workflow ([5645d36](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/5645d367cd11d6d9537209d9779f2f481fadc241))
+* add FUNDING.yml pointing to xquik.com ([3e30062](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/3e30062a3c84d20b76ed0aa7f565e6420df10a9b))
+* add per-file license evidence ([f212f91](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/f212f915fc75595d1f404bd65abb8a189ea1ba4e))
+* **deps:** bump ossf/scorecard-action from 2.4.3 to 2.4.4 ([#33](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/33)) ([3eda594](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/3eda594f4649f5046aaf8f9f6bfd7bd30ae9a066))
+* **deps:** bump pnpm/action-setup from 6.0.9 to 6.0.10 ([#48](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/48)) ([923c673](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/923c6739dbcdfc47ce2ad9c561363792146f173f))
+* enforce OpenSSF Gold quality gates ([a89c2b2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/a89c2b2d1ad3ffc0286d14506986525559bba7d7))
+* prepare v0.4.1 ([3190d41](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/3190d41999828d9368110ef15f126e8579480892))
+* refresh compatible TypeScript tooling ([#56](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/56)) ([d21067f](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/d21067f13335c3294041fc21c841cf032ebec99e))
+
+
+### Documentation
+
+* add Contributor Covenant 2.1 Code of Conduct ([#2192](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/2192)) ([5d240c1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/5d240c15cf30730956e13428574656cae2b03570))
+* add DeepWiki badge ([d3d8428](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/d3d84280a222966a14f2904d01c494c6b76b5f54))
+* clarify repository discovery ([4d847a9](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/4d847a9dfdc07433cca2ee584e0d118091c4ac3c))
+* map common X data tasks ([#11](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/11)) ([f4fa511](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/f4fa5119c650a2ce80681af2a5a8555f1879e897))
+* **readme:** add search-first SDK landing page ([fd4f1c9](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/fd4f1c91847b34b85a5183d3cba5ae9c7ab3c47a))
+* refine public TypeScript SDK text ([#59](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/59)) ([ef08541](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ef085416c97354686f981f2c1257702689f4e79f))
+* refresh bundled Skill audit evidence ([821b5c2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/821b5c29f987822970505e4ede777fc81fabaf4f))
+* remove obsolete MCP copy ([#61](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/61)) ([87b4257](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/87b425796f3b4b2a8dfb4108050887175eb38be6))
+* remove private login vendor wording ([89373f1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/89373f1886443797645e073874983af88ab9b6a7))
+* sync MCP 2026 Skill ([db5ba8d](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/db5ba8de038019e8d020510c2f7398d90a8ec767))
+
 ## 0.12.4 (2026-08-21)
 
 Full Changelog: [v0.12.3...v0.12.4](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.3...v0.12.4)
