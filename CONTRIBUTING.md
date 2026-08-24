@@ -14,18 +14,6 @@ pnpm build
 
 Follow the shared [Xquik contribution policy](https://github.com/Xquik-dev/.github/blob/main/CONTRIBUTING.md).
 
-Submit non-trivial changes through pull requests.
-
-A person other than the author must approve each non-trivial change.
-
-Sign every commit using the Developer Certificate of Origin:
-
-```sh
-git commit -s
-```
-
-Start with issues labeled `good first issue` when seeking a small task.
-
 ## Contribute code
 
 Most SDK code is generated. Manual patches persist but may conflict with later generations.
