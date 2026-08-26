@@ -225,17 +225,15 @@ Client schemas differ. Never copy generic headers or store literal keys.
 
 ## MCP server architecture
 
-Use live discovery to inspect the credential-scoped catalog and tools.
-Use REST for binary support downloads.
+Use live discovery to inspect the credential-scoped catalog and available mode.
+Code Mode exposes `docs`, `search`, and `execute`.
+Native mode derives operation tools from the same OpenAPI document.
 
-| Tool      | Description                                                   | Usage              |
-| --------- | ------------------------------------------------------------- | ------------------ |
-| `explore` | Search the API endpoint catalog (read-only, no network calls) | Included           |
-| `xquik`   | Send confirmed Xquik API requests                             | Varies by endpoint |
+`docs` searches public guidance. `search` reads `spec.paths` without network
+access. `execute` calls `xquik.request()` inside a network-restricted sandbox.
+Authentication is injected. Tool code must never include credentials.
 
-`explore` searches the credential-scoped catalog. `xquik` executes authenticated
-operations with normalized snake_case responses. Authentication is injected, so
-tool code must never include credentials.
+Use REST for binary downloads.
 
 Keep credential, checkout & guest-wallet operations in REST or dashboard workflows:
 
@@ -244,18 +242,17 @@ Keep credential, checkout & guest-wallet operations in REST or dashboard workflo
 - Account top-up redirect
 - Guest wallet creation, status polling, and top-up
 
-Private reads, writes, monitors, webhooks, persistent resources, and metered bulk
-jobs require the user's explicit approval. Plan and credit changes stay
-dashboard-only.
+Private reads, writes, persistent resources, and metered bulk jobs require
+explicit approval. Plan and credit changes stay dashboard-only.
 
 ## After setup
 
-Use `explore` before unfamiliar operations. Use `xquik` only for the narrowest
-confirmed request.
+Use `docs` for guidance. Use `search` for unfamiliar operation contracts.
+Use `execute` only for the narrowest confirmed request.
 
 | Workflow            | Steps                                                                  |
 | ------------------- | ---------------------------------------------------------------------- |
-| Search public posts | `explore` for the search route, then `xquik` with a bounded limit      |
+| Search public posts | Resolve the route with `search`, then run one bounded `execute` call   |
 | Set up alerts       | Confirm target and ongoing usage, then create a monitor and webhook    |
 | Run a giveaway      | Confirm the source post, rules, and winner count, then create the draw |
 | Bulk extraction     | Estimate, confirm the bound, create the job, then poll its status      |

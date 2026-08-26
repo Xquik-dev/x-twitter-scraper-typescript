@@ -20,7 +20,13 @@ Install the bundled Xquik Skills directly from npm:
 pi install npm:x-twitter-scraper
 ```
 
-Pi loads both packaged Skills. Import the typed SDK from the same npm package.
+Pi loads 3 packaged Skills:
+
+- `x-twitter-scraper` for API and MCP integration.
+- `xquik-social-research` for public X research.
+- `xquik-account-automation` for approved connected-account actions.
+
+Import the typed SDK from the same npm package.
 
 ## Common Twitter & X tasks
 

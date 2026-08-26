@@ -2,8 +2,8 @@
 
 ## Description
 
-Xquik API Integration guides agents through bounded X data workflows.
-It covers REST, MCP, SDKs, webhooks, exports & confirmation-gated actions.
+Xquik Developer Integration covers REST, MCP, OpenAPI, SDKs, and webhooks.
+Separate Skills handle public research and connected-account actions.
 
 Operators must provide a valid Xquik API key and follow `SKILL.md` gates.
 Refresh required scan, evaluation, benchmark & signature evidence before release claims.
@@ -18,8 +18,7 @@ MIT for the skill package. Xquik service terms govern API use.
 
 ## Use case
 
-Use this Skill for Twitter search, profiles, follower exports, media & monitoring.
-It also covers webhooks, MCP, SDKs, bulk workflows & approved publishing.
+Use this Skill for API setup, routing, pagination, exports, and monitoring.
 
 ## Deployment geography for use
 
@@ -57,7 +56,7 @@ Mitigation: Verify unfamiliar endpoint details against `https://docs.xquik.com` 
 - NVIDIA signing guidance: `https://docs.nvidia.com/skills/signing-agent-skills`
 - NVIDIA skill card guidance: `https://docs.nvidia.com/skills/skill-cards`
 - NVIDIA release checklist: `https://docs.nvidia.com/skills/release-checklist`
-- Scan evidence: `skillspector-report.md` records the 2026-08-21 static scan.
+- Scan evidence: `skillspector-report.md` records the 2026-08-26 static scan.
 - Scan result: 1 legal-text match and 0 applicable findings.
 - Refresh the scan after each skill directory change.
 - Signing evidence: pending `skill.oms.sig` for signed release artifacts.
@@ -76,7 +75,7 @@ Send API calls only through HTTPS to Xquik-owned hosts.
 
 ## Skill version
 
-2.6.1
+2.7.0
 
 ## Ethical considerations
 

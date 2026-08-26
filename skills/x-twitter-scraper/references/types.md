@@ -25,7 +25,6 @@ Use this index to load only the TypeScript types needed for the task.
 | Tweet style cache             | [tweet-style-cache.md](types-tweet-style-cache.md)                       |
 | Tweet drafts                  | [tweet-drafts.md](types-tweet-drafts.md)                                 |
 | Account identity              | [account-identity.md](types-account-identity.md)                         |
-| REST API and MCP field naming | [rest-api-vs-mcp-field-naming.md](types-rest-api-vs-mcp-field-naming.md) |
 | MCP output schemas            | [mcp-output-schemas.md](types-mcp-output-schemas.md)                     |
 | Connected X accounts          | [x-accounts.md](types-x-accounts.md)                                     |
 | X writes                      | [x-write.md](types-x-write.md)                                           |
