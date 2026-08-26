@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.12.5 (2026-08-26)
+
+Full Changelog: [v0.12.4...v0.12.5](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.4...v0.12.5)
+
+### Documentation
+
+* enforce source LOC reduction ([#66](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/66)) ([0887a22](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/0887a2267c5d2e480cfee94b1787f3e3211ca06e))
+* split MCP agent Skills ([#68](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/68)) ([508e95a](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/508e95a061da94c907c76a7873d1c7cd308c58e3))
+
 ## 0.12.4 (2026-08-21)
 
 Full Changelog: [v0.12.3...v0.12.4](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.3...v0.12.4)
