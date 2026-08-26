@@ -1,10 +1,10 @@
 {
-  "version": "2.6.1",
+  "version": "2.7.0",
   "organization": "Xquik",
   "homepage": "https://docs.xquik.com",
   "repository": "https://github.com/Xquik-dev/x-twitter-scraper",
   "license": "MIT",
-  "abstract": "Xquik agent guide for Twitter search, profiles, follower export, social listening, webhooks, MCP, REST, and X automation. Public reads are the default. Require explicit approval for private reads, writes, monitors, webhooks, event delivery, and metered jobs. Handle only the user-issued Xquik API key. Never collect X passwords, 2FA codes, cookies, session tokens, recovery codes, or local files. Not affiliated with X Corp.",
+  "abstract": "Developer guide for Xquik REST, MCP, OpenAPI, SDKs, extractions, monitors, and webhooks. Use the separate research or account-automation Skill for user workflows. Handle only approved Xquik credentials. Never collect X passwords, 2FA codes, cookies, session tokens, or recovery codes. Not affiliated with X Corp.",
   "security": {
     "defaultMode": "read-only-public-data",
     "credentialsHandled": ["xquik-api-key"],
