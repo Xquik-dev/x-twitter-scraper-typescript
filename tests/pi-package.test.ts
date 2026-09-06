@@ -2,10 +2,23 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { existsSync, readFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import ts from 'typescript';
 
 type PackageManifest = {
+  scripts: { prepare: string };
   bugs: {
     url: string;
   };
@@ -34,6 +47,42 @@ const skillSpectorReport = readFileSync(resolve(skillRoot, 'skillspector-report.
 const xApiTypes = readFileSync(resolve(skillRoot, 'references/types-x-api.md'), 'utf8');
 
 describe('package metadata', () => {
+  test.each(['tmp', '.tmp', 'node_modules'])('prepare preserves checkouts inside %s', (parent) => {
+    expect.assertions(5);
+    const directory = mkdtempSync(resolve(tmpdir(), 'sdk-prepare-'));
+    const checkout = resolve(directory, parent, 'checkout');
+    const files = ['.git', 'src/index.ts', 'tests/example.ts', 'notes.txt'];
+    try {
+      cpSync(resolve(packageRoot, 'scripts'), resolve(checkout, 'scripts'), { recursive: true });
+      for (const file of files) {
+        mkdirSync(resolve(checkout, file, '..'), { recursive: true });
+        writeFileSync(resolve(checkout, file), file);
+      }
+      writeFileSync(
+        resolve(checkout, 'scripts/build'),
+        '#!/bin/sh\nmkdir dist\necho built > dist/index.js\n',
+      );
+      execFileSync('bash', ['-c', manifest.scripts.prepare], { cwd: checkout, timeout: 5000 });
+      expect(readFileSync(resolve(checkout, 'dist/index.js'), 'utf8')).toBe('built\n');
+      expect(files.map((file) => readFileSync(resolve(checkout, file), 'utf8'))).toEqual(files);
+      mkdirSync(resolve(checkout, 'node_modules'));
+      symlinkSync(packageRoot, resolve(checkout, 'node_modules/x-twitter-scraper'), 'junction');
+      for (const path of ['', '/core/error', '/core/error.js']) {
+        const { resolvedModule } = ts.resolveModuleName(
+          `x-twitter-scraper${path}`,
+          resolve(checkout, 'index.ts'),
+          { moduleResolution: ts.ModuleResolutionKind.Node10 },
+          ts.sys,
+        );
+        expect(resolvedModule?.resolvedFileName).toBe(
+          resolve(packageRoot, 'dist', path ? 'core/error.d.ts' : 'index.d.ts'),
+        );
+      }
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
   test('preserves support and removed resource contracts', () => {
     expect.assertions(2);
     expect(manifest.bugs.url).toBe('https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues');

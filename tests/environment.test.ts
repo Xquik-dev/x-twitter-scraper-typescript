@@ -6,30 +6,18 @@ import { readEnv } from 'x-twitter-scraper/internal/utils/env';
 import { isRunningInBrowser } from 'x-twitter-scraper/internal/detect-platform';
 
 describe('environment variables', () => {
-  const originalProcess = Object.getOwnPropertyDescriptor(globalThis, 'process');
-  const originalDeno = Object.getOwnPropertyDescriptor(globalThis, 'Deno');
-  const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
-  const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const originals = ['process', 'Deno', 'window', 'navigator'].map(
+    (name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const,
+  );
   const originalValue = process.env['XQUIK_TEST_VALUE'];
 
   afterEach(() => {
-    if (originalProcess) {
-      Object.defineProperty(globalThis, 'process', originalProcess);
-    }
-    if (originalDeno) {
-      Object.defineProperty(globalThis, 'Deno', originalDeno);
-    } else {
-      Reflect.deleteProperty(globalThis, 'Deno');
-    }
-    if (originalWindow) {
-      Object.defineProperty(globalThis, 'window', originalWindow);
-    } else {
-      Reflect.deleteProperty(globalThis, 'window');
-    }
-    if (originalNavigator) {
-      Object.defineProperty(globalThis, 'navigator', originalNavigator);
-    } else {
-      Reflect.deleteProperty(globalThis, 'navigator');
+    for (const [name, descriptor] of originals) {
+      if (descriptor) {
+        Object.defineProperty(globalThis, name, descriptor);
+      } else {
+        Reflect.deleteProperty(globalThis, name);
+      }
     }
     if (originalValue === undefined) {
       delete process.env['XQUIK_TEST_VALUE'];
