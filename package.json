@@ -4,6 +4,14 @@
   "description": "TypeScript SDK & agent Skills for Twitter search, followers, webhooks, MCP & X automation. Not affiliated with X Corp.",
   "author": "Xquik <support@xquik.com>",
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*",
+        "*"
+      ]
+    }
+  },
   "main": "dist/index.js",
   "type": "commonjs",
   "homepage": "https://docs.xquik.com/sdks/typescript",
@@ -50,9 +58,10 @@
     "test": "./scripts/test",
     "build": "./scripts/build",
     "check:reproducible": "./scripts/check-reproducible",
+    "check:all": "pnpm lint && pnpm test --runInBand && pnpm run check:reproducible && pnpm audit --audit-level high",
     "prepublishOnly": "echo 'Direct publish blocked. Build first, then publish from dist.' && exit 1",
     "format": "./scripts/format",
-    "prepare": "if ./scripts/utils/check-is-in-git-install.sh; then ./scripts/build && ./scripts/utils/git-swap.sh; fi",
+    "prepare": "./scripts/build",
     "tsn": "ts-node -r tsconfig-paths/register",
     "lint": "./scripts/lint",
     "fix": "./scripts/format"

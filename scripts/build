@@ -18,19 +18,13 @@ node scripts/utils/check-version.cjs
 rm -rf dist; mkdir dist
 # Copy src to dist/src and build from dist/src into dist, so that
 # the source map for index.js.map will refer to ./src/index.ts etc
-cp -rp src README.md dist
-cp -rp assets skills dist
-for file in LICENSE CHANGELOG.md; do
-  if [ -e "${file}" ]; then cp "${file}" dist; fi
+cp -rp src README.md assets skills dist
+for file in LICENSE CHANGELOG.md bin/cli bin/migration-config.json; do
+  if [ -e "$file" ]; then
+    mkdir -p "dist/$(dirname "$file")"
+    cp -p "$file" "dist/$file"
+  fi
 done
-if [ -e "bin/cli" ]; then
-  mkdir -p dist/bin
-  cp -p "bin/cli" dist/bin/;
-fi
-if [ -e "bin/migration-config.json" ]; then
-  mkdir -p dist/bin
-  cp -p "bin/migration-config.json" dist/bin/;
-fi
 # this converts the export map paths for the dist directory
 # and does a few other minor things
 node scripts/utils/make-dist-package-json.cjs > dist/package.json
