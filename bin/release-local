@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Publishes the package version from package.json to npm, then tags and
+# releases it on GitHub. Run it from a clean main that matches origin/main.
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+readonly expected_name="x-twitter-scraper"
+readonly github_repo="Xquik-dev/x-twitter-scraper-typescript"
+readonly registry="https://registry.npmjs.org/"
+readonly keychain_service="npm"
+readonly keychain_account="burakbayir"
+
+step() {
+  printf '==> %s\n' "$1"
+}
+
+fail() {
+  printf '%s\n' "$1" >&2
+  exit 1
+}
+
+work_directory="$(mktemp -d)"
+trap 'rm -rf -- "${work_directory:?}"' EXIT
+
+step "Checking the release tools"
+for tool in gh git jq npm pnpm security; do
+  command -v "$tool" >/dev/null 2>&1 || fail "${tool} is missing. Install it, then run bin/release-local again."
+done
+gh auth status >/dev/null 2>&1 || fail "gh is signed out. Run gh auth login, then run bin/release-local again."
+
+step "Checking for a clean working tree"
+[[ -z "$(git status --porcelain)" ]] || fail "The working tree has changes. Commit or remove them first."
+
+step "Checking the current branch"
+[[ "$(git symbolic-ref --quiet --short HEAD || true)" == "main" ]] || fail "Release only from main. Run git switch main first."
+
+step "Comparing main with origin/main"
+git fetch --quiet origin main
+[[ "$(git rev-parse HEAD)" == "$(git rev-parse origin/main)" ]] || fail "main differs from origin/main. Pull or push until they match."
+
+step "Reading the package version"
+package_name="$(jq -r -e '.name' package.json)"
+version="$(jq -r -e '.version' package.json)"
+tag="v${version}"
+[[ "$package_name" == "$expected_name" ]] || fail "package.json name is ${package_name}. Set it to ${expected_name}."
+[[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "package.json version ${version} is invalid. Use MAJOR.MINOR.PATCH."
+grep -Fq "export const VERSION = '${version}';" src/version.ts || fail "src/version.ts differs from ${version}. Run pnpm build and commit the change."
+
+step "Checking that ${tag} is a new tag"
+[[ -z "$(git ls-remote --tags origin "refs/tags/${tag}")" ]] || fail "${tag} already exists on origin. Bump the version in package.json first."
+if git rev-parse --quiet --verify "refs/tags/${tag}" >/dev/null; then
+  fail "${tag} exists only locally. Delete it with git tag -d ${tag}."
+fi
+
+step "Reading the ${version} release notes from CHANGELOG.md"
+notes_file="${work_directory}/notes.md"
+awk -v heading="## ${version}" '
+  /^## / {
+    if (found) exit
+    if ($0 == heading || index($0, heading " ") == 1) found = 1
+    next
+  }
+  found { print }
+' CHANGELOG.md >"$notes_file"
+grep -q '[^[:space:]]' "$notes_file" || fail "CHANGELOG.md has no notes for ${version}. Add a ## ${version} section."
+
+step "Running the local checks"
+bin/check-local
+
+step "Auditing dependencies for high or critical findings"
+pnpm audit --audit-level high || fail "The audit found a high or critical vulnerability. Fix it before you release."
+
+step "Building the package"
+bash ./bin/prepare-npm-release
+[[ -z "$(git status --porcelain)" ]] || fail "The build changed tracked files. Commit the changes, then run bin/release-local again."
+
+step "Packing the package"
+package_file="$(cd dist && npm pack --json --pack-destination "$work_directory" | jq -r -e '.[0].filename')"
+package_path="${work_directory}/${package_file}"
+[[ -f "$package_path" ]] || fail "npm pack wrote no archive. Run bash ./bin/prepare-npm-release and check its output."
+
+step "Checking npm for ${expected_name}@${version}"
+published_version="$(npm view "${expected_name}@${version}" version --registry "$registry" 2>/dev/null || true)"
+if [[ "$published_version" == "$version" ]]; then
+  echo "${expected_name}@${version} is already on npm. Skipping the upload."
+elif [[ -n "$published_version" ]]; then
+  fail "npm returned version ${published_version} for ${version}. Check the registry before you release."
+else
+  step "Publishing ${expected_name}@${version} to npm"
+  npm_config_file="$(mktemp "${work_directory}/npmrc.XXXXXX")"
+  chmod 600 "$npm_config_file"
+  npm_token="$(security find-generic-password -s "$keychain_service" -a "$keychain_account" -w)" ||
+    fail "The Keychain has no ${keychain_service} item for ${keychain_account}. Add the npm token there first."
+  printf 'registry=%s\n//registry.npmjs.org/:_authToken=%s\n' "$registry" "$npm_token" >"$npm_config_file"
+  unset npm_token
+  npm publish "$package_path" --access public --tag latest --registry "$registry" --userconfig "$npm_config_file"
+  rm -f -- "$npm_config_file"
+fi
+
+step "Creating the annotated tag ${tag}"
+git tag -a "$tag" -m "$tag"
+
+step "Pushing ${tag} to origin"
+git push origin "refs/tags/${tag}"
+
+step "Creating the GitHub release ${tag}"
+gh release create "$tag" "$package_path" --repo "$github_repo" --title "$tag" --notes-file "$notes_file" --verify-tag
+
+echo "Released ${expected_name}@${version} as ${tag}."

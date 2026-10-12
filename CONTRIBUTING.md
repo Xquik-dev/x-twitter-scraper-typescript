@@ -72,11 +72,15 @@ Tests enforce 90% statement coverage and 80% branch coverage.
 
 Add regression tests for every corrected defect.
 
-Run the reproducibility check before requesting review:
+Run every repository check before requesting review:
 
 ```sh
-pnpm run check:reproducible
+bin/check-local
 ```
+
+It installs dependencies from the lockfile, then checks license notices when `reuse` is installed.
+It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
+It stops at the first failure and says what to fix.
 
 ## Lint & format
 
@@ -97,12 +101,17 @@ pnpm fix
 
 ## Publish releases
 
-The automated release pipeline publishes changes to npm.
+A maintainer publishes each release from a local machine:
 
-### Use the GitHub workflow
+```sh
+bin/release-local
+```
 
-The [Publish npm workflow](https://github.com/Xquik-dev/x-twitter-scraper-typescript/actions/workflows/publish-npm.yml)
-validates release tags, builds the package, signs its provenance, uploads release assets, and publishes through
-npm trusted publishing. The release path uses short-lived identity tokens. It stores no npm token.
+It releases only from a clean `main` that matches `origin/main`.
+It refuses a version whose `v<version>` tag already exists.
+It runs `bin/check-local`, audits dependencies, and builds the package with `bin/prepare-npm-release`.
+It publishes the packed archive to npm unless that version is already there.
+It reads the npm token from the macOS Keychain and never writes it to a lasting file.
+Then it pushes the annotated tag and creates the GitHub release from the `CHANGELOG.md` section.
 
 Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

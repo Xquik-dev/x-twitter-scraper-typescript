@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# Runs the repository checks on this machine and stops at the first failure.
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+run_check() {
+  local name="$1"
+  local hint="$2"
+  shift 2
+
+  printf '==> %s\n' "$name"
+  if ! "$@"; then
+    printf 'Check failed: %s. %s\n' "$name" "$hint" >&2
+    exit 1
+  fi
+}
+
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "Check failed: pnpm is missing. Install pnpm 11, then run bin/check-local again." >&2
+  exit 1
+fi
+
+run_check "Install dependencies" \
+  "Run pnpm install and commit the updated pnpm-lock.yaml." \
+  pnpm install --frozen-lockfile
+
+if command -v reuse >/dev/null 2>&1; then
+  run_check "Check license notices" \
+    "Add the missing license notice or REUSE.toml entry." \
+    reuse lint
+else
+  echo "==> Skipping license notices because reuse is missing. Install it with pipx install reuse."
+fi
+
+run_check "Audit dependencies" \
+  "Upgrade or override the vulnerable dependency, then update pnpm-lock.yaml." \
+  pnpm audit --audit-level high
+
+run_check "Lint, build & check types" \
+  "Run pnpm fix, then fix the remaining errors above." \
+  ./scripts/lint
+
+run_check "Check reproducible build" \
+  "Remove the build step that writes timestamps or random values." \
+  ./scripts/check-reproducible
+
+run_check "Run tests" \
+  "Fix the failing tests or coverage gaps above." \
+  ./scripts/test
+
+echo "All local checks passed."
