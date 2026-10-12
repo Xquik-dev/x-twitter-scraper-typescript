@@ -5,23 +5,98 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Runs the repository checks on this machine and stops at the first failure.
+# Posts the result as the xquik-local-checks commit status on GitHub when the
+# tree is clean and HEAD is pushed. Pass --no-status to skip posting.
 
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+readonly github_repo="Xquik-dev/x-twitter-scraper-typescript"
+readonly status_context="xquik-local-checks"
+
+post_status=1
+for argument in "$@"; do
+  case "$argument" in
+    --no-status) post_status=0 ;;
+    *)
+      echo "Unknown option ${argument}. Run bin/check-local or bin/check-local --no-status." >&2
+      exit 2
+      ;;
+  esac
+done
+
+status_skip_reason() {
+  if ((post_status == 0)); then
+    echo "--no-status was passed"
+  elif ! command -v gh >/dev/null 2>&1 || ! gh auth status >/dev/null 2>&1; then
+    echo "gh is missing or signed out"
+  elif [[ -z "$commit" ]]; then
+    echo "this is not a Git checkout"
+  elif [[ -n "$(git status --porcelain)" ]]; then
+    echo "the working tree has changes"
+  elif ! gh api "repos/${github_repo}/commits/${commit}" --silent >/dev/null 2>&1; then
+    echo "${commit:0:12} is not on GitHub yet"
+  fi
+}
+
+post_commit_status() {
+  if [[ -n "$skip_reason" ]]; then
+    return 0
+  fi
+  if ! gh api "repos/${github_repo}/statuses/${commit}" --silent \
+    -f state="$1" -f context="$status_context" -f description="$2" >/dev/null 2>&1; then
+    echo "Could not post the ${status_context} status. Run gh auth status, then try again." >&2
+  fi
+}
+
+current_check="Start checks"
+reuse_note=""
+
+finish() {
+  local exit_code=$?
+  local passed_tests
+
+  if ((exit_code == 0)); then
+    passed_tests="$(sed -nE 's/^Tests:.* ([0-9]+) passed.*/\1/p' "$test_log" | tail -n 1)"
+    post_commit_status success \
+      "Audit, lint, types, reproducible build & ${passed_tests:-all} tests passed${reuse_note}"
+  else
+    post_commit_status failure "${current_check} failed. Run bin/check-local to see why."
+  fi
+  rm -f -- "${test_log:?}"
+  exit "$exit_code"
+}
+
 run_check() {
-  local name="$1"
   local hint="$2"
+  current_check="$1"
   shift 2
 
-  printf '==> %s\n' "$name"
+  printf '==> %s\n' "$current_check"
   if ! "$@"; then
-    printf 'Check failed: %s. %s\n' "$name" "$hint" >&2
+    printf 'Check failed: %s. %s\n' "$current_check" "$hint" >&2
     exit 1
   fi
 }
 
+run_tests() {
+  bash ./scripts/test 2>&1 | tee "$test_log"
+}
+
+commit="$(git rev-parse HEAD 2>/dev/null || true)"
+skip_reason="$(status_skip_reason)"
+if [[ -n "$skip_reason" ]]; then
+  echo "==> Not posting the ${status_context} status because ${skip_reason}."
+else
+  echo "==> Posting the ${status_context} status to ${commit:0:12}"
+fi
+
+test_log="$(mktemp)"
+trap finish EXIT
+post_commit_status pending "Local checks are running."
+
+current_check="Find pnpm"
 if ! command -v pnpm >/dev/null 2>&1; then
   echo "Check failed: pnpm is missing. Install pnpm 11, then run bin/check-local again." >&2
   exit 1
@@ -36,6 +111,7 @@ if command -v reuse >/dev/null 2>&1; then
     "Add the missing license notice or REUSE.toml entry." \
     reuse lint
 else
+  reuse_note=" (REUSE skipped)"
   echo "==> Skipping license notices because reuse is missing. Install it with pipx install reuse."
 fi
 
@@ -53,6 +129,6 @@ run_check "Check reproducible build" \
 
 run_check "Run tests" \
   "Fix the failing tests or coverage gaps above." \
-  ./scripts/test
+  run_tests
 
 echo "All local checks passed."

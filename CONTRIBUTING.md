@@ -81,6 +81,8 @@ bin/check-local
 It installs dependencies from the lockfile, then checks license notices when `reuse` is installed.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
 It stops at the first failure and says what to fix.
+When the tree is clean and `HEAD` is pushed, it posts the `xquik-local-checks` commit status.
+Pass `--no-status` to skip the status.
 
 ## Lint & format
 
