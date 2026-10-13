@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Runs the repository checks on this machine and stops at the first failure.
-# CodeQL is mandatory, and REUSE runs only when the reuse tool is installed.
+# CodeQL and REUSE are mandatory. REUSE runs at a pinned version through uv.
 # Posts the result as the xquik-local-checks commit status on GitHub when the
 # tree is clean and HEAD is pushed. Posting uses the owner's gh login on the
 # release machine. Success is posted only after every mandatory check passes,
@@ -17,6 +17,7 @@ cd "$(dirname "$0")/.."
 
 readonly github_repo="Xquik-dev/x-twitter-scraper-typescript"
 readonly status_context="xquik-local-checks"
+readonly reuse_version="6.2.0"
 
 post_status=1
 for argument in "$@"; do
@@ -55,7 +56,6 @@ post_commit_status() {
 
 current_check="Start checks"
 passed=()
-skipped=""
 
 finish() {
   local exit_code=$?
@@ -63,7 +63,7 @@ finish() {
 
   if ((exit_code == 0)); then
     printf -v description '%s, ' "${passed[@]}"
-    description="Passed: ${description%, }${skipped}"
+    description="Passed: ${description%, }"
     echo "==> ${description}"
     post_commit_status success "${description:0:139}"
   else
@@ -126,7 +126,7 @@ trap finish EXIT
 post_commit_status pending "Local checks are running."
 
 current_check="Find tools"
-for tool in pnpm node jq codeql; do
+for tool in pnpm node jq codeql uv; do
   if ! command -v "$tool" >/dev/null 2>&1; then
     case "$tool" in
       codeql) install_hint="brew install --cask codeql" ;;
@@ -143,15 +143,10 @@ run_check "Install dependencies" \
   pnpm install --frozen-lockfile
 passed+=("install")
 
-if command -v reuse >/dev/null 2>&1; then
-  run_check "Check license notices" \
-    "Add the missing license notice or REUSE.toml entry." \
-    reuse lint
-  passed+=("REUSE")
-else
-  skipped="; skipped: REUSE"
-  echo "==> Skipping license notices because reuse is missing. Install it with pipx install reuse."
-fi
+run_check "Check license notices" \
+  "Add the missing license notice or REUSE.toml entry." \
+  uvx --from "reuse==${reuse_version}" reuse lint
+passed+=("REUSE")
 
 run_check "Audit dependencies" \
   "Fix each blocking finding above, or review an unfixable development finding into audit-exceptions.json." \
