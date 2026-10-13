@@ -33,7 +33,7 @@ const minimumReleaseAgeMs = () => {
   return match ? Number(match[1]) * 60 * 1000 : 0;
 };
 
-// pnpm writes ".>tsc-multi>fast-glob>braces"; the exceptions file uses "tsc-multi > fast-glob > braces".
+// pnpm writes ".>jest>micromatch>braces", and the exceptions file uses "jest > micromatch > braces".
 const normalizePath = (auditPath) =>
   auditPath
     .split('>')
@@ -75,7 +75,7 @@ const loadExceptions = (problems) => {
     if (!/^GHSA(-[0-9a-z]{4}){3}$/.test(entry.advisory ?? '')) {
       problems.push(`${label} needs an "advisory" like GHSA-xxxx-xxxx-xxxx.`);
     } else if (typeof entry.path !== 'string' || normalizePath(entry.path) !== entry.path) {
-      problems.push(`${label} needs a "path" like "tsc-multi > fast-glob > braces".`);
+      problems.push(`${label} needs a "path" like "jest > micromatch > braces".`);
     } else if (!allowedReasons.has(entry.reason)) {
       problems.push(`${label} needs a "reason" of ${[...allowedReasons].map((r) => `"${r}"`).join(' or ')}.`);
     } else if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.recheck ?? '') || Number.isNaN(Date.parse(entry.recheck))) {
