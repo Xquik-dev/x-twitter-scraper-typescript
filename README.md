@@ -1,11 +1,13 @@
-# Xquik TypeScript SDK: Twitter search, followers & X automation
+# X API & Twitter API TypeScript SDK: Xquik Twitter scraper
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13740/badge)](https://www.bestpractices.dev/projects/13740)
 
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 
-Use the Xquik TypeScript SDK for Twitter search, timelines, profiles & followers.
-Manage media, webhooks, MCP & X automation with generated types and agent Skills.
+Use this X API & Twitter API SDK to work with X from TypeScript.
+It works as a Twitter scraper & tweet scraper for search, profiles & followers.
+Scrape Twitter timelines, lists, communities, Spaces & trends into typed results.
+Manage media, webhooks, monitors & X automation with bundled agent Skills.
 It provides a Twitter API alternative through documented Xquik REST routes.
 
 [TypeScript SDK Guide](https://docs.xquik.com/sdks/typescript) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
@@ -113,6 +115,21 @@ const wallet = await guestClient.guestWallets.retrieveStatus();
 ```
 
 Keep guest keys out of source code, URLs, and logs.
+
+## Streaming events
+
+`client.events.stream()` yields each monitor event as it happens.
+
+```ts
+const stream = await client.events.stream();
+
+for await (const event of stream) {
+  console.log(event.type, event.id);
+}
+```
+
+Pass `{ 'Last-Event-ID': '42' }` to resume after event 42.
+Break out of the loop or call `stream.controller.abort()` to close the stream.
 
 ## File uploads
 

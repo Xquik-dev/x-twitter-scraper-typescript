@@ -1,7 +1,7 @@
 {
   "name": "x-twitter-scraper",
   "version": "0.13.0",
-  "description": "TypeScript SDK & agent Skills for Twitter search, followers, webhooks, MCP & X automation. Not affiliated with X Corp.",
+  "description": "X API & Twitter API SDK for TypeScript. Scrape Twitter search, profiles & followers as a Twitter scraper & tweet scraper. Not affiliated with X Corp.",
   "author": "Xquik <support@xquik.com>",
   "types": "dist/index.d.ts",
   "typesVersions": {
@@ -26,15 +26,22 @@
     "x-api",
     "twitter-api",
     "twitter-scraper",
+    "tweet-scraper",
+    "scrape-twitter",
+    "twitter-api-alternative",
+    "twitter-data-api",
+    "twitter-sdk",
+    "twitter-api-typescript",
+    "twitter-api-javascript",
+    "twitter-api-node",
+    "typescript-sdk",
     "x-twitter-scraper",
     "xquik",
     "pi-package",
-    "typescript-sdk",
     "twitter-search",
     "follower-export",
     "webhooks",
-    "x-automation",
-    "social-media-api"
+    "x-automation"
   ],
   "pi": {
     "skills": [
