@@ -3,19 +3,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Runs pnpm audit and fails on:
-// - any finding in a shipped runtime dependency, at any severity;
-// - any high or critical development finding with an installable fix;
-// - any other high or critical development finding that audit-exceptions.json does not list.
-// A listed exception blocks again on its recheck date or once a fixed version is installable.
+// - any finding in a shipped runtime dependency;
+// - any development finding with an installable fix;
+// - any other development finding that audit-exceptions.json does not list.
+// Severity never excuses a finding. A listed exception blocks again on its recheck date or once a fixed
+// version is installable. Pass a directory to audit it instead of this repository.
 
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const root = path.resolve(__dirname, '..', '..');
+const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
 const exceptionsFile = 'audit-exceptions.json';
-const developmentSeverities = new Set(['high', 'critical']);
-const allowedReasons = new Set(['build-time only', 'peer dependency provided by the host']);
+const allowedReasons = new Set(['build-time only', 'test-time only', 'peer dependency provided by the host']);
 const maxRecheckDays = 30;
 const dayInMs = 24 * 60 * 60 * 1000;
 
@@ -129,7 +129,7 @@ const main = () => {
     if (runtimePaths.length > 0) {
       problems.push(`${name} reaches the shipped dependency path ${runtimePaths[0]}. Upgrade it.`);
     }
-    if (developmentPaths.length === 0 || !developmentSeverities.has(advisory.severity)) continue;
+    if (developmentPaths.length === 0) continue;
 
     let fixable;
     try {
