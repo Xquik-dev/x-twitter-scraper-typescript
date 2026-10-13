@@ -64,7 +64,8 @@ Required mitigations include:
 - Validate untrusted response data before privileged use.
 - Confirm account, payload, and audience before write actions.
 - Pin production dependencies and development tools.
-- Run coverage, static analysis, audits, and reproducibility checks.
+- Run coverage, CodeQL, audits, and reproducibility checks.
+- Review each audit exception and recheck it within 30 days.
 - Publish only through `bin/release-local` after every local check passes.
 
 ## Response process

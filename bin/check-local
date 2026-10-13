@@ -5,8 +5,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Runs the repository checks on this machine and stops at the first failure.
+# CodeQL is mandatory, and REUSE runs only when the reuse tool is installed.
 # Posts the result as the xquik-local-checks commit status on GitHub when the
-# tree is clean and HEAD is pushed. Pass --no-status to skip posting.
+# tree is clean and HEAD is pushed. Posting uses the owner's gh login on the
+# release machine. Success is posted only after every mandatory check passes,
+# and its text lists only the checks that ran. Pass --no-status to skip posting.
 
 set -euo pipefail
 
@@ -51,20 +54,22 @@ post_commit_status() {
 }
 
 current_check="Start checks"
-reuse_note=""
+passed=()
+skipped=""
 
 finish() {
   local exit_code=$?
-  local passed_tests
+  local description
 
   if ((exit_code == 0)); then
-    passed_tests="$(sed -nE 's/^Tests:.* ([0-9]+) passed.*/\1/p' "$test_log" | tail -n 1)"
-    post_commit_status success \
-      "Audit, lint, types, reproducible build & ${passed_tests:-all} tests passed${reuse_note}"
+    printf -v description '%s, ' "${passed[@]}"
+    description="Passed: ${description%, }${skipped}"
+    echo "==> ${description}"
+    post_commit_status success "${description:0:139}"
   else
     post_commit_status failure "${current_check} failed. Run bin/check-local to see why."
   fi
-  rm -f -- "${test_log:?}"
+  rm -rf -- "${work_directory:?}"
   exit "$exit_code"
 }
 
@@ -80,8 +85,32 @@ run_check() {
   fi
 }
 
+run_audit() {
+  node scripts/utils/check-audit.cjs 2>&1 | tee "${work_directory}/audit.log"
+}
+
 run_tests() {
-  bash ./scripts/test 2>&1 | tee "$test_log"
+  bash ./scripts/test 2>&1 | tee "${work_directory}/test.log"
+}
+
+# Matches the deleted CodeQL workflow: JavaScript and TypeScript, no build, security-extended queries.
+run_codeql() {
+  local database="${work_directory}/codeql-database"
+  local config="${work_directory}/codeql-config.yml"
+  local results="${work_directory}/codeql-results.sarif"
+  local count
+
+  printf 'paths-ignore:\n  - dist\n  - dist-deno\n  - node_modules\n' >"$config"
+  codeql database create "$database" --language=javascript --build-mode=none --source-root=. \
+    --codescanning-config="$config" --threads=0 || return 1
+  codeql database analyze "$database" codeql/javascript-queries:codeql-suites/javascript-security-extended.qls \
+    --download --format=sarif-latest --output="$results" --threads=0 || return 1
+  count="$(jq '[.runs[].results[]?] | length' "$results")" || return 1
+  if ((count > 0)); then
+    jq -r '.runs[].results[] | "\(.ruleId) \(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine) \(.message.text)"' "$results" >&2
+    echo "CodeQL found ${count} result(s)." >&2
+    return 1
+  fi
 }
 
 commit="$(git rev-parse HEAD 2>/dev/null || true)"
@@ -92,43 +121,67 @@ else
   echo "==> Posting the ${status_context} status to ${commit:0:12}"
 fi
 
-test_log="$(mktemp)"
+work_directory="$(mktemp -d)"
 trap finish EXIT
 post_commit_status pending "Local checks are running."
 
-current_check="Find pnpm"
-if ! command -v pnpm >/dev/null 2>&1; then
-  echo "Check failed: pnpm is missing. Install pnpm 11, then run bin/check-local again." >&2
-  exit 1
-fi
+current_check="Find tools"
+for tool in pnpm node jq codeql; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    case "$tool" in
+      codeql) install_hint="brew install --cask codeql" ;;
+      pnpm) install_hint="brew install pnpm" ;;
+      *) install_hint="brew install ${tool}" ;;
+    esac
+    echo "Check failed: ${tool} is missing. Install it with ${install_hint}, then run bin/check-local again." >&2
+    exit 1
+  fi
+done
 
 run_check "Install dependencies" \
   "Run pnpm install and commit the updated pnpm-lock.yaml." \
   pnpm install --frozen-lockfile
+passed+=("install")
 
 if command -v reuse >/dev/null 2>&1; then
   run_check "Check license notices" \
     "Add the missing license notice or REUSE.toml entry." \
     reuse lint
+  passed+=("REUSE")
 else
-  reuse_note=" (REUSE skipped)"
+  skipped="; skipped: REUSE"
   echo "==> Skipping license notices because reuse is missing. Install it with pipx install reuse."
 fi
 
 run_check "Audit dependencies" \
-  "Upgrade or override the vulnerable dependency, then update pnpm-lock.yaml." \
-  pnpm audit --audit-level high
+  "Fix each blocking finding above, or review an unfixable development finding into audit-exceptions.json." \
+  run_audit
+exceptions="$(sed -nE 's/^Audit passed with ([0-9]+) reviewed exceptions?\.$/\1/p' "${work_directory}/audit.log")"
+case "$exceptions" in
+  "") passed+=("audit") ;;
+  1) passed+=("audit (1 reviewed exception)") ;;
+  *) passed+=("audit (${exceptions} reviewed exceptions)") ;;
+esac
 
 run_check "Lint, build & check types" \
   "Run pnpm fix, then fix the remaining errors above." \
   ./scripts/lint
+passed+=("lint & types")
 
 run_check "Check reproducible build" \
   "Remove the build step that writes timestamps or random values." \
   ./scripts/check-reproducible
+passed+=("reproducible build")
 
 run_check "Run tests" \
   "Fix the failing tests or coverage gaps above." \
   run_tests
+passed_tests="$(sed -nE 's/^Tests:.* ([0-9]+) passed.*/\1/p' "${work_directory}/test.log" | tail -n 1)"
+passed+=("${passed_tests:+${passed_tests} }tests")
+
+run_check "Run CodeQL" \
+  "Fix each CodeQL result above, then run bin/check-local again." \
+  run_codeql
+passed+=("CodeQL")
 
 echo "All local checks passed."

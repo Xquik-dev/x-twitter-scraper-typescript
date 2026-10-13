@@ -80,9 +80,17 @@ bin/check-local
 
 It installs dependencies from the lockfile, then checks license notices when `reuse` is installed.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
+Last, it runs the CodeQL `security-extended` queries for JavaScript and TypeScript.
+CodeQL is required. Install it with `brew install --cask codeql`.
 It stops at the first failure and says what to fix.
 When the tree is clean and `HEAD` is pushed, it posts the `xquik-local-checks` commit status.
 Pass `--no-status` to skip the status.
+
+The audit fails on any finding in a shipped dependency.
+It also fails on a high or critical development finding that has an installable fix.
+An unfixable development finding passes only when `audit-exceptions.json` lists it.
+Each entry names the advisory, the package path, the reason, and a recheck date within 30 days.
+An entry stops counting on its recheck date or once a fix is installable.
 
 ## Lint & format
 
@@ -111,7 +119,7 @@ bin/release-local
 
 It releases only from a clean `main` that matches `origin/main`.
 It refuses a version whose `v<version>` tag already exists.
-It runs `bin/check-local`, audits dependencies, and builds the package with `bin/prepare-npm-release`.
+It runs `bin/check-local`, repeats the audit, and builds the package with `bin/prepare-npm-release`.
 It publishes the packed archive to npm unless that version is already there.
 It reads the npm token from the macOS Keychain and never writes it to a lasting file.
 Then it pushes the annotated tag and creates the GitHub release from the `CHANGELOG.md` section.

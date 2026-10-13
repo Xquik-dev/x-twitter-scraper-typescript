@@ -30,7 +30,7 @@ work_directory="$(mktemp -d)"
 trap 'rm -rf -- "${work_directory:?}"' EXIT
 
 step "Checking the release tools"
-for tool in gh git jq npm pnpm security; do
+for tool in gh git jq node npm pnpm security; do
   command -v "$tool" >/dev/null 2>&1 || fail "${tool} is missing. Install it, then run bin/release-local again."
 done
 gh auth status >/dev/null 2>&1 || fail "gh is signed out. Run gh auth login, then run bin/release-local again."
@@ -74,8 +74,8 @@ grep -q '[^[:space:]]' "$notes_file" || fail "CHANGELOG.md has no notes for ${ve
 step "Running the local checks"
 bin/check-local
 
-step "Auditing dependencies for high or critical findings"
-pnpm audit --audit-level high || fail "The audit found a high or critical vulnerability. Fix it before you release."
+step "Auditing dependencies against audit-exceptions.json"
+node scripts/utils/check-audit.cjs || fail "The audit found a blocking finding. Fix it before you release."
 
 step "Building the package"
 bash ./bin/prepare-npm-release

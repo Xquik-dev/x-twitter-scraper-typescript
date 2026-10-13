@@ -18,7 +18,9 @@ The shared Xquik documentation site supports this released project.
 - Jest enforces 90% statement and 80% branch coverage.
 - The current suite passes both enforced coverage thresholds.
 - REUSE maps every tracked file to Apache-2.0 or MIT.
-- `bin/check-local` and `bin/release-local` refuse high or critical npm audit findings.
+- `bin/check-local` runs CodeQL `security-extended` queries and fails on any result.
+- `bin/check-local` and `bin/release-local` refuse blocking npm audit findings.
+- `audit-exceptions.json` lists reviewed, unfixable development findings with 30-day rechecks.
 - Package archives build reproducibly through `pnpm run check:reproducible`.
 - `bin/release-local` releases only a clean `main` that matches `origin/main`.
 - `bin/release-local` refuses a version whose release tag already exists.

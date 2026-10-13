@@ -1,0 +1,10 @@
+{
+  "exceptions": [
+    {
+      "advisory": "GHSA-vfj7-8cjw-p6xm",
+      "path": "tsc-multi > fast-glob > micromatch > braces",
+      "reason": "build-time only",
+      "recheck": "2026-11-12"
+    }
+  ]
+}
