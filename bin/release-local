@@ -10,6 +10,10 @@
 # what a release would publish, without publishing, tagging or releasing.
 # When npm asks for 2FA approval, the script prints npm's approval URL and
 # waits for it.
+#
+# The npm token comes from the macOS Keychain item that 2 environment
+# variables name: NPM_KEYCHAIN_SERVICE and NPM_KEYCHAIN_ACCOUNT. Set them on
+# the release machine. A dry run needs neither.
 
 set -euo pipefail
 
@@ -18,8 +22,6 @@ cd "$(dirname "$0")/.."
 readonly expected_name="x-twitter-scraper"
 readonly github_repo="Xquik-dev/x-twitter-scraper-typescript"
 readonly registry="https://registry.npmjs.org/"
-readonly keychain_service="npm"
-readonly keychain_account="burakbayir"
 
 dry_run=0
 for argument in "$@"; do
@@ -40,6 +42,13 @@ fail() {
   printf '%s\n' "$1" >&2
   exit 1
 }
+
+if ((dry_run == 0)); then
+  [[ -n "${NPM_KEYCHAIN_SERVICE:-}" ]] ||
+    fail "NPM_KEYCHAIN_SERVICE is unset. Set it to the Keychain service that holds the npm token, then run bin/release-local again."
+  [[ -n "${NPM_KEYCHAIN_ACCOUNT:-}" ]] ||
+    fail "NPM_KEYCHAIN_ACCOUNT is unset. Set it to the Keychain account that holds the npm token, then run bin/release-local again."
+fi
 
 work_directory="$(mktemp -d)"
 trap 'rm -rf -- "${work_directory:?}"' EXIT
@@ -121,8 +130,8 @@ else
   step "Publishing ${expected_name}@${version} to npm"
   npm_config_file="$(mktemp "${work_directory}/npmrc.XXXXXX")"
   chmod 600 "$npm_config_file"
-  npm_token="$(security find-generic-password -s "$keychain_service" -a "$keychain_account" -w)" ||
-    fail "The Keychain has no ${keychain_service} item for ${keychain_account}. Add the npm token there first."
+  npm_token="$(security find-generic-password -s "$NPM_KEYCHAIN_SERVICE" -a "$NPM_KEYCHAIN_ACCOUNT" -w)" ||
+    fail "The Keychain has no item for NPM_KEYCHAIN_SERVICE & NPM_KEYCHAIN_ACCOUNT. Add the npm token there first."
   printf 'registry=%s\n//registry.npmjs.org/:_authToken=%s\n' "$registry" "$npm_token" >"$npm_config_file"
   unset npm_token
   echo "If npm asks for 2FA approval, open the URL it prints and approve. The script waits."
