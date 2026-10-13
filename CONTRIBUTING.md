@@ -82,6 +82,7 @@ It installs dependencies from the lockfile, then checks license notices with REU
 REUSE runs at a pinned version through `uv`. Install `uv` with `brew install uv`.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
 Last, it runs the CodeQL `security-extended` queries for JavaScript and TypeScript.
+Any result fails the run, and so does any file that CodeQL cannot parse.
 CodeQL is required. Install it with `brew install --cask codeql`.
 It stops at the first failure and says what to fix.
 When the tree is clean and `HEAD` is pushed, it posts the `xquik-local-checks` commit status.

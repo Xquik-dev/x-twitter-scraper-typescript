@@ -98,13 +98,32 @@ run_codeql() {
   local database="${work_directory}/codeql-database"
   local config="${work_directory}/codeql-config.yml"
   local results="${work_directory}/codeql-results.sarif"
-  local count
+  local extraction_diagnostic="js/diagnostics/extraction-errors"
+  local count unread
 
   printf 'paths-ignore:\n  - dist\n  - dist-deno\n  - node_modules\n' >"$config"
   codeql database create "$database" --language=javascript --build-mode=none --source-root=. \
     --codescanning-config="$config" --threads=0 || return 1
   codeql database analyze "$database" codeql/javascript-queries:codeql-suites/javascript-security-extended.qls \
     --download --format=sarif-latest --output="$results" --threads=0 || return 1
+
+  # CodeQL goes on after it fails to parse a file and scans only the code it could parse. The
+  # extraction diagnostic of the suite names each such file. The report lists every diagnostic query
+  # that ran, so a suite without that diagnostic cannot pass.
+  if ! jq -e --arg id "$extraction_diagnostic" \
+    'any(.runs[].tool["driver"].notifications[]?; .id == $id)' "$results" >/dev/null; then
+    echo "The CodeQL scan lacks ${extraction_diagnostic}, so it cannot show that it read every file. Make the suite in bin/check-local run that diagnostic query." >&2
+    return 1
+  fi
+  unread="$(jq -r --arg id "$extraction_diagnostic" '
+    [.runs[].invocations[]?.toolExecutionNotifications[]? | select(.descriptor.id == $id)
+      | .locations[0].physicalLocation | "\(.artifactLocation.uri) at line \(.region.startLine)"]
+    | unique | join(" and ")' "$results")" || return 1
+  if [[ -n "$unread" ]]; then
+    echo "CodeQL could not parse ${unread}, so the scan is incomplete. Rewrite that syntax so CodeQL parses it, then run bin/check-local again." >&2
+    return 1
+  fi
+
   count="$(jq '[.runs[].results[]?] | length' "$results")" || return 1
   if ((count > 0)); then
     jq -r '.runs[].results[] | "\(.ruleId) \(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine) \(.message.text)"' "$results" >&2
@@ -175,7 +194,7 @@ passed_tests="$(sed -nE 's/^Tests:.* ([0-9]+) passed.*/\1/p' "${work_directory}/
 passed+=("${passed_tests:+${passed_tests} }tests")
 
 run_check "Run CodeQL" \
-  "Fix each CodeQL result above, then run bin/check-local again." \
+  "Fix what CodeQL reported above, then run bin/check-local again." \
   run_codeql
 passed+=("CodeQL")
 
