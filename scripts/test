@@ -9,7 +9,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Checking types"
-./node_modules/typescript/bin/tsc --project tsconfig.json --noEmit
+./node_modules/@typescript/native/bin/tsc --project tsconfig.json --noEmit
 
 echo "==> Running tests"
 ./node_modules/.bin/jest "$@"

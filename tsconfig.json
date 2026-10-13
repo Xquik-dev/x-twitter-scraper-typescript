@@ -5,8 +5,10 @@
     "target": "es2020",
     "lib": ["es2020"],
     "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
+    "types": ["jest", "node"],
+    "rootDir": ".",
     "paths": {
       "x-twitter-scraper/*": ["./src/*"],
       "x-twitter-scraper": ["./src/index.ts"]

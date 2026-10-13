@@ -10,6 +10,11 @@ pnpm install
 pnpm build
 ```
 
+The build and the type checks use TypeScript 7.
+`pnpm build` compiles once for CommonJS and once for ES modules with `scripts/utils/compile-formats.cjs`.
+TypeScript 7 has no compiler API yet.
+ESLint and ts-node load the TypeScript 6.0 API from the `typescript` alias, as the TypeScript 7 release notes recommend.
+
 ## Contribution requirements
 
 Follow the shared [Xquik contribution policy](https://github.com/Xquik-dev/.github/blob/main/CONTRIBUTING.md).
