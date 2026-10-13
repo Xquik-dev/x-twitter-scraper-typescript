@@ -2,6 +2,36 @@
 
 ## Unreleased
 
+## 0.13.0 (2026-10-13)
+
+Full Changelog: [v0.12.4...v0.13.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.4...v0.13.0)
+
+### Features
+
+The SDK now covers 175 operations of the current API spec. These methods are new:
+
+* Events: `events.stream()` streams monitor events as server-sent events.
+* Extractions: `extractions.cancel()` cancels an extraction.
+* Webhooks: `webhooks.createTelegramLink()` returns a link that connects a Telegram chat.
+* X: `x.autocompleteSearch()`, `x.getHashflags()`, `x.getTrendLocations()` and `x.searchPlaces()` read search suggestions, hashflags, trend locations and places.
+* Analysis: `x.analysis.brand()`, `classify()`, `marketSignals()`, `news()`, `sentiment()` and `viralScore()` analyze posts with AI.
+* Tweets: `x.tweets.checkRepost()`, `embed()`, `getHiddenReplies()`, `getInsights()`, `getRetweeterIds()`, `getSubtitles()`, `listTop()`, `resolveLinks()` and `translate()` read more about tweets.
+* Users: `x.users.retrieveAffiliates()`, `retrieveArticles()`, `retrieveBatchTweets()`, `retrieveFollowerIds()`, `retrieveFollowingIds()`, `retrieveHighlights()`, `retrieveInsights()`, `retrieveListMemberships()`, `retrieveLists()`, `retrieveLive()`, `retrieveSimilar()`, `retrieveSubscriptions()` and `translateBio()` read more about users.
+* Jobs: `x.jobs.retrieve()`, `listLocations()` and `search()` read public X job listings.
+* Direct messages: `x.dm.deleteMessage()` deletes a DM from the account's side.
+* Communities: `x.communities.find()`, `listPopular()`, `listSuggested()`, `listTopics()` and `searchMembers()` find communities and members. `x.communities.media.list()` lists a community's media tweets.
+* Lists: `x.lists.retrieve()` and `retrieveSearch()` read and search X Lists.
+* Broadcasts: `x.broadcasts.retrieve()` reads an X broadcast.
+* Spaces: `x.spaces.retrieve()`, `retrieveReplay()` and `search()` read and search X Spaces.
+
+### Changes
+
+* Existing methods take the current parameters, response fields, prices and descriptions. Read methods accept `fields` and `omit`.
+* These methods now take an optional params object before the request options: `monitors.list()`, `monitors.keywords.list()`, `styles.list()`, `webhooks.list()`, `webhooks.listDeliveries()`, `support.tickets.list()`, `x.accounts.list()`, `x.bookmarks.retrieveFolders()`, `x.communities.retrieveInfo()`, `x.getArticle()`, `x.tweets.retrieve()` and `x.users.retrieve()`. Pass request options as the next argument.
+* `x.accountConnectionChallenges.submit()` returns a renewed challenge or the account. `extractions.run()` returns a dry-run estimate or the accepted job.
+* `minFaves` stays as a deprecated alias of `minLikes`. Filters the spec dropped from replies, likes, media and mentions reads stay as deprecated fields.
+* `XAccount` and `XAccountDetail` drop a field the API no longer returns.
+
 ## 0.12.4 (2026-08-21)
 
 Full Changelog: [v0.12.3...v0.12.4](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.3...v0.12.4)
