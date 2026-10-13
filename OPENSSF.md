@@ -29,7 +29,7 @@ The shared Xquik documentation site supports this released project.
 
 ## Gold limitations
 
-Public evidence does not yet prove these human Gold requirements:
+Public evidence does not yet prove these human Gold requirements.
 
 - A bus factor of 2 or more.
 - Two unassociated significant contributors.

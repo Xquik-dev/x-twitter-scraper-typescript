@@ -4,7 +4,7 @@
 
 # Shared
 
-Types:
+Types
 
 - <code><a href="./src/resources/shared.ts">Community</a></code>
 - <code><a href="./src/resources/shared.ts">CommunityPage</a></code>
@@ -21,13 +21,13 @@ Types:
 
 # Account
 
-Types:
+Types
 
 - <code><a href="./src/resources/account.ts">AccountRetrieveResponse</a></code>
 - <code><a href="./src/resources/account.ts">AccountSetXUsernameResponse</a></code>
 - <code><a href="./src/resources/account.ts">AccountUpdateLocaleResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /account">client.account.<a href="./src/resources/account.ts">retrieve</a>() -> AccountRetrieveResponse</code>
 - <code title="put /account/x-identity">client.account.<a href="./src/resources/account.ts">setXUsername</a>({ ...params }) -> AccountSetXUsernameResponse</code>
@@ -35,33 +35,33 @@ Methods:
 
 # Subscribe
 
-Types:
+Types
 
 - <code><a href="./src/resources/subscribe.ts">SubscribeCreateResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /subscribe">client.subscribe.<a href="./src/resources/subscribe.ts">create</a>({ ...params }) -> SubscribeCreateResponse</code>
 
 # Compose
 
-Types:
+Types
 
 - <code><a href="./src/resources/compose.ts">ComposeCreateResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /compose">client.compose.<a href="./src/resources/compose.ts">create</a>({ ...params }) -> ComposeCreateResponse</code>
 
 # Drafts
 
-Types:
+Types
 
 - <code><a href="./src/resources/drafts.ts">Draft</a></code>
 - <code><a href="./src/resources/drafts.ts">DraftDetail</a></code>
 - <code><a href="./src/resources/drafts.ts">DraftListResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /drafts">client.drafts.<a href="./src/resources/drafts.ts">create</a>({ ...params }) -> DraftDetail</code>
 - <code title="get /drafts/{id}">client.drafts.<a href="./src/resources/drafts.ts">retrieve</a>(id) -> DraftDetail</code>
@@ -70,7 +70,7 @@ Methods:
 
 # Styles
 
-Types:
+Types
 
 - <code><a href="./src/resources/styles.ts">StyleProfile</a></code>
 - <code><a href="./src/resources/styles.ts">StyleProfileSummary</a></code>
@@ -78,7 +78,7 @@ Types:
 - <code><a href="./src/resources/styles.ts">StyleCompareResponse</a></code>
 - <code><a href="./src/resources/styles.ts">StyleGetPerformanceResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /styles/{id}">client.styles.<a href="./src/resources/styles.ts">retrieve</a>(id) -> StyleProfile</code>
 - <code title="put /styles/{id}">client.styles.<a href="./src/resources/styles.ts">update</a>(id, { ...params }) -> StyleProfile</code>
@@ -90,25 +90,25 @@ Methods:
 
 # Radar
 
-Types:
+Types
 
 - <code><a href="./src/resources/radar.ts">RadarItem</a></code>
 - <code><a href="./src/resources/radar.ts">RadarRetrieveTrendingTopicsResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /radar">client.radar.<a href="./src/resources/radar.ts">retrieveTrendingTopics</a>({ ...params }) -> RadarRetrieveTrendingTopicsResponse</code>
 
 # Monitors
 
-Types:
+Types
 
 - <code><a href="./src/resources/monitors/monitors.ts">Monitor</a></code>
 - <code><a href="./src/resources/monitors/monitors.ts">MonitorCreateResponse</a></code>
 - <code><a href="./src/resources/monitors/monitors.ts">MonitorListResponse</a></code>
 - <code><a href="./src/resources/monitors/monitors.ts">MonitorDeactivateResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /monitors">client.monitors.<a href="./src/resources/monitors/monitors.ts">create</a>({ ...params }) -> MonitorCreateResponse</code>
 - <code title="get /monitors/{id}">client.monitors.<a href="./src/resources/monitors/monitors.ts">retrieve</a>(id) -> Monitor</code>
@@ -118,7 +118,7 @@ Methods:
 
 ## Keywords
 
-Types:
+Types
 
 - <code><a href="./src/resources/monitors/keywords.ts">KeywordCreateResponse</a></code>
 - <code><a href="./src/resources/monitors/keywords.ts">KeywordRetrieveResponse</a></code>
@@ -126,7 +126,7 @@ Types:
 - <code><a href="./src/resources/monitors/keywords.ts">KeywordListResponse</a></code>
 - <code><a href="./src/resources/monitors/keywords.ts">KeywordDeactivateResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /monitors/keywords">client.monitors.keywords.<a href="./src/resources/monitors/keywords.ts">create</a>({ ...params }) -> KeywordCreateResponse</code>
 - <code title="get /monitors/keywords/{id}">client.monitors.keywords.<a href="./src/resources/monitors/keywords.ts">retrieve</a>(id) -> KeywordRetrieveResponse</code>
@@ -136,13 +136,13 @@ Methods:
 
 # Events
 
-Types:
+Types
 
 - <code><a href="./src/resources/events.ts">Event</a></code>
 - <code><a href="./src/resources/events.ts">EventDetail</a></code>
 - <code><a href="./src/resources/events.ts">EventListResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /events/{id}">client.events.<a href="./src/resources/events.ts">retrieve</a>(id) -> EventDetail</code>
 - <code title="get /events">client.events.<a href="./src/resources/events.ts">list</a>({ ...params }) -> EventListResponse</code>
@@ -150,7 +150,7 @@ Methods:
 
 # Extractions
 
-Types:
+Types
 
 - <code><a href="./src/resources/extractions.ts">ExtractionJob</a></code>
 - <code><a href="./src/resources/extractions.ts">ExtractionRetrieveResponse</a></code>
@@ -159,7 +159,7 @@ Types:
 - <code><a href="./src/resources/extractions.ts">ExtractionEstimateCostResponse</a></code>
 - <code><a href="./src/resources/extractions.ts">ExtractionRunResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /extractions/{id}">client.extractions.<a href="./src/resources/extractions.ts">retrieve</a>(id, { ...params }) -> ExtractionRetrieveResponse</code>
 - <code title="get /extractions">client.extractions.<a href="./src/resources/extractions.ts">list</a>({ ...params }) -> ExtractionListResponse</code>
@@ -170,7 +170,7 @@ Methods:
 
 # Draws
 
-Types:
+Types
 
 - <code><a href="./src/resources/draws.ts">DrawDetail</a></code>
 - <code><a href="./src/resources/draws.ts">DrawListItem</a></code>
@@ -179,7 +179,7 @@ Types:
 - <code><a href="./src/resources/draws.ts">DrawListResponse</a></code>
 - <code><a href="./src/resources/draws.ts">DrawRunResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /draws/{id}">client.draws.<a href="./src/resources/draws.ts">retrieve</a>(id) -> DrawRetrieveResponse</code>
 - <code title="get /draws">client.draws.<a href="./src/resources/draws.ts">list</a>({ ...params }) -> DrawListResponse</code>
@@ -188,7 +188,7 @@ Methods:
 
 # Webhooks
 
-Types:
+Types
 
 - <code><a href="./src/resources/webhooks.ts">Delivery</a></code>
 - <code><a href="./src/resources/webhooks.ts">Webhook</a></code>
@@ -200,7 +200,7 @@ Types:
 - <code><a href="./src/resources/webhooks.ts">WebhookResumeResponse</a></code>
 - <code><a href="./src/resources/webhooks.ts">WebhookTestResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /webhooks">client.webhooks.<a href="./src/resources/webhooks.ts">create</a>({ ...params }) -> WebhookCreateResponse</code>
 - <code title="patch /webhooks/{id}">client.webhooks.<a href="./src/resources/webhooks.ts">update</a>(id, { ...params }) -> Webhook</code>
@@ -213,7 +213,7 @@ Methods:
 
 # X
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/x.ts">XAutocompleteSearchResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XGetArticleResponse</a></code>
@@ -223,7 +223,7 @@ Types:
 - <code><a href="./src/resources/x/x.ts">XGetTrendsResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XSearchPlacesResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/search/autocomplete">client.x.<a href="./src/resources/x/x.ts">autocompleteSearch</a>({ ...params }) -> XAutocompleteSearchResponse</code>
 - <code title="get /x/articles/{tweetId}">client.x.<a href="./src/resources/x/x.ts">getArticle</a>(tweetID, { ...params }) -> XGetArticleResponse</code>
@@ -236,17 +236,17 @@ Methods:
 
 ## WriteActions
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/write-actions.ts">WriteActionRetrieveResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/write-actions/{id}">client.x.writeActions.<a href="./src/resources/x/write-actions.ts">retrieve</a>(id) -> WriteActionRetrieveResponse</code>
 
 ## Analysis
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/analysis.ts">AnalysisBrandResponse</a></code>
 - <code><a href="./src/resources/x/analysis.ts">AnalysisClassifyResponse</a></code>
@@ -255,7 +255,7 @@ Types:
 - <code><a href="./src/resources/x/analysis.ts">AnalysisSentimentResponse</a></code>
 - <code><a href="./src/resources/x/analysis.ts">AnalysisViralScoreResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/analysis/brand">client.x.analysis.<a href="./src/resources/x/analysis.ts">brand</a>({ ...params }) -> AnalysisBrandResponse</code>
 - <code title="post /x/analysis/classify">client.x.analysis.<a href="./src/resources/x/analysis.ts">classify</a>({ ...params }) -> AnalysisClassifyResponse</code>
@@ -266,7 +266,7 @@ Methods:
 
 ## Tweets
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetAuthor</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetDetail</a></code>
@@ -284,7 +284,7 @@ Types:
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetSearchResponse</a></code>
 - <code><a href="./src/resources/x/tweets/tweets.ts">TweetTranslateResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/tweets">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">create</a>({ ...params }) -> TweetCreateResponse</code>
 - <code title="get /x/tweets/{id}">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">retrieve</a>(id, { ...params }) -> TweetRetrieveResponse</code>
@@ -308,31 +308,31 @@ Methods:
 
 ### Like
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/tweets/like.ts">LikeCreateResponse</a></code>
 - <code><a href="./src/resources/x/tweets/like.ts">LikeDeleteResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/tweets/{id}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">create</a>(id, { ...params }) -> LikeCreateResponse</code>
 - <code title="delete /x/tweets/{id}/like">client.x.tweets.like.<a href="./src/resources/x/tweets/like.ts">delete</a>(id, { ...params }) -> LikeDeleteResponse</code>
 
 ### Retweet
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/tweets/retweet.ts">RetweetCreateResponse</a></code>
 - <code><a href="./src/resources/x/tweets/retweet.ts">RetweetDeleteResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/tweets/{id}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">create</a>(id, { ...params }) -> RetweetCreateResponse</code>
 - <code title="delete /x/tweets/{id}/retweet">client.x.tweets.retweet.<a href="./src/resources/x/tweets/retweet.ts">delete</a>(id, { ...params }) -> RetweetDeleteResponse</code>
 
 ## Users
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/users/users.ts">UserRemoveFollowerResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveBatchResponse</a></code>
@@ -348,7 +348,7 @@ Types:
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveVerifiedFollowersResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserTranslateBioResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/users/{id}">client.x.users.<a href="./src/resources/x/users/users.ts">retrieve</a>(id, { ...params }) -> UserProfile</code>
 - <code title="post /x/users/{id}/remove-follower">client.x.users.<a href="./src/resources/x/users/users.ts">removeFollower</a>(id, { ...params }) -> UserRemoveFollowerResponse</code>
@@ -379,35 +379,35 @@ Methods:
 
 ### Follow
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/users/follow.ts">FollowCreateResponse</a></code>
 - <code><a href="./src/resources/x/users/follow.ts">FollowDeleteAllResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/users/{id}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">create</a>(id, { ...params }) -> FollowCreateResponse</code>
 - <code title="delete /x/users/{id}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">deleteAll</a>(id, { ...params }) -> FollowDeleteAllResponse</code>
 
 ## Followers
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/followers.ts">FollowerCheckResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/followers/check">client.x.followers.<a href="./src/resources/x/followers.ts">check</a>({ ...params }) -> FollowerCheckResponse</code>
 
 ## Jobs
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/jobs.ts">JobRetrieveResponse</a></code>
 - <code><a href="./src/resources/x/jobs.ts">JobListLocationsResponse</a></code>
 - <code><a href="./src/resources/x/jobs.ts">JobSearchResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/jobs/{id}">client.x.jobs.<a href="./src/resources/x/jobs.ts">retrieve</a>(id, { ...params }) -> JobRetrieveResponse</code>
 - <code title="get /x/jobs/locations">client.x.jobs.<a href="./src/resources/x/jobs.ts">listLocations</a>({ ...params }) -> JobListLocationsResponse</code>
@@ -415,13 +415,13 @@ Methods:
 
 ## Dm
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/dm.ts">DmDeleteMessageResponse</a></code>
 - <code><a href="./src/resources/x/dm.ts">DmRetrieveHistoryResponse</a></code>
 - <code><a href="./src/resources/x/dm.ts">DmSendResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="delete /x/dm/{userId}/messages/{messageId}">client.x.dm.<a href="./src/resources/x/dm.ts">deleteMessage</a>(messageID, { ...params }) -> DmDeleteMessageResponse</code>
 - <code title="get /x/dm/{userId}/history">client.x.dm.<a href="./src/resources/x/dm.ts">retrieveHistory</a>(userID, { ...params }) -> DmRetrieveHistoryResponse</code>
@@ -429,25 +429,25 @@ Methods:
 
 ## Media
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/media.ts">MediaDownloadResponse</a></code>
 - <code><a href="./src/resources/x/media.ts">MediaUploadResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/media/download">client.x.media.<a href="./src/resources/x/media.ts">download</a>({ ...params }) -> MediaDownloadResponse</code>
 - <code title="post /x/media">client.x.media.<a href="./src/resources/x/media.ts">upload</a>({ ...params }) -> MediaUploadResponse</code>
 
 ## Profile
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/profile.ts">ProfileUpdateResponse</a></code>
 - <code><a href="./src/resources/x/profile.ts">ProfileUpdateAvatarResponse</a></code>
 - <code><a href="./src/resources/x/profile.ts">ProfileUpdateBannerResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="patch /x/profile">client.x.profile.<a href="./src/resources/x/profile.ts">update</a>({ ...params }) -> ProfileUpdateResponse</code>
 - <code title="patch /x/profile/avatar">client.x.profile.<a href="./src/resources/x/profile.ts">updateAvatar</a>({ ...params }) -> ProfileUpdateAvatarResponse</code>
@@ -455,7 +455,7 @@ Methods:
 
 ## Communities
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/communities/communities.ts">CommunityCreateResponse</a></code>
 - <code><a href="./src/resources/x/communities/communities.ts">CommunityDeleteResponse</a></code>
@@ -463,7 +463,7 @@ Types:
 - <code><a href="./src/resources/x/communities/communities.ts">CommunityListTopicsResponse</a></code>
 - <code><a href="./src/resources/x/communities/communities.ts">CommunityRetrieveInfoResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/communities">client.x.communities.<a href="./src/resources/x/communities/communities.ts">create</a>({ ...params }) -> CommunityCreateResponse</code>
 - <code title="delete /x/communities/{id}">client.x.communities.<a href="./src/resources/x/communities/communities.ts">delete</a>(id, { ...params }) -> CommunityDeleteResponse</code>
@@ -479,32 +479,32 @@ Methods:
 
 ### Join
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/communities/join.ts">JoinCreateResponse</a></code>
 - <code><a href="./src/resources/x/communities/join.ts">JoinDeleteAllResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/communities/{id}/join">client.x.communities.join.<a href="./src/resources/x/communities/join.ts">create</a>(id, { ...params }) -> JoinCreateResponse</code>
 - <code title="delete /x/communities/{id}/join">client.x.communities.join.<a href="./src/resources/x/communities/join.ts">deleteAll</a>(id, { ...params }) -> JoinDeleteAllResponse</code>
 
 ### Tweets
 
-Methods:
+Methods
 
 - <code title="get /x/communities/tweets">client.x.communities.tweets.<a href="./src/resources/x/communities/tweets.ts">list</a>({ ...params }) -> PaginatedTweets</code>
 - <code title="get /x/communities/{id}/tweets">client.x.communities.tweets.<a href="./src/resources/x/communities/tweets.ts">listByCommunity</a>(id, { ...params }) -> PaginatedTweets</code>
 
 ### Media
 
-Methods:
+Methods
 
 - <code title="get /x/communities/{id}/media">client.x.communities.media.<a href="./src/resources/x/communities/media.ts">list</a>(id, { ...params }) -> PaginatedTweets</code>
 
 ## Accounts
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/accounts.ts">XAccount</a></code>
 - <code><a href="./src/resources/x/accounts.ts">XAccountDetail</a></code>
@@ -514,7 +514,7 @@ Types:
 - <code><a href="./src/resources/x/accounts.ts">AccountBulkRetryResponse</a></code>
 - <code><a href="./src/resources/x/accounts.ts">AccountReauthResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">create</a>({ ...params }) -> AccountCreateResponse</code>
 - <code title="get /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">retrieve</a>(id) -> XAccountDetail</code>
@@ -525,45 +525,45 @@ Methods:
 
 ## AccountConnectionChallenges
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/account-connection-challenges.ts">AccountConnectionChallengeSubmitResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /x/account-connection-challenges/{id}/submit">client.x.accountConnectionChallenges.<a href="./src/resources/x/account-connection-challenges.ts">submit</a>(id, { ...params }) -> AccountConnectionChallengeSubmitResponse</code>
 
 ## AccountConnectionAttempts
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/account-connection-attempts.ts">AccountConnectionAttemptRetrieveResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/account-connection-attempts/{id}">client.x.accountConnectionAttempts.<a href="./src/resources/x/account-connection-attempts.ts">retrieve</a>(id) -> AccountConnectionAttemptRetrieveResponse</code>
 
 ## Bookmarks
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/bookmarks.ts">BookmarkRetrieveFoldersResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/bookmarks">client.x.bookmarks.<a href="./src/resources/x/bookmarks.ts">list</a>({ ...params }) -> PaginatedTweets</code>
 - <code title="get /x/bookmarks/folders">client.x.bookmarks.<a href="./src/resources/x/bookmarks.ts">retrieveFolders</a>({ ...params }) -> BookmarkRetrieveFoldersResponse</code>
 
 ## Lists
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/lists.ts">ListRetrieveResponse</a></code>
 - <code><a href="./src/resources/x/lists.ts">ListRetrieveFollowersResponse</a></code>
 - <code><a href="./src/resources/x/lists.ts">ListRetrieveMembersResponse</a></code>
 - <code><a href="./src/resources/x/lists.ts">ListRetrieveSearchResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/lists/{id}">client.x.lists.<a href="./src/resources/x/lists.ts">retrieve</a>(id, { ...params }) -> ListRetrieveResponse</code>
 - <code title="get /x/lists/{id}/followers">client.x.lists.<a href="./src/resources/x/lists.ts">retrieveFollowers</a>(id, { ...params }) -> ListRetrieveFollowersResponse</code>
@@ -573,23 +573,23 @@ Methods:
 
 ## Broadcasts
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/broadcasts.ts">BroadcastRetrieveResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/broadcasts/{id}">client.x.broadcasts.<a href="./src/resources/x/broadcasts.ts">retrieve</a>(id, { ...params }) -> BroadcastRetrieveResponse</code>
 
 ## Spaces
 
-Types:
+Types
 
 - <code><a href="./src/resources/x/spaces.ts">SpaceRetrieveResponse</a></code>
 - <code><a href="./src/resources/x/spaces.ts">SpaceRetrieveReplayResponse</a></code>
 - <code><a href="./src/resources/x/spaces.ts">SpaceSearchResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /x/spaces/{id}">client.x.spaces.<a href="./src/resources/x/spaces.ts">retrieve</a>(id, { ...params }) -> SpaceRetrieveResponse</code>
 - <code title="get /x/spaces/{id}/replay">client.x.spaces.<a href="./src/resources/x/spaces.ts">retrieveReplay</a>(id, { ...params }) -> SpaceRetrieveReplayResponse</code>
@@ -597,11 +597,11 @@ Methods:
 
 # Trends
 
-Types:
+Types
 
 - <code><a href="./src/resources/trends.ts">TrendListResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /trends">client.trends.<a href="./src/resources/trends.ts">list</a>({ ...params }) -> TrendListResponse</code>
 
@@ -609,13 +609,13 @@ Methods:
 
 ## Attachments
 
-Methods:
+Methods
 
 - <code title="get /support/attachments/{id}">client.support.attachments.<a href="./src/resources/support/attachments.ts">download</a>(id, { ...params }) -> Response</code>
 
 ## Tickets
 
-Types:
+Types
 
 - <code><a href="./src/resources/support/tickets.ts">TicketCreateResponse</a></code>
 - <code><a href="./src/resources/support/tickets.ts">TicketRetrieveResponse</a></code>
@@ -623,7 +623,7 @@ Types:
 - <code><a href="./src/resources/support/tickets.ts">TicketListResponse</a></code>
 - <code><a href="./src/resources/support/tickets.ts">TicketReplyResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /support/tickets">client.support.tickets.<a href="./src/resources/support/tickets.ts">create</a>({ ...params }) -> TicketCreateResponse</code>
 - <code title="get /support/tickets/{id}">client.support.tickets.<a href="./src/resources/support/tickets.ts">retrieve</a>(id) -> TicketRetrieveResponse</code>
@@ -633,13 +633,13 @@ Methods:
 
 # Credits
 
-Types:
+Types
 
 - <code><a href="./src/resources/credits.ts">CreditRetrieveBalanceResponse</a></code>
 - <code><a href="./src/resources/credits.ts">CreditRetrieveTopupStatusResponse</a></code>
 - <code><a href="./src/resources/credits.ts">CreditTopupBalanceResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="get /credits/topup/redirect">client.credits.<a href="./src/resources/credits.ts">redirectTopupCheckout</a>({ ...params }) -> void</code>
 - <code title="get /credits">client.credits.<a href="./src/resources/credits.ts">retrieveBalance</a>() -> CreditRetrieveBalanceResponse</code>
@@ -648,14 +648,14 @@ Methods:
 
 # GuestWallets
 
-Types:
+Types
 
 - <code><a href="./src/resources/guest-wallets.ts">GuestWalletAmount</a></code>
 - <code><a href="./src/resources/guest-wallets.ts">GuestWalletCreateResponse</a></code>
 - <code><a href="./src/resources/guest-wallets.ts">GuestWalletRetrieveStatusResponse</a></code>
 - <code><a href="./src/resources/guest-wallets.ts">GuestWalletTopupResponse</a></code>
 
-Methods:
+Methods
 
 - <code title="post /guest-wallets">client.guestWallets.<a href="./src/resources/guest-wallets.ts">create</a>({ ...params }) -> GuestWalletCreateResponse</code>
 - <code title="get /guest-wallets/status">client.guestWallets.<a href="./src/resources/guest-wallets.ts">retrieveStatus</a>() -> GuestWalletRetrieveStatusResponse</code>
