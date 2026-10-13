@@ -12,8 +12,6 @@ It provides a Twitter API alternative through documented Xquik REST routes.
 
 [TypeScript SDK Guide](https://docs.xquik.com/sdks/typescript) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
-[Stainless](https://www.stainless.com/) generates this SDK.
-
 ## Pi coding agent package
 
 Install the bundled Xquik Skills directly from npm:
