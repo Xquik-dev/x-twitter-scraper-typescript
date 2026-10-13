@@ -130,6 +130,8 @@ It refuses a version whose `v<version>` tag already exists.
 It runs `bin/check-local`, repeats the audit, and builds the package with `bin/prepare-npm-release`.
 It publishes the packed archive to npm unless that version is already there.
 It reads the npm token from the macOS Keychain and never writes it to a lasting file.
+Set `NPM_KEYCHAIN_SERVICE` and `NPM_KEYCHAIN_ACCOUNT` to the Keychain item that holds the token.
+The script stops with 1 line when either is unset. A dry run needs neither.
 When npm asks for 2FA approval, it prints npm's approval URL and waits, with or without a terminal.
 Then it pushes the annotated tag and creates the GitHub release from the `CHANGELOG.md` section.
 
