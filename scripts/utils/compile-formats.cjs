@@ -116,6 +116,8 @@ const specifierPatterns = [
   /(\brequire\()(")([^"\n]+)"(?=\))/g,
   /(\bimport\()(['"])([^'"\n]+)\2(?=\))/g,
   /(\bfrom )(['"])([^'"\n]+)\2(?=;)/g,
+  // A side-effect import, such as import "./setup";
+  /(^\s*import )(['"])([^'"\n]+)\2(?=;)/g,
 ];
 
 /**

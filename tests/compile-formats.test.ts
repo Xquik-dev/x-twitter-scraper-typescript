@@ -171,6 +171,25 @@ describe('scripts/utils/compile-formats.cjs', () => {
   });
 
   it.each([
+    ['commonjs' as const, "require('./entry.js')", 'require("./setup.js");'],
+    ['module' as const, "await import('./entry.mjs')", 'import "./setup.mjs";'],
+  ])('gives a side-effect import the extension of its format, so it runs as %s', (type, load, line) => {
+    const withSetup = build({
+      'entry.ts': "import './setup';\nexport const ready = (globalThis as { ready?: boolean }).ready;\n",
+      'setup.ts': '(globalThis as { ready?: boolean }).ready = true;\nexport {};\n',
+    });
+    try {
+      expect(withSetup.status).toBe(0);
+      expect(withSetup.read(type === 'module' ? 'entry.mjs' : 'entry.js')).toContain(line);
+      const result = run(withSetup.root, type, `const m = ${load};\nconsole.log(m.ready);`);
+      expect(result.stderr).toBe('');
+      expect(result.stdout).toBe('true\n');
+    } finally {
+      rmSync(withSetup.root, { recursive: true, force: true });
+    }
+  });
+
+  it.each([
     ['commonjs' as const, "require('./index.js')"],
     ['module' as const, "await import('./index.mjs')"],
   ])('runs as %s with the shared helpers', (type, load) => {
