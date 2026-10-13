@@ -72,11 +72,26 @@ Tests enforce 90% statement coverage and 80% branch coverage.
 
 Add regression tests for every corrected defect.
 
-Run the reproducibility check before requesting review:
+Run every repository check before requesting review:
 
 ```sh
-pnpm run check:reproducible
+bin/check-local
 ```
+
+It installs dependencies from the lockfile, then checks license notices when `reuse` is installed.
+It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
+Last, it runs the CodeQL `security-extended` queries for JavaScript and TypeScript.
+CodeQL is required. Install it with `brew install --cask codeql`.
+It stops at the first failure and says what to fix.
+When the tree is clean and `HEAD` is pushed, it posts the `xquik-local-checks` commit status.
+Pass `--no-status` to skip the status.
+
+The audit fails on any finding in a shipped dependency.
+It also fails on any development finding that has an installable fix.
+Severity never excuses a finding.
+An unfixable development finding passes only when `audit-exceptions.json` lists it.
+Each entry names the advisory, the package path, the reason, and a recheck date within 30 days.
+An entry stops counting on its recheck date or once a fix is installable.
 
 ## Lint & format
 
@@ -97,12 +112,24 @@ pnpm fix
 
 ## Publish releases
 
-The automated release pipeline publishes changes to npm.
+A maintainer publishes each release from a local machine:
 
-### Use the GitHub workflow
+```sh
+bin/release-local
+```
 
-The [Publish npm workflow](https://github.com/Xquik-dev/x-twitter-scraper-typescript/actions/workflows/publish-npm.yml)
-validates release tags, builds the package, signs its provenance, uploads release assets, and publishes through
-npm trusted publishing. The release path uses short-lived identity tokens. It stores no npm token.
+To see what a release would publish, without publishing, tagging or releasing:
+
+```sh
+bin/release-local --dry-run
+```
+
+It releases only from a clean `main` that matches `origin/main`.
+It refuses a version whose `v<version>` tag already exists.
+It runs `bin/check-local`, repeats the audit, and builds the package with `bin/prepare-npm-release`.
+It publishes the packed archive to npm unless that version is already there.
+It reads the npm token from the macOS Keychain and never writes it to a lasting file.
+When npm asks for 2FA approval, it prints npm's approval URL and waits, with or without a terminal.
+Then it pushes the annotated tag and creates the GitHub release from the `CHANGELOG.md` section.
 
 Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

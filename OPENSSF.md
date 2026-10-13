@@ -14,15 +14,16 @@ The shared Xquik documentation site supports this released project.
 
 ## Technical evidence
 
-- CI runs linting, type checks, builds, tests, and dependency audits.
+- `bin/check-local` runs linting, type checks, builds, tests, and dependency audits.
 - Jest enforces 90% statement and 80% branch coverage.
 - The current suite passes both enforced coverage thresholds.
 - REUSE maps every tracked file to Apache-2.0 or MIT.
-- CodeQL and OpenSSF Scorecard run on pinned workflow revisions.
-- Dependabot monitors GitHub Actions and npm dependencies.
+- `bin/check-local` runs CodeQL `security-extended` queries and fails on any result.
+- `bin/check-local` and `bin/release-local` refuse blocking npm audit findings.
+- `audit-exceptions.json` lists reviewed, unfixable development findings with 30-day rechecks.
 - Package archives build reproducibly through `pnpm run check:reproducible`.
-- Release tags must match the package version and default-branch commit.
-- npm trusted publishing creates public package provenance.
+- `bin/release-local` releases only a clean `main` that matches `origin/main`.
+- `bin/release-local` refuses a version whose release tag already exists.
 - [SECURITY.md](SECURITY.md) documents the security boundary and threat model.
 - [CONTRIBUTING.md](CONTRIBUTING.md) documents tests, review, and DCO requirements.
 

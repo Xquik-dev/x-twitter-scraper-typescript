@@ -52,7 +52,7 @@ Relevant threats include:
 
 - Credentials exposed through logs, source files, URLs, or untrusted endpoints.
 - Malicious responses exploiting parsing, streaming, upload, or retry behavior.
-- Dependency or release-workflow compromise.
+- Dependency or release-process compromise.
 - Generated-code drift weakening validation or security behavior.
 - Unreviewed write actions causing unintended external changes.
 
@@ -63,9 +63,10 @@ Required mitigations include:
 - Review custom endpoints before sending credentials.
 - Validate untrusted response data before privileged use.
 - Confirm account, payload, and audience before write actions.
-- Pin workflow actions and production dependencies.
-- Run coverage, static analysis, audits, and reproducibility checks.
-- Publish through npm trusted publishing with provenance.
+- Pin production dependencies and development tools.
+- Run coverage, CodeQL, audits, and reproducibility checks.
+- Review each audit exception and recheck it within 30 days.
+- Publish only through `bin/release-local` after every local check passes.
 
 ## Response process
 
