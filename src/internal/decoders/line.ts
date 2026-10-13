@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 import { concatBytes, decodeUTF8, encodeUTF8 } from '../utils/bytes';
 
 export type Bytes = string | ArrayBuffer | Uint8Array | null | undefined;

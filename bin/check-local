@@ -63,7 +63,7 @@ finish() {
 
   if ((exit_code == 0)); then
     printf -v description '%s, ' "${passed[@]}"
-    description="Passed: ${description%, }"
+    description="Passed ${description%, }"
     echo "==> ${description}"
     post_commit_status success "${description:0:139}"
   else
@@ -80,7 +80,7 @@ run_check() {
 
   printf '==> %s\n' "$current_check"
   if ! "$@"; then
-    printf 'Check failed: %s. %s\n' "$current_check" "$hint" >&2
+    printf 'Check failed at %s. %s\n' "$current_check" "$hint" >&2
     exit 1
   fi
 }
@@ -133,7 +133,7 @@ for tool in pnpm node jq codeql uv; do
       pnpm) install_hint="brew install pnpm" ;;
       *) install_hint="brew install ${tool}" ;;
     esac
-    echo "Check failed: ${tool} is missing. Install it with ${install_hint}, then run bin/check-local again." >&2
+    echo "Check failed because ${tool} is missing. Install it with ${install_hint}, then run bin/check-local again." >&2
     exit 1
   fi
 done

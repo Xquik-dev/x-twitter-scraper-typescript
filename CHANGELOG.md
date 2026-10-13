@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 0.13.1 (2026-10-13)
+
+[Full changelog from v0.13.0 to v0.13.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.0...v0.13.1)
+
+### Documentation
+
+* The README title is now "X API & Twitter API TypeScript SDK by Xquik".
+* The README says near the top what Xquik is, how it bills and that it is not affiliated with X Corp.
+* README sentences that introduce code now end with a full stop.
+
+### Chores
+
+* Source files no longer carry the code generator's comment.
+* The prefix of the idempotency key that the client can generate is now `xquik-node-retry-`. The client never sends that key by default, so no request changes.
+
 ## 0.13.0 (2026-10-13)
 
 Full Changelog: [v0.12.4...v0.13.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.12.4...v0.13.0)

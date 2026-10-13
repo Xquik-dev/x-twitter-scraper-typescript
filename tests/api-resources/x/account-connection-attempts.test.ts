@@ -1,5 +1,3 @@
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({

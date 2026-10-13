@@ -127,7 +127,7 @@ describe('scripts/utils/check-audit.cjs', () => {
     });
     expect(result.status).toBe(1);
     expect(result.output).toContain(
-      'Blocking: GHSA-aaaa-bbbb-cccc leftpad (low) reaches the shipped dependency path shipped > leftpad. Upgrade it.',
+      'Blocked. GHSA-aaaa-bbbb-cccc leftpad (low) reaches the shipped dependency path shipped > leftpad. Upgrade it.',
     );
   });
 
@@ -137,7 +137,7 @@ describe('scripts/utils/check-audit.cjs', () => {
       const result = runAudit({ advisories: [advisory({ severity })], registry: fixPublished });
       expect(result.status).toBe(1);
       expect(result.output).toContain(
-        `Blocking: GHSA-aaaa-bbbb-cccc leftpad (${severity}) has an installable fix (>=2.0.0). Upgrade or override it.`,
+        `Blocked. GHSA-aaaa-bbbb-cccc leftpad (${severity}) has an installable fix (>=2.0.0). Upgrade or override it.`,
       );
     },
   );
@@ -148,7 +148,7 @@ describe('scripts/utils/check-audit.cjs', () => {
       const result = runAudit({ advisories: [advisory({ severity })] });
       expect(result.status).toBe(1);
       expect(result.output).toContain(
-        `Blocking: GHSA-aaaa-bbbb-cccc leftpad (${severity}) has no fix and 1 unlisted path(s), such as jest > leftpad. ` +
+        `Blocked. GHSA-aaaa-bbbb-cccc leftpad (${severity}) has no fix and 1 unlisted path(s), such as jest > leftpad. ` +
           'Review each one and list it in audit-exceptions.json.',
       );
     },
@@ -159,8 +159,8 @@ describe('scripts/utils/check-audit.cjs', () => {
     expect(runAudit({ advisories: [advisory({})], exceptions: [exception] })).toEqual({
       status: 0,
       output:
-        `Accepted reviewed exception: GHSA-aaaa-bbbb-cccc leftpad (moderate) via jest > leftpad: ` +
-        `test-time only, recheck by ${exception.recheck}\n` +
+        `Accepted the reviewed exception for GHSA-aaaa-bbbb-cccc leftpad (moderate) via jest > leftpad. ` +
+        `It is test-time only. Recheck by ${exception.recheck}.\n` +
         'Audit passed with 1 reviewed exception.\n',
     });
   });

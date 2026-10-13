@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 import { APIPromise } from 'x-twitter-scraper/core/api-promise';
 
 import util from 'node:util';
