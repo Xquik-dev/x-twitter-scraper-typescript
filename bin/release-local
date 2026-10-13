@@ -6,6 +6,10 @@
 
 # Publishes the package version from package.json to npm, then tags and
 # releases it on GitHub. Run it from a clean main that matches origin/main.
+# Pass --dry-run to run every check, build and pack the package, and print
+# what a release would publish, without publishing, tagging or releasing.
+# When npm asks for 2FA approval, the script prints npm's approval URL and
+# waits for it.
 
 set -euo pipefail
 
@@ -16,6 +20,17 @@ readonly github_repo="Xquik-dev/x-twitter-scraper-typescript"
 readonly registry="https://registry.npmjs.org/"
 readonly keychain_service="npm"
 readonly keychain_account="burakbayir"
+
+dry_run=0
+for argument in "$@"; do
+  case "$argument" in
+    --dry-run) dry_run=1 ;;
+    *)
+      echo "Unknown option ${argument}. Run bin/release-local or bin/release-local --dry-run." >&2
+      exit 2
+      ;;
+  esac
+done
 
 step() {
   printf '==> %s\n' "$1"
@@ -86,6 +101,16 @@ package_file="$(cd dist && npm pack --json --pack-destination "$work_directory" 
 package_path="${work_directory}/${package_file}"
 [[ -f "$package_path" ]] || fail "npm pack wrote no archive. Run bash ./bin/prepare-npm-release and check its output."
 
+if ((dry_run == 1)); then
+  step "Listing what ${expected_name}@${version} would publish"
+  jq '{name, version, description, keywords, homepage, repository, bugs, license}' dist/package.json
+  echo "Files in ${package_file}:"
+  tar -tzf "$package_path" | sort
+  npm publish "$package_path" --dry-run --access public --tag latest --registry "$registry"
+  echo "Dry run finished. Nothing was published, tagged or released."
+  exit 0
+fi
+
 step "Checking npm for ${expected_name}@${version}"
 published_version="$(npm view "${expected_name}@${version}" version --registry "$registry" 2>/dev/null || true)"
 if [[ "$published_version" == "$version" ]]; then
@@ -100,7 +125,8 @@ else
     fail "The Keychain has no ${keychain_service} item for ${keychain_account}. Add the npm token there first."
   printf 'registry=%s\n//registry.npmjs.org/:_authToken=%s\n' "$registry" "$npm_token" >"$npm_config_file"
   unset npm_token
-  npm publish "$package_path" --access public --tag latest --registry "$registry" --userconfig "$npm_config_file"
+  echo "If npm asks for 2FA approval, open the URL it prints and approve. The script waits."
+  scripts/utils/npm-publish "$package_path" --access public --tag latest --registry "$registry" --userconfig "$npm_config_file"
   rm -f -- "$npm_config_file"
 fi
 

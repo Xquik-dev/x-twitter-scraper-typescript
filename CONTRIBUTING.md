@@ -87,7 +87,8 @@ When the tree is clean and `HEAD` is pushed, it posts the `xquik-local-checks` c
 Pass `--no-status` to skip the status.
 
 The audit fails on any finding in a shipped dependency.
-It also fails on a high or critical development finding that has an installable fix.
+It also fails on any development finding that has an installable fix.
+Severity never excuses a finding.
 An unfixable development finding passes only when `audit-exceptions.json` lists it.
 Each entry names the advisory, the package path, the reason, and a recheck date within 30 days.
 An entry stops counting on its recheck date or once a fix is installable.
@@ -117,11 +118,18 @@ A maintainer publishes each release from a local machine:
 bin/release-local
 ```
 
+To see what a release would publish, without publishing, tagging or releasing:
+
+```sh
+bin/release-local --dry-run
+```
+
 It releases only from a clean `main` that matches `origin/main`.
 It refuses a version whose `v<version>` tag already exists.
 It runs `bin/check-local`, repeats the audit, and builds the package with `bin/prepare-npm-release`.
 It publishes the packed archive to npm unless that version is already there.
 It reads the npm token from the macOS Keychain and never writes it to a lasting file.
+When npm asks for 2FA approval, it prints npm's approval URL and waits, with or without a terminal.
 Then it pushes the annotated tag and creates the GitHub release from the `CHANGELOG.md` section.
 
 Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
