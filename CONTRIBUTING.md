@@ -78,7 +78,8 @@ Run every repository check before requesting review:
 bin/check-local
 ```
 
-It installs dependencies from the lockfile, then checks license notices when `reuse` is installed.
+It installs dependencies from the lockfile, then checks license notices with REUSE.
+REUSE runs at a pinned version through `uv`. Install `uv` with `brew install uv`.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
 Last, it runs the CodeQL `security-extended` queries for JavaScript and TypeScript.
 CodeQL is required. Install it with `brew install --cask codeql`.
