@@ -113,12 +113,35 @@ const relativeSpecifier = (from, to) => {
 
 // The places where TypeScript writes a module specifier in JavaScript and declaration output.
 const specifierPatterns = [
-  /(\brequire\()(")([^"\n]+)"(?=\))/g,
+  // A CommonJS dynamic import keeps the source's quotes, such as require('./value').
+  /(\brequire\()(['"])([^'"\n]+)\2(?=\))/g,
   /(\bimport\()(['"])([^'"\n]+)\2(?=\))/g,
   /(\bfrom )(['"])([^'"\n]+)\2(?=;)/g,
   // A side-effect import, such as import "./setup";
   /(^\s*import )(['"])([^'"\n]+)\2(?=;)/g,
 ];
+
+/**
+ * Tells whether a column sits inside a string literal that opens earlier on the same line, so a
+ * message such as "import a from './b';" keeps its text.
+ * @param {string} line
+ * @param {number} column
+ */
+const insideString = (line, column) => {
+  /** @type {string | undefined} */
+  let quote;
+  for (let index = 0; index < column; index++) {
+    const char = line[index];
+    if (quote === undefined) {
+      if (char === '"' || char === "'" || char === '`') quote = char;
+    } else if (char === '\\') {
+      index++;
+    } else if (char === quote) {
+      quote = undefined;
+    }
+  }
+  return quote !== undefined;
+};
 
 /**
  * Rewrites each specifier that `rewrite` changes and records where each line changed. A new specifier
@@ -144,7 +167,7 @@ const rewriteSpecifiers = (text, rewrite) => {
     let output = '';
     let cursor = 0;
     for (const { column, literal, specifier } of matches) {
-      const next = column >= cursor ? rewrite(specifier) : undefined;
+      const next = column >= cursor && !insideString(line, column) ? rewrite(specifier) : undefined;
       if (next === undefined) continue;
       const replacement = JSON.stringify(next);
       output += line.slice(cursor, column) + replacement;

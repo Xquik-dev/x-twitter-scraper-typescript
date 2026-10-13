@@ -158,6 +158,9 @@ describe('scripts/utils/compile-formats.cjs', () => {
     expect(built.read('index.js')).toContain('const other_js_1 = require("./other.js");');
     expect(built.read('index.js')).toContain('tslib_1.__exportStar(require("./value.js"), exports);');
     expect(built.read('index.js')).toContain('const tslib_1 = require("./internal/tslib.js");');
+    expect(built.read('index.js')).toContain(
+      'Promise.resolve().then(() => tslib_1.__importStar(require("./value.js")))',
+    );
     expect(built.read('index.mjs')).toContain('import * as sub from "./sub/index.mjs";');
     expect(built.read('index.mjs')).toContain('import { other } from "./other.mjs";');
     expect(built.read('index.mjs')).toContain('export * from "./value.mjs";');
@@ -186,6 +189,23 @@ describe('scripts/utils/compile-formats.cjs', () => {
       expect(result.stdout).toBe('true\n');
     } finally {
       rmSync(withSetup.root, { recursive: true, force: true });
+    }
+  });
+
+  it.each([
+    ['commonjs' as const, "require('./text.js')", 'text.d.ts'],
+    ['module' as const, "await import('./text.mjs')", 'text.d.mts'],
+  ])('leaves import-like text inside a string alone, so it runs as %s', (type, load, declarations) => {
+    const text = "import a from './value'; require('./value'); import('./value')";
+    const withText = build({ 'text.ts': `export const text = ${JSON.stringify(text)};\n` });
+    try {
+      expect(withText.status).toBe(0);
+      expect(withText.read(declarations)).toContain(JSON.stringify(text));
+      const result = run(withText.root, type, `const m = ${load};\nconsole.log(m.text);`);
+      expect(result.stderr).toBe('');
+      expect(result.stdout).toBe(`${text}\n`);
+    } finally {
+      rmSync(withText.root, { recursive: true, force: true });
     }
   });
 
