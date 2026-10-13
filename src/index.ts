@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 export { XTwitterScraper as default } from './client';
 
 export { type Uploadable, toFile } from './core/uploads';

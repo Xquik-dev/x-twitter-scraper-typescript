@@ -14,12 +14,12 @@ package_version="$(jq -r -e '.version' package.json)"
 source_version="$(jq -r -e '.version' ../package.json)"
 
 if [[ "$package_name" != "x-twitter-scraper" ]]; then
-  echo "Package name is unexpected: ${package_name}. Use x-twitter-scraper." >&2
+  echo "Package name ${package_name} is unexpected. Use x-twitter-scraper." >&2
   exit 1
 fi
 
 if [[ "$package_version" != "$source_version" ]]; then
-  echo "Built version mismatch: ${package_version}. Use ${source_version}." >&2
+  echo "Built version ${package_version} is wrong. Use ${source_version}." >&2
   exit 1
 fi
 

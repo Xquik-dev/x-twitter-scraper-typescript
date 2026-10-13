@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 /**
  * This module provides internal shims and utility functions for environments where certain Node.js or global types may not be available.
  *

@@ -1,4 +1,4 @@
-# X API & Twitter API TypeScript SDK: Xquik Twitter scraper
+# X API & Twitter API TypeScript SDK by Xquik
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13740/badge)](https://www.bestpractices.dev/projects/13740)
 
@@ -10,17 +10,23 @@ Scrape Twitter timelines, lists, communities, Spaces & trends into typed results
 Manage media, webhooks, monitors & X automation with bundled agent Skills.
 It provides a Twitter API alternative through documented Xquik REST routes.
 
+Xquik is the world's fastest and cheapest X Twitter scraper service with the most complete X data.
+Xquik charges only for delivered, unique, filter-matching results and never pads rows.
+
+> Xquik is an independent third-party service. Not affiliated with X Corp.
+> "Twitter" and "X" are trademarks of X Corp.
+
 [TypeScript SDK Guide](https://docs.xquik.com/sdks/typescript) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
 ## Pi coding agent package
 
-Install the bundled Xquik Skills directly from npm:
+Install the bundled Xquik Skills directly from npm.
 
 ```sh
 pi install npm:x-twitter-scraper
 ```
 
-Pi loads 3 packaged Skills:
+Pi loads 3 packaged Skills.
 
 - `x-twitter-scraper` for API and MCP integration.
 - `xquik-social-research` for public X research.
@@ -50,13 +56,13 @@ Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authenti
 
 ## Package & registry trust
 
-- Package: [npm `x-twitter-scraper`](https://www.npmjs.com/package/x-twitter-scraper)
-- Source: [Xquik-dev/x-twitter-scraper-typescript](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
-- SDK license: Apache-2.0
-- Bundled Skill license: MIT
-- Citation metadata: [CITATION.cff](CITATION.cff)
-- Security boundary and reporting: [SECURITY.md](SECURITY.md)
-- OpenSSF evidence and current limitations: [OPENSSF.md](OPENSSF.md)
+- [npm package `x-twitter-scraper`](https://www.npmjs.com/package/x-twitter-scraper)
+- [Source in Xquik-dev/x-twitter-scraper-typescript](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
+- Apache-2.0 license for the SDK
+- MIT license for the bundled Skills
+- [Citation metadata in CITATION.cff](CITATION.cff)
+- [Security boundary and reporting in SECURITY.md](SECURITY.md)
+- [OpenSSF evidence and current limitations in OPENSSF.md](OPENSSF.md)
 
 ## Installation
 
@@ -83,7 +89,7 @@ const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 })
 
 ### Request & response types
 
-The package includes types for every request parameter and response field. Import them directly:
+The package includes types for every request parameter and response field. Import them directly.
 
 <!-- prettier-ignore -->
 ```ts
@@ -131,7 +137,7 @@ Break out of the loop or call `stream.controller.abort()` to close the stream.
 
 ## File uploads
 
-Pass file uploads in these forms:
+Pass file uploads in these forms.
 
 - `File` (or an object with the same structure)
 - a `fetch` `Response` (or an object with the same structure)
@@ -166,7 +172,7 @@ await client.x.media.upload({
 
 ## Handling errors
 
-The SDK throws an `APIError` subclass for connection failures and non-2xx responses:
+The SDK throws an `APIError` subclass for connection failures and non-2xx responses.
 
 <!-- prettier-ignore -->
 ```ts
@@ -199,7 +205,7 @@ const paginatedTweets = await client.x.tweets
 The SDK retries connection errors and HTTP 408, 409, 429, and 5xx responses.
 It uses exponential backoff and attempts 2 retries by default.
 
-Set `maxRetries` to change or disable retries:
+Set `maxRetries` to change or disable retries.
 
 <!-- prettier-ignore -->
 ```js
@@ -216,7 +222,7 @@ await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
 
 ### Timeouts
 
-Requests time out after 1 minute. Set a custom `timeout` when needed:
+Requests time out after 1 minute. Set a custom `timeout` when needed.
 
 <!-- prettier-ignore -->
 ```ts
@@ -267,7 +273,7 @@ console.log(paginatedTweets.has_next_page);
 
 ### Log levels
 
-The log level can be configured in two ways:
+Configure the log level in 2 ways.
 
 1. Via the `X_TWITTER_SCRAPER_LOG` environment variable
 2. Using the `logLevel` client option (overrides the environment variable if set)
@@ -280,7 +286,7 @@ const client = new XTwitterScraper({
 });
 ```
 
-Available log levels, from most to least verbose:
+Available log levels, from most to least verbose.
 
 - `'debug'` - Show debug messages, info, warnings, and errors
 - `'info'` - Show info messages, warnings, and errors
@@ -355,7 +361,7 @@ The SDK does not validate or remove extra API response properties.
 
 The SDK uses the global `fetch` function by default.
 
-Polyfill the global to use another `fetch` implementation:
+Polyfill the global to use another `fetch` implementation.
 
 ```ts
 import fetch from 'my-fetch';
@@ -363,7 +369,7 @@ import fetch from 'my-fetch';
 globalThis.fetch = fetch;
 ```
 
-Or pass it to the client:
+Or pass it to the client.
 
 ```ts
 import XTwitterScraper from 'x-twitter-scraper';
@@ -388,7 +394,7 @@ const client = new XTwitterScraper({
 
 ### Proxies
 
-Add runtime-specific proxy settings through `fetchOptions`:
+Add runtime-specific proxy settings through `fetchOptions`.
 
 **Node** <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/docs/api/ProxyAgent.md#example---proxyagent-with-fetch)]</sup>
 
@@ -431,7 +437,7 @@ const client = new XTwitterScraper({
 
 ## Semantic versioning
 
-This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions:
+This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions.
 
 1. Static type changes that preserve runtime behavior.
 2. Changes to undocumented internals that remain technically public.
@@ -441,7 +447,7 @@ Open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-typescript/is
 
 ## Runtime support
 
-Supports these runtimes:
+Supports these runtimes.
 
 - Current Chrome, Firefox, Safari, Edge, and other web browsers.
 - [Maintained Node.js](https://endoflife.date/nodejs) 20 LTS or later.

@@ -135,7 +135,7 @@ const main = () => {
     try {
       fixable = hasInstallableFix(advisory.module_name, advisory.patched_versions, releaseAgeMs, now);
     } catch (error) {
-      problems.push(`${name}: ${error.message}`);
+      problems.push(`${name} could not be checked. ${error.message}`);
       continue;
     }
     if (fixable) {
@@ -163,7 +163,7 @@ const main = () => {
           `${name} exception recheck ${entry.recheck} is too far out. Use ${latestRecheck} or earlier.`,
         );
       } else {
-        accepted.push(`${name} via ${developmentPath}: ${entry.reason}, recheck by ${entry.recheck}`);
+        accepted.push(`${name} via ${developmentPath}. It is ${entry.reason}. Recheck by ${entry.recheck}.`);
       }
     }
     if (unlisted.length > 0) {
@@ -181,10 +181,10 @@ const main = () => {
       );
     }
   }
-  for (const line of accepted) console.log(`Accepted reviewed exception: ${line}`);
+  for (const line of accepted) console.log(`Accepted the reviewed exception for ${line}`);
 
   if (problems.length > 0) {
-    for (const line of problems) console.error(`Blocking: ${line}`);
+    for (const line of problems) console.error(`Blocked. ${line}`);
     console.error(`Audit failed with ${problems.length} blocking finding(s).`);
     process.exit(1);
   }
