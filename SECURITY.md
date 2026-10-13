@@ -48,7 +48,7 @@ Xquik services enforce server-side authorization and write confirmations.
 
 Protected assets include credentials, request bodies, response data, and package integrity.
 
-Relevant threats include:
+These threats are in scope.
 
 - Credentials exposed through logs, source files, URLs, or untrusted endpoints.
 - Malicious responses exploiting parsing, streaming, upload, or retry behavior.
@@ -56,7 +56,7 @@ Relevant threats include:
 - Generated-code drift weakening validation or security behavior.
 - Unreviewed write actions causing unintended external changes.
 
-Required mitigations include:
+These mitigations are required.
 
 - Keep credentials in secret stores or environment variables.
 - Use the default HTTPS endpoint outside isolated tests.

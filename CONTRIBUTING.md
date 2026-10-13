@@ -3,7 +3,7 @@
 This repository uses [`pnpm`](https://pnpm.io/).
 Other package managers may work but are not officially supported for development.
 
-Install dependencies and build `dist/`:
+Install dependencies and build `dist/`.
 
 ```sh
 pnpm install
@@ -38,13 +38,13 @@ pnpm tsn -T examples/<your-example>.ts
 
 ## Use the repository from source
 
-Install directly from Git:
+Install directly from Git.
 
 ```sh
 npm install git+ssh://git@github.com:Xquik-dev/x-twitter-scraper-typescript.git
 ```
 
-Or link a local clone:
+Or link a local clone.
 
 ```sh
 # Clone.
@@ -72,7 +72,7 @@ Tests enforce 90% statement coverage and 80% branch coverage.
 
 Add regression tests for every corrected defect.
 
-Run every repository check before requesting review:
+Run every repository check before requesting review.
 
 ```sh
 bin/check-local
@@ -99,13 +99,13 @@ An entry stops counting on its recheck date or once a fix is installable.
 Use [Prettier](https://www.npmjs.com/package/prettier) and
 [ESLint](https://www.npmjs.com/package/eslint) for formatting and linting.
 
-To lint:
+Lint with this command.
 
 ```sh
 pnpm lint
 ```
 
-To format and fix all lint issues automatically:
+Format and fix every lint issue with this command.
 
 ```sh
 pnpm fix
@@ -113,13 +113,13 @@ pnpm fix
 
 ## Publish releases
 
-A maintainer publishes each release from a local machine:
+A maintainer publishes each release from a local machine.
 
 ```sh
 bin/release-local
 ```
 
-To see what a release would publish, without publishing, tagging or releasing:
+This command shows what a release would publish, without publishing, tagging or releasing.
 
 ```sh
 bin/release-local --dry-run
