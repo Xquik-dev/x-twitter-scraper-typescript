@@ -29,7 +29,7 @@ describe('resource compose', () => {
       step: 'compose',
       topic: 'PostgreSQL query planning',
       goal: 'engagement',
-      styleUsername: 'x',
+      styleUsername: 'example_user',
     });
   });
 });

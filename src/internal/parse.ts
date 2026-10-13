@@ -5,6 +5,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import type { FinalRequestOptions } from './request-options';
+import { Stream } from '../core/streaming';
 import { type XTwitterScraper } from '../client';
 import { formatRequestDetails, loggerFor } from './utils/log';
 
@@ -20,6 +21,14 @@ export type APIResponseProps = {
 export async function defaultParseResponse<T>(client: XTwitterScraper, props: APIResponseProps): Promise<T> {
   const { response, requestLogID, retryOfRequestLogID, startTime } = props;
   const body = await (async () => {
+    if (props.options.stream) {
+      loggerFor(client).debug('response', response.status, response.url, response.headers, response.body);
+
+      // Note: there is an invariant here that isn't represented in the type system
+      // that if you set `stream: true` the response type must also be `Stream<T>`
+      return Stream.fromSSEResponse(response, props.controller, client) as any;
+    }
+
     // fetch refuses to read the body when the status code is 204.
     if (response.status === 204) {
       return null as T;

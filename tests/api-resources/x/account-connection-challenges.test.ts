@@ -14,7 +14,7 @@ const client = new XTwitterScraper({
 
 describe('resource accountConnectionChallenges', () => {
   test('submit: only required params', async () => {
-    const responsePromise = client.x.accountConnectionChallenges.submit('id', {
+    const responsePromise = client.x.accountConnectionChallenges.submit('xch_AbCdEfGhIjKlMnOp', {
       email_code: '<EMAIL_VERIFICATION_CODE>',
     });
     const rawResponse = await responsePromise.asResponse();
@@ -27,7 +27,7 @@ describe('resource accountConnectionChallenges', () => {
   });
 
   test('submit: required and optional params', async () => {
-    const response = await client.x.accountConnectionChallenges.submit('id', {
+    const response = await client.x.accountConnectionChallenges.submit('xch_AbCdEfGhIjKlMnOp', {
       email_code: '<EMAIL_VERIFICATION_CODE>',
     });
   });

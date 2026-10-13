@@ -15,7 +15,7 @@ import { path } from '../internal/utils/path';
  */
 export class Draws extends APIResource {
   /**
-   * Get draw details
+   * Returns draw rules, status, candidates, and selected winners.
    *
    * @example
    * ```ts
@@ -29,7 +29,7 @@ export class Draws extends APIResource {
   }
 
   /**
-   * List draws
+   * Returns giveaway draws owned by the authenticated account.
    *
    * @example
    * ```ts
@@ -44,7 +44,7 @@ export class Draws extends APIResource {
   }
 
   /**
-   * Export draw data
+   * Downloads draw evidence in the requested format.
    *
    * @example
    * ```ts
@@ -67,59 +67,69 @@ export class Draws extends APIResource {
   }
 
   /**
-   * Runs a giveaway draw from a source tweet. The draw first checks that the usage
-   * balance can inspect the source tweet and at least 1 candidate. Available balance
-   * caps how many replies and retweeters can be inspected before filters and winner
-   * selection run.
+   * Checks credits, then draws winners from inspected replies & reposters. Remaining
+   * credits cap the candidates.
    *
    * @example
    * ```ts
    * const response = await client.draws.run({
    *   tweetUrl: 'https://x.com/elonmusk/status/1234567890',
+   *   backupCount: 2,
+   *   filterAccountAgeDays: 30,
+   *   filterLanguage: 'en',
+   *   filterMinFollowers: 50,
+   *   mustFollowUsername: 'elonmusk',
    *   mustRetweet: true,
+   *   requiredHashtags: ['#giveaway'],
+   *   requiredKeywords: ['entered'],
+   *   requiredMentions: ['@elonmusk'],
+   *   uniqueAuthorsOnly: true,
    *   winnerCount: 3,
    * });
    * ```
    */
-  run(body: DrawRunParams, options?: RequestOptions): APIPromise<DrawRunResponse> {
-    return this._client.post('/draws', { body, ...options });
+  run(params: DrawRunParams, options?: RequestOptions): APIPromise<DrawRunResponse> {
+    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    return this._client.post('/draws', {
+      body,
+      ...options,
+      headers: buildHeaders([
+        { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+        options?.headers,
+      ]),
+    });
   }
 }
 
 /**
  * Full giveaway draw with tweet metrics, entries, and timing.
  */
-export interface DrawDetail {
-  /**
-   * Draw public ID.
-   */
-  id: string;
-
-  createdAt: string;
-
-  status: string;
-
-  totalEntries: number;
-
+export interface DrawDetail extends DrawListItem {
   tweetAuthorUsername: string;
 
   tweetId: string;
 
+  /**
+   * Whole number from 0.
+   */
   tweetLikeCount: number;
 
+  /**
+   * Whole number from 0.
+   */
   tweetQuoteCount: number;
 
+  /**
+   * Whole number from 0.
+   */
   tweetReplyCount: number;
 
+  /**
+   * Whole number from 0.
+   */
   tweetRetweetCount: number;
 
   tweetText: string;
-
-  tweetUrl: string;
-
-  validEntries: number;
-
-  drawnAt?: string;
 }
 
 /**
@@ -135,10 +145,16 @@ export interface DrawListItem {
 
   status: string;
 
+  /**
+   * Whole number from 0.
+   */
   totalEntries: number;
 
   tweetUrl: string;
 
+  /**
+   * Whole number from 0.
+   */
   validEntries: number;
 
   drawnAt?: string;
@@ -178,16 +194,16 @@ export interface DrawRunResponse {
   id: string;
 
   /**
-   * Candidate entries inspected for this draw. This may
-   * be lower than the source tweet's full reply count.
+   * Entries inspected after the credit cap, which can be fewer than the post's
+   * replies.
    */
   totalEntries: number;
 
   tweetId: string;
 
   /**
-   * Entries from the inspected candidate set that passed all filters. This is not
-   * necessarily every valid reply on the source tweet when the available balance limits inspection.
+   * Inspected entries that passed every filter. A credit cap can leave valid replies
+   * uninspected.
    */
   validEntries: number;
 
@@ -196,15 +212,14 @@ export interface DrawRunResponse {
 
 export interface DrawListParams {
   /**
-   * Previous nextCursor.
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
    */
   cursor?: string;
 
   /**
-   * Maximum number of items to return (1-100, default 50). For paid per-result
-   * endpoints, the returned count may be lower when available usage balance cannot cover
-   * the requested page. If zero paid results are affordable, the endpoint returns
-   * 402 insufficient_credits.
+   * Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+   * With none affordable, it returns 402 insufficient_credits.
    */
   limit?: number;
 }
@@ -223,29 +238,72 @@ export interface DrawExportParams {
 }
 
 export interface DrawRunParams {
+  /**
+   * Body param
+   */
   tweetUrl: string;
 
+  /**
+   * Body param
+   */
   backupCount?: number;
 
+  /**
+   * Body param
+   */
   filterAccountAgeDays?: number;
 
+  /**
+   * Body param
+   */
   filterLanguage?: string;
 
+  /**
+   * Body param
+   */
   filterMinFollowers?: number;
 
+  /**
+   * Body param: X username entrants must follow, with or without @
+   */
   mustFollowUsername?: string;
 
+  /**
+   * Body param
+   */
   mustRetweet?: boolean;
 
+  /**
+   * Body param
+   */
   requiredHashtags?: Array<string>;
 
+  /**
+   * Body param
+   */
   requiredKeywords?: Array<string>;
 
+  /**
+   * Body param
+   */
   requiredMentions?: Array<string>;
 
+  /**
+   * Body param
+   */
   uniqueAuthorsOnly?: boolean;
 
+  /**
+   * Body param
+   */
   winnerCount?: number;
+
+  /**
+   * Header param: Generate 1 unique value per intended request. Reuse it only to
+   * retry the same request. Exact retries return the original result & charge
+   * nothing.
+   */
+  'Idempotency-Key'?: string;
 }
 
 export declare namespace Draws {

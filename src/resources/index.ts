@@ -43,12 +43,20 @@ export {
   type DrawExportParams,
   type DrawRunParams,
 } from './draws';
-export { Events, type Event, type EventDetail, type EventListResponse, type EventListParams } from './events';
+export {
+  Events,
+  type Event,
+  type EventDetail,
+  type EventListResponse,
+  type EventListParams,
+  type EventStreamParams,
+} from './events';
 export {
   Extractions,
   type ExtractionJob,
   type ExtractionRetrieveResponse,
   type ExtractionListResponse,
+  type ExtractionCancelResponse,
   type ExtractionEstimateCostResponse,
   type ExtractionRunResponse,
   type ExtractionRetrieveParams,
@@ -74,6 +82,7 @@ export {
   type MonitorDeactivateResponse,
   type MonitorCreateParams,
   type MonitorUpdateParams,
+  type MonitorListParams,
 } from './monitors/monitors';
 export {
   Radar,
@@ -89,6 +98,7 @@ export {
   type StyleCompareResponse,
   type StyleGetPerformanceResponse,
   type StyleUpdateParams,
+  type StyleListParams,
   type StyleAnalyzeParams,
   type StyleCompareParams,
 } from './styles';
@@ -101,19 +111,32 @@ export {
   type Webhook,
   type WebhookCreateResponse,
   type WebhookListResponse,
+  type WebhookCreateTelegramLinkResponse,
   type WebhookDeactivateResponse,
   type WebhookListDeliveriesResponse,
   type WebhookResumeResponse,
   type WebhookTestResponse,
   type WebhookCreateParams,
   type WebhookUpdateParams,
+  type WebhookListParams,
+  type WebhookCreateTelegramLinkParams,
+  type WebhookListDeliveriesParams,
 } from './webhooks';
 export {
   X,
+  type XAutocompleteSearchResponse,
   type XGetArticleResponse,
+  type XGetHashflagsResponse,
   type XGetNotificationsResponse,
+  type XGetTrendLocationsResponse,
   type XGetTrendsResponse,
+  type XSearchPlacesResponse,
+  type XAutocompleteSearchParams,
+  type XGetArticleParams,
+  type XGetHashflagsParams,
   type XGetHomeTimelineParams,
   type XGetNotificationsParams,
+  type XGetTrendLocationsParams,
   type XGetTrendsParams,
+  type XSearchPlacesParams,
 } from './x/x';

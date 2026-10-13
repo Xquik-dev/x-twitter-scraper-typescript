@@ -11,6 +11,7 @@ import * as TicketsAPI from './tickets';
 import {
   TicketCreateParams,
   TicketCreateResponse,
+  TicketListParams,
   TicketListResponse,
   TicketReplyParams,
   TicketReplyResponse,
@@ -40,6 +41,7 @@ export declare namespace Support {
     type TicketReplyResponse as TicketReplyResponse,
     type TicketCreateParams as TicketCreateParams,
     type TicketUpdateParams as TicketUpdateParams,
+    type TicketListParams as TicketListParams,
     type TicketReplyParams as TicketReplyParams,
   };
 }

@@ -15,7 +15,7 @@ import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
  */
 export class Profile extends APIResource {
   /**
-   * Update X profile
+   * Updates editable fields on a connected X profile.
    *
    * @example
    * ```ts
@@ -39,7 +39,7 @@ export class Profile extends APIResource {
   }
 
   /**
-   * Update profile avatar
+   * Replaces the avatar on a connected X profile.
    *
    * @example
    * ```ts
@@ -69,7 +69,7 @@ export class Profile extends APIResource {
   }
 
   /**
-   * Update profile banner
+   * Replaces the banner on a connected X profile.
    *
    * @example
    * ```ts
@@ -100,9 +100,9 @@ export class Profile extends APIResource {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface ProfileUpdateResponse {
   id: string;
@@ -123,6 +123,7 @@ export interface ProfileUpdateResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -167,7 +168,7 @@ export interface ProfileUpdateResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -223,6 +224,10 @@ export interface ProfileUpdateResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -299,6 +304,9 @@ export namespace ProfileUpdateResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -343,9 +351,9 @@ export namespace ProfileUpdateResponse {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface ProfileUpdateAvatarResponse {
   id: string;
@@ -366,6 +374,7 @@ export interface ProfileUpdateAvatarResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -410,7 +419,7 @@ export interface ProfileUpdateAvatarResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -466,6 +475,10 @@ export interface ProfileUpdateAvatarResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -542,6 +555,9 @@ export namespace ProfileUpdateAvatarResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -586,9 +602,9 @@ export namespace ProfileUpdateAvatarResponse {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface ProfileUpdateBannerResponse {
   id: string;
@@ -609,6 +625,7 @@ export interface ProfileUpdateBannerResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -653,7 +670,7 @@ export interface ProfileUpdateBannerResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -709,6 +726,10 @@ export interface ProfileUpdateBannerResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -785,6 +806,9 @@ export namespace ProfileUpdateBannerResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -835,25 +859,27 @@ export interface ProfileUpdateParams {
   account: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 
   /**
-   * Body param: Bio description
+   * Body param: Bio, up to 160 characters. An emoji counts as 2.
    */
   description?: string;
 
   /**
-   * Body param
+   * Body param: Location, up to 30 characters. An emoji counts as 2.
    */
   location?: string;
 
   /**
-   * Body param: Display name
+   * Body param: Display name, 1 to 50 characters. An emoji counts as 2.
    */
   name?: string;
 
@@ -875,10 +901,12 @@ export interface ProfileUpdateAvatarParams {
   url: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }
@@ -895,10 +923,12 @@ export interface ProfileUpdateBannerParams {
   url: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }

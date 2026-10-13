@@ -5,21 +5,24 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
 
 /**
- * Bulk data extraction (23 tool types)
+ * Saved or bulk data extraction (23 tool types)
  */
 export class Extractions extends APIResource {
   /**
-   * Get extraction results
+   * Returns status and up to 1,000 results. Follow nextCursor when hasMore is true.
    *
    * @example
    * ```ts
-   * const extraction = await client.extractions.retrieve('id');
+   * const extraction = await client.extractions.retrieve(
+   *   'L3NjAbCdEfGh',
+   * );
    * ```
    */
   retrieve(
@@ -31,7 +34,7 @@ export class Extractions extends APIResource {
   }
 
   /**
-   * List extraction jobs
+   * Returns extraction jobs with status and result counts.
    *
    * @example
    * ```ts
@@ -46,13 +49,45 @@ export class Extractions extends APIResource {
   }
 
   /**
-   * Estimate extraction cost
+   * Cancels an active extraction without charging or saving rows.
+   *
+   * @example
+   * ```ts
+   * const response = await client.extractions.cancel(
+   *   'L3NjAbCdEfGh',
+   * );
+   * ```
+   */
+  cancel(id: string, options?: RequestOptions): APIPromise<ExtractionCancelResponse> {
+    return this._client.delete(path`/extractions/${id}`, options);
+  }
+
+  /**
+   * Estimates extraction cost without creating a job.
    *
    * @example
    * ```ts
    * const response = await client.extractions.estimateCost({
    *   toolType: 'follower_explorer',
-   *   targetUsername: 'elonmusk',
+   *   bioContains: 'space, astronomy',
+   *   businessEmailOnly: true,
+   *   emailDomains: 'nasa.gov',
+   *   enrichProfiles: true,
+   *   hasEmail: true,
+   *   hasLocation: true,
+   *   hasWebsite: true,
+   *   locationContains: 'Houston',
+   *   maxFollowers: 1000000,
+   *   maxFollowing: 5000,
+   *   maxPosts: 100000,
+   *   minAccountAgeDays: 365,
+   *   minFollowers: 1000,
+   *   minFollowing: 10,
+   *   minPosts: 100,
+   *   resultsLimit: 500,
+   *   targetUsername: 'NASA',
+   *   usernameContains: 'space',
+   *   verifiedType: 'Business',
    * });
    * ```
    */
@@ -64,12 +99,14 @@ export class Extractions extends APIResource {
   }
 
   /**
-   * Export extraction results
+   * Downloads completed extraction results in the requested format. JSON rows also
+   * keep each result's nested `enrichmentData`, as `GET /extractions/{id}` returns
+   * it.
    *
    * @example
    * ```ts
    * const response = await client.extractions.exportResults(
-   *   'id',
+   *   'L3NjAbCdEfGh',
    *   { format: 'csv' },
    * );
    *
@@ -91,19 +128,46 @@ export class Extractions extends APIResource {
   }
 
   /**
-   * Run extraction
+   * Starts one single-target or multi-target extraction. Follow waitUrl, then page
+   * statusUrl after completion.
    *
    * @example
    * ```ts
    * const response = await client.extractions.run({
    *   toolType: 'follower_explorer',
-   *   targetUsername: 'elonmusk',
+   *   bioContains: 'space, astronomy',
+   *   businessEmailOnly: true,
+   *   emailDomains: 'nasa.gov',
+   *   enrichProfiles: true,
+   *   hasEmail: true,
+   *   hasLocation: true,
+   *   hasWebsite: true,
+   *   locationContains: 'Houston',
+   *   maxFollowers: 1000000,
+   *   maxFollowing: 5000,
+   *   maxPosts: 100000,
+   *   minAccountAgeDays: 365,
+   *   minFollowers: 1000,
+   *   minFollowing: 10,
+   *   minPosts: 100,
+   *   resultsLimit: 500,
+   *   targetUsername: 'NASA',
+   *   usernameContains: 'space',
+   *   verifiedType: 'Business',
    * });
    * ```
    */
   run(params: ExtractionRunParams, options?: RequestOptions): APIPromise<ExtractionRunResponse> {
-    const { dry_run, ...body } = params;
-    return this._client.post('/extractions', { query: { dry_run }, body, ...options });
+    const { dry_run, 'Idempotency-Key': idempotencyKey, ...body } = params;
+    return this._client.post('/extractions', {
+      query: { dry_run },
+      body,
+      ...options,
+      headers: buildHeaders([
+        { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+        options?.headers,
+      ]),
+    });
   }
 }
 
@@ -115,7 +179,7 @@ export interface ExtractionJob {
 
   createdAt: string;
 
-  status: 'running' | 'completed' | 'failed';
+  status: 'pending' | 'running' | 'canceled' | 'completed' | 'failed';
 
   /**
    * Identifier for the extraction tool used to run a job.
@@ -145,22 +209,142 @@ export interface ExtractionJob {
     | 'user_media'
     | 'verified_follower_explorer';
 
+  /**
+   * Whole number from 0.
+   */
   totalResults: number;
 
   completedAt?: string;
+
+  /**
+   * Why a terminal job stopped.
+   */
+  completionReason?:
+    | 'budget_limited'
+    | 'canceled'
+    | 'deadline_reached'
+    | 'failed'
+    | 'pagination_safety_limit'
+    | 'partial_failure'
+    | 'requested_limit_reached'
+    | 'source_exhausted';
+
+  /**
+   * Result limit after affordability checks.
+   */
+  effectiveResultsLimit?: number;
+
+  /**
+   * Safe error code for a failed job.
+   */
+  errorMessage?: string;
+
+  /**
+   * Requested result limit.
+   */
+  resultsLimit?: number;
 }
 
 export interface ExtractionRetrieveResponse {
   hasMore: boolean;
 
   /**
-   * Extraction job metadata - shape varies by tool type (JSON)
+   * Extraction job tracking status, tool type, and result count.
    */
-  job: { [key: string]: unknown };
+  job: ExtractionJob;
 
-  results: Array<{ [key: string]: unknown }>;
+  pollAfterMs: number;
+
+  results: Array<ExtractionRetrieveResponse.Result>;
+
+  waitUrl: string;
 
   nextCursor?: string;
+}
+
+export namespace ExtractionRetrieveResponse {
+  /**
+   * Represents a public row across supported extraction modes.
+   */
+  export interface Result {
+    id: string;
+
+    createdAt: string;
+
+    xUserId: string;
+
+    /**
+     * Whole number from 0.
+     */
+    bookmarkCount?: number;
+
+    /**
+     * First email the account publishes on its profile, with outputPreset=flat.
+     * Default nested output uses enrichmentData.user.email, beside
+     * enrichmentData.user.contactInfo. Absent when the profile publishes none.
+     */
+    email?: string;
+
+    /**
+     * Public metadata whose fields are defined by X.
+     */
+    enrichmentData?: { [key: string]: unknown };
+
+    /**
+     * Whole number from 0.
+     */
+    likeCount?: number;
+
+    /**
+     * Attached media with outputPreset=flat. Default nested output uses
+     * enrichmentData.tweet.media.
+     */
+    media?: Array<Shared.TweetMedia>;
+
+    /**
+     * Whole number from 0.
+     */
+    quoteCount?: number;
+
+    /**
+     * Whole number from 0.
+     */
+    replyCount?: number;
+
+    /**
+     * Whole number from 0.
+     */
+    retweetCount?: number;
+
+    tweetCreatedAt?: string;
+
+    tweetId?: string;
+
+    tweetText?: string;
+
+    tweetUrl?: string;
+
+    /**
+     * Whole number from 0.
+     */
+    viewCount?: number;
+
+    xDisplayName?: string;
+
+    /**
+     * Followers of the account. Absent when X sends no count, as for the hosts &
+     * speakers of a Space, and never 0 in its place.
+     */
+    xFollowersCount?: number;
+
+    xProfileImageUrl?: string;
+
+    xUsername?: string;
+
+    xVerified?: boolean;
+
+    [k: string]: unknown;
+  }
 }
 
 export interface ExtractionListResponse {
@@ -171,47 +355,138 @@ export interface ExtractionListResponse {
   nextCursor?: string;
 }
 
+export interface ExtractionCancelResponse {
+  id: string;
+
+  status: 'canceled';
+}
+
+/**
+ * Free conservative cost estimate. Post estimates use the supported cap & refuse a
+ * protected profile. It never creates a job or charges.
+ */
 export interface ExtractionEstimateCostResponse {
+  /**
+   * Whether the balance covers the full estimate.
+   */
   allowed: boolean;
 
   creditsAvailable: string;
 
   creditsRequired: string;
 
+  /**
+   * Credit calculation row count, not source availability.
+   */
   estimatedResults: number;
 
   source:
     | 'followers'
     | 'following'
     | 'collection'
+    | 'likeCount'
     | 'paginationCap'
-    | 'posts'
     | 'quoteCount'
     | 'replyCount'
     | 'resultsLimit'
     | 'retweetCount'
     | 'unknown';
 
+  /**
+   * Resolved X user ID from count-based profile estimates.
+   */
   resolvedXUserId?: string;
 }
 
-export interface ExtractionRunResponse {
-  allowed: boolean;
+/**
+ * Free conservative cost estimate. Post estimates use the supported cap & refuse a
+ * protected profile. It never creates a job or charges.
+ */
+export type ExtractionRunResponse = ExtractionRunResponse.ExtractionEstimate | ExtractionRunResponse.Accepted;
 
-  creditsAvailable: string;
+export namespace ExtractionRunResponse {
+  /**
+   * Free conservative cost estimate. Post estimates use the supported cap & refuse a
+   * protected profile. It never creates a job or charges.
+   */
+  export interface ExtractionEstimate {
+    /**
+     * Whether the balance covers the full estimate.
+     */
+    allowed: boolean;
 
-  creditsRequired: string;
+    creditsAvailable: string;
 
-  estimatedResults: number;
+    creditsRequired: string;
 
-  source: string;
+    /**
+     * Credit calculation row count, not source availability.
+     */
+    estimatedResults: number;
 
-  resolvedXUserId?: string;
+    source:
+      | 'followers'
+      | 'following'
+      | 'collection'
+      | 'likeCount'
+      | 'paginationCap'
+      | 'quoteCount'
+      | 'replyCount'
+      | 'resultsLimit'
+      | 'retweetCount'
+      | 'unknown';
+
+    /**
+     * Resolved X user ID from count-based profile estimates.
+     */
+    resolvedXUserId?: string;
+  }
+
+  export interface Accepted {
+    id: string;
+
+    pollAfterMs: number;
+
+    status: 'pending' | 'running' | 'canceled' | 'completed' | 'failed';
+
+    statusUrl: string;
+
+    /**
+     * Identifier for the extraction tool used to run a job.
+     */
+    toolType:
+      | 'article_extractor'
+      | 'community_extractor'
+      | 'community_moderator_explorer'
+      | 'community_post_extractor'
+      | 'community_search'
+      | 'favoriters'
+      | 'follower_explorer'
+      | 'following_explorer'
+      | 'list_follower_explorer'
+      | 'list_member_extractor'
+      | 'list_post_extractor'
+      | 'mention_extractor'
+      | 'people_search'
+      | 'post_extractor'
+      | 'quote_extractor'
+      | 'reply_extractor'
+      | 'repost_extractor'
+      | 'space_explorer'
+      | 'thread_extractor'
+      | 'tweet_search_extractor'
+      | 'user_likes'
+      | 'user_media'
+      | 'verified_follower_explorer';
+
+    waitUrl: string;
+  }
 }
 
 export interface ExtractionRetrieveParams {
   /**
-   * Previous nextCursor.
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
    */
   cursor?: string;
 
@@ -226,12 +501,13 @@ export interface ExtractionRetrieveParams {
   includeRaw?: boolean;
 
   /**
-   * Maximum number of results to return (1-1000, default 100)
+   * Maximum results per page (1-1000, default 100).
    */
   limit?: number;
 
   /**
-   * Select compact, full, or raw-compatible result fields.
+   * Use compact for core fields and tweet counts, full for nested enrichment, or raw
+   * for a source copy.
    */
   outputMode?: 'compact' | 'full' | 'raw';
 
@@ -239,26 +515,30 @@ export interface ExtractionRetrieveParams {
    * Keep enrichment nested or merge it into each result.
    */
   outputPreset?: 'nested' | 'flat';
+
+  /**
+   * Wait up to this many seconds when the job is active.
+   */
+  wait?: number;
 }
 
 export interface ExtractionListParams {
   /**
-   * Previous nextCursor.
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
    */
   cursor?: string;
 
   /**
-   * Maximum number of items to return (1-100, default 50). For paid per-result
-   * endpoints, the returned count may be lower when available usage balance cannot cover
-   * the requested page. If zero paid results are affordable, the endpoint returns
-   * 402 insufficient_credits.
+   * Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+   * With none affordable, it returns 402 insufficient_credits.
    */
   limit?: number;
 
   /**
    * Filter by job status
    */
-  status?: 'running' | 'completed' | 'failed';
+  status?: 'pending' | 'running' | 'canceled' | 'completed' | 'failed';
 
   /**
    * Filter by extraction tool type
@@ -324,18 +604,18 @@ export interface ExtractionEstimateCostParams {
   advancedQuery?: string;
 
   /**
-   * Words or quoted phrases where any one can match. Separate with spaces, commas,
-   * or lines. (tweet_search_extractor)
+   * Any matching term or phrase (tweet_search_extractor).
    */
   anyWords?: string;
 
   /**
-   * Bio terms separated by commas or lines.
+   * Match any bio term, ignoring case. Separate terms with commas or lines.
    */
   bioContains?: string;
 
   /**
-   * Return only Blue-verified Tweet authors.
+   * Return only Blue-verified Tweet authors. On a tool that returns users, return
+   * only profiles X marks as blue verified.
    */
   blueVerifiedOnly?: boolean;
 
@@ -345,12 +625,17 @@ export interface ExtractionEstimateCostParams {
   boundingBox?: string;
 
   /**
-   * Match the Tweet card name.
+   * Require an email the profile publishes outside free webmail, such as Gmail.
+   */
+  businessEmailOnly?: boolean;
+
+  /**
+   * Require Tweet cards whose name matches this value.
    */
   cardName?: string;
 
   /**
-   * Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+   * Matching cashtags (tweet_search_extractor).
    */
   cashtags?: string;
 
@@ -375,6 +660,19 @@ export interface ExtractionEstimateCostParams {
   dedupeMode?: 'none' | 'first' | 'merge';
 
   /**
+   * Require an email at one of these domains. Separate domains with commas.
+   * Subdomains match.
+   */
+  emailDomains?: string;
+
+  /**
+   * Add each user's full profile to follower_explorer, following_explorer,
+   * verified_follower_explorer, people_search & repost_extractor rows. Jobs take
+   * longer.
+   */
+  enrichProfiles?: boolean;
+
+  /**
    * Exact phrase to match (tweet_search_extractor)
    */
   exactPhrase?: string;
@@ -385,13 +683,14 @@ export interface ExtractionEstimateCostParams {
   excludeOriginalAuthor?: boolean;
 
   /**
-   * Exclude a source application.
+   * X search ignores excludeSource, so an extraction with it returns unfiltered
+   * rows. Its answers carry `Deprecation` & `Sunset` headers. From 2027-01-15 an
+   * extraction with it answers 424 `search_unavailable` & charges nothing.
    */
   excludeSource?: string;
 
   /**
-   * Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
-   * (tweet_search_extractor)
+   * Excluded terms or phrases (tweet_search_extractor).
    */
   excludeWords?: string;
 
@@ -401,12 +700,18 @@ export interface ExtractionEstimateCostParams {
   fromUser?: string;
 
   /**
-   * Match latitude, longitude, and radius.
+   * X search no longer supports geocode. An extraction with it answers 424
+   * `search_unavailable` & charges nothing.
    */
   geocode?: string;
 
   /**
-   * Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+   * Require an email the profile publishes.
+   */
+  hasEmail?: boolean;
+
+  /**
+   * Matching hashtags (tweet_search_extractor).
    */
   hashtags?: string;
 
@@ -446,7 +751,7 @@ export interface ExtractionEstimateCostParams {
   inReplyToTweetId?: string;
 
   /**
-   * Language code filter (tweet_search_extractor)
+   * Tweet or Community search language.
    */
   language?: string;
 
@@ -476,7 +781,7 @@ export interface ExtractionEstimateCostParams {
   maxFollowing?: number;
 
   /**
-   * Return Tweets older than this Tweet ID.
+   * Require Tweet IDs at or below this ID.
    */
   maxId?: string;
 
@@ -516,12 +821,12 @@ export interface ExtractionEstimateCostParams {
   maxRetweets?: number;
 
   /**
-   * Media type filter (tweet_search_extractor)
+   * Tweet or Community search media.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
 
   /**
-   * Filter tweets mentioning a username (tweet_search_extractor)
+   * Mentions this username (tweet_search_extractor).
    */
   mentioning?: string;
 
@@ -536,7 +841,7 @@ export interface ExtractionEstimateCostParams {
   minBookmarks?: number;
 
   /**
-   * Minimum likes threshold (tweet_search_extractor)
+   * Tweet or Community search minimum likes.
    */
   minFaves?: number;
 
@@ -561,32 +866,33 @@ export interface ExtractionEstimateCostParams {
   minQuotes?: number;
 
   /**
-   * Minimum replies threshold (tweet_search_extractor)
+   * Tweet or Community search minimum replies.
    */
   minReplies?: number;
 
   /**
-   * Minimum retweets threshold (tweet_search_extractor)
+   * Tweet or Community search minimum reposts.
    */
   minRetweets?: number;
 
   /**
-   * Minimum Tweet view count.
+   * Tweet or Community search minimum views.
    */
   minViews?: number;
 
   /**
-   * Only return native reposts.
+   * Tweet or Community search native reposts.
    */
   nativeRetweets?: boolean;
 
   /**
-   * Match a place name.
+   * Restrict Tweet search to this place name.
    */
   near?: string;
 
   /**
-   * Only return news results.
+   * X search no longer supports filter:news. An extraction with news true answers
+   * 424 `search_unavailable` & charges nothing.
    */
   news?: boolean;
 
@@ -611,12 +917,12 @@ export interface ExtractionEstimateCostParams {
   pointRadius?: string;
 
   /**
-   * Search ranking applied to every query.
+   * Use Top for engagement. The relevance alias maps to Top.
    */
-  queryType?: 'Latest' | 'Top' | 'Both';
+  queryType?: 'Latest' | 'Top' | 'Both' | 'relevance';
 
   /**
-   * Quote mode (tweet_search_extractor)
+   * Choose whether tweet search includes, excludes, or isolates quotes.
    */
   quotes?: 'include' | 'exclude' | 'only';
 
@@ -626,23 +932,24 @@ export interface ExtractionEstimateCostParams {
   quotesOfTweetId?: string;
 
   /**
-   * Profile relations processed within one job.
+   * Profile relations processed within one job. Protected profiles are skipped & the
+   * job ends with partial_failure.
    */
   relationTargets?: Array<ExtractionEstimateCostParams.RelationTarget>;
 
   /**
-   * Reply mode (tweet_search_extractor)
+   * Choose whether tweet search includes, excludes, or isolates replies.
    */
   replies?: 'include' | 'exclude' | 'only';
 
   /**
-   * Maximum number of results to extract. When set, the extraction stops after
-   * reaching this limit.
+   * Maximum unique results to emit. Billing follows emitted results, not this upper
+   * bound.
    */
   resultsLimit?: number;
 
   /**
-   * Retweet mode (tweet_search_extractor)
+   * Choose whether tweet search includes, excludes, or isolates reposts.
    */
   retweets?: 'include' | 'exclude' | 'only';
 
@@ -652,7 +959,7 @@ export interface ExtractionEstimateCostParams {
   retweetsOfTweetId?: string;
 
   /**
-   * Enable the safe-search filter.
+   * Apply safe-search filtering to Tweet results.
    */
   safe?: boolean;
 
@@ -662,22 +969,26 @@ export interface ExtractionEstimateCostParams {
   scope?: 'all' | 'direct' | 'nested';
 
   /**
-   * Search queries processed as one collection job.
+   * Search queries processed as one collection job. Each follows the rules of
+   * searchQuery, its structured fields & 512-character limit included.
    */
   searchQueries?: Array<string>;
 
   /**
-   * Required for tweet_search_extractor & community_search.
+   * Required for tweet_search_extractor, people_search & community_search.
+   * tweet_search_extractor adds the structured search fields, such as fromUser &
+   * minFaves, to this query. X searches up to 512 characters. A longer tweet or
+   * people search answers 400, counted with the added fields.
    */
   searchQuery?: string;
 
   /**
-   * Start date YYYY-MM-DD (tweet_search_extractor)
+   * Tweet or Community search start date.
    */
   sinceDate?: string;
 
   /**
-   * Return Tweets newer than this Tweet ID.
+   * Require Tweet IDs above this ID.
    */
   sinceId?: string;
 
@@ -692,7 +1003,8 @@ export interface ExtractionEstimateCostParams {
   sort?: 'relevance' | 'latest' | 'oldest' | 'likes';
 
   /**
-   * Match the source application.
+   * X search no longer supports source. An extraction with it answers 424
+   * `search_unavailable` & charges nothing.
    */
   source?: string;
 
@@ -723,12 +1035,16 @@ export interface ExtractionEstimateCostParams {
   targetListIds?: Array<string>;
 
   /**
-   * Mixed targets auto-routed within one job.
+   * Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
+   * profile_media kinds to collect attached media. Protected profiles are skipped &
+   * the job ends with partial_failure.
    */
   targets?: Array<string | ExtractionEstimateCostParams.UnionMember1>;
 
   /**
-   * Required for space_explorer.
+   * Required for space_explorer. X names a Space's hosts & speakers without counts
+   * or bio, so Xquik reads each one's profile. Rows carry it, & profile filters such
+   * as minFollowers check it.
    */
   targetSpaceId?: string;
 
@@ -742,17 +1058,19 @@ export interface ExtractionEstimateCostParams {
   targetUsername?: string;
 
   /**
-   * Usernames processed as one collection job.
+   * Usernames processed concurrently in one job. With tweet_search_extractor, each
+   * username collects posts. Post & media jobs skip a protected profile & end with
+   * partial_failure.
    */
   targetUsernames?: Array<string>;
 
   /**
-   * Filter replies sent to a username (tweet_search_extractor)
+   * Replies to this username (tweet_search_extractor).
    */
   toUser?: string;
 
   /**
-   * End date YYYY-MM-DD (tweet_search_extractor)
+   * Tweet or Community search end date.
    */
   untilDate?: string;
 
@@ -772,7 +1090,7 @@ export interface ExtractionEstimateCostParams {
   usernameContains?: string;
 
   /**
-   * Only verified authors (tweet_search_extractor)
+   * Tweet or Community search verified authors.
    */
   verifiedOnly?: boolean;
 
@@ -782,12 +1100,13 @@ export interface ExtractionEstimateCostParams {
   verifiedType?: string;
 
   /**
-   * Set the radius for the near filter.
+   * X search no longer supports within. An extraction with it answers 424
+   * `search_unavailable` & charges nothing. Use near alone.
    */
   within?: string;
 
   /**
-   * Match Tweets inside a recent time window.
+   * Restrict Tweets to this recent time window.
    */
   withinTime?: string;
 }
@@ -834,9 +1153,25 @@ export interface ExtractionExportResultsParams {
   format: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
 
   /**
+   * Require an email outside free webmail, such as Gmail, in the row's Email column.
+   */
+  businessEmailOnly?: boolean;
+
+  /**
+   * Require the row's email at one of these domains. Separate domains with commas.
+   * Subdomains match.
+   */
+  emailDomains?: string;
+
+  /**
    * Require a non-empty description.
    */
   hasDescription?: boolean;
+
+  /**
+   * Require an email in the row's Email column.
+   */
+  hasEmail?: boolean;
 
   /**
    * Require a non-empty location.
@@ -909,12 +1244,16 @@ export interface ExtractionExportResultsParams {
   search?: string;
 
   /**
-   * Include results on or after this date.
+   * Include results on or after this date, from 00:00 UTC. An ISO 8601 time starts
+   * at that instant. Results without a post date are left out. An empty value sets
+   * no filter.
    */
   sinceDate?: string;
 
   /**
-   * Include results on or before this date.
+   * Include results on or before this date, inclusive, through 23:59:59 UTC. An ISO
+   * 8601 time ends at that instant. Results without a post date are left out. An
+   * empty value sets no filter.
    */
   untilDate?: string;
 
@@ -964,18 +1303,19 @@ export interface ExtractionRunParams {
   advancedQuery?: string;
 
   /**
-   * Body param: Words or quoted phrases where any one can match. Separate with
-   * spaces, commas, or lines. (tweet_search_extractor)
+   * Body param: Any matching term or phrase (tweet_search_extractor).
    */
   anyWords?: string;
 
   /**
-   * Body param: Bio terms separated by commas or lines.
+   * Body param: Match any bio term, ignoring case. Separate terms with commas or
+   * lines.
    */
   bioContains?: string;
 
   /**
-   * Body param: Return only Blue-verified Tweet authors.
+   * Body param: Return only Blue-verified Tweet authors. On a tool that returns
+   * users, return only profiles X marks as blue verified.
    */
   blueVerifiedOnly?: boolean;
 
@@ -986,13 +1326,18 @@ export interface ExtractionRunParams {
   boundingBox?: string;
 
   /**
-   * Body param: Match the Tweet card name.
+   * Body param: Require an email the profile publishes outside free webmail, such as
+   * Gmail.
+   */
+  businessEmailOnly?: boolean;
+
+  /**
+   * Body param: Require Tweet cards whose name matches this value.
    */
   cardName?: string;
 
   /**
-   * Body param: Cashtags separated by spaces, commas, or lines.
-   * (tweet_search_extractor)
+   * Body param: Matching cashtags (tweet_search_extractor).
    */
   cashtags?: string;
 
@@ -1017,6 +1362,19 @@ export interface ExtractionRunParams {
   dedupeMode?: 'none' | 'first' | 'merge';
 
   /**
+   * Body param: Require an email at one of these domains. Separate domains with
+   * commas. Subdomains match.
+   */
+  emailDomains?: string;
+
+  /**
+   * Body param: Add each user's full profile to follower_explorer,
+   * following_explorer, verified_follower_explorer, people_search & repost_extractor
+   * rows. Jobs take longer.
+   */
+  enrichProfiles?: boolean;
+
+  /**
    * Body param: Exact phrase to match (tweet_search_extractor)
    */
   exactPhrase?: string;
@@ -1027,13 +1385,15 @@ export interface ExtractionRunParams {
   excludeOriginalAuthor?: boolean;
 
   /**
-   * Body param: Exclude a source application.
+   * Body param: X search ignores excludeSource, so an extraction with it returns
+   * unfiltered rows. Its answers carry `Deprecation` & `Sunset` headers. From
+   * 2027-01-15 an extraction with it answers 424 `search_unavailable` & charges
+   * nothing.
    */
   excludeSource?: string;
 
   /**
-   * Body param: Words or quoted phrases to exclude. Separate with spaces, commas, or
-   * lines. (tweet_search_extractor)
+   * Body param: Excluded terms or phrases (tweet_search_extractor).
    */
   excludeWords?: string;
 
@@ -1043,13 +1403,18 @@ export interface ExtractionRunParams {
   fromUser?: string;
 
   /**
-   * Body param: Match latitude, longitude, and radius.
+   * Body param: X search no longer supports geocode. An extraction with it answers
+   * 424 `search_unavailable` & charges nothing.
    */
   geocode?: string;
 
   /**
-   * Body param: Hashtags separated by spaces, commas, or lines.
-   * (tweet_search_extractor)
+   * Body param: Require an email the profile publishes.
+   */
+  hasEmail?: boolean;
+
+  /**
+   * Body param: Matching hashtags (tweet_search_extractor).
    */
   hashtags?: string;
 
@@ -1089,7 +1454,7 @@ export interface ExtractionRunParams {
   inReplyToTweetId?: string;
 
   /**
-   * Body param: Language code filter (tweet_search_extractor)
+   * Body param: Tweet or Community search language.
    */
   language?: string;
 
@@ -1119,7 +1484,7 @@ export interface ExtractionRunParams {
   maxFollowing?: number;
 
   /**
-   * Body param: Return Tweets older than this Tweet ID.
+   * Body param: Require Tweet IDs at or below this ID.
    */
   maxId?: string;
 
@@ -1159,12 +1524,12 @@ export interface ExtractionRunParams {
   maxRetweets?: number;
 
   /**
-   * Body param: Media type filter (tweet_search_extractor)
+   * Body param: Tweet or Community search media.
    */
   mediaType?: 'images' | 'videos' | 'gifs' | 'media' | 'links' | 'none';
 
   /**
-   * Body param: Filter tweets mentioning a username (tweet_search_extractor)
+   * Body param: Mentions this username (tweet_search_extractor).
    */
   mentioning?: string;
 
@@ -1179,7 +1544,7 @@ export interface ExtractionRunParams {
   minBookmarks?: number;
 
   /**
-   * Body param: Minimum likes threshold (tweet_search_extractor)
+   * Body param: Tweet or Community search minimum likes.
    */
   minFaves?: number;
 
@@ -1204,32 +1569,33 @@ export interface ExtractionRunParams {
   minQuotes?: number;
 
   /**
-   * Body param: Minimum replies threshold (tweet_search_extractor)
+   * Body param: Tweet or Community search minimum replies.
    */
   minReplies?: number;
 
   /**
-   * Body param: Minimum retweets threshold (tweet_search_extractor)
+   * Body param: Tweet or Community search minimum reposts.
    */
   minRetweets?: number;
 
   /**
-   * Body param: Minimum Tweet view count.
+   * Body param: Tweet or Community search minimum views.
    */
   minViews?: number;
 
   /**
-   * Body param: Only return native reposts.
+   * Body param: Tweet or Community search native reposts.
    */
   nativeRetweets?: boolean;
 
   /**
-   * Body param: Match a place name.
+   * Body param: Restrict Tweet search to this place name.
    */
   near?: string;
 
   /**
-   * Body param: Only return news results.
+   * Body param: X search no longer supports filter:news. An extraction with news
+   * true answers 424 `search_unavailable` & charges nothing.
    */
   news?: boolean;
 
@@ -1254,12 +1620,12 @@ export interface ExtractionRunParams {
   pointRadius?: string;
 
   /**
-   * Body param: Search ranking applied to every query.
+   * Body param: Use Top for engagement. The relevance alias maps to Top.
    */
-  queryType?: 'Latest' | 'Top' | 'Both';
+  queryType?: 'Latest' | 'Top' | 'Both' | 'relevance';
 
   /**
-   * Body param: Quote mode (tweet_search_extractor)
+   * Body param: Choose whether tweet search includes, excludes, or isolates quotes.
    */
   quotes?: 'include' | 'exclude' | 'only';
 
@@ -1269,23 +1635,24 @@ export interface ExtractionRunParams {
   quotesOfTweetId?: string;
 
   /**
-   * Body param: Profile relations processed within one job.
+   * Body param: Profile relations processed within one job. Protected profiles are
+   * skipped & the job ends with partial_failure.
    */
   relationTargets?: Array<ExtractionRunParams.RelationTarget>;
 
   /**
-   * Body param: Reply mode (tweet_search_extractor)
+   * Body param: Choose whether tweet search includes, excludes, or isolates replies.
    */
   replies?: 'include' | 'exclude' | 'only';
 
   /**
-   * Body param: Maximum number of results to extract. When set, the extraction stops
-   * after reaching this limit.
+   * Body param: Maximum unique results to emit. Billing follows emitted results, not
+   * this upper bound.
    */
   resultsLimit?: number;
 
   /**
-   * Body param: Retweet mode (tweet_search_extractor)
+   * Body param: Choose whether tweet search includes, excludes, or isolates reposts.
    */
   retweets?: 'include' | 'exclude' | 'only';
 
@@ -1295,7 +1662,7 @@ export interface ExtractionRunParams {
   retweetsOfTweetId?: string;
 
   /**
-   * Body param: Enable the safe-search filter.
+   * Body param: Apply safe-search filtering to Tweet results.
    */
   safe?: boolean;
 
@@ -1305,22 +1672,26 @@ export interface ExtractionRunParams {
   scope?: 'all' | 'direct' | 'nested';
 
   /**
-   * Body param: Search queries processed as one collection job.
+   * Body param: Search queries processed as one collection job. Each follows the
+   * rules of searchQuery, its structured fields & 512-character limit included.
    */
   searchQueries?: Array<string>;
 
   /**
-   * Body param: Required for tweet_search_extractor & community_search.
+   * Body param: Required for tweet_search_extractor, people_search &
+   * community_search. tweet_search_extractor adds the structured search fields, such
+   * as fromUser & minFaves, to this query. X searches up to 512 characters. A longer
+   * tweet or people search answers 400, counted with the added fields.
    */
   searchQuery?: string;
 
   /**
-   * Body param: Start date YYYY-MM-DD (tweet_search_extractor)
+   * Body param: Tweet or Community search start date.
    */
   sinceDate?: string;
 
   /**
-   * Body param: Return Tweets newer than this Tweet ID.
+   * Body param: Require Tweet IDs above this ID.
    */
   sinceId?: string;
 
@@ -1335,7 +1706,8 @@ export interface ExtractionRunParams {
   sort?: 'relevance' | 'latest' | 'oldest' | 'likes';
 
   /**
-   * Body param: Match the source application.
+   * Body param: X search no longer supports source. An extraction with it answers
+   * 424 `search_unavailable` & charges nothing.
    */
   source?: string;
 
@@ -1366,12 +1738,16 @@ export interface ExtractionRunParams {
   targetListIds?: Array<string>;
 
   /**
-   * Body param: Mixed targets auto-routed within one job.
+   * Body param: Mixed targets auto-routed within one job. Use tweet, replies,
+   * quotes, thread, or profile_media kinds to collect attached media. Protected
+   * profiles are skipped & the job ends with partial_failure.
    */
   targets?: Array<string | ExtractionRunParams.UnionMember1>;
 
   /**
-   * Body param: Required for space_explorer.
+   * Body param: Required for space_explorer. X names a Space's hosts & speakers
+   * without counts or bio, so Xquik reads each one's profile. Rows carry it, &
+   * profile filters such as minFollowers check it.
    */
   targetSpaceId?: string;
 
@@ -1391,17 +1767,19 @@ export interface ExtractionRunParams {
   targetUsername?: string;
 
   /**
-   * Body param: Usernames processed as one collection job.
+   * Body param: Usernames processed concurrently in one job. With
+   * tweet_search_extractor, each username collects posts. Post & media jobs skip a
+   * protected profile & end with partial_failure.
    */
   targetUsernames?: Array<string>;
 
   /**
-   * Body param: Filter replies sent to a username (tweet_search_extractor)
+   * Body param: Replies to this username (tweet_search_extractor).
    */
   toUser?: string;
 
   /**
-   * Body param: End date YYYY-MM-DD (tweet_search_extractor)
+   * Body param: Tweet or Community search end date.
    */
   untilDate?: string;
 
@@ -1421,7 +1799,7 @@ export interface ExtractionRunParams {
   usernameContains?: string;
 
   /**
-   * Body param: Only verified authors (tweet_search_extractor)
+   * Body param: Tweet or Community search verified authors.
    */
   verifiedOnly?: boolean;
 
@@ -1431,14 +1809,22 @@ export interface ExtractionRunParams {
   verifiedType?: string;
 
   /**
-   * Body param: Set the radius for the near filter.
+   * Body param: X search no longer supports within. An extraction with it answers
+   * 424 `search_unavailable` & charges nothing. Use near alone.
    */
   within?: string;
 
   /**
-   * Body param: Match Tweets inside a recent time window.
+   * Body param: Restrict Tweets to this recent time window.
    */
   withinTime?: string;
+
+  /**
+   * Header param: Generate 1 unique value per intended request. Reuse it only to
+   * retry the same request. Exact retries return the original result & charge
+   * nothing.
+   */
+  'Idempotency-Key'?: string;
 }
 
 export namespace ExtractionRunParams {
@@ -1481,6 +1867,7 @@ export declare namespace Extractions {
     type ExtractionJob as ExtractionJob,
     type ExtractionRetrieveResponse as ExtractionRetrieveResponse,
     type ExtractionListResponse as ExtractionListResponse,
+    type ExtractionCancelResponse as ExtractionCancelResponse,
     type ExtractionEstimateCostResponse as ExtractionEstimateCostResponse,
     type ExtractionRunResponse as ExtractionRunResponse,
     type ExtractionRetrieveParams as ExtractionRetrieveParams,

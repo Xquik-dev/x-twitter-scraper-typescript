@@ -15,7 +15,7 @@ import { path } from '../internal/utils/path';
  */
 export class Webhooks extends APIResource {
   /**
-   * Create webhook
+   * Registers an endpoint for signed event deliveries.
    *
    * @example
    * ```ts
@@ -30,11 +30,12 @@ export class Webhooks extends APIResource {
   }
 
   /**
-   * Update webhook
+   * Updates an endpoint, event selection, or delivery settings.
    *
    * @example
    * ```ts
    * const webhook = await client.webhooks.update('id', {
+   *   eventTypes: ['tweet.new'],
    *   isActive: true,
    *   url: 'https://example.com/webhook',
    * });
@@ -45,19 +46,44 @@ export class Webhooks extends APIResource {
   }
 
   /**
-   * List webhooks
+   * Returns configured webhook endpoints and delivery states.
    *
    * @example
    * ```ts
    * const webhooks = await client.webhooks.list();
    * ```
    */
-  list(options?: RequestOptions): APIPromise<WebhookListResponse> {
-    return this._client.get('/webhooks', options);
+  list(
+    query: WebhookListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<WebhookListResponse> {
+    return this._client.get('/webhooks', { query, ...options });
   }
 
   /**
-   * Deactivate webhook
+   * Returns a t.me link to @XquikBot that connects a Telegram chat to the account's
+   * monitor events. Opening it & pressing Start connects the chat, which then gets
+   * each event as a message. The link works once, within 15 minutes. The chat
+   * appears in the webhook list with the URL telegram:<chat ID>, with deliveries,
+   * retries & resume as any webhook. In the chat, /stop pauses its alerts. It costs
+   * no credits.
+   *
+   * @example
+   * ```ts
+   * const response = await client.webhooks.createTelegramLink({
+   *   eventTypes: ['tweet.new', 'tweet.reply'],
+   * });
+   * ```
+   */
+  createTelegramLink(
+    body: WebhookCreateTelegramLinkParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<WebhookCreateTelegramLinkResponse> {
+    return this._client.post('/webhooks/telegram', { body, ...options });
+  }
+
+  /**
+   * Stops future deliveries to the selected webhook.
    *
    * @example
    * ```ts
@@ -69,19 +95,23 @@ export class Webhooks extends APIResource {
   }
 
   /**
-   * List webhook deliveries
+   * Returns delivery attempts and response outcomes, newest first.
    *
    * @example
    * ```ts
    * const response = await client.webhooks.listDeliveries('id');
    * ```
    */
-  listDeliveries(id: string, options?: RequestOptions): APIPromise<WebhookListDeliveriesResponse> {
-    return this._client.get(path`/webhooks/${id}/deliveries`, options);
+  listDeliveries(
+    id: string,
+    query: WebhookListDeliveriesParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<WebhookListDeliveriesResponse> {
+    return this._client.get(path`/webhooks/${id}/deliveries`, { query, ...options });
   }
 
   /**
-   * Test and resume webhook endpoint
+   * Tests the endpoint before resuming a manually paused webhook.
    *
    * @example
    * ```ts
@@ -93,7 +123,7 @@ export class Webhooks extends APIResource {
   }
 
   /**
-   * Test webhook endpoint
+   * Sends a signed test event to the configured endpoint.
    *
    * @example
    * ```ts
@@ -111,6 +141,9 @@ export class Webhooks extends APIResource {
 export interface Delivery {
   id: string;
 
+  /**
+   * Whole number from 0.
+   */
   attempts: number;
 
   createdAt: string;
@@ -140,8 +173,8 @@ export interface Webhook {
   createdAt: string;
 
   /**
-   * Endpoint delivery state. needs_attention means delivery stopped after repeated
-   * failures.
+   * Endpoint delivery state. paused means the user paused delivery. needs_attention
+   * marks repeated failures. Delivery attempts continue.
    */
   deliveryStatus: 'active' | 'paused' | 'needs_attention';
 
@@ -151,7 +184,7 @@ export interface Webhook {
   eventTypes: Array<Shared.EventType>;
 
   /**
-   * Consecutive delivery failures that pause the endpoint.
+   * Maximum reported failures before needs_attention. It does not pause delivery.
    */
   failureHardCap: number;
 
@@ -179,7 +212,23 @@ export interface WebhookCreateResponse {
 }
 
 export interface WebhookListResponse {
+  hasMore: boolean;
+
   webhooks: Array<Webhook>;
+
+  nextCursor?: string;
+}
+
+export interface WebhookCreateTelegramLinkResponse {
+  /**
+   * When the link stops working, 15 minutes on.
+   */
+  expiresAt: string;
+
+  /**
+   * Opens @XquikBot with the link's code.
+   */
+  url: string;
 }
 
 export interface WebhookDeactivateResponse {
@@ -188,6 +237,10 @@ export interface WebhookDeactivateResponse {
 
 export interface WebhookListDeliveriesResponse {
   deliveries: Array<Delivery>;
+
+  hasMore: boolean;
+
+  nextCursor?: string;
 }
 
 export interface WebhookResumeResponse {
@@ -216,7 +269,9 @@ export interface WebhookCreateParams {
   eventTypes: Array<Shared.EventType>;
 
   /**
-   * HTTPS URL
+   * HTTPS URL. A Discord channel webhook URL gets each event as a Discord message, &
+   * a Slack incoming webhook URL as a Slack message. To deliver to Telegram, use
+   * POST /webhooks/telegram instead.
    */
   url: string;
 }
@@ -232,17 +287,56 @@ export interface WebhookUpdateParams {
   url?: string;
 }
 
+export interface WebhookListParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+   * next page.
+   */
+  limit?: number;
+}
+
+export interface WebhookCreateTelegramLinkParams {
+  /**
+   * Array of event types to subscribe to.
+   */
+  eventTypes?: Array<Shared.EventType>;
+}
+
+export interface WebhookListDeliveriesParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum deliveries per page: 1 to 100, default 100. Pass nextCursor as cursor
+   * for the next page.
+   */
+  limit?: number;
+}
+
 export declare namespace Webhooks {
   export {
     type Delivery as Delivery,
     type Webhook as Webhook,
     type WebhookCreateResponse as WebhookCreateResponse,
     type WebhookListResponse as WebhookListResponse,
+    type WebhookCreateTelegramLinkResponse as WebhookCreateTelegramLinkResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
     type WebhookResumeResponse as WebhookResumeResponse,
     type WebhookTestResponse as WebhookTestResponse,
     type WebhookCreateParams as WebhookCreateParams,
     type WebhookUpdateParams as WebhookUpdateParams,
+    type WebhookListParams as WebhookListParams,
+    type WebhookCreateTelegramLinkParams as WebhookCreateTelegramLinkParams,
+    type WebhookListDeliveriesParams as WebhookListDeliveriesParams,
   };
 }

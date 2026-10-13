@@ -15,7 +15,7 @@ import { path } from '../internal/utils/path';
  */
 export class Styles extends APIResource {
   /**
-   * Get cached style profile
+   * Returns one cached writing style profile.
    *
    * @example
    * ```ts
@@ -27,17 +27,15 @@ export class Styles extends APIResource {
   }
 
   /**
-   * Save style profile with custom tweets
+   * Creates or replaces a style profile from supplied posts.
    *
    * @example
    * ```ts
    * const styleProfile = await client.styles.update('id', {
-   *   label: 'Professional Voice',
    *   tweets: [
-   *     {
-   *       text: 'Excited to share our latest research findings.',
-   *     },
+   *     { text: 'Excited to share our latest research.' },
    *   ],
+   *   label: 'Professional Voice',
    * });
    * ```
    */
@@ -46,19 +44,22 @@ export class Styles extends APIResource {
   }
 
   /**
-   * List cached style profiles
+   * Returns cached writing style profiles for the account.
    *
    * @example
    * ```ts
    * const styles = await client.styles.list();
    * ```
    */
-  list(options?: RequestOptions): APIPromise<StyleListResponse> {
-    return this._client.get('/styles', options);
+  list(
+    query: StyleListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<StyleListResponse> {
+    return this._client.get('/styles', { query, ...options });
   }
 
   /**
-   * Delete a style profile
+   * Permanently removes one cached style profile.
    *
    * @example
    * ```ts
@@ -73,7 +74,7 @@ export class Styles extends APIResource {
   }
 
   /**
-   * Analyze writing style from recent tweets
+   * Builds a writing style profile from recent public posts.
    *
    * @example
    * ```ts
@@ -87,7 +88,7 @@ export class Styles extends APIResource {
   }
 
   /**
-   * Compare two style profiles
+   * Compares language and engagement signals across two style profiles.
    *
    * @example
    * ```ts
@@ -102,7 +103,7 @@ export class Styles extends APIResource {
   }
 
   /**
-   * Get engagement metrics for style tweets
+   * Returns engagement metrics for an analyzed public X profile.
    *
    * @example
    * ```ts
@@ -117,16 +118,8 @@ export class Styles extends APIResource {
 /**
  * Full style profile with sampled tweets used for tone analysis.
  */
-export interface StyleProfile {
-  fetchedAt: string;
-
-  isOwnAccount: boolean;
-
-  tweetCount: number;
-
+export interface StyleProfile extends StyleProfileSummary {
   tweets: Array<StyleProfile.Tweet>;
-
-  xUsername: string;
 }
 
 export namespace StyleProfile {
@@ -155,7 +148,11 @@ export interface StyleProfileSummary {
 }
 
 export interface StyleListResponse {
+  hasMore: boolean;
+
   styles: Array<StyleProfileSummary>;
+
+  nextCursor?: string;
 }
 
 export interface StyleCompareResponse {
@@ -184,9 +181,11 @@ export namespace StyleGetPerformanceResponse {
 
     text: string;
 
-    createdAt?: string;
+    bookmarkCount?: number;
 
     likeCount?: number;
+
+    quoteCount?: number;
 
     replyCount?: number;
 
@@ -198,20 +197,36 @@ export namespace StyleGetPerformanceResponse {
 
 export interface StyleUpdateParams {
   /**
-   * Display label for the style
-   */
-  label: string;
-
-  /**
    * Array of tweet objects
    */
   tweets: Array<StyleUpdateParams.Tweet>;
+
+  /**
+   * Optional display label of up to 50 characters. When sent, it must match the path
+   * ID, ignoring case and a leading @. When it is left out, the path ID names the
+   * style and must fit the same limit.
+   */
+  label?: string;
 }
 
 export namespace StyleUpdateParams {
   export interface Tweet {
     text: string;
   }
+}
+
+export interface StyleListParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+   * next page.
+   */
+  limit?: number;
 }
 
 export interface StyleAnalyzeParams {
@@ -241,6 +256,7 @@ export declare namespace Styles {
     type StyleCompareResponse as StyleCompareResponse,
     type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
     type StyleUpdateParams as StyleUpdateParams,
+    type StyleListParams as StyleListParams,
     type StyleAnalyzeParams as StyleAnalyzeParams,
     type StyleCompareParams as StyleCompareParams,
   };

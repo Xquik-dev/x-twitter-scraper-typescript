@@ -14,7 +14,7 @@ import { path } from '../../internal/utils/path';
  */
 export class Accounts extends APIResource {
   /**
-   * Connect X account
+   * Starts a secure X account connection flow.
    *
    * @example
    * ```ts
@@ -31,7 +31,7 @@ export class Accounts extends APIResource {
   }
 
   /**
-   * Get X account details
+   * Returns one connected X account and its current status.
    *
    * @example
    * ```ts
@@ -45,19 +45,23 @@ export class Accounts extends APIResource {
   }
 
   /**
-   * List connected X accounts
+   * Returns connected accounts in creation order. Omit pagination for up to 10,000
+   * accounts. Send limit or cursor for legacy pagination.
    *
    * @example
    * ```ts
    * const accounts = await client.x.accounts.list();
    * ```
    */
-  list(options?: RequestOptions): APIPromise<AccountListResponse> {
-    return this._client.get('/x/accounts', options);
+  list(
+    query: AccountListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<AccountListResponse> {
+    return this._client.get('/x/accounts', { query, ...options });
   }
 
   /**
-   * Disconnect X account
+   * Disconnects one X account and removes stored session access.
    *
    * @example
    * ```ts
@@ -82,7 +86,7 @@ export class Accounts extends APIResource {
   }
 
   /**
-   * Re-authenticate X account
+   * Starts re-authentication for an existing X account connection.
    *
    * @example
    * ```ts
@@ -121,7 +125,10 @@ export interface XAccount {
 
   xUsername: string;
 
-  cookiesObtainedAt?: string;
+  /**
+   * When the account last connected or reconnected.
+   */
+  connectedAt?: string;
 }
 
 /**
@@ -140,7 +147,11 @@ export interface XAccountDetail {
 
   xUsername: string;
 
-  cookiesObtainedAt?: string;
+  /**
+   * Last connection or reconnection time of this account. Omitted before its first
+   * login.
+   */
+  connectedAt?: string;
 
   updatedAt?: string;
 }
@@ -205,6 +216,16 @@ export namespace AccountCreateResponse {
 
 export interface AccountListResponse {
   accounts: Array<XAccount>;
+
+  /**
+   * Present on cursor-paginated responses.
+   */
+  hasMore?: boolean;
+
+  /**
+   * Pass unchanged as cursor when hasMore is true.
+   */
+  nextCursor?: string;
 }
 
 export interface AccountDeleteResponse {
@@ -252,9 +273,23 @@ export interface AccountCreateParams {
   totp_secret: string;
 
   /**
-   * X username
+   * X username of the account to connect, with or without @
    */
   username: string;
+}
+
+export interface AccountListParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+   * With none affordable, it returns 402 insufficient_credits.
+   */
+  limit?: number;
 }
 
 export interface AccountReauthParams {
@@ -284,6 +319,7 @@ export declare namespace Accounts {
     type AccountBulkRetryResponse as AccountBulkRetryResponse,
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
+    type AccountListParams as AccountListParams,
     type AccountReauthParams as AccountReauthParams,
   };
 }

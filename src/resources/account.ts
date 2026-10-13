@@ -13,7 +13,8 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Account extends APIResource {
   /**
-   * Get account info
+   * Returns plan, credit, monitoring, and account settings for the authenticated
+   * user.
    *
    * @example
    * ```ts
@@ -25,7 +26,7 @@ export class Account extends APIResource {
   }
 
   /**
-   * Set linked X username
+   * Links an X username to the authenticated Xquik account.
    *
    * @example
    * ```ts
@@ -42,7 +43,7 @@ export class Account extends APIResource {
   }
 
   /**
-   * Update account locale
+   * Changes the locale used for account responses and notifications.
    *
    * @example
    * ```ts
@@ -72,6 +73,11 @@ export interface AccountRetrieveResponse {
 
   plan: 'active' | 'inactive';
 
+  /**
+   * Subscription state without billing provider identifiers.
+   */
+  subscription: AccountRetrieveResponse.Subscription;
+
   creditInfo?: AccountRetrieveResponse.CreditInfo;
 
   /**
@@ -83,24 +89,24 @@ export interface AccountRetrieveResponse {
 export namespace AccountRetrieveResponse {
   export interface MonitorBilling {
     /**
-     * Estimated daily usage for currently active monitors.
+     * Daily credits for currently active monitors.
      */
     activeDailyEstimate: string;
 
     /**
-     * Usage charged each hour for currently active monitors.
+     * Credits charged each hour for currently active monitors.
      */
     activeHourlyBurn: string;
 
     /**
-     * Rounded daily estimate for 1 active monitor.
+     * Daily credits charged for 1 active monitor.
      */
-    creditsPerActiveMonitorDay: string;
+    creditsPerActiveMonitorDay: '720';
 
     /**
-     * Hourly credits charged for 1 active monitor.
+     * Hourly credits charged for 1 active monitor. It is a monitor's only charge.
      */
-    creditsPerActiveMonitorHour: string;
+    creditsPerActiveMonitorHour: '30';
 
     /**
      * Webhook and event deliveries are included in monitor billing.
@@ -118,6 +124,22 @@ export namespace AccountRetrieveResponse {
     unlimitedSlots: boolean;
   }
 
+  /**
+   * Subscription state without billing provider identifiers.
+   */
+  export interface Subscription {
+    status: 'none' | 'active' | 'past_due' | 'canceling' | 'incomplete';
+
+    /**
+     * Renewal date, or the end date when canceling.
+     */
+    currentPeriodEnd?: string;
+
+    currentPeriodStart?: string;
+
+    tier?: 'starter' | 'pro' | 'business';
+  }
+
   export interface CreditInfo {
     /**
      * Dollar amount charged when automatic top-up runs.
@@ -127,9 +149,16 @@ export namespace AccountRetrieveResponse {
     autoTopupEnabled: boolean;
 
     /**
+     * True when 3 declined charges in a row on one card stopped automatic top-up while
+     * it stays enabled. A paid top-up, a paid plan renewal, or the next automatic
+     * top-up on a new card clears it.
+     */
+    autoTopupStopped: boolean;
+
+    /**
      * Bigint string threshold that triggers automatic top-up when enabled.
      */
-    autoTopupThreshold: string;
+    autoTopupThreshold: '10000' | '50000' | '100000' | '250000';
 
     /**
      * Bigint string to preserve precision above Number.MAX_SAFE_INTEGER.
@@ -137,12 +166,12 @@ export namespace AccountRetrieveResponse {
     balance: string;
 
     /**
-     * Total purchased usage as a bigint string.
+     * Total purchased credits as a bigint string.
      */
     lifetimePurchased: string;
 
     /**
-     * Total consumed usage as a bigint string.
+     * Total consumed credits as a bigint string.
      */
     lifetimeUsed: string;
   }

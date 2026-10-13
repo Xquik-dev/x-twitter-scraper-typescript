@@ -15,14 +15,17 @@ import { path } from '../../../internal/utils/path';
  */
 export class Join extends APIResource {
   /**
-   * Join community
+   * Joins an X Community through a connected account.
    *
    * @example
    * ```ts
-   * const join = await client.x.communities.join.create('id', {
-   *   account: '@elonmusk',
-   *   'Idempotency-Key': 'Idempotency-Key',
-   * });
+   * const join = await client.x.communities.join.create(
+   *   '1500000000000000000',
+   *   {
+   *     account: '@elonmusk',
+   *     'Idempotency-Key': 'Idempotency-Key',
+   *   },
+   * );
    * ```
    */
   create(id: string, params: JoinCreateParams, options?: RequestOptions): APIPromise<JoinCreateResponse> {
@@ -35,12 +38,12 @@ export class Join extends APIResource {
   }
 
   /**
-   * Leave community
+   * Leaves an X Community through a connected account.
    *
    * @example
    * ```ts
    * const response = await client.x.communities.join.deleteAll(
-   *   'id',
+   *   '1500000000000000000',
    *   {
    *     account: '@elonmusk',
    *     'Idempotency-Key': 'Idempotency-Key',
@@ -63,9 +66,9 @@ export class Join extends APIResource {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface JoinCreateResponse {
   id: string;
@@ -86,6 +89,7 @@ export interface JoinCreateResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -130,7 +134,7 @@ export interface JoinCreateResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -186,6 +190,10 @@ export interface JoinCreateResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -262,6 +270,9 @@ export namespace JoinCreateResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -306,9 +317,9 @@ export namespace JoinCreateResponse {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface JoinDeleteAllResponse {
   id: string;
@@ -329,6 +340,7 @@ export interface JoinDeleteAllResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -373,7 +385,7 @@ export interface JoinDeleteAllResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -429,6 +441,10 @@ export interface JoinDeleteAllResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -505,6 +521,9 @@ export namespace JoinDeleteAllResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -555,10 +574,12 @@ export interface JoinCreateParams {
   account: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }
@@ -570,10 +591,12 @@ export interface JoinDeleteAllParams {
   account: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }

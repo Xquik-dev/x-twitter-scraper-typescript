@@ -13,7 +13,7 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Radar extends APIResource {
   /**
-   * Get trending topics from curated sources
+   * Returns current topics and sources for writing research.
    */
   retrieveTrendingTopics(
     query: RadarRetrieveTrendingTopicsParams | null | undefined = {},
@@ -43,33 +43,26 @@ export interface RadarItem {
   language: string;
 
   /**
-   * Source-specific fields. Shape varies per source:
-   *
+   * Source fields vary:
    * - reddit: { author, authorId?, subreddit, subredditId?, subredditSubscribers?,
    *   sourceFormat, score?, upvoteRatio?, estimatedUpvotes?, estimatedDownvotes?,
    *   numberComments?, numberCrossposts?, selftext?, contentUrl?, domain?,
    *   postHint?, linkFlairText?, distinguished?, totalAwardsReceived?, viewCount?,
    *   editedAt?, galleryImageUrls?, redditVideo?, archived?, contestMode?,
    *   isCrosspostable?, isMeta?, isNsfw?, isOriginalContent?, isRobotIndexable?,
-   *   isSelf?, isSpoiler?, isVideo?, locked?, stickied? }. `score` is Reddit's
-   *   public net score. Exact public upvote and downvote counts are not available.
-   *   Estimated counts derive from the public score and upvote ratio, which Reddit
-   *   may fuzz. Comment bodies are not included. Current items combine public
-   *   listing discovery with server-rendered post data and use `sourceFormat: html`;
-   *   `json` and `rss` remain for legacy rows.
-   * - github: { starsToday: number }
-   * - hacker_news: { points: number, numberComments: number }
-   * - google_trends: { approxTraffic: number }
-   * - polymarket: { volume24hr: number }
-   * - wikipedia: { views: number }
+   *   isSelf?, isSpoiler?, isVideo?, locked?, stickied? }.
+   * - github: { starsToday }
+   * - hacker_news: { points, numberComments }
+   * - google_trends: { approxTraffic }
+   * - polymarket: { volume24hr }
+   * - wikipedia: { views }
    * - trustmrr: { mrr, growthPercent, last30Days, total, customers,
    *   activeSubscriptions, onSale, xHandle?, category?, askingPrice?, country?,
    *   foundedDate?, googleSearchImpressionsLast30Days?, growthMrrPercent?,
    *   multiple?, paymentProvider?, profitMarginLast30Days?, rank?,
-   *   revenuePerVisitor?, targetAudience?, visitorsLast30Days? } For the startup
-   *   growth source, xHandle is the founder's X username without @. The rank field
-   *   is the source's revenue rank. Result order represents reported 30-day
-   *   revenue-growth rank.
+   *   revenuePerVisitor?, targetAudience?, visitorsLast30Days? } Reddit score is
+   *   public net. Vote estimates use its fuzzed ratio. Comments are omitted. Startup
+   *   xHandle omits @. rank is its growth rank.
    */
   metadata: RadarItem.Metadata;
 
@@ -100,43 +93,45 @@ export interface RadarItem {
 
 export namespace RadarItem {
   /**
-   * Source-specific fields. Shape varies per source:
-   *
+   * Source fields vary:
    * - reddit: { author, authorId?, subreddit, subredditId?, subredditSubscribers?,
    *   sourceFormat, score?, upvoteRatio?, estimatedUpvotes?, estimatedDownvotes?,
    *   numberComments?, numberCrossposts?, selftext?, contentUrl?, domain?,
    *   postHint?, linkFlairText?, distinguished?, totalAwardsReceived?, viewCount?,
    *   editedAt?, galleryImageUrls?, redditVideo?, archived?, contestMode?,
    *   isCrosspostable?, isMeta?, isNsfw?, isOriginalContent?, isRobotIndexable?,
-   *   isSelf?, isSpoiler?, isVideo?, locked?, stickied? }. `score` is Reddit's
-   *   public net score. Exact public upvote and downvote counts are not available.
-   *   Estimated counts derive from the public score and upvote ratio, which Reddit
-   *   may fuzz. Comment bodies are not included. Current items combine public
-   *   listing discovery with server-rendered post data and use `sourceFormat: html`;
-   *   `json` and `rss` remain for legacy rows.
-   * - github: { starsToday: number }
-   * - hacker_news: { points: number, numberComments: number }
-   * - google_trends: { approxTraffic: number }
-   * - polymarket: { volume24hr: number }
-   * - wikipedia: { views: number }
+   *   isSelf?, isSpoiler?, isVideo?, locked?, stickied? }.
+   * - github: { starsToday }
+   * - hacker_news: { points, numberComments }
+   * - google_trends: { approxTraffic }
+   * - polymarket: { volume24hr }
+   * - wikipedia: { views }
    * - trustmrr: { mrr, growthPercent, last30Days, total, customers,
    *   activeSubscriptions, onSale, xHandle?, category?, askingPrice?, country?,
    *   foundedDate?, googleSearchImpressionsLast30Days?, growthMrrPercent?,
    *   multiple?, paymentProvider?, profitMarginLast30Days?, rank?,
-   *   revenuePerVisitor?, targetAudience?, visitorsLast30Days? } For the startup
-   *   growth source, xHandle is the founder's X username without @. The rank field
-   *   is the source's revenue rank. Result order represents reported 30-day
-   *   revenue-growth rank.
+   *   revenuePerVisitor?, targetAudience?, visitorsLast30Days? } Reddit score is
+   *   public net. Vote estimates use its fuzzed ratio. Comments are omitted. Startup
+   *   xHandle omits @. rank is its growth rank.
    */
   export interface Metadata {
     author?: string;
 
     contentUrl?: string;
 
+    /**
+     * Whole number from 0.
+     */
     estimatedDownvotes?: number;
 
+    /**
+     * Whole number from 0.
+     */
     estimatedUpvotes?: number;
 
+    /**
+     * Whole number from 0.
+     */
     numberComments?: number;
 
     score?: number;
@@ -169,7 +164,8 @@ export interface RadarRetrieveTrendingTopicsResponse {
 
 export interface RadarRetrieveTrendingTopicsParams {
   /**
-   * Cursor for pagination (from prior response nextCursor).
+   * Cursor for pagination, from the prior response's nextCursor. A cursor the radar
+   * can't read gets 400 `invalid_input`.
    */
   after?: string;
 

@@ -16,7 +16,7 @@ import { path } from '../../internal/utils/path';
  */
 export class Tickets extends APIResource {
   /**
-   * Create a support ticket
+   * Creates a support ticket with an initial message.
    *
    * @example
    * ```ts
@@ -45,7 +45,7 @@ export class Tickets extends APIResource {
   }
 
   /**
-   * Get ticket with all messages
+   * Returns one support ticket with its message history.
    *
    * @example
    * ```ts
@@ -59,7 +59,7 @@ export class Tickets extends APIResource {
   }
 
   /**
-   * Update ticket status
+   * Changes the open or closed state of a support ticket.
    *
    * @example
    * ```ts
@@ -74,19 +74,22 @@ export class Tickets extends APIResource {
   }
 
   /**
-   * List user's support tickets
+   * Returns support tickets owned by the authenticated user, latest activity first.
    *
    * @example
    * ```ts
    * const tickets = await client.support.tickets.list();
    * ```
    */
-  list(options?: RequestOptions): APIPromise<TicketListResponse> {
-    return this._client.get('/support/tickets', options);
+  list(
+    query: TicketListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<TicketListResponse> {
+    return this._client.get('/support/tickets', { query, ...options });
   }
 
   /**
-   * Reply to a support ticket
+   * Adds a message to an existing support ticket.
    *
    * @example
    * ```ts
@@ -115,6 +118,9 @@ export class Tickets extends APIResource {
   }
 }
 
+/**
+ * Support submission receipt.
+ */
 export interface TicketCreateResponse {
   attachments: Array<TicketCreateResponse.Attachment>;
 
@@ -202,7 +208,11 @@ export interface TicketUpdateResponse {
 }
 
 export interface TicketListResponse {
+  hasMore: boolean;
+
   tickets: Array<TicketListResponse.Ticket>;
+
+  nextCursor?: string;
 }
 
 export namespace TicketListResponse {
@@ -221,6 +231,9 @@ export namespace TicketListResponse {
   }
 }
 
+/**
+ * Support submission receipt.
+ */
 export interface TicketReplyResponse {
   attachments: Array<TicketReplyResponse.Attachment>;
 
@@ -240,12 +253,12 @@ export namespace TicketReplyResponse {
 
 export interface TicketCreateParams {
   /**
-   * Body param
+   * Body param: Non-empty support message text.
    */
   body: string;
 
   /**
-   * Body param
+   * Body param: Non-empty support ticket subject.
    */
   subject: string;
 
@@ -260,9 +273,23 @@ export interface TicketUpdateParams {
   status: 'open' | 'resolved' | 'closed';
 }
 
+export interface TicketListParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+   * next page.
+   */
+  limit?: number;
+}
+
 export interface TicketReplyParams {
   /**
-   * Body param
+   * Body param: Non-empty support message text.
    */
   body: string;
 
@@ -282,6 +309,7 @@ export declare namespace Tickets {
     type TicketReplyResponse as TicketReplyResponse,
     type TicketCreateParams as TicketCreateParams,
     type TicketUpdateParams as TicketUpdateParams,
+    type TicketListParams as TicketListParams,
     type TicketReplyParams as TicketReplyParams,
   };
 }

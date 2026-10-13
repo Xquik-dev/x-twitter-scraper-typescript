@@ -26,8 +26,7 @@ describe('resource styles', () => {
 
   test('update: only required params', async () => {
     const responsePromise = client.styles.update('id', {
-      label: 'Professional Voice',
-      tweets: [{ text: 'Excited to share our latest research findings.' }],
+      tweets: [{ text: 'Excited to share our latest research.' }],
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -40,8 +39,8 @@ describe('resource styles', () => {
 
   test('update: required and optional params', async () => {
     const response = await client.styles.update('id', {
+      tweets: [{ text: 'Excited to share our latest research.' }],
       label: 'Professional Voice',
-      tweets: [{ text: 'Excited to share our latest research findings.' }],
     });
   });
 
@@ -54,6 +53,13 @@ describe('resource styles', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('list: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.styles.list({ cursor: 'cursor', limit: 1 }, { path: '/_stainless_unknown_path' }),
+    ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
   test('delete', async () => {

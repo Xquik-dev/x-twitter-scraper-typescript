@@ -41,7 +41,8 @@ export class GuestWallets extends APIResource {
   /**
    * Poll after payment. Use usable to decide whether paid reads can run. An active
    * wallet can remain usable while a top-up is pending. A new wallet becomes usable
-   * only after payment is verified. Send the guest key as Authorization: Bearer.
+   * only after payment is verified. Send the guest key as Authorization: Bearer
+   * xq_...
    *
    * @example
    * ```ts
@@ -119,7 +120,7 @@ export interface GuestWalletCreateResponse {
   credential_notice: 'Store api_key and the Idempotency-Key securely before sharing checkout_url. No email recovery is available.';
 
   /**
-   * Usage granted after verified payment.
+   * Credits granted after verified payment.
    */
   credits: string;
 
@@ -164,7 +165,7 @@ export interface GuestWalletRetrieveStatusResponse {
   balance: string;
 
   /**
-   * Latest guest wallet purchase fulfillment state.
+   * Latest purchase state. This does not determine usability.
    */
   latest_purchase: GuestWalletRetrieveStatusResponse.LatestPurchase | null;
 
@@ -229,7 +230,7 @@ export namespace GuestWalletRetrieveStatusResponse {
 }
 
 /**
- * Pending hosted checkout and guest wallet purchase details.
+ * Existing guest wallet top-up response without a new key.
  */
 export interface GuestWalletTopupResponse {
   account_required: false;
@@ -245,7 +246,7 @@ export interface GuestWalletTopupResponse {
   checkout_url: string;
 
   /**
-   * Usage granted after verified payment.
+   * Credits granted after verified payment.
    */
   credits: string;
 
