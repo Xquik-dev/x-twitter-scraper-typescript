@@ -14,14 +14,15 @@ import { path } from '../../internal/utils/path';
  */
 export class AccountConnectionChallenges extends APIResource {
   /**
-   * Submit X account email verification code
+   * Submits the email code requested during X account connection.
    *
    * @example
    * ```ts
    * const response =
-   *   await client.x.accountConnectionChallenges.submit('id', {
-   *     email_code: '<EMAIL_VERIFICATION_CODE>',
-   *   });
+   *   await client.x.accountConnectionChallenges.submit(
+   *     'xch_AbCdEfGhIjKlMnOp',
+   *     { email_code: '<EMAIL_VERIFICATION_CODE>' },
+   *   );
    * ```
    */
   submit(
@@ -36,18 +37,45 @@ export class AccountConnectionChallenges extends APIResource {
 /**
  * Sanitized X account summary returned by connect and reauth.
  */
-export interface AccountConnectionChallengeSubmitResponse {
-  id: string;
+export type AccountConnectionChallengeSubmitResponse =
+  | AccountConnectionChallengeSubmitResponse.SanitizedXAccount
+  | AccountConnectionChallengeSubmitResponse.XAccountConnectionChallenge;
 
-  createdAt: string;
+export namespace AccountConnectionChallengeSubmitResponse {
+  /**
+   * Sanitized X account summary returned by connect and reauth.
+   */
+  export interface SanitizedXAccount {
+    id: string;
 
-  health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
+    createdAt: string;
 
-  status: 'active';
+    health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
 
-  xUserId: string;
+    status: 'active';
 
-  xUsername: string;
+    xUserId: string;
+
+    xUsername: string;
+  }
+
+  /**
+   * Resumable account connection challenge. Submit the email code to finish the same
+   * connection attempt.
+   */
+  export interface XAccountConnectionChallenge {
+    id: string;
+
+    expiresAt: string;
+
+    message: string;
+
+    object: 'x_account_connection_challenge';
+
+    status: 'requires_email_code';
+
+    username: string;
+  }
 }
 
 export interface AccountConnectionChallengeSubmitParams {

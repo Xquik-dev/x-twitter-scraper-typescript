@@ -14,7 +14,7 @@ import { path } from '../../internal/utils/path';
  */
 export class WriteActions extends APIResource {
   /**
-   * Get write action status
+   * Returns the current state of an asynchronous write action.
    *
    * @example
    * ```ts
@@ -29,9 +29,9 @@ export class WriteActions extends APIResource {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface WriteActionRetrieveResponse {
   id: string;
@@ -52,6 +52,7 @@ export interface WriteActionRetrieveResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -96,7 +97,7 @@ export interface WriteActionRetrieveResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -152,6 +153,10 @@ export interface WriteActionRetrieveResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -228,6 +233,9 @@ export namespace WriteActionRetrieveResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;

@@ -8,12 +8,20 @@ export {
   Communities,
   type CommunityCreateResponse,
   type CommunityDeleteResponse,
+  type CommunityListSuggestedResponse,
+  type CommunityListTopicsResponse,
   type CommunityRetrieveInfoResponse,
   type CommunityCreateParams,
   type CommunityDeleteParams,
+  type CommunityFindParams,
+  type CommunityListPopularParams,
+  type CommunityListSuggestedParams,
+  type CommunityListTopicsParams,
+  type CommunityRetrieveInfoParams,
   type CommunityRetrieveMembersParams,
   type CommunityRetrieveModeratorsParams,
   type CommunityRetrieveSearchParams,
+  type CommunitySearchMembersParams,
 } from './communities';
 export {
   Join,
@@ -22,4 +30,5 @@ export {
   type JoinCreateParams,
   type JoinDeleteAllParams,
 } from './join';
+export { Media, type MediaListParams } from './media';
 export { Tweets, type TweetListParams, type TweetListByCommunityParams } from './tweets';

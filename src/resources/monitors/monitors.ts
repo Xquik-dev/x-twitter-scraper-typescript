@@ -11,6 +11,7 @@ import {
   KeywordCreateParams,
   KeywordCreateResponse,
   KeywordDeactivateResponse,
+  KeywordListParams,
   KeywordListResponse,
   KeywordRetrieveResponse,
   KeywordUpdateParams,
@@ -28,16 +29,16 @@ export class Monitors extends APIResource {
   keywords: KeywordsAPI.Keywords = new KeywordsAPI.Keywords(this._client);
 
   /**
-   * Creates an account monitor. Monitors are unlimited. Active monitors check every
-   * 1 second and cost 21 credits per hour. Events and webhook deliveries are
-   * included. Creation requires available credits for the first hourly charge and
-   * username lookup.
+   * Creates an account monitor, with no count limit. Active monitors check every
+   * second for 30 credits an hour, events & webhook deliveries included. That hourly
+   * price is a monitor's only charge. Creation needs the credits of the first hour.
    *
    * @example
    * ```ts
    * const monitor = await client.monitors.create({
    *   eventTypes: ['tweet.new', 'tweet.reply'],
    *   username: 'elonmusk',
+   *   name: 'Launch watch',
    * });
    * ```
    */
@@ -46,7 +47,7 @@ export class Monitors extends APIResource {
   }
 
   /**
-   * Get monitor
+   * Returns configuration and status for one account monitor.
    *
    * @example
    * ```ts
@@ -58,13 +59,14 @@ export class Monitors extends APIResource {
   }
 
   /**
-   * Update monitor
+   * Updates mutable settings for an existing account monitor.
    *
    * @example
    * ```ts
    * const monitor = await client.monitors.update('id', {
    *   eventTypes: ['tweet.new'],
    *   isActive: true,
+   *   name: 'Launch watch',
    * });
    * ```
    */
@@ -73,19 +75,23 @@ export class Monitors extends APIResource {
   }
 
   /**
-   * List monitors
+   * Returns account monitors with their current operating states.
    *
    * @example
    * ```ts
    * const monitors = await client.monitors.list();
    * ```
    */
-  list(options?: RequestOptions): APIPromise<MonitorListResponse> {
-    return this._client.get('/monitors', options);
+  list(
+    query: MonitorListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<MonitorListResponse> {
+    return this._client.get('/monitors', { query, ...options });
   }
 
   /**
-   * Delete monitor
+   * Stops one account monitor, then removes its stored events in bounded batches.
+   * Poll statusUrl until the monitor returns 404.
    *
    * @example
    * ```ts
@@ -113,13 +119,18 @@ export interface Monitor {
   isActive: boolean;
 
   /**
-   * Next hourly usage charge time for this account monitor.
+   * Next hourly credit charge time for this account monitor.
    */
   nextBillingAt: string;
 
   username: string;
 
   xUserId: string;
+
+  /**
+   * Customer-set label of the account monitor, when set.
+   */
+  name?: string;
 
   /**
    * When Xquik automatically paused this monitor.
@@ -129,7 +140,7 @@ export interface Monitor {
   /**
    * Why Xquik automatically paused this monitor.
    */
-  pausedReason?: 'x_user_not_found';
+  pausedReason?: 'x_account_protected' | 'x_user_not_found';
 }
 
 export interface MonitorCreateResponse {
@@ -145,7 +156,7 @@ export interface MonitorCreateResponse {
   isActive: boolean;
 
   /**
-   * Next hourly usage charge time. New active monitors are due immediately.
+   * Next hourly credit charge time. New active monitors are due immediately.
    */
   nextBillingAt: string;
 
@@ -155,12 +166,26 @@ export interface MonitorCreateResponse {
 }
 
 export interface MonitorListResponse {
+  hasMore: boolean;
+
   monitors: Array<Monitor>;
 
+  /**
+   * Account monitors on this page.
+   */
   total: number;
+
+  nextCursor?: string;
 }
 
 export interface MonitorDeactivateResponse {
+  deletionStatus: 'deleting';
+
+  /**
+   * Poll this monitor URL until it returns 404.
+   */
+  statusUrl: string;
+
   success: true;
 }
 
@@ -171,9 +196,15 @@ export interface MonitorCreateParams {
   eventTypes: Array<Shared.EventType>;
 
   /**
-   * X username (without @)
+   * X username to monitor, with or without @
    */
   username: string;
+
+  /**
+   * Your label for the monitor. Its events carry it as monitorName. Whitespace is
+   * normalized.
+   */
+  name?: string;
 }
 
 export interface MonitorUpdateParams {
@@ -183,6 +214,25 @@ export interface MonitorUpdateParams {
   eventTypes?: Array<Shared.EventType>;
 
   isActive?: boolean;
+
+  /**
+   * New label for the account monitor. Send null to remove the label.
+   */
+  name?: string | null;
+}
+
+export interface MonitorListParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+   * next page.
+   */
+  limit?: number;
 }
 
 Monitors.Keywords = Keywords;
@@ -195,6 +245,7 @@ export declare namespace Monitors {
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
     type MonitorCreateParams as MonitorCreateParams,
     type MonitorUpdateParams as MonitorUpdateParams,
+    type MonitorListParams as MonitorListParams,
   };
 
   export {
@@ -206,5 +257,6 @@ export declare namespace Monitors {
     type KeywordDeactivateResponse as KeywordDeactivateResponse,
     type KeywordCreateParams as KeywordCreateParams,
     type KeywordUpdateParams as KeywordUpdateParams,
+    type KeywordListParams as KeywordListParams,
   };
 }

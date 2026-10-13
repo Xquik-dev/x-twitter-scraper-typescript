@@ -256,3 +256,53 @@ describe('Stream', () => {
     expect(await collect(Stream.fromReadableStream(lines, new AbortController()))).toEqual([]);
   });
 });
+
+describe('events.stream', () => {
+  function streamingClient(requests: Request[], chunks: string[]): XTwitterScraper {
+    return new XTwitterScraper({
+      apiKey: 'My API Key',
+      baseURL: 'https://example.com/api/v1',
+      fetch: async (input, init) => {
+        requests.push(new Request(input, init));
+        return sseResponse(chunks);
+      },
+    });
+  }
+
+  test('sends an event-stream request and yields each event', async () => {
+    const requests: Request[] = [];
+    const client = streamingClient(requests, [
+      ': idle\n\n',
+      'id: 42\nevent: tweet.new\ndata: {"id":"42","type":"tweet.new","monitorId":"7","monitorType":"account","occurredAt":"2025-01-15T12:00:00.000Z","data":{}}\n\n',
+    ]);
+
+    const stream = await client.events.stream();
+    const events = await collect(stream);
+
+    expect(events).toEqual([
+      {
+        id: '42',
+        type: 'tweet.new',
+        monitorId: '7',
+        monitorType: 'account',
+        occurredAt: '2025-01-15T12:00:00.000Z',
+        data: {},
+      },
+    ]);
+    expect(requests).toHaveLength(1);
+    expect(requests[0]!.method).toBe('GET');
+    expect(requests[0]!.url).toBe('https://example.com/api/v1/events/stream');
+    expect(requests[0]!.headers.get('accept')).toBe('text/event-stream');
+    expect(requests[0]!.headers.has('last-event-id')).toBe(false);
+  });
+
+  test('resumes after the last event ID', async () => {
+    const requests: Request[] = [];
+    const client = streamingClient(requests, []);
+
+    const stream = await client.events.stream({ 'Last-Event-ID': '42' });
+
+    expect(await collect(stream)).toEqual([]);
+    expect(requests[0]!.headers.get('last-event-id')).toBe('42');
+  });
+});

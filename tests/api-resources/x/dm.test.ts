@@ -13,6 +13,29 @@ const client = new XTwitterScraper({
 });
 
 describe('resource dm', () => {
+  test('deleteMessage: only required params', async () => {
+    const responsePromise = client.x.dm.deleteMessage('321669910225', {
+      userId: 'userId',
+      account: 'account',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('deleteMessage: required and optional params', async () => {
+    const response = await client.x.dm.deleteMessage('321669910225', {
+      userId: 'userId',
+      account: 'account',
+      'Idempotency-Key': 'Idempotency-Key',
+    });
+  });
+
   test('retrieveHistory: only required params', async () => {
     const responsePromise = client.x.dm.retrieveHistory('userId', { account: 'account' });
     const rawResponse = await responsePromise.asResponse();

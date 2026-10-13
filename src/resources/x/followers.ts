@@ -13,7 +13,8 @@ import { RequestOptions } from '../../internal/request-options';
  */
 export class Followers extends APIResource {
   /**
-   * Check if one user follows another
+   * Returns whether one public account follows another, & the reverse, with each
+   * account's username & user ID as X names them.
    *
    * @example
    * ```ts
@@ -35,19 +36,50 @@ export interface FollowerCheckResponse {
 
   sourceUsername: string;
 
+  /**
+   * The target account's username, in lower case.
+   */
   targetUsername: string;
+
+  /**
+   * The source account's user ID, as X gives it.
+   */
+  sourceId?: string;
+
+  /**
+   * The target account's user ID, as X gives it.
+   */
+  targetId?: string;
 }
 
 export interface FollowerCheckParams {
   /**
-   * Source username, @username, or X or Twitter profile URL
+   * Source user ID, username, @username, or X or Twitter profile URL, such as
+   * x.com/i/user/11348282. A number is a user ID.
    */
   source: string;
 
   /**
-   * Target username, @username, or X or Twitter profile URL
+   * Target user ID, username, @username, or X or Twitter profile URL, such as
+   * x.com/i/user/11348282. A number is a user ID.
    */
   target: string;
+
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+   * author.username. A list keeps the field in each item. Case & underscores do not
+   * matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+   * always stay. An unknown name answers 400 unknown_field with the valid names,
+   * before any read. The price stays the same. SDK row types then hold only the
+   * named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
 }
 
 export declare namespace Followers {

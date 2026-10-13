@@ -74,6 +74,7 @@ describe('resource draws', () => {
       requiredMentions: ['@elonmusk'],
       uniqueAuthorsOnly: true,
       winnerCount: 3,
+      'Idempotency-Key': 'Idempotency-Key',
     });
   });
 });

@@ -15,15 +15,16 @@ import { path } from '../../internal/utils/path';
  */
 export class Keywords extends APIResource {
   /**
-   * Creates a keyword monitor. Keyword monitors are unlimited. Active monitors check
-   * every 1 second and cost 21 credits per hour. Events and webhook deliveries are
-   * included. Creation requires available credits for the first hourly charge.
+   * Creates a keyword monitor, with no count limit. Active monitors check every
+   * second for 30 credits an hour, events & webhook deliveries included. That hourly
+   * price is a monitor's only charge. Creation needs the credits of the first hour.
    *
    * @example
    * ```ts
    * const keyword = await client.monitors.keywords.create({
    *   eventTypes: ['tweet.new'],
    *   query: 'xquik OR "x api"',
+   *   name: 'Launch mentions',
    * });
    * ```
    */
@@ -32,7 +33,7 @@ export class Keywords extends APIResource {
   }
 
   /**
-   * Get keyword monitor
+   * Returns configuration and status for one keyword monitor.
    *
    * @example
    * ```ts
@@ -46,13 +47,17 @@ export class Keywords extends APIResource {
   }
 
   /**
-   * Update keyword monitor
+   * Updates mutable settings for an existing keyword monitor.
    *
    * @example
    * ```ts
    * const keyword = await client.monitors.keywords.update(
    *   'id',
-   *   { eventTypes: ['tweet.new'], isActive: true },
+   *   {
+   *     eventTypes: ['tweet.new'],
+   *     isActive: true,
+   *     name: 'Launch mentions',
+   *   },
    * );
    * ```
    */
@@ -61,19 +66,23 @@ export class Keywords extends APIResource {
   }
 
   /**
-   * List keyword monitors
+   * Returns keyword monitors with their current operating states.
    *
    * @example
    * ```ts
    * const keywords = await client.monitors.keywords.list();
    * ```
    */
-  list(options?: RequestOptions): APIPromise<KeywordListResponse> {
-    return this._client.get('/monitors/keywords', options);
+  list(
+    query: KeywordListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<KeywordListResponse> {
+    return this._client.get('/monitors/keywords', { query, ...options });
   }
 
   /**
-   * Delete keyword monitor
+   * Stops one keyword monitor, then removes its stored events in bounded batches.
+   * Poll statusUrl until the monitor returns 404.
    *
    * @example
    * ```ts
@@ -103,11 +112,16 @@ export interface KeywordCreateResponse {
   isActive: boolean;
 
   /**
-   * Next hourly usage charge time for this keyword query monitor.
+   * Next hourly credit charge time for this keyword query monitor.
    */
   nextBillingAt: string;
 
   query: string;
+
+  /**
+   * Customer-set label of the keyword monitor, when set.
+   */
+  name?: string;
 }
 
 /**
@@ -126,11 +140,16 @@ export interface KeywordRetrieveResponse {
   isActive: boolean;
 
   /**
-   * Next hourly usage charge time for this keyword query monitor.
+   * Next hourly credit charge time for this keyword query monitor.
    */
   nextBillingAt: string;
 
   query: string;
+
+  /**
+   * Customer-set label of the keyword monitor, when set.
+   */
+  name?: string;
 }
 
 /**
@@ -149,17 +168,29 @@ export interface KeywordUpdateResponse {
   isActive: boolean;
 
   /**
-   * Next hourly usage charge time for this keyword query monitor.
+   * Next hourly credit charge time for this keyword query monitor.
    */
   nextBillingAt: string;
 
   query: string;
+
+  /**
+   * Customer-set label of the keyword monitor, when set.
+   */
+  name?: string;
 }
 
 export interface KeywordListResponse {
+  hasMore: boolean;
+
   monitors: Array<KeywordListResponse.Monitor>;
 
+  /**
+   * Keyword monitors on this page.
+   */
   total: number;
+
+  nextCursor?: string;
 }
 
 export namespace KeywordListResponse {
@@ -179,15 +210,27 @@ export namespace KeywordListResponse {
     isActive: boolean;
 
     /**
-     * Next hourly usage charge time for this keyword query monitor.
+     * Next hourly credit charge time for this keyword query monitor.
      */
     nextBillingAt: string;
 
     query: string;
+
+    /**
+     * Customer-set label of the keyword monitor, when set.
+     */
+    name?: string;
   }
 }
 
 export interface KeywordDeactivateResponse {
+  deletionStatus: 'deleting';
+
+  /**
+   * Poll this monitor URL until it returns 404.
+   */
+  statusUrl: string;
+
   success: true;
 }
 
@@ -201,6 +244,11 @@ export interface KeywordCreateParams {
    * X search query to monitor. Whitespace is normalized.
    */
   query: string;
+
+  /**
+   * Your own label for the keyword monitor. Its events carry it as monitorName.
+   */
+  name?: string;
 }
 
 export interface KeywordUpdateParams {
@@ -210,6 +258,25 @@ export interface KeywordUpdateParams {
   eventTypes?: Array<Shared.EventType>;
 
   isActive?: boolean;
+
+  /**
+   * New label for the keyword monitor. Send null to remove it.
+   */
+  name?: string | null;
+}
+
+export interface KeywordListParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+   * next page.
+   */
+  limit?: number;
 }
 
 export declare namespace Keywords {
@@ -221,5 +288,6 @@ export declare namespace Keywords {
     type KeywordDeactivateResponse as KeywordDeactivateResponse,
     type KeywordCreateParams as KeywordCreateParams,
     type KeywordUpdateParams as KeywordUpdateParams,
+    type KeywordListParams as KeywordListParams,
   };
 }

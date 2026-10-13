@@ -14,7 +14,8 @@ import { RequestOptions } from '../../internal/request-options';
  */
 export class Bookmarks extends APIResource {
   /**
-   * Get bookmarked tweets
+   * Returns your X account's bookmarks, else 424 `account_required`. A folder needs
+   * X Premium, else 424 `bookmark_folders_unavailable`.
    *
    * @example
    * ```ts
@@ -29,15 +30,19 @@ export class Bookmarks extends APIResource {
   }
 
   /**
-   * Get bookmark folders
+   * Returns your X account's bookmark folders, else 424 `account_required`. Folders
+   * need X Premium, else 424 `bookmark_folders_unavailable`.
    *
    * @example
    * ```ts
    * const response = await client.x.bookmarks.retrieveFolders();
    * ```
    */
-  retrieveFolders(options?: RequestOptions): APIPromise<BookmarkRetrieveFoldersResponse> {
-    return this._client.get('/x/bookmarks/folders', options);
+  retrieveFolders(
+    query: BookmarkRetrieveFoldersParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<BookmarkRetrieveFoldersResponse> {
+    return this._client.get('/x/bookmarks/folders', { query, ...options });
   }
 }
 
@@ -45,39 +50,128 @@ export interface BookmarkRetrieveFoldersResponse {
   folders: Array<BookmarkRetrieveFoldersResponse.Folder>;
 
   /**
-   * Always false for the current bookmark folder route
+   * Whether another folder page is available
    */
   has_next_page: boolean;
 
   /**
-   * Always empty for the current bookmark folder route
+   * Cursor for the next folder page
    */
   next_cursor: string;
 }
 
 export namespace BookmarkRetrieveFoldersResponse {
+  /**
+   * Bookmark folder and its optional public cover image.
+   */
   export interface Folder {
+    /**
+     * Folder ID.
+     */
     id: string;
 
-    name: string;
+    /**
+     * Public folder cover image metadata.
+     */
+    media?: Folder.Media;
+
+    /**
+     * Folder name.
+     */
+    name?: string;
+  }
+
+  export namespace Folder {
+    /**
+     * Public folder cover image metadata.
+     */
+    export interface Media {
+      /**
+       * Media object ID.
+       */
+      id?: string;
+
+      /**
+       * Media ID.
+       */
+      mediaId?: string;
+
+      /**
+       * Stable media key.
+       */
+      mediaKey?: string;
+
+      /**
+       * Original image height.
+       */
+      originalImageHeight?: number;
+
+      /**
+       * Original image URL.
+       */
+      originalImageUrl?: string;
+
+      /**
+       * Original image width.
+       */
+      originalImageWidth?: number;
+
+      /**
+       * Dominant image colors and their proportions.
+       */
+      palette?: Array<Media.Palette>;
+
+      /**
+       * Media object type.
+       */
+      type?: string;
+    }
+
+    export namespace Media {
+      export interface Palette {
+        percentage?: number;
+
+        rgb?: Palette.Rgb;
+      }
+
+      export namespace Palette {
+        export interface Rgb {
+          blue?: number;
+
+          green?: number;
+
+          red?: number;
+        }
+      }
+    }
   }
 }
 
 export interface BookmarkListParams {
   /**
-   * Pagination cursor for bookmarks
+   * Pagination cursor for bookmarks. Also read as next_cursor, next_token,
+   * pagination_token or continuation_token.
    */
   cursor?: string;
 
   /**
-   * Optional bookmark folder ID
+   * Optional bookmark folder ID. Folders need X Premium.
    */
   folderId?: string;
+}
+
+export interface BookmarkRetrieveFoldersParams {
+  /**
+   * Pagination cursor for collection results. Also read as next_cursor, next_token,
+   * pagination_token or continuation_token.
+   */
+  cursor?: string;
 }
 
 export declare namespace Bookmarks {
   export {
     type BookmarkRetrieveFoldersResponse as BookmarkRetrieveFoldersResponse,
     type BookmarkListParams as BookmarkListParams,
+    type BookmarkRetrieveFoldersParams as BookmarkRetrieveFoldersParams,
   };
 }

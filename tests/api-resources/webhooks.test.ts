@@ -56,6 +56,34 @@ describe('resource webhooks', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
+  test('list: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.webhooks.list({ cursor: 'cursor', limit: 1 }, { path: '/_stainless_unknown_path' }),
+    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
+  test('createTelegramLink', async () => {
+    const responsePromise = client.webhooks.createTelegramLink();
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('createTelegramLink: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.webhooks.createTelegramLink(
+        { eventTypes: ['tweet.new', 'tweet.reply'] },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
   test('deactivate', async () => {
     const responsePromise = client.webhooks.deactivate('id');
     const rawResponse = await responsePromise.asResponse();
@@ -76,6 +104,17 @@ describe('resource webhooks', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('listDeliveries: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.webhooks.listDeliveries(
+        'id',
+        { cursor: 'cursor', limit: 1 },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(XTwitterScraper.NotFoundError);
   });
 
   test('resume', async () => {

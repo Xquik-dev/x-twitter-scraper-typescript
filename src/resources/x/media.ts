@@ -12,7 +12,7 @@ import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
 
 export class Media extends APIResource {
   /**
-   * Download images and videos from tweets
+   * Downloads images and videos attached to selected tweets.
    *
    * @example
    * ```ts
@@ -26,7 +26,7 @@ export class Media extends APIResource {
   }
 
   /**
-   * Upload media
+   * Uploads media and returns an identifier for later writes.
    *
    * @example
    * ```ts
@@ -66,9 +66,9 @@ export interface MediaDownloadResponse {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface MediaUploadResponse {
   id: string;
@@ -89,6 +89,7 @@ export interface MediaUploadResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -133,7 +134,7 @@ export interface MediaUploadResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -189,6 +190,10 @@ export interface MediaUploadResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -265,6 +270,9 @@ export namespace MediaUploadResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -315,7 +323,8 @@ export interface MediaDownloadParams {
   tweetId?: string;
 
   /**
-   * Array of tweet URLs or IDs (bulk, max 50 string items)
+   * Up to 50 tweet URLs or IDs. An item that names no post gets 400
+   * `invalid_tweet_id`, which says which item.
    */
   tweetIds?: Array<string>;
 
@@ -337,15 +346,18 @@ export interface MediaUploadParams {
   account: string;
 
   /**
-   * Body param: HTTPS URL to download and upload as media
+   * Body param: HTTPS URL to download and upload as media, up to 15 MB. Another
+   * scheme gets 400 `invalid_media_url`.
    */
   url: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }

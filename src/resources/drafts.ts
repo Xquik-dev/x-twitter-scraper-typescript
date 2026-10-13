@@ -15,7 +15,7 @@ import { path } from '../internal/utils/path';
  */
 export class Drafts extends APIResource {
   /**
-   * Save a tweet draft
+   * Stores a private Xquik draft. It never publishes or creates native X drafts.
    *
    * @example
    * ```ts
@@ -31,7 +31,7 @@ export class Drafts extends APIResource {
   }
 
   /**
-   * Get draft by ID
+   * Returns one private Xquik draft. Native X drafts remain inaccessible.
    *
    * @example
    * ```ts
@@ -43,7 +43,7 @@ export class Drafts extends APIResource {
   }
 
   /**
-   * List saved drafts
+   * Lists private Xquik drafts. It cannot access native X drafts.
    *
    * @example
    * ```ts
@@ -58,7 +58,7 @@ export class Drafts extends APIResource {
   }
 
   /**
-   * Delete a draft
+   * Deletes one Xquik draft, not native X drafts or published posts.
    *
    * @example
    * ```ts
@@ -74,7 +74,7 @@ export class Drafts extends APIResource {
 }
 
 /**
- * Saved tweet draft with optional topic and goal.
+ * Private Xquik draft with optional topic and goal.
  */
 export interface Draft {
   id: string;
@@ -89,20 +89,10 @@ export interface Draft {
 }
 
 /**
- * Full tweet draft including update timestamp.
+ * Full private Xquik draft including update timestamp.
  */
-export interface DraftDetail {
-  id: string;
-
-  createdAt: string;
-
-  text: string;
-
+export interface DraftDetail extends Draft {
   updatedAt: string;
-
-  goal?: string;
-
-  topic?: string;
 }
 
 export interface DraftListResponse {
@@ -114,6 +104,9 @@ export interface DraftListResponse {
 }
 
 export interface DraftCreateParams {
+  /**
+   * Draft text, up to 25,000 characters. An emoji counts as 2.
+   */
   text: string;
 
   goal?: 'engagement' | 'followers' | 'authority' | 'conversation';
@@ -123,15 +116,13 @@ export interface DraftCreateParams {
 
 export interface DraftListParams {
   /**
-   * Cursor for pagination
+   * Cursor for pagination. The after alias also works.
    */
   afterCursor?: string;
 
   /**
-   * Maximum number of items to return (1-100, default 50). For paid per-result
-   * endpoints, the returned count may be lower when available usage balance cannot cover
-   * the requested page. If zero paid results are affordable, the endpoint returns
-   * 402 insufficient_credits.
+   * Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+   * With none affordable, it returns 402 insufficient_credits.
    */
   limit?: number;
 }

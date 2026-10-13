@@ -9,7 +9,7 @@ import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
 /**
- * Subscription, billing, and usage balance
+ * Subscription, billing, and credits
  */
 export class Subscribe extends APIResource {
   /**

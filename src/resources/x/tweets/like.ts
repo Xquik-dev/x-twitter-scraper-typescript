@@ -15,7 +15,7 @@ import { path } from '../../../internal/utils/path';
  */
 export class Like extends APIResource {
   /**
-   * Like tweet
+   * Likes a post through a connected X account.
    *
    * @example
    * ```ts
@@ -35,7 +35,7 @@ export class Like extends APIResource {
   }
 
   /**
-   * Unlike tweet
+   * Removes a like through a connected X account.
    *
    * @example
    * ```ts
@@ -56,9 +56,9 @@ export class Like extends APIResource {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface LikeCreateResponse {
   id: string;
@@ -79,6 +79,7 @@ export interface LikeCreateResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -123,7 +124,7 @@ export interface LikeCreateResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -179,6 +180,10 @@ export interface LikeCreateResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -255,6 +260,9 @@ export namespace LikeCreateResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -299,9 +307,9 @@ export namespace LikeCreateResponse {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface LikeDeleteResponse {
   id: string;
@@ -322,6 +330,7 @@ export interface LikeDeleteResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -366,7 +375,7 @@ export interface LikeDeleteResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -422,6 +431,10 @@ export interface LikeDeleteResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -498,6 +511,9 @@ export namespace LikeDeleteResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -548,10 +564,12 @@ export interface LikeCreateParams {
   account: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }
@@ -563,10 +581,12 @@ export interface LikeDeleteParams {
   account: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }

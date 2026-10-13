@@ -13,10 +13,8 @@ import { RequestOptions } from '../internal/request-options';
  */
 export class Compose extends APIResource {
   /**
-   * Run one step of Xquik's three-step writing workflow. Compose returns questions,
-   * editorial rules, and source-specific Radar recommendations. Refine returns
-   * goal-specific guidance. Score applies deterministic text checks. It does not
-   * predict reach or expose X ranking weights.
+   * Uses xai-org/x-algorithm facts to compose and refine text. Score checks text. It
+   * never predicts reach or engagement.
    *
    * @example
    * ```ts
@@ -24,6 +22,7 @@ export class Compose extends APIResource {
    *   step: 'compose',
    *   topic: 'PostgreSQL query planning',
    *   goal: 'engagement',
+   *   styleUsername: 'example_user',
    * });
    * ```
    */
@@ -32,20 +31,26 @@ export class Compose extends APIResource {
   }
 }
 
+/**
+ * Rules, questions, and research guidance for drafting a post.
+ */
 export type ComposeCreateResponse =
   | ComposeCreateResponse.ComposePrepareResult
   | ComposeCreateResponse.ComposeRefineResult
   | ComposeCreateResponse.ComposeScoreResult;
 
 export namespace ComposeCreateResponse {
+  /**
+   * Rules, questions, and research guidance for drafting a post.
+   */
   export interface ComposePrepareResult {
     /**
-     * Xquik editorial heuristics, ordered for the goal.
+     * Facts derived only from xai-org/x-algorithm.
      */
     contentRules: Array<ComposePrepareResult.ContentRule>;
 
     /**
-     * Published engagement signal names. Production multipliers are not published.
+     * Source ranking signals. Repository defaults may vary in production.
      */
     engagementMultipliers: Array<ComposePrepareResult.EngagementMultiplier>;
 
@@ -64,12 +69,14 @@ export namespace ComposeCreateResponse {
     nextStep: string;
 
     /**
-     * Sources and guidance for researching a fresh post angle.
+     * Deprecated compatibility field. Always empty.
+     *
+     * @deprecated
      */
     radarRecommendations: Array<ComposePrepareResult.RadarRecommendation>;
 
     /**
-     * Published signal names with unpublished weights as null.
+     * Source signals with production values withheld as null.
      */
     scorerWeights: Array<ComposePrepareResult.ScorerWeight>;
 
@@ -100,19 +107,30 @@ export namespace ComposeCreateResponse {
   }
 
   export namespace ComposePrepareResult {
+    /**
+     * One source-backed ranking fact returned during preparation.
+     */
     export interface ContentRule {
       rule: string;
     }
 
+    /**
+     * One ranking signal and its source-value limit.
+     */
     export interface EngagementMultiplier {
       /**
        * Human-readable published signal name.
        */
       action: string;
 
-      multiplier: 'Production weight not published by X';
+      multiplier: 'Source default; production value can vary';
     }
 
+    /**
+     * Deprecated compatibility schema. The response array is empty.
+     *
+     * @deprecated
+     */
     export interface RadarRecommendation {
       /**
        * Radar endpoint for this source.
@@ -132,9 +150,12 @@ export namespace ComposeCreateResponse {
       useFor: string;
     }
 
+    /**
+     * One source ranking signal without a production claim.
+     */
     export interface ScorerWeight {
       /**
-       * Signal direction and publication limit.
+       * Signal direction and production limit.
        */
       context: string;
 
@@ -144,28 +165,40 @@ export namespace ComposeCreateResponse {
       signal: string;
 
       /**
-       * X does not publish the production weight.
+       * Null prevents source defaults becoming production claims.
        */
       weight: null;
     }
 
+    /**
+     * A saved username style and analyzed post count.
+     */
     export interface SavedStyle {
+      /**
+       * Whole number from 0.
+       */
       tweetCount: number;
 
       username: string;
     }
   }
 
+  /**
+   * Source-backed guidance for refining a post.
+   */
   export interface ComposeRefineResult {
     /**
-     * Goal, tone, media, and editorial guidance.
+     * Request context and xai-org/x-algorithm guidance.
      */
     compositionGuidance: Array<string>;
 
+    /**
+     * @deprecated
+     */
     examplePatterns: Array<ComposeRefineResult.ExamplePattern>;
 
     /**
-     * X post intent seeded with the topic.
+     * X post intent generated for the refined topic.
      */
     intentUrl: string;
 
@@ -173,6 +206,11 @@ export namespace ComposeCreateResponse {
   }
 
   export namespace ComposeRefineResult {
+    /**
+     * Deprecated example-pattern schema. The response array is empty.
+     *
+     * @deprecated
+     */
     export interface ExamplePattern {
       description: string;
 
@@ -180,9 +218,12 @@ export namespace ComposeCreateResponse {
     }
   }
 
+  /**
+   * Posting validation without a fabricated ranking score.
+   */
   export interface ComposeScoreResult {
     /**
-     * Deterministic editorial checks. Not a reach prediction.
+     * Deterministic input validation. Not a reach prediction.
      */
     checklist: Array<ComposeScoreResult.Checklist>;
 
@@ -194,7 +235,7 @@ export namespace ComposeCreateResponse {
 
     topSuggestion: string;
 
-    totalChecks: 9;
+    totalChecks: 1;
 
     /**
      * Present only when every check passes.
@@ -203,6 +244,9 @@ export namespace ComposeCreateResponse {
   }
 
   export namespace ComposeScoreResult {
+    /**
+     * One deterministic draft check.
+     */
     export interface Checklist {
       factor: string;
 
@@ -216,12 +260,18 @@ export namespace ComposeCreateResponse {
   }
 }
 
+/**
+ * Inputs for preparing source-backed post guidance.
+ */
 export type ComposeCreateParams =
   | ComposeCreateParams.ComposePrepareRequest
   | ComposeCreateParams.ComposeRefineRequest
   | ComposeCreateParams.ComposeScoreRequest;
 
 export declare namespace ComposeCreateParams {
+  /**
+   * Inputs for preparing source-backed post guidance.
+   */
   export interface ComposePrepareRequest {
     step: 'compose';
 
@@ -231,7 +281,7 @@ export declare namespace ComposeCreateParams {
     topic: string;
 
     /**
-     * Editorial goal used to order the rules and questions.
+     * User goal used for one follow-up question.
      */
     goal?: 'engagement' | 'followers' | 'authority' | 'conversation';
 
@@ -243,9 +293,12 @@ export declare namespace ComposeCreateParams {
     [k: string]: unknown;
   }
 
+  /**
+   * Inputs for refining a post plan.
+   */
   export interface ComposeRefineRequest {
     /**
-     * Editorial goal for the guidance.
+     * User goal interpreted against published ranking signals.
      */
     goal: 'engagement' | 'followers' | 'authority' | 'conversation';
 
@@ -257,7 +310,7 @@ export declare namespace ComposeCreateParams {
     tone: string;
 
     /**
-     * Subject for the post.
+     * Subject to refine into a post.
      */
     topic: string;
 
@@ -279,21 +332,24 @@ export declare namespace ComposeCreateParams {
     [k: string]: unknown;
   }
 
+  /**
+   * Inputs for checking a post draft.
+   */
   export interface ComposeScoreRequest {
     /**
-     * Full post text for deterministic editorial checks.
+     * Full post text. The endpoint never assigns a ranking score.
      */
     draft: string;
 
     step: 'score';
 
     /**
-     * True when a separate link card is attached.
+     * @deprecated Ignored. Remove this field.
      */
     hasLink?: boolean;
 
     /**
-     * @deprecated Ignored. Remove this field. Use hasLink for a separate link card.
+     * @deprecated Ignored. Remove this field.
      */
     hasMedia?: boolean;
 

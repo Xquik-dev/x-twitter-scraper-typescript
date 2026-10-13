@@ -59,8 +59,16 @@ import {
   Draws,
   Winner,
 } from './resources/draws';
-import { Event, EventDetail, EventListParams, EventListResponse, Events } from './resources/events';
 import {
+  Event,
+  EventDetail,
+  EventListParams,
+  EventListResponse,
+  EventStreamParams,
+  Events,
+} from './resources/events';
+import {
+  ExtractionCancelResponse,
   ExtractionEstimateCostParams,
   ExtractionEstimateCostResponse,
   ExtractionExportResultsParams,
@@ -93,6 +101,7 @@ import {
   StyleCompareParams,
   StyleCompareResponse,
   StyleGetPerformanceResponse,
+  StyleListParams,
   StyleListResponse,
   StyleProfile,
   StyleProfileSummary,
@@ -106,8 +115,12 @@ import {
   Webhook,
   WebhookCreateParams,
   WebhookCreateResponse,
+  WebhookCreateTelegramLinkParams,
+  WebhookCreateTelegramLinkResponse,
   WebhookDeactivateResponse,
+  WebhookListDeliveriesParams,
   WebhookListDeliveriesResponse,
+  WebhookListParams,
   WebhookListResponse,
   WebhookResumeResponse,
   WebhookTestResponse,
@@ -119,6 +132,7 @@ import {
   MonitorCreateParams,
   MonitorCreateResponse,
   MonitorDeactivateResponse,
+  MonitorListParams,
   MonitorListResponse,
   MonitorUpdateParams,
   Monitors,
@@ -126,12 +140,21 @@ import {
 import { Support } from './resources/support/support';
 import {
   X,
+  XAutocompleteSearchParams,
+  XAutocompleteSearchResponse,
+  XGetArticleParams,
   XGetArticleResponse,
+  XGetHashflagsParams,
+  XGetHashflagsResponse,
   XGetHomeTimelineParams,
   XGetNotificationsParams,
   XGetNotificationsResponse,
+  XGetTrendLocationsParams,
+  XGetTrendLocationsResponse,
   XGetTrendsParams,
   XGetTrendsResponse,
+  XSearchPlacesParams,
+  XSearchPlacesResponse,
 } from './resources/x/x';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
@@ -902,7 +925,7 @@ export class XTwitterScraper {
    */
   account: API.Account = new API.Account(this);
   /**
-   * Subscription, billing, and usage balance
+   * Subscription, billing, and credits
    */
   subscribe: API.Subscribe = new API.Subscribe(this);
   /**
@@ -930,7 +953,7 @@ export class XTwitterScraper {
    */
   events: API.Events = new API.Events(this);
   /**
-   * Bulk data extraction (23 tool types)
+   * Saved or bulk data extraction (23 tool types)
    */
   extractions: API.Extractions = new API.Extractions(this);
   /**
@@ -948,7 +971,7 @@ export class XTwitterScraper {
   trends: API.Trends = new API.Trends(this);
   support: API.Support = new API.Support(this);
   /**
-   * Subscription, billing, and usage balance
+   * Subscription, billing, and credits
    */
   credits: API.Credits = new API.Credits(this);
   /**
@@ -1015,6 +1038,7 @@ export declare namespace XTwitterScraper {
     type StyleCompareResponse as StyleCompareResponse,
     type StyleGetPerformanceResponse as StyleGetPerformanceResponse,
     type StyleUpdateParams as StyleUpdateParams,
+    type StyleListParams as StyleListParams,
     type StyleAnalyzeParams as StyleAnalyzeParams,
     type StyleCompareParams as StyleCompareParams,
   };
@@ -1034,6 +1058,7 @@ export declare namespace XTwitterScraper {
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
     type MonitorCreateParams as MonitorCreateParams,
     type MonitorUpdateParams as MonitorUpdateParams,
+    type MonitorListParams as MonitorListParams,
   };
 
   export {
@@ -1042,6 +1067,7 @@ export declare namespace XTwitterScraper {
     type EventDetail as EventDetail,
     type EventListResponse as EventListResponse,
     type EventListParams as EventListParams,
+    type EventStreamParams as EventStreamParams,
   };
 
   export {
@@ -1049,6 +1075,7 @@ export declare namespace XTwitterScraper {
     type ExtractionJob as ExtractionJob,
     type ExtractionRetrieveResponse as ExtractionRetrieveResponse,
     type ExtractionListResponse as ExtractionListResponse,
+    type ExtractionCancelResponse as ExtractionCancelResponse,
     type ExtractionEstimateCostResponse as ExtractionEstimateCostResponse,
     type ExtractionRunResponse as ExtractionRunResponse,
     type ExtractionRetrieveParams as ExtractionRetrieveParams,
@@ -1077,22 +1104,35 @@ export declare namespace XTwitterScraper {
     type Webhook as Webhook,
     type WebhookCreateResponse as WebhookCreateResponse,
     type WebhookListResponse as WebhookListResponse,
+    type WebhookCreateTelegramLinkResponse as WebhookCreateTelegramLinkResponse,
     type WebhookDeactivateResponse as WebhookDeactivateResponse,
     type WebhookListDeliveriesResponse as WebhookListDeliveriesResponse,
     type WebhookResumeResponse as WebhookResumeResponse,
     type WebhookTestResponse as WebhookTestResponse,
     type WebhookCreateParams as WebhookCreateParams,
     type WebhookUpdateParams as WebhookUpdateParams,
+    type WebhookListParams as WebhookListParams,
+    type WebhookCreateTelegramLinkParams as WebhookCreateTelegramLinkParams,
+    type WebhookListDeliveriesParams as WebhookListDeliveriesParams,
   };
 
   export {
     X as X,
+    type XAutocompleteSearchResponse as XAutocompleteSearchResponse,
     type XGetArticleResponse as XGetArticleResponse,
+    type XGetHashflagsResponse as XGetHashflagsResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
+    type XGetTrendLocationsResponse as XGetTrendLocationsResponse,
     type XGetTrendsResponse as XGetTrendsResponse,
+    type XSearchPlacesResponse as XSearchPlacesResponse,
+    type XAutocompleteSearchParams as XAutocompleteSearchParams,
+    type XGetArticleParams as XGetArticleParams,
+    type XGetHashflagsParams as XGetHashflagsParams,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
     type XGetNotificationsParams as XGetNotificationsParams,
+    type XGetTrendLocationsParams as XGetTrendLocationsParams,
     type XGetTrendsParams as XGetTrendsParams,
+    type XSearchPlacesParams as XSearchPlacesParams,
   };
 
   export {
@@ -1123,6 +1163,9 @@ export declare namespace XTwitterScraper {
     type GuestWalletTopupParams as GuestWalletTopupParams,
   };
 
+  export type Community = API.Community;
+  export type CommunityPage = API.CommunityPage;
+  export type CommunityTopic = API.CommunityTopic;
   export type ContentDisclosure = API.ContentDisclosure;
   export type EmbeddedTweet = API.EmbeddedTweet;
   export type Error = API.Error;

@@ -13,6 +13,7 @@ export {
   type KeywordDeactivateResponse,
   type KeywordCreateParams,
   type KeywordUpdateParams,
+  type KeywordListParams,
 } from './keywords';
 export {
   Monitors,
@@ -22,4 +23,5 @@ export {
   type MonitorDeactivateResponse,
   type MonitorCreateParams,
   type MonitorUpdateParams,
+  type MonitorListParams,
 } from './monitors';

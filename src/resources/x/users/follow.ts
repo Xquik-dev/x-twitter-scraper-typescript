@@ -15,7 +15,7 @@ import { path } from '../../../internal/utils/path';
  */
 export class Follow extends APIResource {
   /**
-   * Follow user
+   * Follows a user through a connected X account.
    *
    * @example
    * ```ts
@@ -35,7 +35,7 @@ export class Follow extends APIResource {
   }
 
   /**
-   * Unfollow user
+   * Unfollows a user through a connected X account.
    *
    * @example
    * ```ts
@@ -63,9 +63,9 @@ export class Follow extends APIResource {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface FollowCreateResponse {
   id: string;
@@ -86,6 +86,7 @@ export interface FollowCreateResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -130,7 +131,7 @@ export interface FollowCreateResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -186,6 +187,10 @@ export interface FollowCreateResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -262,6 +267,9 @@ export namespace FollowCreateResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -306,9 +314,9 @@ export namespace FollowCreateResponse {
 }
 
 /**
- * Durable write lifecycle record. Poll statusUrl until terminal is true. Reusing
- * the original Idempotency-Key returns this same record. Submit a new write only
- * when safeToRetry is true, using a new key.
+ * Durable write record. Poll statusUrl until terminal is true. Reusing its
+ * Idempotency-Key returns this record. Create another action only when safeToRetry
+ * is true.
  */
 export interface FollowDeleteAllResponse {
   id: string;
@@ -329,6 +337,7 @@ export interface FollowDeleteAllResponse {
     | 'unfollow'
     | 'remove_follower'
     | 'send_dm'
+    | 'delete_dm'
     | 'upload_media'
     | 'update_profile'
     | 'update_avatar'
@@ -373,7 +382,7 @@ export interface FollowDeleteAllResponse {
   retryable: boolean;
 
   /**
-   * True only when no write was dispatched and a new idempotency key may be used.
+   * True only when X did not get the write and a new idempotency key may be used.
    */
   safeToRetry: boolean;
 
@@ -429,6 +438,10 @@ export interface FollowDeleteAllResponse {
    */
   expiresAt?: string;
 
+  /**
+   * True when this answers a retry of an earlier request with the same
+   * Idempotency-Key.
+   */
   idempotent?: boolean;
 
   /**
@@ -505,6 +518,9 @@ export namespace FollowDeleteAllResponse {
   export interface NextAction {
     type: 'poll' | 'retry' | 'verify_result' | 'fix_request';
 
+    /**
+     * Milliseconds to wait before you poll or retry.
+     */
     afterMs?: number;
 
     requiresNewIdempotencyKey?: boolean;
@@ -555,10 +571,12 @@ export interface FollowCreateParams {
   account: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }
@@ -570,10 +588,12 @@ export interface FollowDeleteAllParams {
   account: string;
 
   /**
-   * Header param: Generate one unique value for each intended write. Reuse it only
-   * when retrying the exact same account, action, target, and payload. A reused key
-   * returns the original action. Reusing it with different input returns 409. Replay
-   * protection remains active for at least 90 days.
+   * Header param: Use one unique value per intended write. Reuse it only for an
+   * identical retry. A matching retry returns the first answer again, with
+   * idempotent: true added. It keeps the first status, body & Retry-After. It sends
+   * nothing to X & charges nothing. While the first request runs, a retry returns
+   * 202 & the action. Different input returns 409. Protection lasts at least 90
+   * days.
    */
   'Idempotency-Key': string;
 }

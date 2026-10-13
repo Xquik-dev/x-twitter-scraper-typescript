@@ -10,11 +10,11 @@ import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
 
 /**
- * Subscription, billing, and usage balance
+ * Subscription, billing, and credits
  */
 export class Credits extends APIResource {
   /**
-   * Redirect to an active top-up payment page
+   * Redirects to the active hosted top-up checkout.
    *
    * @example
    * ```ts
@@ -36,7 +36,7 @@ export class Credits extends APIResource {
   }
 
   /**
-   * Get usage balance
+   * Returns the account credit balance and usage context.
    *
    * @example
    * ```ts
@@ -48,7 +48,7 @@ export class Credits extends APIResource {
   }
 
   /**
-   * Get top-up billing status
+   * Returns verification status for a credit top-up.
    *
    * @example
    * ```ts
@@ -72,6 +72,7 @@ export class Credits extends APIResource {
    * ```ts
    * const response = await client.credits.topupBalance({
    *   dollars: 10,
+   *   locale: 'en',
    * });
    * ```
    */
@@ -92,24 +93,31 @@ export interface CreditRetrieveBalanceResponse {
   auto_topup_enabled: boolean;
 
   /**
-   * Usage balance threshold that triggers automatic top-up when enabled,
+   * Whether declined charges stopped automatic top-up while it is enabled. It stops
+   * after 3 declines in a row on one card. A paid top-up, a paid plan renewal, or
+   * the next automatic top-up on a new card clears it.
+   */
+  auto_topup_stopped: boolean;
+
+  /**
+   * Credit balance threshold that triggers automatic top-up when enabled,
    * represented as a bigint string.
    */
   auto_topup_threshold: string;
 
   /**
-   * Current usage balance as a bigint string to preserve precision above
+   * Current credit balance as a bigint string to preserve precision above
    * Number.MAX_SAFE_INTEGER.
    */
   balance: string;
 
   /**
-   * Lifetime purchased usage as a bigint string.
+   * Lifetime purchased credits as a bigint string.
    */
   lifetime_purchased: string;
 
   /**
-   * Lifetime consumed usage as a bigint string.
+   * Lifetime consumed credits as a bigint string.
    */
   lifetime_used: string;
 }
@@ -123,7 +131,7 @@ export interface CreditRetrieveTopupStatusResponse {
   amount_dollars?: number | null;
 
   /**
-   * Bigint string usage amount granted or pending.
+   * Bigint string credit amount granted or pending.
    */
   credits?: string;
 }
@@ -162,7 +170,8 @@ export interface CreditTopupBalanceParams {
   dollars: number;
 
   /**
-   * Optional checkout locale. Defaults to en.
+   * Optional site language for Stripe's return page. An unsupported 1 uses en, the
+   * default.
    */
   locale?: string;
 }

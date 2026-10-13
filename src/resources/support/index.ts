@@ -15,5 +15,6 @@ export {
   type TicketReplyResponse,
   type TicketCreateParams,
   type TicketUpdateParams,
+  type TicketListParams,
   type TicketReplyParams,
 } from './tickets';

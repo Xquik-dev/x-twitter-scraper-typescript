@@ -10,7 +10,7 @@ import { path } from '../../internal/utils/path';
  */
 export class AccountConnectionAttempts extends APIResource {
   /**
-   * Get X account connection status
+   * Returns progress for an X account connection attempt.
    *
    * @example
    * ```ts
