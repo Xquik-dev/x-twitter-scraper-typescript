@@ -51,7 +51,6 @@ export class Stream<Item> implements AsyncIterable<Item> {
       let done = false;
       try {
         for await (const sse of _iterSSEMessages(response, controller)) {
-          // Each event is named by its type, so every event with data is yielded.
           if (!sse.data) continue;
 
           try {
@@ -64,11 +63,9 @@ export class Stream<Item> implements AsyncIterable<Item> {
         }
         done = true;
       } catch (e) {
-        // If the user calls `stream.controller.abort()`, we should exit without throwing.
         if (isAbortError(e)) return;
         throw e;
       } finally {
-        // If the user `break`s, abort the ongoing request.
         if (!done) controller.abort();
       }
     }
@@ -117,11 +114,9 @@ export class Stream<Item> implements AsyncIterable<Item> {
         }
         done = true;
       } catch (e) {
-        // If the user calls `stream.controller.abort()`, we should exit without throwing.
         if (isAbortError(e)) return;
         throw e;
       } finally {
-        // If the user `break`s, abort the ongoing request.
         if (!done) controller.abort();
       }
     }
@@ -227,10 +222,6 @@ export async function* _iterSSEMessages(
   }
 }
 
-/**
- * Given an async iterable iterator, iterates over it and yields full
- * SSE chunks, i.e. yields when a double new-line is encountered.
- */
 async function* iterSSEChunks(iterator: AsyncIterableIterator<Bytes>): AsyncGenerator<Uint8Array> {
   let data = new Uint8Array();
 
@@ -278,7 +269,6 @@ class SSEDecoder {
     }
 
     if (!line) {
-      // empty line and we didn't previously encounter any messages
       if (!this.event && !this.data.length) return null;
 
       const sse: ServerSentEvent = {

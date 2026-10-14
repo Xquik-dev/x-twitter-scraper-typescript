@@ -23,7 +23,6 @@ describe('resource jobs', () => {
   });
 
   test('retrieve: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.jobs.retrieve(
         '1899202395210649861',

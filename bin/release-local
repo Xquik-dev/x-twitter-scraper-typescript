@@ -4,17 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Publishes the package version from package.json to npm, then tags and
-# releases it on GitHub. Run it from a clean main that matches origin/main.
-# Pass --dry-run to run every check, build and pack the package, and print
-# what a release would publish, without publishing, tagging or releasing.
-# When npm asks for 2FA approval, the script prints npm's approval URL and
-# waits for it.
-#
-# The npm token comes from the macOS Keychain item that 2 environment
-# variables name: NPM_KEYCHAIN_SERVICE and NPM_KEYCHAIN_ACCOUNT. Set them on
-# the release machine. A dry run needs neither.
-
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

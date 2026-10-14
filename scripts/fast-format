@@ -28,7 +28,6 @@ if ! [ -z "$ESLINT_FILES" ]; then
 fi
 
 echo "==> Running prettier --write"
-# format things eslint didn't
 PRETTIER_FILES="$(grep '\.\(js\|json\)$' "$FILE_LIST" || true)"
 if ! [ -z "$PRETTIER_FILES" ]; then
    echo "$PRETTIER_FILES" | xargs ./node_modules/.bin/prettier \

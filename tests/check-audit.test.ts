@@ -46,13 +46,11 @@ const listed = (overrides: Partial<Exception> = {}): Exception => ({
   ...overrides,
 });
 
-// A fix that npm has served for a year, so pnpm's minimumReleaseAge allows it.
 const fixPublished: Registry = {
   'leftpad@>=2.0.0 version': '2.0.0',
   'leftpad time': { '2.0.0': new Date(Date.now() - 365 * dayInMs).toISOString() },
 };
 
-// A fix that npm published an hour ago, which pnpm's minimumReleaseAge of 7 days still refuses.
 const fixTooNew: Registry = {
   'leftpad@>=2.0.0 version': '2.0.0',
   'leftpad time': { '2.0.0': new Date(Date.now() - 60 * 60 * 1000).toISOString() },
@@ -63,7 +61,6 @@ process.stdout.write(require('fs').readFileSync(process.env.FAKE_AUDIT_REPORT, '
 process.exit(1);
 `;
 
-// Answers "npm view <spec> <field> --json" from the fake registry, or E404 as npm does.
 const fakeNpm = `#!/usr/bin/env node
 const registry = JSON.parse(require('fs').readFileSync(process.env.FAKE_REGISTRY, 'utf8'));
 const key = process.argv.slice(3, 5).join(' ');

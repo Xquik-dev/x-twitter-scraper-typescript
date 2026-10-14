@@ -2,13 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// Runs pnpm audit and fails on:
-// - any finding in a shipped runtime dependency;
-// - any development finding with an installable fix;
-// - any other development finding that audit-exceptions.json does not list.
-// Severity never excuses a finding. A listed exception blocks again on its recheck date or once a fixed
-// version is installable. Pass a directory to audit it instead of this repository.
-
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -33,7 +26,6 @@ const minimumReleaseAgeMs = () => {
   return match ? Number(match[1]) * 60 * 1000 : 0;
 };
 
-// pnpm writes ".>jest>micromatch>braces", and the exceptions file uses "jest > micromatch > braces".
 const normalizePath = (auditPath) =>
   auditPath
     .split('>')
@@ -50,7 +42,6 @@ const npmViewJson = (args) => {
   throw new Error(`npm view ${args.join(' ')} failed. Check the network, then run the audit again.`);
 };
 
-// A fix is installable when a version in the patched range is old enough for pnpm's minimumReleaseAge.
 const hasInstallableFix = (moduleName, patchedVersions, releaseAgeMs, now) => {
   if (!patchedVersions || patchedVersions === '<0.0.0') return false;
   const matching = npmViewJson([`${moduleName}@${patchedVersions}`, 'version']);

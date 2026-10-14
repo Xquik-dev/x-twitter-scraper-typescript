@@ -25,11 +25,8 @@ async function postprocess() {
 
     const code = await fs.promises.readFile(file, 'utf8');
 
-    // strip out lib="dom", types="node", and types="react" references; these
-    // are needed at build time, but would pollute the user's TS environment
     const transformed = code.replace(
       /^ *\/\/\/ *<reference +(lib="dom"|types="(node|react)").*?\n/gm,
-      // replace with same number of characters to avoid breaking source maps
       (match) => ' '.repeat(match.length - 1) + '\n',
     );
 

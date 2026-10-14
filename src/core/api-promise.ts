@@ -24,9 +24,6 @@ export class APIPromise<T> extends Promise<T> {
     ) => PromiseOrValue<T> = defaultParseResponse,
   ) {
     super((resolve) => {
-      // this is maybe a bit weird but this has to be a no-op to not implicitly
-      // parse the response body; instead .then, .catch, .finally are overridden
-      // to parse the response
       resolve(null as any);
     });
     this.#client = client;
@@ -44,10 +41,6 @@ export class APIPromise<T> extends Promise<T> {
    *
    * If you want to parse the response body but still get the `Response`
    * instance, you can use {@link withResponse()}.
-   *
-   * 👋 Getting the wrong TypeScript type for `Response`?
-   * Try setting `"moduleResolution": "NodeNext"` or add `"lib": ["DOM"]`
-   * to your `tsconfig.json`.
    */
   asResponse(): Promise<Response> {
     return this.responsePromise.then((p) => p.response);
@@ -58,10 +51,6 @@ export class APIPromise<T> extends Promise<T> {
    *
    * If you just want to get the raw `Response` instance without parsing it,
    * you can use {@link asResponse()}.
-   *
-   * 👋 Getting the wrong TypeScript type for `Response`?
-   * Try setting `"moduleResolution": "NodeNext"` or add `"lib": ["DOM"]`
-   * to your `tsconfig.json`.
    */
   async withResponse(): Promise<{ data: T; response: Response }> {
     const [data, response] = await Promise.all([this.parse(), this.asResponse()]);

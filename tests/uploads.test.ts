@@ -36,7 +36,6 @@ describe('toFile', () => {
 
   it('disallows string at the type-level', async () => {
     // @ts-expect-error we intentionally do not type support for `string`
-    // to help people avoid passing a file path
     const file = await toFile('contents');
     expect(file.text()).resolves.toEqual('contents');
   });
@@ -80,8 +79,6 @@ describe('missing File error message', () => {
   let prevGlobalFile: unknown;
   let prevNodeFile: unknown;
   beforeEach(() => {
-    // The file shim captures the global File object when it's first imported.
-    // Reset modules before each test so we can test the error thrown when it's undefined.
     jest.resetModules();
     const buffer = require('node:buffer');
     // @ts-ignore
@@ -92,7 +89,6 @@ describe('missing File error message', () => {
     buffer.File = undefined;
   });
   afterEach(() => {
-    // Clean up
     // @ts-ignore
     globalThis.File = prevGlobalFile;
     require('node:buffer').File = prevNodeFile;

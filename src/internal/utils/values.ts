@@ -14,7 +14,6 @@ export const isAbsoluteURL = (url: string): boolean => {
 export let isArray = (val: unknown): val is unknown[] => ((isArray = Array.isArray), isArray(val));
 export let isReadonlyArray = isArray as (val: unknown) => val is readonly unknown[];
 
-/** Returns an object if the given value isn't an object, otherwise returns as-is */
 export function maybeObj(x: unknown): object {
   if (typeof x !== 'object') {
     return {};
@@ -23,14 +22,12 @@ export function maybeObj(x: unknown): object {
   return x ?? {};
 }
 
-// https://stackoverflow.com/a/34491287
 export function isEmptyObj(obj: Object | null | undefined): boolean {
   if (!obj) return true;
   for (const _k in obj) return false;
   return true;
 }
 
-// https://eslint.org/docs/latest/rules/no-prototype-builtins
 export function hasOwn<T extends object = object>(obj: T, key: PropertyKey): key is keyof T {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }

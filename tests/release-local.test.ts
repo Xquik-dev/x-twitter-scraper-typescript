@@ -7,8 +7,6 @@ import { resolve } from 'node:path';
 
 const script = resolve(__dirname, '..', 'bin', 'release-local');
 
-// Runs the release script with only the given Keychain variables set. Each case here stops at the
-// variable check, which comes before every other step, so nothing is built, published or tagged.
 const release = (variables: Record<string, string>) => {
   const env = { ...process.env, ...variables };
   for (const name of ['NPM_KEYCHAIN_SERVICE', 'NPM_KEYCHAIN_ACCOUNT']) {

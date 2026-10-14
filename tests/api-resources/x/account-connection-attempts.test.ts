@@ -7,7 +7,6 @@ const client = new XTwitterScraper({
 });
 
 describe('resource accountConnectionAttempts', () => {
-  // Mock server tests are disabled
   test.skip('retrieve', async () => {
     const responsePromise = client.x.accountConnectionAttempts.retrieve(
       'xatt_0123456789abcdef0123456789abcdef',

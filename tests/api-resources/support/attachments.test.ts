@@ -12,7 +12,6 @@ const client = new XTwitterScraper({
 
 describe('resource attachments', () => {
   test('download: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.support.attachments.download(
         'att_a1b2c3d4e5f6a1b2c3d4e5f6',

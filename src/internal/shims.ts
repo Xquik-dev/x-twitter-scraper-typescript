@@ -2,13 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-/**
- * This module provides internal shims and utility functions for environments where certain Node.js or global types may not be available.
- *
- * These are used to ensure we can provide a consistent behaviour between different JavaScript environments and good error
- * messages in cases where an environment isn't fully supported.
- */
-
 import type { Fetch } from './builtin-types';
 import type { ReadableStream } from './shim-types';
 
@@ -27,8 +20,6 @@ type ReadableStreamArgs = ConstructorParameters<typeof ReadableStream>;
 export function makeReadableStream(...args: ReadableStreamArgs): ReadableStream {
   const ReadableStream = (globalThis as any).ReadableStream;
   if (typeof ReadableStream === 'undefined') {
-    // Note: All of the platforms / runtimes we officially support already define
-    // `ReadableStream` as a global, so this should only ever be hit on unsupported runtimes.
     throw new Error(
       '`ReadableStream` is not defined as a global; You will need to polyfill it, `globalThis.ReadableStream = ReadableStream`',
     );
@@ -58,9 +49,6 @@ export function ReadableStreamFrom<T>(iterable: Iterable<T> | AsyncIterable<T>):
 }
 
 /**
- * Most browsers don't yet have async iterable support for ReadableStream,
- * and Node has a very different way of reading bytes from its "ReadableStream".
- *
  * This polyfill was pulled from https://github.com/MattiasBuelens/web-streams-polyfill/pull/122#issuecomment-1627354490
  */
 export function ReadableStreamToAsyncIterable<T>(stream: any): AsyncIterableIterator<T> {
@@ -71,10 +59,10 @@ export function ReadableStreamToAsyncIterable<T>(stream: any): AsyncIterableIter
     async next() {
       try {
         const result = await reader.read();
-        if (result?.done) reader.releaseLock(); // release lock when stream becomes closed
+        if (result?.done) reader.releaseLock();
         return result;
       } catch (e) {
-        reader.releaseLock(); // release lock when stream becomes errored
+        reader.releaseLock();
         throw e;
       }
     },

@@ -17,9 +17,6 @@ export const isRunningInBrowser = () => {
 
 type DetectedPlatform = 'deno' | 'node' | 'edge' | 'unknown';
 
-/**
- * Note this does not detect 'browser'; for that, use getBrowserInfo().
- */
 function getDetectedPlatform(): DetectedPlatform {
   if (typeof Deno !== 'undefined' && Deno.build != null) {
     return 'deno';
@@ -74,7 +71,6 @@ const getPlatformProperties = (): PlatformProperties => {
       'X-Stainless-Runtime-Version': (globalThis as any).process.version,
     };
   }
-  // Check if Node.js
   if (detectedPlatform === 'node') {
     return {
       'X-Stainless-Lang': 'js',
@@ -98,7 +94,6 @@ const getPlatformProperties = (): PlatformProperties => {
     };
   }
 
-  // TODO add support for Cloudflare workers, etc.
   return {
     'X-Stainless-Lang': 'js',
     'X-Stainless-Package-Version': VERSION,
@@ -122,7 +117,6 @@ function getBrowserInfo(): BrowserInfo | null {
     return null;
   }
 
-  // NOTE: The order matters here!
   const browserPatterns = [
     { key: 'edge' as const, pattern: /Edge(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
     { key: 'ie' as const, pattern: /MSIE(?:\W+(\d+)\.(\d+)(?:\.(\d+))?)?/ },
@@ -132,7 +126,6 @@ function getBrowserInfo(): BrowserInfo | null {
     { key: 'safari' as const, pattern: /(?:Version\W+(\d+)\.(\d+)(?:\.(\d+))?)?(?:\W+Mobile\S*)?\W+Safari/ },
   ];
 
-  // Find the FIRST matching browser
   for (const { key, pattern } of browserPatterns) {
     const match = pattern.exec(navigator.userAgent);
     if (match) {
@@ -148,10 +141,6 @@ function getBrowserInfo(): BrowserInfo | null {
 }
 
 const normalizeArch = (arch: string): Arch => {
-  // Node docs:
-  // - https://nodejs.org/api/process.html#processarch
-  // Deno docs:
-  // - https://doc.deno.land/deno/stable/~/Deno.build
   if (arch === 'x32') return 'x32';
   if (arch === 'x86_64' || arch === 'x64') return 'x64';
   if (arch === 'arm') return 'arm';
@@ -161,18 +150,8 @@ const normalizeArch = (arch: string): Arch => {
 };
 
 const normalizePlatform = (platform: string): PlatformName => {
-  // Node platforms:
-  // - https://nodejs.org/api/process.html#processplatform
-  // Deno platforms:
-  // - https://doc.deno.land/deno/stable/~/Deno.build
-  // - https://github.com/denoland/deno/issues/14799
-
   platform = platform.toLowerCase();
 
-  // NOTE: this iOS check is untested and may not work
-  // Node does not work natively on IOS, there is a fork at
-  // https://github.com/nodejs-mobile/nodejs-mobile
-  // however it is unknown at the time of writing how to detect if it is running
   if (platform.includes('ios')) return 'iOS';
   if (platform === 'android') return 'Android';
   if (platform === 'darwin') return 'MacOS';

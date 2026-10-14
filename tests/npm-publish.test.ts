@@ -11,9 +11,6 @@ import { join, resolve } from 'node:path';
 
 const script = resolve(__dirname, '..', 'scripts', 'utils', 'npm-publish');
 
-// A registry that asks for 2FA approval as npm's does: the first PUT gets 401 with an approval URL
-// and a URL to poll, the poll answers 202 until the owner approves, and the retried PUT carries the
-// one-time password that the poll returned.
 const startRegistry = async (pollsBeforeApproval: number) => {
   const requests: string[] = [];
   let polls = 0;
@@ -55,7 +52,6 @@ const startRegistry = async (pollsBeforeApproval: number) => {
 
 const publish = (args: string[], cwd: string) =>
   new Promise<{ status: number | null; output: string }>((done) => {
-    // stdin, stdout and stderr are pipes here, so npm has no terminal, as in a background release run.
     const child = spawn(script, args, { cwd, stdio: ['ignore', 'pipe', 'pipe'] });
     let output = '';
     child.stdout.on('data', (chunk: Buffer) => (output += chunk.toString()));

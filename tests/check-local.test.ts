@@ -9,10 +9,8 @@ import { delimiter, dirname, join, resolve } from 'node:path';
 
 const script = resolve(__dirname, '..', 'bin', 'check-local');
 
-// Stand-ins for the tools that install, lint, build and reach other systems. Each one passes.
 const passes = '#!/bin/sh\n';
 
-// Stands in for the CodeQL CLI. The analysis writes the SARIF file that the test names.
 const fakeCodeql = `#!/bin/sh
 for argument in "$@"; do
   case "$argument" in
@@ -25,8 +23,6 @@ const extractionDiagnostic = 'js/diagnostics/extraction-errors';
 
 type Unread = { file: string; line: number };
 
-// A SARIF file in the shape CodeQL 2.27 writes for a scan without results. "unread" lists the files
-// CodeQL could not parse, and "diagnostics" names the diagnostic queries that ran.
 const sarif = ({
   unread = [],
   diagnostics = [extractionDiagnostic],
@@ -61,8 +57,6 @@ const sarif = ({
     ],
   });
 
-// Runs bin/check-local in a throwaway project. Stand-ins replace every check but CodeQL, and the fake
-// CodeQL writes the given SARIF file. Git, jq and Node are real.
 const checkLocal = (codeqlSarif: string) => {
   const root = mkdtempSync(join(tmpdir(), 'check-local-'));
   try {

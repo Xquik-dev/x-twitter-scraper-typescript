@@ -13,7 +13,6 @@ const dist = join(repository, 'dist');
 
 type PackageJson = { exports: { '.': { types: string; require: { types: string } } } };
 
-// Copies the built package, applies 1 change to it, and runs the consumer type check on the copy.
 const checkCopy = (change: (directory: string) => void) => {
   const directory = mkdtempSync(join(tmpdir(), 'consumer-types-'));
   try {

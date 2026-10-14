@@ -18,7 +18,6 @@ import { join, relative, resolve } from 'node:path';
 const repository = resolve(__dirname, '..');
 const script = join(repository, 'scripts', 'utils', 'compile-formats.cjs');
 
-// A small project in the layout scripts/build uses. The sources sit in dist/src and compile into dist.
 const sources: Record<string, string> = {
   'index.ts': [
     "import * as sub from './sub';",
@@ -39,7 +38,6 @@ const sources: Record<string, string> = {
   'sub/index.ts': 'export const inner = 3;\n',
 };
 
-// As in tsconfig.build.json, the sources sit inside outDir, so nothing is excluded.
 const config = {
   include: ['dist/src'],
   exclude: [],
@@ -85,14 +83,12 @@ const build = (extraSources: Record<string, string> = {}): Build & { root: strin
   };
 };
 
-// Runs code in the built project. Each format loads its own files, so CommonJS uses require.
 const run = (root: string, type: 'commonjs' | 'module', body: string) =>
   spawnSync(process.execPath, ['--input-type', type, '--eval', `(async () => {\n${body}\n})();`], {
     cwd: join(root, 'dist'),
     encoding: 'utf8',
   });
 
-// Reads a source map's mappings into absolute [generated column, source, line, column] tuples per line.
 const decodeMappings = (mappings: string): number[][][] => {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   const state = [0, 0, 0, 0, 0];
@@ -121,7 +117,6 @@ const decodeMappings = (mappings: string): number[][][] => {
   });
 };
 
-// Finds the source position a debugger shows for a generated position.
 const originalPosition = (map: { mappings: string }, line: number, column: number) => {
   const segments = decodeMappings(map.mappings)[line] ?? [];
   const segment = segments.filter(([generated]) => (generated ?? 0) <= column).pop();

@@ -4,11 +4,6 @@
 
 // @ts-check
 
-// Compiles small caller programs against the built package, the way callers resolve it. Each program
-// imports the client class, 1 params type and 1 response type, and fails to compile when any of them
-// is missing or `any`. It runs under CommonJS with node16, ES modules with nodenext and bundler
-// resolution, with both the TypeScript 7 tsc and tsc6. Pass a package folder to check it instead of dist.
-
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
@@ -48,15 +43,9 @@ export const params: AccountSetXUsernameParams = { username: 'xquik' };
 export const client = new XTwitterScraper({ apiKey: 'key' });
 `;
 
-/** @param {string[]} names */
 const sentenceList = (names) =>
   names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : (names[0] ?? '');
 
-/**
- * Writes a caller project for 1 resolution mode that installs the package under test.
- * @param {string} project
- * @param {(typeof modes)[number]} mode
- */
 const writeProject = (project, mode) => {
   fs.mkdirSync(path.join(project, 'node_modules', '@types'), { recursive: true });
   fs.symlinkSync(packageDirectory, path.join(project, 'node_modules', 'x-twitter-scraper'), 'junction');

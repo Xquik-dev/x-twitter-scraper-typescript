@@ -37,7 +37,6 @@ describe('path template tag function', () => {
       return testParams.flatMap((e) => rest.map((r) => [e, ...r]));
     }
 
-    // We need to test how %2E is handled, so we use a custom encoder that does no escaping.
     const rawPath = createPathTagFunction((s) => s);
 
     const emptyObject = {};
@@ -51,7 +50,6 @@ describe('path template tag function', () => {
       }
     })();
 
-    // Invalid values
     expect(() => rawPath`/a/${null}/b`).toThrow(
       'Path parameters result in path with invalid segments:\n' +
         'Value of type Null is not a valid path parameter\n' +
@@ -96,15 +94,11 @@ describe('path template tag function', () => {
         ' ^^ ^^^^^^^^^^^^^^',
     );
 
-    // Valid values
     expect(rawPath`/${0}`).toBe('/0');
     expect(rawPath`/${''}`).toBe('/');
     expect(rawPath`/${numberObject}`).toBe('/0');
     expect(rawPath`${stringObject}/`).toBe('/');
     expect(rawPath`/${classWithToString}`).toBe('/ok');
-
-    // We need to check what happens with cross-realm values, which we might get from
-    // Jest or other frames in a browser.
 
     const newRealm = runInNewContext('globalThis');
     expect(newRealm.Object).not.toBe(Object);
@@ -120,7 +114,6 @@ describe('path template tag function', () => {
       }
     })();
 
-    // Invalid cross-realm values
     expect(() => rawPath`/a/${crossRealmObject}/b`).toThrow(
       'Path parameters result in path with invalid segments:\n' +
         'Value of type Object is not a valid path parameter\n' +
@@ -140,7 +133,6 @@ describe('path template tag function', () => {
         ' ^^^^^^^^^^^^^^^',
     );
 
-    // Valid cross-realm values
     expect(rawPath`/${crossRealmNumber}`).toBe('/0');
     expect(rawPath`${crossRealmString}/`).toBe('/');
     expect(rawPath`/${crossRealmClassWithToString}`).toBe('/ok');
@@ -166,8 +158,6 @@ describe('path template tag function', () => {
         try {
           const result = rawPath(pathParts, ...params);
           expect(result).toBe(stringRaw);
-          // there are no special segments, so the length of the normalized path is
-          // equal to the length of the normalized plain path.
           expect(normalizedStringRaw.length).toBe(normalizedPlainString.length);
           pathResults[pathResultsKey] = {
             valid: true,
@@ -176,8 +166,6 @@ describe('path template tag function', () => {
         } catch (e) {
           const error = String(e);
           expect(error).toMatch(/Path parameters result in path with invalid segment/);
-          // there are special segments, so the length of the normalized path is
-          // different than the length of the normalized plain path.
           expect(normalizedStringRaw.length).not.toBe(normalizedPlainString.length);
           pathResults[pathResultsKey] = {
             valid: false,
@@ -438,11 +426,8 @@ describe('path template tag function', () => {
 describe('encodeURIPath', () => {
   const testCases: string[] = [
     '',
-    // Every ASCII character
     ...Array.from({ length: 0x7f }, (_, i) => String.fromCharCode(i)),
-    // Unicode BMP codepoint
     'å',
-    // Unicode supplementary codepoint
     '😃',
   ];
 
@@ -450,7 +435,6 @@ describe('encodeURIPath', () => {
     test('properly encodes ' + inspect(param), () => {
       const encoded = encodeURIPath(param);
       const naiveEncoded = encodeURIComponent(param);
-      // we should never encode more characters than encodeURIComponent
       expect(naiveEncoded.length).toBeGreaterThanOrEqual(encoded.length);
       expect(decodeURIComponent(encoded)).toBe(param);
     });

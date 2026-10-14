@@ -4,53 +4,18 @@
 
 export type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
-/**
- * An alias to the builtin `RequestInit` type so we can
- * easily alias it in import statements if there are name clashes.
- *
- * https://developer.mozilla.org/docs/Web/API/RequestInit
- */
 type _RequestInit = RequestInit;
 
-/**
- * An alias to the builtin `Response` type so we can
- * easily alias it in import statements if there are name clashes.
- *
- * https://developer.mozilla.org/docs/Web/API/Response
- */
 type _Response = Response;
 
-/**
- * The type for the first argument to `fetch`.
- *
- * https://developer.mozilla.org/docs/Web/API/Window/fetch#resource
- */
 type _RequestInfo = Request | URL | string;
 
-/**
- * The type for constructing `RequestInit` Headers.
- *
- * https://developer.mozilla.org/docs/Web/API/RequestInit#setting_headers
- */
 type _HeadersInit = RequestInit['headers'];
 
-/**
- * The type for constructing `RequestInit` body.
- *
- * https://developer.mozilla.org/docs/Web/API/RequestInit#body
- */
 type _BodyInit = RequestInit['body'];
 
-/**
- * An alias to the builtin `Array<T>` type so we can
- * easily alias it in import statements if there are name clashes.
- */
 type _Array<T> = Array<T>;
 
-/**
- * An alias to the builtin `Record<K, T>` type so we can
- * easily alias it in import statements if there are name clashes.
- */
 type _Record<K extends keyof any, T> = Record<K, T>;
 
 export type {
@@ -63,12 +28,6 @@ export type {
   _Response as Response,
 };
 
-/**
- * A copy of the builtin `EndingType` type as it isn't fully supported in certain
- * environments and attempting to reference the global version will error.
- *
- * https://github.com/microsoft/TypeScript/blob/49ad1a3917a0ea57f5ff248159256e12bb1cb705/src/lib/dom.generated.d.ts#L27941
- */
 type EndingType = 'native' | 'transparent';
 
 /**

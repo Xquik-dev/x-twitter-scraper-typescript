@@ -8,24 +8,13 @@ import { checkFileSupport } from './uploads';
 
 type BlobLikePart = string | ArrayBuffer | ArrayBufferView | BlobLike | DataView;
 
-/**
- * Intended to match DOM Blob, node-fetch Blob, node:buffer Blob, etc.
- * Don't add arrayBuffer here, node-fetch doesn't have it
- */
 interface BlobLike {
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/size) */
   readonly size: number;
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/type) */
   readonly type: string;
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/text) */
   text(): Promise<string>;
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Blob/slice) */
   slice(start?: number, end?: number): BlobLike;
 }
 
-/**
- * This check adds the arrayBuffer() method type because it is available and used at runtime
- */
 const isBlobLike = (value: any): value is BlobLike & { arrayBuffer(): Promise<ArrayBuffer> } =>
   value != null &&
   typeof value === 'object' &&
@@ -35,19 +24,11 @@ const isBlobLike = (value: any): value is BlobLike & { arrayBuffer(): Promise<Ar
   typeof value.slice === 'function' &&
   typeof value.arrayBuffer === 'function';
 
-/**
- * Intended to match DOM File, node:buffer File, undici File, etc.
- */
 interface FileLike extends BlobLike {
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/File/lastModified) */
   readonly lastModified: number;
-  /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/File/name) */
   readonly name?: string | undefined;
 }
 
-/**
- * This check adds the arrayBuffer() method type because it is available and used at runtime
- */
 const isFileLike = (value: any): value is FileLike & { arrayBuffer(): Promise<ArrayBuffer> } =>
   value != null &&
   typeof value === 'object' &&
@@ -55,9 +36,6 @@ const isFileLike = (value: any): value is FileLike & { arrayBuffer(): Promise<Ar
   typeof value.lastModified === 'number' &&
   isBlobLike(value);
 
-/**
- * Intended to match DOM Response, node-fetch Response, undici Response, etc.
- */
 export interface ResponseLike {
   url: string;
   blob(): Promise<BlobLike>;
@@ -88,10 +66,8 @@ export async function toFile(
 ): Promise<File> {
   checkFileSupport();
 
-  // If it's a promise, resolve it.
   value = await value;
 
-  // If we've been given a `File` we don't need to do anything
   if (isFileLike(value)) {
     if (value instanceof File) {
       return value;
@@ -122,19 +98,13 @@ export async function toFile(
 
 async function getBytes(value: BlobLikePart | AsyncIterable<BlobLikePart>): Promise<Array<BlobPart>> {
   let parts: Array<BlobPart> = [];
-  if (
-    typeof value === 'string' ||
-    ArrayBuffer.isView(value) || // includes Uint8Array, Buffer, etc.
-    value instanceof ArrayBuffer
-  ) {
+  if (typeof value === 'string' || ArrayBuffer.isView(value) || value instanceof ArrayBuffer) {
     parts.push(value);
   } else if (isBlobLike(value)) {
     parts.push(value instanceof Blob ? value : await value.arrayBuffer());
-  } else if (
-    isAsyncIterable(value) // includes Readable, ReadableStream, etc.
-  ) {
+  } else if (isAsyncIterable(value)) {
     for await (const chunk of value) {
-      parts.push(...(await getBytes(chunk as BlobLikePart))); // TODO, consider validating?
+      parts.push(...(await getBytes(chunk as BlobLikePart)));
     }
   } else {
     const constructor = value?.constructor?.name;

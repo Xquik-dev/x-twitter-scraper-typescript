@@ -20,7 +20,6 @@ const EMPTY = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.create(null))
 
 export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
   function path(statics: readonly string[], ...params: readonly unknown[]): string {
-    // If there are no params, no processing is needed.
     if (statics.length === 1) return statics[0]!;
 
     let postPath = false;
@@ -35,7 +34,6 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
         index !== params.length &&
         (value == null ||
           (typeof value === 'object' &&
-            // handle values from other realms
             value.toString ===
               Object.getPrototypeOf(Object.getPrototypeOf((value as any).hasOwnProperty ?? EMPTY) ?? EMPTY)
                 ?.toString))
@@ -56,7 +54,6 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
     const invalidSegmentPattern = /(?<=^|\/)(?:\.|%2e){1,2}(?=\/|$)/gi;
     let match;
 
-    // Find all invalid segments
     while ((match = invalidSegmentPattern.exec(pathOnly)) !== null) {
       invalidSegments.push({
         start: match.index,
@@ -86,7 +83,4 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
     return path;
   };
 
-/**
- * URI-encodes path params and ensures no unsafe /./ or /../ path segments are introduced.
- */
 export const path = /* @__PURE__ */ createPathTagFunction(encodeURIPath);

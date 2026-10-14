@@ -4,9 +4,6 @@
 
 import { XTwitterScraperError } from '../../core/error';
 
-/**
- * Basic re-implementation of `qs.stringify` for primitive types.
- */
 export function stringifyQuery(query: object | Record<string, unknown>) {
   return Object.entries(query)
     .filter(([_, value]) => typeof value !== 'undefined')
