@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 0.13.2 (2026-10-14)
+
+[Full changelog from v0.13.1 to v0.13.2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.1...v0.13.2)
+
+### Documentation
+
+* The 3 bundled Skills and their references have no colon or semicolon in any sentence.
+* `api.md`, the contributing guide and the security policy follow the same rule.
+
+### Chores
+
+* The package builds and checks its types with TypeScript 7.
+
 ## 0.13.1 (2026-10-13)
 
 [Full changelog from v0.13.0 to v0.13.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.0...v0.13.1)
