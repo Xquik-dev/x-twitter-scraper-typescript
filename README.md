@@ -16,11 +16,11 @@ Xquik charges only for delivered, unique, filter-matching results and never pads
 > Xquik is an independent third-party service. Not affiliated with X Corp.
 > "Twitter" and "X" are trademarks of X Corp.
 
-[TypeScript SDK Guide](https://docs.xquik.com/sdks/typescript) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
+[TypeScript SDK guide](https://docs.xquik.com/sdks/typescript) | [API map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP guide](https://docs.xquik.com/mcp/overview)
 
 ## Pi coding agent package
 
-Install the bundled Xquik Skills directly from npm.
+Install the bundled Xquik Skills from npm.
 
 ```sh
 pi install npm:x-twitter-scraper
@@ -36,7 +36,7 @@ Import the typed SDK from the same npm package.
 
 ## Common Twitter & X tasks
 
-| Task                            | REST Route                    | Usage                                     |
+| Task                            | REST route                    | Usage                                     |
 | ------------------------------- | ----------------------------- | ----------------------------------------- |
 | Search tweets without the X API | `GET /x/tweets/search`        | Use keyword or advanced operator queries. |
 | Read an X profile timeline      | `GET /x/users/{id}/tweets`    | Paginate bounded results.                 |
@@ -66,7 +66,7 @@ Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authenti
 
 ## Installation
 
-Requires TypeScript 4.9 or later.
+The SDK requires TypeScript 4.9 or later.
 
 ```sh
 npm install x-twitter-scraper
@@ -81,7 +81,7 @@ See [api.md](api.md) for the complete API.
 import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
-  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional; the client reads this variable.
+  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional. The client reads this variable.
 });
 
 const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
@@ -96,7 +96,7 @@ The package includes types for every request parameter and response field. Impor
 import XTwitterScraper from 'x-twitter-scraper';
 
 const client = new XTwitterScraper({
-  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional; the client reads this variable.
+  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional. The client reads this variable.
 });
 
 const params: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit: 10 };
@@ -189,7 +189,7 @@ const paginatedTweets = await client.x.tweets
   });
 ```
 
-| Status Code | Error Type                 |
+| Status code | Error type                 |
 | ----------- | -------------------------- |
 | 400         | `BadRequestError`          |
 | 401         | `AuthenticationError`      |
@@ -237,7 +237,7 @@ await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
 });
 ```
 
-On timeout, an `APIConnectionTimeoutError` is thrown.
+On timeout, the SDK throws an `APIConnectionTimeoutError`.
 
 Timed-out requests follow the [default retry policy](#retries).
 
@@ -268,15 +268,15 @@ console.log(paginatedTweets.has_next_page);
 ## Logging
 
 > [!IMPORTANT]
-> All log messages are intended for debugging only. The format and content of log messages
-> may change between releases.
+> Log messages are for debugging only. The format and content of log messages may change
+> between releases.
 
 ### Log levels
 
 Configure the log level in 2 ways.
 
-1. Via the `X_TWITTER_SCRAPER_LOG` environment variable
-2. Using the `logLevel` client option (overrides the environment variable if set)
+1. Set the `X_TWITTER_SCRAPER_LOG` environment variable.
+2. Set the `logLevel` client option. It overrides the environment variable.
 
 ```ts
 import XTwitterScraper from 'x-twitter-scraper';
@@ -286,17 +286,16 @@ const client = new XTwitterScraper({
 });
 ```
 
-Available log levels, from most to least verbose.
+These are the log levels, from most to least verbose.
 
-- `'debug'` - Show debug messages, info, warnings, and errors
-- `'info'` - Show info messages, warnings, and errors
-- `'warn'` - Show warnings and errors (default)
-- `'error'` - Show only errors
-- `'off'` - Disable all logging
+- `'debug'` shows debug messages, info, warnings, and errors.
+- `'info'` shows info messages, warnings, and errors.
+- `'warn'` shows warnings and errors. It is the default.
+- `'error'` shows only errors.
+- `'off'` disables all logging.
 
-At the `'debug'` level, all HTTP requests and responses are logged, including headers and bodies.
-Some authentication-related headers are redacted, but sensitive data in request and response bodies
-may still be visible.
+At the `'debug'` level, the SDK logs every HTTP request and response, including headers and bodies.
+It redacts some authentication headers, but request and response bodies may still show sensitive data.
 
 ### Custom logger
 
@@ -447,18 +446,18 @@ Open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-typescript/is
 
 ## Runtime support
 
-Supports these runtimes.
+The SDK supports these runtimes.
 
 - Current Chrome, Firefox, Safari, Edge, and other web browsers.
 - [Maintained Node.js](https://endoflife.date/nodejs) 20 LTS or later.
-- Deno v1.28.0 or higher.
+- Deno v1.28.0 or later.
 - Bun 1.0 or later.
 - Cloudflare Workers.
 - Vercel Edge Runtime.
-- Jest 28 or greater with the `"node"` environment (`"jsdom"` is not supported at this time).
-- Nitro v2.6 or greater.
+- Jest 28 or later with the `"node"` environment, not `"jsdom"`.
+- Nitro v2.6 or later.
 
-React Native is not supported.
+The SDK does not support React Native.
 
 Request another runtime in a GitHub issue.
 
