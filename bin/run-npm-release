@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+set -euo pipefail
+directory="$(cd "$(dirname "$0")/release" && pwd)"
+if command -v sha256sum >/dev/null; then
+  source_hash="$(cd "$directory" && sha256sum ./*.go go.mod | sha256sum)"
+else
+  source_hash="$(cd "$directory" && shasum -a 256 ./*.go go.mod | shasum -a 256)"
+fi
+cache="${GOCACHE:-${HOME:?}/.cache/go-build}/x-twitter-scraper-release/go1.27.1/${source_hash%% *}"
+build_flags=()
+if [[ -n "${GOCOVERDIR:-}" ]]; then
+  cache="$cache/coverage"
+  build_flags+=(-cover)
+fi
+if [[ ! -x "$cache/release" ]]; then
+  mkdir -p "$cache"
+  build_directory="$(mktemp -d "$cache/build-XXXXXX")"
+  trap 'rm -rf "${build_directory:?}"' EXIT
+  (cd "$directory" && env GOTOOLCHAIN=go1.27.1 GOWORK=off GOENV=off GOFLAGS= go build -trimpath "${build_flags[@]}" -o "$build_directory/release" .)
+  mv "$build_directory/release" "$cache/release"
+fi
+status=0
+"$cache/release" "$@" || status=$?
+exit "$status"
