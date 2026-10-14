@@ -4,7 +4,7 @@
 
 const proof = /https:\/\/|SPDX-/u;
 const directive =
-  /^\s*(?:eslint-disable(?:-next-line|-line)?|eslint-enable|eslint|globals?|exported)(?:\s|$)|^\s*@ts-(?:check|nocheck|expect-error|ignore)\b|^\s*prettier-ignore\b|^\s*(?:c8|v8|istanbul) ignore\b|^\/\s*<reference\s|^\*\s*@type\s*\{|[#@]__(?:PURE|NO_SIDE_EFFECTS)__/u;
+  /^\s*(?:eslint-disable(?:-next-line|-line)?|eslint-enable|eslint|globals?|exported)(?:\s|$)|^\*?\s*@ts-(?:check|nocheck|expect-error|ignore)\b|^\s*prettier-ignore\b|^\s*(?:c8|v8|istanbul) ignore\b|^\/\s*<reference\s|^\*\s*@type\s*\{|[#@]__(?:PURE|NO_SIDE_EFFECTS)__/u;
 const exported = new Set(['ExportAllDeclaration', 'ExportDefaultDeclaration', 'ExportNamedDeclaration']);
 const declarations = new Set([
   ...exported,
@@ -40,13 +40,28 @@ function declarationAfter(sourceCode, comment) {
   return node && declarations.has(node.type) ? node : undefined;
 }
 
+const bodies = new Set([
+  'ArrowFunctionExpression',
+  'BlockStatement',
+  'FunctionDeclaration',
+  'FunctionExpression',
+  'StaticBlock',
+]);
+
 function isPublic(node) {
-  if (node.accessibility === 'private' || node.key?.type === 'PrivateIdentifier') {
+  if (
+    node.accessibility === 'private' ||
+    node.accessibility === 'protected' ||
+    node.key?.type === 'PrivateIdentifier'
+  ) {
     return false;
   }
   for (let ancestor = node; ancestor; ancestor = ancestor.parent) {
     if (exported.has(ancestor.type)) {
       return true;
+    }
+    if (ancestor !== node && bodies.has(ancestor.type)) {
+      return false;
     }
   }
   return false;

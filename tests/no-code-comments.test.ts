@@ -43,6 +43,16 @@ tester.run('no-code-comments', rule, {
       errors: comment,
     },
     {
+      code: 'export function search(): void {\n  /** Names a local. */\n  const id = 1;\n}',
+      options: publicApiDocs,
+      errors: comment,
+    },
+    {
+      code: 'export class Client {\n  /** A subclass hook. */\n  protected prepare(): void {}\n}',
+      options: publicApiDocs,
+      errors: comment,
+    },
+    {
       code: 'export function search(): void {\n  /** Narrates the body. */\n  run();\n}',
       options: publicApiDocs,
       errors: comment,

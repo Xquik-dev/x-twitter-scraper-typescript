@@ -43,8 +43,13 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/**'],
-    ignores: ['src/internal/**'],
+    files: [
+      'src/**',
+      'src/internal/request-options.ts',
+      'src/internal/to-file.ts',
+      'src/internal/uploads.ts',
+    ],
+    ignores: ['src/internal/!(request-options|to-file|uploads).ts', 'src/internal/*/**'],
     rules: {
       'xquik/no-code-comments': ['error', { publicApiDocs: true }],
     },
