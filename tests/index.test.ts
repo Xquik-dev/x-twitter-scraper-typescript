@@ -261,7 +261,6 @@ describe('instantiate client', () => {
   });
 
   test('explicit global fetch', async () => {
-    // make sure the global fetch type is assignable to our Fetch type
     const client = new XTwitterScraper({
       baseURL: 'http://localhost:5000/',
       apiKey: 'My API Key',
@@ -354,13 +353,13 @@ describe('instantiate client', () => {
     });
 
     test('empty env variable', () => {
-      process.env['X_TWITTER_SCRAPER_BASE_URL'] = ''; // empty
+      process.env['X_TWITTER_SCRAPER_BASE_URL'] = '';
       const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.baseURL).toEqual('https://xquik.com/api/v1');
     });
 
     test('blank env variable', () => {
-      process.env['X_TWITTER_SCRAPER_BASE_URL'] = '  '; // blank
+      process.env['X_TWITTER_SCRAPER_BASE_URL'] = '  ';
       const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.baseURL).toEqual('https://xquik.com/api/v1');
     });
@@ -400,7 +399,6 @@ describe('instantiate client', () => {
     });
     expect(client.maxRetries).toEqual(4);
 
-    // default
     const client2 = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
     expect(client2.maxRetries).toEqual(2);
   });
@@ -419,15 +417,12 @@ describe('instantiate client', () => {
         baseURL: 'http://localhost:5001/',
       });
 
-      // Verify the new client has updated options
       expect(newClient.maxRetries).toEqual(5);
       expect(newClient.baseURL).toEqual('http://localhost:5001/');
 
-      // Verify the original client is unchanged
       expect(client.maxRetries).toEqual(3);
       expect(client.baseURL).toEqual('http://localhost:5000/');
 
-      // Verify it's a different instance
       expect(newClient).not.toBe(client);
       expect(newClient.constructor).toBe(client.constructor);
     });
@@ -445,7 +440,6 @@ describe('instantiate client', () => {
         baseURL: 'http://localhost:5001/',
       });
 
-      // Test inherited options remain the same
       expect(newClient.buildURL('/foo', null)).toEqual('http://localhost:5001/foo?test-param=test-value');
 
       const { req } = await newClient.buildRequest({ path: '/foo', method: 'get' });
@@ -460,32 +454,26 @@ describe('instantiate client', () => {
         bearerToken: 'My Bearer Token',
       });
 
-      // Modify the client properties directly after creation
       client.baseURL = 'http://localhost:6000/';
       client.timeout = 2000;
 
-      // Create a new client with withOptions
       const newClient = client.withOptions({
         maxRetries: 10,
       });
 
-      // Verify the new client uses the updated properties, not the original ones
       expect(newClient.baseURL).toEqual('http://localhost:6000/');
       expect(newClient.timeout).toEqual(2000);
       expect(newClient.maxRetries).toEqual(10);
 
-      // Original client should still have its modified properties
       expect(client.baseURL).toEqual('http://localhost:6000/');
       expect(client.timeout).toEqual(2000);
       expect(client.maxRetries).not.toEqual(10);
 
-      // Verify URL building uses the updated baseURL
       expect(newClient.buildURL('/bar', null)).toEqual('http://localhost:6000/bar');
     });
   });
 
   test('with environment variable arguments', () => {
-    // set options via env var
     process.env['X_TWITTER_SCRAPER_API_KEY'] = 'My API Key';
     process.env['X_TWITTER_SCRAPER_BEARER_TOKEN'] = 'My Bearer Token';
     const client = new XTwitterScraper();
@@ -494,7 +482,6 @@ describe('instantiate client', () => {
   });
 
   test('with overridden environment variable arguments', () => {
-    // set options via env var
     process.env['X_TWITTER_SCRAPER_API_KEY'] = 'another My API Key';
     process.env['X_TWITTER_SCRAPER_BEARER_TOKEN'] = 'another My Bearer Token';
     const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });

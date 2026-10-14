@@ -10,7 +10,6 @@ const repository = resolve(__dirname, '..');
 const examples = readdirSync(resolve(repository, 'examples')).filter((file) => file.endsWith('.ts'));
 
 describe('examples', () => {
-  // CONTRIBUTING.md tells contributors to run examples with pnpm tsn -T.
   it.each(examples)(
     'pnpm tsn -T runs examples/%s',
     (file) => {

@@ -24,7 +24,6 @@ function decodeChunks(
 
 describe('line decoder', () => {
   test('basic', () => {
-    // baz is not included because the line hasn't ended yet
     expect(decodeChunks(['foo', ' bar\nbaz'], { flush: false })).toEqual(['foo bar']);
   });
 
@@ -66,7 +65,6 @@ describe('line decoder', () => {
   test('double \\r', () => {
     expect(decodeChunks(['foo\r', 'bar\r'], { flush: true })).toEqual(['foo', 'bar']);
     expect(decodeChunks(['foo\r', '\r', 'bar'], { flush: true })).toEqual(['foo', '', 'bar']);
-    // implementation detail: we don't yield the single \r line until a new \r or \n is encountered
     expect(decodeChunks(['foo\r', '\r', 'bar'], { flush: false })).toEqual(['foo']);
   });
 
@@ -85,8 +83,6 @@ describe('line decoder', () => {
   test('multi-byte characters across chunks', () => {
     const decoder = new LineDecoder();
 
-    // bytes taken from the string 'известни' and arbitrarily split
-    // so that some multi-byte characters span multiple chunks
     expect(decoder.decode(new Uint8Array([0xd0]))).toHaveLength(0);
     expect(decoder.decode(new Uint8Array([0xb8, 0xd0, 0xb7, 0xd0]))).toHaveLength(0);
     expect(

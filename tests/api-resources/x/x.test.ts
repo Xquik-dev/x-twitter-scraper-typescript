@@ -44,7 +44,6 @@ describe('resource x', () => {
   });
 
   test('getArticle: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.getArticle(
         'tweetId',
@@ -66,7 +65,6 @@ describe('resource x', () => {
   });
 
   test('getHashflags: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.getHashflags(
         {
@@ -93,7 +91,6 @@ describe('resource x', () => {
   });
 
   test('getHomeTimeline: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.getHomeTimeline(
         { cursor: 'cursor', seenTweetIds: 'seenTweetIds' },
@@ -114,7 +111,6 @@ describe('resource x', () => {
   });
 
   test('getNotifications: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.getNotifications({ cursor: 'cursor', type: 'All' }, { path: '/_stainless_unknown_path' }),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
@@ -132,7 +128,6 @@ describe('resource x', () => {
   });
 
   test('getTrendLocations: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.getTrendLocations(
         {
@@ -160,7 +155,6 @@ describe('resource x', () => {
   });
 
   test('getTrends: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.getTrends(
         {

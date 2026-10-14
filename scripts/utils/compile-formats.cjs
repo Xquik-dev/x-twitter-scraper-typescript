@@ -4,17 +4,6 @@
 
 // @ts-check
 
-// Compiles the package with TypeScript 7 once per module format, then links the output the way the
-// package has always shipped.
-//
-// CommonJS gets .js and .d.ts files, and ES modules get .mjs and .d.mts files. Each relative import
-// names a file with its format's extension, and a folder import names the folder's index file. Each
-// format imports TypeScript's helpers from 1 file, internal/tslib.js or internal/tslib.mjs, which this
-// script builds from the pinned tslib package. Source maps keep pointing at the right files and columns.
-//
-// Pass a project folder to compile it instead of this repository. Its tsconfig.build.json compiles
-// rootDir into outDir.
-
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -22,36 +11,22 @@ const path = require('path');
 const repository = path.resolve(__dirname, '..', '..');
 const tsc = path.join(repository, 'node_modules', '@typescript', 'native', 'bin', 'tsc');
 
-// ES modules compile first. Their files get new names before CommonJS takes TypeScript's default names.
 const formats = [
   { name: 'ES modules', module: 'esnext', js: '.mjs', dts: '.d.mts' },
   { name: 'CommonJS', module: 'commonjs', js: '.js', dts: '.d.ts' },
 ];
 
-/**
- * @typedef {{ name: string, module: string, js: string, dts: string }} Format
- * @typedef {{ column: number, length: number, delta: number }} Edit
- */
-
-/**
- * Prints what to fix and stops the build.
- * @param {string} message
- * @param {number} [status]
- * @returns {never}
- */
 const fail = (message, status = 1) => {
   console.error(message);
   process.exit(status);
 };
 
-/** @param {string[]} args */
 const runTsc = (args) => {
   const result = spawnSync(process.execPath, [tsc, ...args], { encoding: 'utf8' });
   if (result.error) throw result.error;
   return result;
 };
 
-/** @param {string} config */
 const readLayout = (config) => {
   const result = runTsc(['--project', config, '--showConfig']);
   if (result.status !== 0) {
@@ -66,25 +41,12 @@ const readLayout = (config) => {
   };
 };
 
-/**
- * The shared helpers file of a format.
- * @param {string} outDir
- * @param {Format} format
- */
 const helpersFileOf = (outDir, format) => path.join(outDir, 'internal', `tslib${format.js}`);
 
-/** @param {string} file */
 const isFile = (file) => fs.statSync(file, { throwIfNoEntry: false })?.isFile() ?? false;
 
-/** @param {string} file */
 const isDirectory = (file) => fs.statSync(file, { throwIfNoEntry: false })?.isDirectory() ?? false;
 
-/**
- * Returns the specifier a relative import needs in the given format, or undefined to keep it.
- * @param {string} specifier
- * @param {string} extension
- * @param {string} sourceDirectory the folder of the source file that holds the import
- */
 const linkSpecifier = (specifier, extension, sourceDirectory) => {
   if (!specifier.startsWith('./') && !specifier.startsWith('../')) return undefined;
   const current = path.extname(specifier);
@@ -101,32 +63,18 @@ const linkSpecifier = (specifier, extension, sourceDirectory) => {
   return `${base}${extension}`;
 };
 
-/**
- * Returns the relative import specifier that leads from a folder to a file.
- * @param {string} from
- * @param {string} to
- */
 const relativeSpecifier = (from, to) => {
   const relative = path.relative(from, to).split(path.sep).join('/');
   return relative.startsWith('.') ? relative : `./${relative}`;
 };
 
-// The places where TypeScript writes a module specifier in JavaScript and declaration output.
 const specifierPatterns = [
-  // A CommonJS dynamic import keeps the source's quotes, such as require('./value').
   /(\brequire\()(['"])([^'"\n]+)\2(?=\))/g,
   /(\bimport\()(['"])([^'"\n]+)\2(?=\))/g,
   /(\bfrom )(['"])([^'"\n]+)\2(?=;)/g,
-  // A side-effect import, such as import "./setup";
   /(^\s*import )(['"])([^'"\n]+)\2(?=;)/g,
 ];
 
-/**
- * Tells whether a column sits inside a string literal that opens earlier on the same line, so a
- * message such as "import a from './b';" keeps its text.
- * @param {string} line
- * @param {number} column
- */
 const insideString = (line, column) => {
   /** @type {string | undefined} */
   let quote;
@@ -143,15 +91,7 @@ const insideString = (line, column) => {
   return quote !== undefined;
 };
 
-/**
- * Rewrites each specifier that `rewrite` changes and records where each line changed. A new specifier
- * is written in double quotes, as the old build tool wrote it.
- * @param {string} text
- * @param {(specifier: string) => string | undefined} rewrite
- * @returns {{ text: string, edits: Map<number, Edit[]> }}
- */
 const rewriteSpecifiers = (text, rewrite) => {
-  /** @type {Map<number, Edit[]>} */
   const edits = new Map();
   const lines = text.split('\n').map((line, index) => {
     const matches = specifierPatterns
@@ -162,7 +102,6 @@ const rewriteSpecifiers = (text, rewrite) => {
         specifier: match[3] ?? '',
       }))
       .sort((a, b) => a.column - b.column);
-    /** @type {Edit[]} */
     const lineEdits = [];
     let output = '';
     let cursor = 0;
@@ -182,7 +121,6 @@ const rewriteSpecifiers = (text, rewrite) => {
 
 const base64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-/** @param {string} segment */
 const decodeSegment = (segment) => {
   /** @type {number[]} */
   const values = [];
@@ -203,7 +141,6 @@ const decodeSegment = (segment) => {
   return values;
 };
 
-/** @param {number} value */
 const encodeValue = (value) => {
   let rest = value < 0 ? (-value << 1) | 1 : value << 1;
   let output = '';
@@ -215,12 +152,6 @@ const encodeValue = (value) => {
   return output;
 };
 
-/**
- * Moves mappings on changed lines by the length each specifier gained. A new specifier has no source
- * position, as with the old build tool, so mappings inside it and at its end go away.
- * @param {string} mappings
- * @param {Map<number, Edit[]>} edits
- */
 const shiftMappings = (mappings, edits) => {
   if (edits.size === 0) return mappings;
   const decoded = [0, 0, 0, 0, 0];
@@ -258,10 +189,6 @@ const shiftMappings = (mappings, edits) => {
     .join(';');
 };
 
-/**
- * Splits tslib's ES module into its top-level helper declarations, in file order.
- * @param {string} text
- */
 const readHelperDeclarations = (text) => {
   /** @type {Map<string, string[]>} */
   const declarations = new Map();
@@ -281,17 +208,11 @@ const readHelperDeclarations = (text) => {
   return new Map([...declarations].map(([name, lines]) => [name, lines.join('\n').trimEnd()]));
 };
 
-/**
- * Builds a helpers file that defines the named helpers and the declarations they use.
- * @param {Set<string>} names
- * @param {Format} format
- */
 const buildHelpers = (names, format) => {
   const tslibFile = require.resolve('tslib/tslib.es6.mjs', { paths: [repository] });
   const declarations = readHelperDeclarations(fs.readFileSync(tslibFile, 'utf8'));
   /** @type {Set<string>} */
   const needed = new Set();
-  /** @param {string} name */
   const add = (name) => {
     if (needed.has(name)) return;
     const code = declarations.get(name);
@@ -318,10 +239,6 @@ const buildHelpers = (names, format) => {
   return `${code}\n\nexport { ${exported.join(', ')} };\n`;
 };
 
-/**
- * Lists the tslib helpers a compiled JavaScript file imports.
- * @param {string} text
- */
 const helpersUsed = (text) => {
   const names = [...text.matchAll(/^import \{([^}]*)\} from "tslib";$/gm)].flatMap((match) =>
     (match[1] ?? '').split(',').map((name) => name.trim()),
@@ -335,13 +252,6 @@ const helpersUsed = (text) => {
   return names.filter(Boolean);
 };
 
-/**
- * Gives 1 emitted file its format's name and links its imports, then does the same for its map.
- * Returns the tslib helpers the file calls.
- * @param {string} file an emitted .js or .d.ts file
- * @param {{ outDir: string, rootDir: string }} layout
- * @param {Format} format
- */
 const relinkFile = (file, { outDir, rootDir }, format) => {
   const declaration = file.endsWith('.d.ts');
   const target = file.replace(declaration ? /\.d\.ts$/ : /\.js$/, declaration ? format.dts : format.js);
@@ -370,11 +280,6 @@ const relinkFile = (file, { outDir, rootDir }, format) => {
   return declaration ? [] : helpersUsed(original);
 };
 
-/**
- * @param {string} config
- * @param {{ outDir: string, rootDir: string }} layout
- * @param {Format} format
- */
 const compileFormat = (config, layout, format) => {
   const result = runTsc([
     '--project',

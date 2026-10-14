@@ -40,10 +40,6 @@ export const checkFileSupport = () => {
  */
 export type Uploadable = File | Response | FsReadStream | BunFile;
 
-/**
- * Construct a `File` instance. This is used to ensure a helpful error is thrown
- * for environments that don't define a global `File` yet.
- */
 export function makeFile(
   fileBits: BlobPart[],
   fileName: string | undefined,
@@ -72,10 +68,6 @@ export function getName(value: any): string | undefined {
 export const isAsyncIterable = (value: any): value is AsyncIterable<any> =>
   value != null && typeof value === 'object' && typeof value[Symbol.asyncIterator] === 'function';
 
-/**
- * Returns a multipart/form-data request if any part of the given request body contains a File / Blob value.
- * Otherwise returns the request as is.
- */
 export const maybeMultipartFormRequestOptions = async (
   opts: RequestOptions,
   fetch: XTwitterScraper | Fetch,
@@ -96,12 +88,6 @@ export const multipartFormRequestOptions = async (
 
 const supportsFormDataMap = /* @__PURE__ */ new WeakMap<Fetch, Promise<boolean>>();
 
-/**
- * node-fetch doesn't support the global FormData object in recent node versions. Instead of sending
- * properly-encoded form data, it just stringifies the object, resulting in a request body of "[object FormData]".
- * This function detects if the fetch function provided supports the global FormData object to avoid
- * confusing error messages later on.
- */
 function supportsFormData(fetchObject: XTwitterScraper | Fetch): Promise<boolean> {
   const fetch: Fetch = typeof fetchObject === 'function' ? fetchObject : (fetchObject as any).fetch;
   const cached = supportsFormDataMap.get(fetch);
@@ -118,7 +104,6 @@ function supportsFormData(fetchObject: XTwitterScraper | Fetch): Promise<boolean
       }
       return true;
     } catch {
-      // avoid false negatives
       return true;
     }
   })();
@@ -140,8 +125,6 @@ export const createForm = async <T = Record<string, unknown>>(
   return form;
 };
 
-// We check for Blob not File because Bun.File doesn't inherit from File,
-// but they both inherit from Blob and have a `name` property at runtime.
 const isNamedBlob = (value: unknown) => value instanceof Blob && 'name' in value;
 
 const isUploadable = (value: unknown) =>
@@ -168,7 +151,6 @@ const addFormValue = async (form: FormData, key: string, value: unknown): Promis
     );
   }
 
-  // TODO: make nested formats configurable
   if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
     form.append(key, String(value));
   } else if (value instanceof Response) {

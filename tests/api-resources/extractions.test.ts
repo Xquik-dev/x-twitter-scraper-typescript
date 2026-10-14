@@ -23,7 +23,6 @@ describe('resource extractions', () => {
   });
 
   test('retrieve: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.extractions.retrieve(
         'L3NjAbCdEfGh',
@@ -53,7 +52,6 @@ describe('resource extractions', () => {
   });
 
   test('list: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.extractions.list(
         {

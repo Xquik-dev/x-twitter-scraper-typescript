@@ -23,7 +23,6 @@ describe('resource lists', () => {
   });
 
   test('retrieve: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.lists.retrieve(
         'id',
@@ -45,7 +44,6 @@ describe('resource lists', () => {
   });
 
   test('retrieveFollowers: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.lists.retrieveFollowers(
         'id',
@@ -93,7 +91,6 @@ describe('resource lists', () => {
   });
 
   test('retrieveMembers: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.lists.retrieveMembers(
         'id',
@@ -162,7 +159,6 @@ describe('resource lists', () => {
   });
 
   test('retrieveTweets: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.lists.retrieveTweets(
         'id',

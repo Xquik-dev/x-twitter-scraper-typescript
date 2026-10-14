@@ -48,7 +48,6 @@ function makeLogFn(fnLevel: keyof Logger, logger: Logger | undefined, logLevel: 
   if (!logger || levelNumbers[fnLevel] > levelNumbers[logLevel]) {
     return noop;
   } else {
-    // Don't wrap logger functions, we want the stacktrace intact!
     return logger[fnLevel].bind(logger);
   }
 }
@@ -100,7 +99,7 @@ export const formatRequestDetails = (details: {
 }) => {
   if (details.options) {
     details.options = { ...details.options };
-    delete details.options['headers']; // redundant + leaks internals
+    delete details.options['headers'];
   }
   if (details.headers) {
     details.headers = Object.fromEntries(

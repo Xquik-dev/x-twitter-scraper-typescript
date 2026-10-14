@@ -55,7 +55,6 @@ describe('resource webhooks', () => {
   });
 
   test('list: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.webhooks.list({ cursor: 'cursor', limit: 1 }, { path: '/_stainless_unknown_path' }),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
@@ -73,7 +72,6 @@ describe('resource webhooks', () => {
   });
 
   test('createTelegramLink: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.webhooks.createTelegramLink(
         { eventTypes: ['tweet.new', 'tweet.reply'] },
@@ -105,7 +103,6 @@ describe('resource webhooks', () => {
   });
 
   test('listDeliveries: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.webhooks.listDeliveries(
         'id',

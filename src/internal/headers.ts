@@ -15,17 +15,9 @@ export type HeadersLike =
 
 const brand_privateNullableHeaders = /* @__PURE__ */ Symbol('brand.privateNullableHeaders');
 
-/**
- * @internal
- * Users can pass explicit nulls to unset default headers. When we parse them
- * into a standard headers type we need to preserve that information.
- */
 export type NullableHeaders = {
-  /** Brand check, prevent users from creating a NullableHeaders. */
   [brand_privateNullableHeaders]: true;
-  /** Parsed headers. */
   values: Headers;
-  /** Set of lowercase header names explicitly set to null. */
   nulls: Set<string>;
 };
 
@@ -59,8 +51,6 @@ function* iterateHeaders(headers: HeadersLike): IterableIterator<readonly [strin
     for (const value of values) {
       if (value === undefined) continue;
 
-      // Objects keys always overwrite older headers, they never append.
-      // Yield a null to clear the header before adding the new values.
       if (shouldClear && !didClear) {
         didClear = true;
         yield [name, null];

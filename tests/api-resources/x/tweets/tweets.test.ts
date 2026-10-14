@@ -49,7 +49,6 @@ describe('resource tweets', () => {
   });
 
   test('retrieve: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.retrieve(
         'id',
@@ -130,7 +129,6 @@ describe('resource tweets', () => {
   });
 
   test('embed: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.embed(
         'id',
@@ -159,7 +157,6 @@ describe('resource tweets', () => {
   });
 
   test('getFavoriters: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getFavoriters(
         'id',
@@ -204,7 +201,6 @@ describe('resource tweets', () => {
   });
 
   test('getHiddenReplies: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getHiddenReplies(
         'id',
@@ -267,7 +263,6 @@ describe('resource tweets', () => {
   });
 
   test('getInsights: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getInsights(
         'id',
@@ -289,7 +284,6 @@ describe('resource tweets', () => {
   });
 
   test('getQuotes: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getQuotes(
         'id',
@@ -372,7 +366,6 @@ describe('resource tweets', () => {
   });
 
   test('getReplies: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getReplies(
         'id',
@@ -447,7 +440,6 @@ describe('resource tweets', () => {
   });
 
   test('getRetweeterIds: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getRetweeterIds(
         'id',
@@ -469,7 +461,6 @@ describe('resource tweets', () => {
   });
 
   test('getRetweeters: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getRetweeters(
         'id',
@@ -516,7 +507,6 @@ describe('resource tweets', () => {
   });
 
   test('getSubtitles: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getSubtitles(
         'id',
@@ -538,7 +528,6 @@ describe('resource tweets', () => {
   });
 
   test('getThread: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.getThread(
         'id',
@@ -601,7 +590,6 @@ describe('resource tweets', () => {
   });
 
   test('listTop: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.tweets.listTop(
         {

@@ -22,12 +22,9 @@ export async function defaultParseResponse<T>(client: XTwitterScraper, props: AP
     if (props.options.stream) {
       loggerFor(client).debug('response', response.status, response.url, response.headers, response.body);
 
-      // Note: there is an invariant here that isn't represented in the type system
-      // that if you set `stream: true` the response type must also be `Stream<T>`
       return Stream.fromSSEResponse(response, props.controller, client) as any;
     }
 
-    // fetch refuses to read the body when the status code is 204.
     if (response.status === 204) {
       return null as T;
     }
@@ -42,7 +39,6 @@ export async function defaultParseResponse<T>(client: XTwitterScraper, props: AP
     if (isJSON) {
       const contentLength = response.headers.get('content-length');
       if (contentLength === '0') {
-        // if there is no content we can't do anything
         return undefined as T;
       }
 

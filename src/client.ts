@@ -204,7 +204,7 @@ export interface ClientOptions {
   /**
    * Specify a custom `fetch` function implementation.
    *
-   * If not provided, we expect that `fetch` is defined globally.
+   * Defaults to globalThis.fetch.
    */
   fetch?: Fetch | undefined;
 
@@ -293,10 +293,9 @@ export class XTwitterScraper {
     };
 
     this.baseURL = options.baseURL!;
-    this.timeout = options.timeout ?? XTwitterScraper.DEFAULT_TIMEOUT; /* 1 minute */
+    this.timeout = options.timeout ?? XTwitterScraper.DEFAULT_TIMEOUT;
     this.logger = options.logger ?? console;
     const defaultLogLevel = 'warn';
-    // Set default logLevel early so that we can log a warning in parseLogLevel.
     this.logLevel = defaultLogLevel;
     this.logLevel =
       parseLogLevel(options.logLevel, 'ClientOptions.logLevel', this) ??
@@ -345,9 +344,6 @@ export class XTwitterScraper {
     return client;
   }
 
-  /**
-   * Check whether the base URL is set to its default.
-   */
   #baseURLOverridden(): boolean {
     return this.baseURL !== 'https://xquik.com/api/v1';
   }
@@ -400,9 +396,6 @@ export class XTwitterScraper {
     return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
   }
 
-  /**
-   * Basic re-implementation of `qs.stringify` for primitive types.
-   */
   protected stringifyQuery(query: object | Record<string, unknown>): string {
     return stringifyQuery(query);
   }
@@ -448,17 +441,8 @@ export class XTwitterScraper {
     return url.toString();
   }
 
-  /**
-   * Used as a callback for mutating the given `FinalRequestOptions` object.
-   */
   protected async prepareOptions(options: FinalRequestOptions): Promise<void> {}
 
-  /**
-   * Used as a callback for mutating the given `RequestInit` object.
-   *
-   * This is useful for cases where you want to add certain headers based off of
-   * the request properties, e.g. `method` or `url`.
-   */
   protected async prepareRequest(
     request: RequestInit,
     { url, options }: { url: string; options: FinalRequestOptions },
@@ -522,7 +506,6 @@ export class XTwitterScraper {
 
     await this.prepareRequest(req, { url, options });
 
-    /** Not an API request ID, just for correlating local log entries. */
     const requestLogID = 'log_' + ((Math.random() * (1 << 24)) | 0).toString(16).padStart(6, '0');
     const retryLogStr = retryOfRequestLogID === undefined ? '' : `, retryOf: ${retryOfRequestLogID}`;
     const startTime = Date.now();
@@ -551,10 +534,6 @@ export class XTwitterScraper {
       if (options.signal?.aborted) {
         throw new Errors.APIUserAbortError();
       }
-      // detect native connection timeout errors
-      // deno throws "TypeError: error sending request for url (https://example/): client error (Connect): tcp connect error: Operation timed out (os error 60): Operation timed out (os error 60)"
-      // undici throws "TypeError: fetch failed" with cause "ConnectTimeoutError: Connect Timeout Error (attempted address: example:443, timeout: 1ms)"
-      // others do not provide enough information to distinguish timeouts from other connection errors
       const isTimeout =
         isAbortError(response) ||
         /timed? ?out/i.test(String(response) + ('cause' in response ? String(response.cause) : ''));
@@ -600,7 +579,6 @@ export class XTwitterScraper {
       if (retriesRemaining && shouldRetry) {
         const retryMessage = `retrying, ${retriesRemaining} attempts remaining`;
 
-        // We don't need the body of this response.
         await Shims.CancelReadableStream(response.body);
         loggerFor(this).info(`${responseInfo} - ${retryMessage}`);
         loggerFor(this).debug(
@@ -689,7 +667,6 @@ export class XTwitterScraper {
     }
 
     try {
-      // use undefined this binding; fetch errors if bound to something else in browser/cloudflare
       return await this.fetch.call(undefined, url, fetchOptions);
     } finally {
       clearTimeout(timeout);
@@ -697,23 +674,17 @@ export class XTwitterScraper {
   }
 
   private async shouldRetry(response: Response): Promise<boolean> {
-    // Note this is not a standard header.
     const shouldRetryHeader = response.headers.get('x-should-retry');
 
-    // If the server explicitly says whether or not to retry, obey.
     if (shouldRetryHeader === 'true') return true;
     if (shouldRetryHeader === 'false') return false;
 
-    // Retry on request timeouts.
     if (response.status === 408) return true;
 
-    // Retry on lock timeouts.
     if (response.status === 409) return true;
 
-    // Retry on rate limits.
     if (response.status === 429) return true;
 
-    // Retry internal errors.
     if (response.status >= 500) return true;
 
     return false;
@@ -727,7 +698,6 @@ export class XTwitterScraper {
   ): Promise<APIResponseProps> {
     let timeoutMillis: number | undefined;
 
-    // Note the `retry-after-ms` header may not be standard, but is a good idea and we'd like proactive support for it.
     const retryAfterMillisHeader = responseHeaders?.get('retry-after-ms');
     if (retryAfterMillisHeader) {
       const timeoutMs = parseFloat(retryAfterMillisHeader);
@@ -736,7 +706,6 @@ export class XTwitterScraper {
       }
     }
 
-    // About the Retry-After header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
     const retryAfterHeader = responseHeaders?.get('retry-after');
     if (retryAfterHeader && !timeoutMillis) {
       const timeoutSeconds = parseFloat(retryAfterHeader);
@@ -747,8 +716,6 @@ export class XTwitterScraper {
       }
     }
 
-    // If the API asks us to wait a certain amount of time, just do what it
-    // says, but otherwise calculate a default
     if (timeoutMillis === undefined) {
       const maxRetries = options.maxRetries ?? this.maxRetries;
       timeoutMillis = this.calculateDefaultRetryTimeoutMillis(retriesRemaining, maxRetries);
@@ -764,10 +731,8 @@ export class XTwitterScraper {
 
     const numRetries = maxRetries - retriesRemaining;
 
-    // Apply exponential backoff, but not more than the max.
     const sleepSeconds = Math.min(initialRetryDelay * Math.pow(2, numRetries), maxRetryDelay);
 
-    // Apply some jitter, take up to at most 25 percent of the retry time.
     const jitter = 1 - Math.random() * 0.25;
 
     return sleepSeconds * jitter * 1000;
@@ -841,8 +806,6 @@ export class XTwitterScraper {
   }
 
   private _makeAbort(controller: AbortController) {
-    // note: we can't just inline this method inside `fetchWithTimeout()` because then the closure
-    //       would capture all request options, and cause a memory leak.
     return () => controller.abort();
   }
 
@@ -852,10 +815,6 @@ export class XTwitterScraper {
   } {
     const { body, headers: rawHeaders } = options;
     if (!body) {
-      // A resource method always passes a `body` key when its operation defines a
-      // request body, even if the caller omitted an optional body param. Keep the
-      // content-type for those, and only elide it for operations with no body at
-      // all (e.g. GET/DELETE).
       if (body == null && 'body' in options) {
         return this.#encoder({ body, headers: buildHeaders([rawHeaders]) });
       }
@@ -863,20 +822,13 @@ export class XTwitterScraper {
     }
     const headers = buildHeaders([rawHeaders]);
     if (
-      // Pass raw type verbatim
       ArrayBuffer.isView(body) ||
       body instanceof ArrayBuffer ||
       body instanceof DataView ||
-      (typeof body === 'string' &&
-        // Preserve legacy string encoding behavior for now
-        headers.values.has('content-type')) ||
-      // `Blob` is superset of `File`
+      (typeof body === 'string' && headers.values.has('content-type')) ||
       ((globalThis as any).Blob && body instanceof (globalThis as any).Blob) ||
-      // `FormData` -> `multipart/form-data`
       body instanceof FormData ||
-      // `URLSearchParams` -> `application/x-www-form-urlencoded`
       body instanceof URLSearchParams ||
-      // Send chunked stream (each chunk has own `length`)
       ((globalThis as any).ReadableStream && body instanceof (globalThis as any).ReadableStream)
     ) {
       return { bodyHeaders: undefined, body: body as BodyInit };
@@ -900,7 +852,7 @@ export class XTwitterScraper {
   }
 
   static XTwitterScraper = this;
-  static DEFAULT_TIMEOUT = 60000; // 1 minute
+  static DEFAULT_TIMEOUT = 60000;
 
   static XTwitterScraperError = Errors.XTwitterScraperError;
   static APIError = Errors.APIError;

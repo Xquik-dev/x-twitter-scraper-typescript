@@ -91,7 +91,6 @@ describe('resource communities', () => {
   });
 
   test('listPopular: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.communities.listPopular(
         {
@@ -119,7 +118,6 @@ describe('resource communities', () => {
   });
 
   test('listSuggested: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.communities.listSuggested(
         { fields: 'id,text,author.username', limit: 1, omit: 'entities,media' },
@@ -140,7 +138,6 @@ describe('resource communities', () => {
   });
 
   test('listTopics: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.communities.listTopics(
         { fields: 'id,text,author.username', limit: 1, omit: 'entities,media' },
@@ -161,7 +158,6 @@ describe('resource communities', () => {
   });
 
   test('retrieveInfo: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.communities.retrieveInfo(
         'id',
@@ -183,7 +179,6 @@ describe('resource communities', () => {
   });
 
   test('retrieveMembers: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.communities.retrieveMembers(
         'id',
@@ -228,7 +223,6 @@ describe('resource communities', () => {
   });
 
   test('retrieveModerators: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.x.communities.retrieveModerators(
         'id',

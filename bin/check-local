@@ -4,13 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Runs the repository checks on this machine and stops at the first failure.
-# CodeQL and REUSE are mandatory. REUSE runs at a pinned version through uv.
-# Posts the result as the xquik-local-checks commit status on GitHub when the
-# tree is clean and HEAD is pushed. Posting uses the owner's gh login on the
-# release machine. Success is posted only after every mandatory check passes,
-# and its text lists only the checks that ran. Pass --no-status to skip posting.
-
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -93,7 +86,6 @@ run_tests() {
   bash ./scripts/test 2>&1 | tee "${work_directory}/test.log"
 }
 
-# Matches the deleted CodeQL workflow: JavaScript and TypeScript, no build, security-extended queries.
 run_codeql() {
   local database="${work_directory}/codeql-database"
   local config="${work_directory}/codeql-config.yml"
@@ -107,9 +99,6 @@ run_codeql() {
   codeql database analyze "$database" codeql/javascript-queries:codeql-suites/javascript-security-extended.qls \
     --download --format=sarif-latest --output="$results" --threads=0 || return 1
 
-  # CodeQL goes on after it fails to parse a file and scans only the code it could parse. The
-  # extraction diagnostic of the suite names each such file. The report lists every diagnostic query
-  # that ran, so a suite without that diagnostic cannot pass.
   if ! jq -e --arg id "$extraction_diagnostic" \
     'any(.runs[].tool["driver"].notifications[]?; .id == $id)' "$results" >/dev/null; then
     echo "The CodeQL scan lacks ${extraction_diagnostic}, so it cannot show that it read every file. Make the suite in bin/check-local run that diagnostic query." >&2
