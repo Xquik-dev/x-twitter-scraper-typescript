@@ -2,9 +2,9 @@
 
 23 bulk data extraction tools. Each requires a specific target parameter.
 
-**Endpoint:** `POST /extractions`
+The endpoint is `POST /extractions`.
 
-**Always estimate first:** `POST /extractions/estimate` with the same body to preview `creditsRequired`, `creditsAvailable`, and whether the job is allowed.
+Always estimate first. Send `POST /extractions/estimate` with the same body to preview `creditsRequired`, `creditsAvailable`, and whether the job is allowed.
 
 ## Contents
 
@@ -27,7 +27,7 @@
 | `article_extractor` | Extract article content linked in a tweet |
 | `favoriters`        | Extract users who favorited a tweet       |
 
-**Example:**
+Here is an example.
 
 ```json
 {
@@ -46,7 +46,7 @@
 | `mention_extractor`          | Extract tweets mentioning an account     |
 | `post_extractor`             | Extract posts from an account            |
 
-**Example:**
+Here is an example.
 
 ```json
 {
@@ -64,7 +64,7 @@ The `@` prefix is automatically stripped if included.
 | `user_likes` | Extract tweets liked by a user   |
 | `user_media` | Extract media tweets from a user |
 
-**Example:**
+Here is an example.
 
 ```json
 {
@@ -82,7 +82,7 @@ The `@` prefix is automatically stripped if included.
 | `community_post_extractor`     | Extract posts from a community                                |
 | `community_search`             | Search posts within a community (also requires `searchQuery`) |
 
-**Example:**
+Here is an example.
 
 ```json
 {
@@ -99,7 +99,7 @@ The `@` prefix is automatically stripped if included.
 | `list_post_extractor`    | Extract posts from a list   |
 | `list_follower_explorer` | Extract followers of a list |
 
-**Example:**
+Here is an example.
 
 ```json
 {
@@ -114,7 +114,7 @@ The `@` prefix is automatically stripped if included.
 | ---------------- | ------------------------------- |
 | `space_explorer` | Extract participants of a Space |
 
-**Example:**
+Here is an example.
 
 ```json
 {
@@ -130,7 +130,7 @@ The `@` prefix is automatically stripped if included.
 | `people_search`          | Search for users by keyword                                         |
 | `tweet_search_extractor` | Search and extract tweets by keyword or hashtag (bulk, up to 1,000) |
 
-**Example (people search):**
+Here is an example for people search.
 
 ```json
 {
@@ -139,7 +139,7 @@ The `@` prefix is automatically stripped if included.
 }
 ```
 
-**Example (tweet search):**
+Here is an example for tweet search.
 
 ```json
 {
@@ -151,7 +151,7 @@ The `@` prefix is automatically stripped if included.
 
 ### Tweet search filters
 
-The `tweet_search_extractor` tool type supports 16 additional filter fields that are converted to X search operators and combined with `searchQuery`:
+The `tweet_search_extractor` tool type supports 16 additional filter fields. Xquik converts them to X search operators and combines them with `searchQuery`.
 
 | Field           | Type    | Description                              |
 | --------------- | ------- | ---------------------------------------- |
@@ -172,7 +172,7 @@ The `tweet_search_extractor` tool type supports 16 additional filter fields that
 | `excludeWords`  | string  | Comma-separated words to exclude         |
 | `advancedQuery` | string  | Raw X search operators appended to query |
 
-**Example with filters:**
+Here is an example with filters.
 
 ```json
 {
@@ -186,7 +186,7 @@ The `tweet_search_extractor` tool type supports 16 additional filter fields that
 }
 ```
 
-`resultsLimit` (optional): Maximum results to extract. Stops early instead of fetching all. Pass this on both `POST /extractions/estimate` and `POST /extractions` when you only need a specific count.
+`resultsLimit` is optional. It sets the maximum results to extract and stops early instead of fetching all. Pass it on both `POST /extractions/estimate` and `POST /extractions` when you only need a specific count.
 
 ## Response
 
@@ -199,7 +199,7 @@ The `tweet_search_extractor` tool type supports 16 additional filter fields that
 }
 ```
 
-Statuses: `pending`, `running`, `completed`, `failed`.
+Statuses are `pending`, `running`, `completed` and `failed`.
 
 ## Retrieve results
 
@@ -207,7 +207,7 @@ Statuses: `pending`, `running`, `completed`, `failed`.
 GET /extractions/{id}
 ```
 
-Returns paginated results (up to 1,000 per page). Each result includes:
+Returns paginated results, up to 1,000 per page. Each result includes these fields.
 
 - `xUserId`, `xUsername`, `xDisplayName`
 - `xFollowersCount`, `xVerified`, `xProfileImageUrl`
@@ -219,7 +219,7 @@ Returns paginated results (up to 1,000 per page). Each result includes:
 GET /extractions/{id}/export?format=csv
 ```
 
-Formats: `csv`, `json`, `md`, `md-document`, `pdf`, `txt`, `xlsx`. 100,000 row limit (10,000 for PDF).
+Formats are `csv`, `json`, `md`, `md-document`, `pdf`, `txt` and `xlsx`. The row limit is 100,000, or 10,000 for PDF.
 
 Exports include enrichment columns not present in the API response.
 
@@ -229,7 +229,7 @@ Exports include enrichment columns not present in the API response.
 POST /extractions/estimate
 ```
 
-Same body as create. Response:
+It takes the same body as create. The response has this shape.
 
 ```json
 {

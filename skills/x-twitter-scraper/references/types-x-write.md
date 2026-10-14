@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: X Write
+# Xquik TypeScript types for X writes
 
 ```typescript
 

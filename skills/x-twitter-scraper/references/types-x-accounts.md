@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: X Accounts (Connected)
+# Xquik TypeScript types for connected X accounts
 
 ```typescript
 

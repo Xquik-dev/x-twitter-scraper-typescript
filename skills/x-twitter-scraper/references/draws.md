@@ -4,11 +4,11 @@ Run transparent, auditable giveaway draws from tweet replies with configurable f
 
 ## Create a draw
 
-`POST /draws` with a `tweetUrl` (required) and optional filters:
+Send `POST /draws` with a `tweetUrl` (required) and these optional filters.
 
 | Field                  | Type     | Description                                                  |
 | ---------------------- | -------- | ------------------------------------------------------------ |
-| `tweetUrl`             | string   | **Required.** Full tweet URL: `https://x.com/user/status/ID` |
+| `tweetUrl`             | string   | **Required.** Full tweet URL, as `https://x.com/user/status/ID` |
 | `winnerCount`          | number   | Winners to select (default 1)                                |
 | `backupCount`          | number   | Backup winners to select                                     |
 | `uniqueAuthorsOnly`    | boolean  | Count only one entry per author                              |

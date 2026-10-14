@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: X Media (Download)
+# Xquik REST API endpoints for X media downloads
 
 ### Download Media
 
@@ -8,14 +8,14 @@ POST /x/media/download
 
 Download images, videos, and GIFs from tweets. Single or bulk (up to 50). Returns a shareable gallery URL.
 
-**Body:** Provide either `tweetInput` (single tweet) or `tweetIds` (bulk). Exactly 1 is required.
+In the body, provide either `tweetInput` (single tweet) or `tweetIds` (bulk). Exactly 1 is required.
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `tweetInput` | string | Tweet URL or numeric tweet ID for a single download. Accepts `x.com` and `twitter.com` URL formats |
 | `tweetIds` | string[] | Array of tweet URLs or IDs for bulk download. Maximum 50 items. Returns a single combined gallery |
 
-**Response (single):**
+A single-tweet response has this shape.
 ```json
 {
   "tweetId": "1893456789012345678",
@@ -24,7 +24,7 @@ Download images, videos, and GIFs from tweets. Single or bulk (up to 50). Return
 }
 ```
 
-**Response (bulk):**
+A bulk response has this shape.
 ```json
 {
   "galleryUrl": "https://xquik.com/g/def456",

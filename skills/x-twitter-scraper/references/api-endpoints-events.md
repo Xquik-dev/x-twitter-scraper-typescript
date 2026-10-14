@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Events
+# Xquik REST API endpoints for events
 
 ### List Events
 
@@ -6,7 +6,7 @@
 GET /events
 ```
 
-**Query parameters:**
+It takes these query parameters.
 
 | Param | Type | Description |
 |-------|------|-------------|
@@ -15,7 +15,7 @@ GET /events
 | `limit` | number | Results per page (1-100, default 50) |
 | `after` | string | Cursor for next page |
 
-**Response:**
+The response has this shape.
 ```json
 {
   "events": [

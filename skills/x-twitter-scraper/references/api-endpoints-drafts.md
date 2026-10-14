@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Drafts
+# Xquik REST API endpoints for drafts
 
 ### Create Draft
 
@@ -6,15 +6,15 @@
 
 Save a tweet draft for later.
 
-**Request body:**
+The request body takes these fields.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `text` | string | Yes | The draft tweet text |
 | `topic` | string | No | Topic the tweet is about |
-| `goal` | string | No | Optimization goal: `engagement`, `followers`, `authority`, `conversation` |
+| `goal` | string | No | Optimization goal, one of `engagement`, `followers`, `authority`, `conversation` |
 
-**Response (201):**
+A `201` response has this shape.
 
 ```json
 {
@@ -35,14 +35,14 @@ Save a tweet draft for later.
 
 List saved tweet drafts with cursor pagination.
 
-**Query parameters:**
+It takes these query parameters.
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | `limit` | number | No | 50 | Results per page (max 50) |
 | `afterCursor` | string | No | - | Pagination cursor from previous response |
 
-**Response (200):**
+A `200` response has this shape.
 
 ```json
 {
@@ -69,9 +69,9 @@ List saved tweet drafts with cursor pagination.
 
 Get a specific draft by ID.
 
-**Response (200):** Single draft object.
+A `200` response returns a single draft object.
 
-**Errors:** `400 invalid_id`, `404 draft_not_found`
+It can return `400 invalid_id` or `404 draft_not_found`.
 
 ---
 
@@ -81,6 +81,6 @@ delete request to `/drafts/{id}`
 
 Delete a draft. Returns `204 No Content`.
 
-**Errors:** `400 invalid_id`, `404 draft_not_found`
+It can return `400 invalid_id` or `404 draft_not_found`.
 
 ---

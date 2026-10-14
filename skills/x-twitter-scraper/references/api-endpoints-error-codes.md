@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Error Codes
+# Xquik REST API error codes
 
 | Status | Code | Meaning |
 |--------|------|---------|
@@ -16,7 +16,7 @@
 | 400 | `no_media` | Tweet has no downloadable media |
 | 400 | `webhook_inactive` | Webhook is disabled (test-webhook only) |
 | 401 | `unauthenticated` | Missing or invalid API key |
-| 403 | `account_needs_reauth` | X account session expired; use dashboard re-auth flow |
+| 403 | `account_needs_reauth` | X account session expired. Use the dashboard re-auth flow |
 | 402 | `no_subscription` | No active plan |
 | 402 | `subscription_inactive` | Plan is not active |
 | 402 | `no_credits` | No credit balance record exists |
@@ -28,7 +28,7 @@
 | 404 | `style_not_found` | No cached style found |
 | 404 | `draft_not_found` | Draft not found |
 | 409 | `monitor_already_exists` | Duplicate monitor for same username |
-| 422 | `login_failed` | Account connection failed; use dashboard re-auth flow |
+| 422 | `login_failed` | Account connection failed. Use the dashboard re-auth flow |
 | 429 | - | Rate limited. Retry with backoff |
 | 429 | `x_api_rate_limited` | X data source rate limited. Retry |
 | 500 | `internal_error` | Server error |

@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Support
+# Xquik REST API endpoints for support
 
 ### Create Ticket
 
@@ -6,9 +6,9 @@
 POST /support/tickets
 ```
 
-**Body:** `{ "subject": "...", "body": "..." }`
+The body is `{ "subject": "...", "body": "..." }`.
 
-**Response (201):** `{ id, subject, status, createdAt }`
+A `201` response is `{ id, subject, status, createdAt }`.
 
 ### List Tickets
 
@@ -40,7 +40,7 @@ Update ticket status.
 POST /support/tickets/{id}/messages
 ```
 
-**Body:** `{ "body": "..." }`
+The body is `{ "body": "..." }`.
 
 Add a message to an existing ticket.
 

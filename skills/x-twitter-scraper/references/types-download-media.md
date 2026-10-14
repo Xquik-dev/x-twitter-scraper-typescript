@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: Download Media
+# Xquik TypeScript types for media downloads
 
 ```typescript
 

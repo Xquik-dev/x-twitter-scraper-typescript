@@ -4,14 +4,14 @@ Use this reference to keep Xquik calls bounded, consent-based, and account-safe.
 
 ## Agent scope
 
-The skill may:
+The skill may do these things.
 
 - read the current credit balance with `GET /credits`
 - call estimate endpoints before bulk jobs, draws, monitors, or write actions
 - show whether a requested operation is metered, included, or blocked by account state
 - explain how to keep a request bounded before sending it
 
-The skill must not:
+The skill must not do these things.
 
 - start plan or credit changes
 - call routes that change account plan or credit state
@@ -23,7 +23,7 @@ Plan and credit changes are dashboard-only.
 
 ## Before metered work
 
-Before creating extraction jobs, draws, monitors, signed event delivery, or write actions:
+Follow these steps before creating extraction jobs, draws, monitors, signed event delivery, or write actions.
 
 1. Identify the exact endpoint or action category.
 2. Validate the target account, tweet, user, query, or URL.
@@ -39,7 +39,7 @@ Do not use balance data to decide whether to run work automatically. Ask the use
 
 ## Persistent usage
 
-Monitors and signed event delivery can continue after the current chat. Before creating one, show:
+Monitors and signed event delivery can continue after the current chat. Before creating one, show these details.
 
 - watched account, query, or event set
 - delivery URL when applicable
