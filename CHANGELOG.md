@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.13.3 (2026-10-14)
+
+[Full changelog from v0.13.2 to v0.13.3](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.2...v0.13.3)
+
+### Documentation
+
+* The README uses sentence case headings, active voice and whole sentences. Its facts, links and legal lines stay the same.
+
 ## 0.13.2 (2026-10-14)
 
 [Full changelog from v0.13.1 to v0.13.2](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.1...v0.13.2)
