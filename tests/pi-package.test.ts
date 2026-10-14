@@ -117,7 +117,7 @@ describe('package metadata', () => {
     expect(mcpTools).not.toContain('`explore`');
     expect(mcpTools).not.toContain('Hosted MCP v2.6.0');
     expect(existsSync(resolve(skillRoot, 'references/types-mcp-search-tweets.md'))).toBe(false);
-    expect(skillSpectorReport).toContain('**Scanned:** 2026-08-26');
+    expect(skillSpectorReport).toContain('**Scanned:** 2026-10-14');
     expect(skillSpectorReport).toContain('- Findings: 1 non-applicable legal-text match');
     expect(xApiTypes).toContain('author?: TweetAuthor');
   });

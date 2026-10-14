@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Tweet Style Cache
+# Xquik REST API endpoints for the tweet style cache
 
 ### Analyze & Cache Style
 
@@ -6,13 +6,13 @@
 
 Fetch recent tweets from an X account and cache them for style analysis. **Consumes metered API usage.**
 
-**Request body:**
+The request body takes these fields.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `username` | string | Yes | X username to analyze (without @) |
 
-**Response (201):**
+A `201` response has this shape.
 
 ```json
 {
@@ -39,7 +39,7 @@ Fetch recent tweets from an X account and cache them for style analysis. **Consu
 
 List all cached tweet style profiles. Max 200 results, ordered by fetch date.
 
-**Response (200):**
+A `200` response has this shape.
 
 ```json
 {
@@ -62,16 +62,16 @@ List all cached tweet style profiles. Max 200 results, ordered by fetch date.
 
 Save a custom style profile from tweet texts. The body `label` controls the saved style label and replaces any existing style with that label.
 
-**Body:**
+The request body takes these fields.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `label` | string | Yes | Style label name (1-30 characters) |
 | `tweets` | object[] | Yes | Array of tweet objects (1-100). Each must have a `text` field |
 
-**Response (200):** Style object with label, `tweetCount`, `isOwnAccount: false`, `fetchedAt`, and `tweets` array.
+A `200` response returns the style object with label, `tweetCount`, `isOwnAccount: false`, `fetchedAt`, and a `tweets` array.
 
-**Errors:** `400 invalid_input`
+It can return `400 invalid_input`.
 
 ---
 
@@ -81,9 +81,9 @@ Save a custom style profile from tweet texts. The body `label` controls the save
 
 Get a cached style profile with full tweet data. `id` is the cached style label or username.
 
-**Response (200):** Full style object with `tweets` array.
+A `200` response returns the full style object with its `tweets` array.
 
-**Errors:** `404 style_not_found`
+It can return `404 style_not_found`.
 
 ---
 
@@ -93,7 +93,7 @@ delete request to `/styles/{id}`
 
 Delete a cached style by label or username. Returns `204 No Content`.
 
-**Errors:** `404 style_not_found`
+It can return `404 style_not_found`.
 
 ---
 
@@ -103,14 +103,14 @@ Delete a cached style by label or username. Returns `204 No Content`.
 
 Compare two cached tweet style profiles side by side.
 
-**Query parameters:**
+It takes these query parameters.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `username1` | string | Yes | First X username |
 | `username2` | string | Yes | Second X username |
 
-**Response (200):**
+A `200` response has this shape.
 
 ```json
 {
@@ -119,7 +119,7 @@ Compare two cached tweet style profiles side by side.
 }
 ```
 
-**Errors:** `400 missing_params`, `404 style_not_found`
+It can return `400 missing_params` or `404 style_not_found`.
 
 ---
 
@@ -129,7 +129,7 @@ Compare two cached tweet style profiles side by side.
 
 Get live engagement metrics for cached tweets for a cached style label or username. **Consumes metered API usage.**
 
-**Response (200):**
+A `200` response has this shape.
 
 ```json
 {
@@ -150,6 +150,6 @@ Get live engagement metrics for cached tweets for a cached style label or userna
 }
 ```
 
-**Errors:** `404 style_not_found`
+It can return `404 style_not_found`.
 
 ---

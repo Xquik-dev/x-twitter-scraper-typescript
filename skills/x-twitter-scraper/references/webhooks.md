@@ -21,7 +21,7 @@ Receive real-time event notifications at your HTTPS endpoints with HMAC-SHA256 s
 
 ## Webhook payload
 
-Every delivery is a `POST` request to your URL with a JSON body:
+Every delivery is a `POST` request to your URL with a JSON body like this.
 
 ```json
 {
@@ -37,7 +37,7 @@ Every delivery is a `POST` request to your URL with a JSON body:
 
 ## Signature verification
 
-The `X-Xquik-Signature` header contains: `sha256=` + HMAC-SHA256(secret, raw JSON body).
+The `X-Xquik-Signature` header contains `sha256=` + HMAC-SHA256(secret, raw JSON body).
 
 ### Node.js (standard library)
 
@@ -207,7 +207,7 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
 
 ## Idempotency
 
-Webhook deliveries can retry on failure, delivering the same event multiple times. Deduplicate by hashing the raw payload:
+Webhook deliveries can retry on failure, delivering the same event multiple times. Deduplicate by hashing the raw payload.
 
 ```javascript
 import { createHash } from 'node:crypto';
@@ -224,9 +224,9 @@ if (processedPayloads.has(payloadHash)) {
 
 ## Retry policy
 
-Failed deliveries are retried up to 5 times with exponential backoff. Delivery statuses: `pending`, `delivered`, `failed`, `exhausted`.
+Xquik retries failed deliveries up to 5 times with exponential backoff. Delivery statuses are `pending`, `delivered`, `failed` and `exhausted`.
 
-Check delivery status: `GET /webhooks/{id}/deliveries`.
+Check delivery status with `GET /webhooks/{id}/deliveries`.
 
 ## Local testing
 

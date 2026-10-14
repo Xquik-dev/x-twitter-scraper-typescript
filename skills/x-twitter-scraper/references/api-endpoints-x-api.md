@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: X API (Direct Lookups)
+# Xquik REST API endpoints for direct X API lookups
 
 Metered operations that require account access.
 
@@ -18,7 +18,7 @@ GET /x/articles/{tweetId}
 
 Retrieve the full content of an X Article (long-form post) by numeric tweet ID. If the user gives an article URL, use the final status ID as `tweetId`. Returns title, body text with block-level formatting, cover image, inline images, and engagement metrics. Metered.
 
-**Response:**
+The response has this shape.
 ```json
 {
   "title": "Why AI Will Transform Everything",
@@ -43,7 +43,7 @@ Retrieve the full content of an X Article (long-form post) by numeric tweet ID. 
 GET /x/tweets/search?q={query}
 ```
 
-Search using X syntax: keywords, `#hashtags`, `from:user`, `to:user`, `"exact phrases"`, `OR`, `-exclude`.
+Search with X syntax, such as keywords, `#hashtags`, `from:user`, `to:user`, `"exact phrases"`, `OR` and `-exclude`.
 
 Returns tweet info with optional engagement metrics (likeCount, retweetCount, replyCount) and optional attached media. Some fields may be omitted if unavailable.
 
@@ -173,7 +173,7 @@ GET /x/bookmarks
 
 Get bookmarked tweets. Requires a connected X account. Metered per returned result.
 
-**Sensitive:** Returns private data. Confirm with user before calling.
+**Sensitive.** It returns private data. Confirm with the user before calling.
 
 ### Get Bookmark Folders
 
@@ -191,7 +191,7 @@ GET /x/notifications
 
 Get notifications with type filter. Requires a connected X account. Metered per returned result.
 
-**Sensitive:** Returns private data. Confirm with user before calling.
+**Sensitive.** It returns private data. Confirm with the user before calling.
 
 ### Get Home Timeline
 
@@ -201,6 +201,6 @@ GET /x/timeline
 
 Get home timeline. Requires a connected X account. Metered per returned result.
 
-**Sensitive:** Returns private data. Confirm with user before calling.
+**Sensitive.** It returns private data. Confirm with the user before calling.
 
 ---

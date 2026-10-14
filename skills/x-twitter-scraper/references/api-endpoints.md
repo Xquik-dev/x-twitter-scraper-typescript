@@ -2,7 +2,7 @@
 
 Routing index for the REST API reference. Load only the section file needed for the user task instead of loading the full endpoint catalog.
 
-Base URL: `https://xquik.com/api/v1`
+The base URL is `https://xquik.com/api/v1`.
 
 All requests require the `x-api-key` header unless the section says session auth only. All responses are JSON. HTTPS only.
 

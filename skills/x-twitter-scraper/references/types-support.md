@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: Support
+# Xquik TypeScript types for support
 
 ```typescript
 

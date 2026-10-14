@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: API Keys
+# Xquik REST API endpoints for API keys
 
 Session auth only. These endpoints do not accept API key auth.
 
@@ -8,9 +8,9 @@ Session auth only. These endpoints do not accept API key auth.
 POST /api-keys
 ```
 
-**Body:** `{ "name": "My Key" }` (optional)
+The optional body is `{ "name": "My Key" }`.
 
-**Response:** Returns `fullKey` (shown only once), `prefix`, `name`, `id`, `createdAt`.
+The response returns `fullKey` (shown only once), `prefix`, `name`, `id`, `createdAt`.
 
 ### List API Keys
 

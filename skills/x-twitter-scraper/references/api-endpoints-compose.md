@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Compose
+# Xquik REST API endpoints for tweet composition
 
 ### Compose Tweet
 
@@ -8,7 +8,7 @@ POST /compose
 
 Compose, refine, and score tweets with Xquik style signals. Three-step workflow.
 
-**Body:**
+The request body takes these fields.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -24,10 +24,10 @@ Compose, refine, and score tweets with Xquik style signals. Three-step workflow.
 | `hasLink` | boolean | No | Link attached (score) |
 | `hasMedia` | boolean | No | Media attached (score) |
 
-**Response (step=compose):** Returns `contentRules`, `scorerWeights`, `followUpQuestions`, `algorithmInsights`, `engagementMultipliers`, `topPenalties`.
+With `step=compose`, the response returns `contentRules`, `scorerWeights`, `followUpQuestions`, `algorithmInsights`, `engagementMultipliers`, `topPenalties`.
 
-**Response (step=refine):** Returns `compositionGuidance`, `examplePatterns`.
+With `step=refine`, the response returns `compositionGuidance`, `examplePatterns`.
 
-**Response (step=score):** Returns `totalChecks`, `passedCount`, `topSuggestion`, `checklist[]` with `factor`, `passed`, `suggestion`.
+With `step=score`, the response returns `totalChecks`, `passedCount`, `topSuggestion`, `checklist[]` with `factor`, `passed`, `suggestion`.
 
 ---

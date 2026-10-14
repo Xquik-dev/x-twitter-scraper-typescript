@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Draws
+# Xquik REST API endpoints for draws
 
 ### Create Draw
 
@@ -8,7 +8,7 @@ POST /draws
 
 Run a giveaway draw from a tweet. Picks random winners from replies.
 
-**Body:**
+The request body has this shape.
 ```json
 {
   "tweetUrl": "https://x.com/user/status/1893456789012345678",
@@ -28,7 +28,7 @@ Run a giveaway draw from a tweet. Picks random winners from replies.
 
 All filter fields are optional. Only `tweetUrl` is required.
 
-**Response:**
+The response has this shape.
 ```json
 {
   "id": "42",
@@ -70,6 +70,6 @@ Returns full draw details including winners.
 GET /draws/{id}/export?format=csv&type=winners
 ```
 
-Formats: `csv`, `json`, `md`, `md-document`, `pdf`, `txt`, `xlsx`. Types: `winners` (default), `entries`. Entry exports capped at 100,000 rows (PDF capped at 10,000).
+Formats are `csv`, `json`, `md`, `md-document`, `pdf`, `txt` and `xlsx`. Types are `winners` (default) and `entries`. Entry exports cap at 100,000 rows, and PDF exports cap at 10,000.
 
 ---

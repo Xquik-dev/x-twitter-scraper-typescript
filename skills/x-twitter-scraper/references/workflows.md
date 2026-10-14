@@ -23,7 +23,7 @@ const headers = { 'x-api-key': apiKey, 'Content-Type': 'application/json' };
 
 ## Retry with exponential backoff
 
-Retry only `429` and `5xx`. Never retry `4xx` (except 429). Max 3 retries:
+Retry only `429` and `5xx`. Never retry `4xx` (except 429). Retry at most 3 times.
 
 ```javascript
 async function xquikFetch(path, options = {}) {
@@ -133,7 +133,7 @@ const csvData = await csvResponse.text();
 
 ## Real-time monitoring setup
 
-Complete end-to-end: create monitor, register webhook, handle events. Create persistent monitors and webhooks only after explicit user approval of the target, event types, destination URL, and ongoing usage.
+This end-to-end example creates a monitor, registers a webhook and handles events. Create persistent monitors and webhooks only after explicit user approval of the target, event types, destination URL, and ongoing usage.
 
 ```javascript
 // 1. Create monitor (persistent resource; active monitors are metered hourly)
@@ -159,7 +159,7 @@ const webhook = await xquikFetch('/webhooks', {
 const events = await xquikFetch('/events?monitorId=7&limit=50');
 ```
 
-Event types: `tweet.new`, `tweet.quote`, `tweet.reply`, `tweet.retweet`, `webhook.test`.
+Event types are `tweet.new`, `tweet.quote`, `tweet.reply`, `tweet.retweet` and `webhook.test`.
 
 ## Endpoint guide
 
@@ -184,7 +184,7 @@ Event types: `tweet.new`, `tweet.quote`, `tweet.reply`, `tweet.retweet`, `webhoo
 | **Get DM history**                   | `GET /x/dm/{userId}/history`                       | Metered per result                                  |
 | **Monitor an X account**             | `POST /monitors`                                   | Active monitors are metered hourly                  |
 | **Poll for events**                  | `GET /events`                                      | Included                                            |
-| **Receive events via webhook**       | `POST /webhooks`                                   | Included; confirmation required for destination URL |
+| **Receive events via webhook**       | `POST /webhooks`                                   | Included, but the destination URL needs approval    |
 | **Run a giveaway draw**              | `POST /draws`                                      | Metered per entry                                   |
 | **Download tweet media**             | `POST /x/media/download`                           | Metered per item                                    |
 | **Extract bulk data**                | `POST /extractions`                                | Metered per result                                  |

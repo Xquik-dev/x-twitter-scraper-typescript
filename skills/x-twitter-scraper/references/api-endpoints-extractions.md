@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Extractions
+# Xquik REST API endpoints for extractions
 
 ### Create Extraction
 
@@ -8,7 +8,7 @@ POST /extractions
 
 Run a bulk data extraction job. See `references/extractions.md` for all 23 tool types.
 
-**Body:**
+The request body has this shape.
 ```json
 {
   "toolType": "reply_extractor",
@@ -17,9 +17,9 @@ Run a bulk data extraction job. See `references/extractions.md` for all 23 tool 
 }
 ```
 
-`resultsLimit` (optional): Maximum results to extract. Stops early instead of fetching all data. Useful for controlling usage.
+`resultsLimit` is optional. It sets the maximum results to extract and stops early instead of fetching all data. It helps control usage.
 
-**Tweet Search Filters** (`tweet_search_extractor` only):
+These tweet search filters apply to `tweet_search_extractor` only.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -42,7 +42,7 @@ Run a bulk data extraction job. See `references/extractions.md` for all 23 tool 
 
 These filters are converted to X search operators and combined with `searchQuery`.
 
-**Response:**
+The response has this shape.
 ```json
 {
   "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -59,7 +59,7 @@ POST /extractions/estimate
 
 Preview usage before running. Same body as create.
 
-**Response:**
+The response has this shape.
 ```json
 {
   "allowed": true,
@@ -92,6 +92,6 @@ Returns job details with paginated results (up to 1,000 per page).
 GET /extractions/{id}/export?format=csv
 ```
 
-Formats: `csv`, `json`, `md`, `md-document`, `pdf`, `txt`, `xlsx`. 100,000 row limit (PDF 10,000). Exports include enrichment columns not in the API response.
+Formats are `csv`, `json`, `md`, `md-document`, `pdf`, `txt` and `xlsx`. The row limit is 100,000, or 10,000 for PDF. Exports include enrichment columns not in the API response.
 
 ---

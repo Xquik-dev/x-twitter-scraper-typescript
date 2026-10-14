@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Credits
+# Xquik REST API endpoints for credits
 
 ### Get Credit Balance
 

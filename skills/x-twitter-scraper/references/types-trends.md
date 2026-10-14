@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: Trends
+# Xquik TypeScript types for trends
 
 ```typescript
 

@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Monitors
+# Xquik REST API endpoints for monitors
 
 ### Create Monitor
 
@@ -6,7 +6,7 @@
 POST /monitors
 ```
 
-**Body:**
+The request body has this shape.
 ```json
 {
   "username": "elonmusk",
@@ -14,7 +14,7 @@ POST /monitors
 }
 ```
 
-**Response:**
+The response has this shape.
 ```json
 {
   "id": "7",
@@ -25,7 +25,7 @@ POST /monitors
 }
 ```
 
-Event types: `tweet.new`, `tweet.quote`, `tweet.reply`, `tweet.retweet`, `webhook.test`.
+Event types are `tweet.new`, `tweet.quote`, `tweet.reply`, `tweet.retweet` and `webhook.test`.
 
 Returns `409 monitor_already_exists` if the username is already monitored.
 
@@ -49,7 +49,7 @@ GET /monitors/{id}
 PATCH /monitors/{id}
 ```
 
-**Body:** `{ "eventTypes": [...], "isActive": true|false }` (both optional)
+The body is `{ "eventTypes": [...], "isActive": true|false }`. Both fields are optional.
 
 ### Delete Monitor
 
@@ -69,6 +69,6 @@ PATCH /monitors/keywords/{id}
 delete request to `/monitors/keywords/{id}`
 ```
 
-Create and manage ongoing keyword monitors. Treat these as persistent resources: confirm the keyword query, event delivery plan, and ongoing usage before creating or enabling one.
+Create and manage ongoing keyword monitors. Treat these as persistent resources. Confirm the keyword query, event delivery plan, and ongoing usage before creating or enabling one.
 
 ---

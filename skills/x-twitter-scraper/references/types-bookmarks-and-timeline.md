@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: Bookmarks & Timeline
+# Xquik TypeScript types for bookmarks & timeline
 
 ```typescript
 

@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Webhooks
+# Xquik REST API endpoints for webhooks
 
 ### Create Webhook
 
@@ -6,7 +6,7 @@
 POST /webhooks
 ```
 
-**Body:**
+The request body has this shape.
 ```json
 {
   "url": "https://your-server.com/webhook",
@@ -30,7 +30,7 @@ Returns all webhooks (up to 200). Secret is never exposed in list responses.
 PATCH /webhooks/{id}
 ```
 
-**Body:** `{ "url": "...", "eventTypes": [...], "isActive": true|false }` (all optional)
+The body is `{ "url": "...", "eventTypes": [...], "isActive": true|false }`. All fields are optional.
 
 ### Delete Webhook
 
@@ -48,7 +48,7 @@ POST /webhooks/{id}/test
 
 Sends a `webhook.test` event to the webhook endpoint, HMAC-signed with the webhook's secret. Returns success or failure status with HTTP response details.
 
-**Payload delivered to your endpoint:**
+Xquik delivers this payload to your endpoint.
 ```json
 {
   "eventType": "webhook.test",
@@ -69,6 +69,6 @@ Returns `400 webhook_inactive` if the webhook is disabled. Reactivate via `PATCH
 GET /webhooks/{id}/deliveries
 ```
 
-View delivery attempts and statuses for a webhook. Statuses: `pending`, `delivered`, `failed`, `exhausted`.
+View delivery attempts and statuses for a webhook. Statuses are `pending`, `delivered`, `failed` and `exhausted`.
 
 ---

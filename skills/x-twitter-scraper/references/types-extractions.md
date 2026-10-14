@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: Extractions
+# Xquik TypeScript types for extractions
 
 ```typescript
 

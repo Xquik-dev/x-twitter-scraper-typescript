@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: X Write
+# Xquik REST API endpoints for X writes
 
 Write actions performed through connected X accounts. All endpoints are metered. Every request requires an `account` field (username or account ID) identifying which connected account to use.
 
@@ -8,7 +8,7 @@ Write actions performed through connected X accounts. All endpoints are metered.
 POST /x/tweets
 ```
 
-**Body:**
+The request body takes these fields.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -20,9 +20,9 @@ POST /x/tweets
 | `is_note_tweet` | boolean | No | Long-form note tweet (up to 25,000 chars) |
 | `media` | string[] | No | Public image URLs to attach (max 4). `POST /x/media` returns `mediaUrl` values for this field |
 
-**Response:** `{ tweetId, success: true }`
+The response is `{ tweetId, success: true }`.
 
-**Errors:** `502 x_write_failed`
+It can return `502 x_write_failed`.
 
 ### Delete Tweet
 
@@ -30,9 +30,9 @@ POST /x/tweets
 delete request to `/x/tweets/{id}`
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
-**Response:** `{ success: true }`
+The response is `{ success: true }`.
 
 ### Like Tweet
 
@@ -40,7 +40,7 @@ delete request to `/x/tweets/{id}`
 POST /x/tweets/{id}/like
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
 ### Unlike Tweet
 
@@ -48,7 +48,7 @@ POST /x/tweets/{id}/like
 delete request to `/x/tweets/{id}/like`
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
 ### Retweet
 
@@ -56,7 +56,7 @@ delete request to `/x/tweets/{id}/like`
 POST /x/tweets/{id}/retweet
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
 ### Unretweet
 
@@ -64,7 +64,7 @@ POST /x/tweets/{id}/retweet
 delete request to `/x/tweets/{id}/retweet`
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
 ### Follow User
 
@@ -72,9 +72,9 @@ delete request to `/x/tweets/{id}/retweet`
 POST /x/users/{id}/follow
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
-**Errors:** `502 x_write_failed`
+It can return `502 x_write_failed`.
 
 ### Unfollow User
 
@@ -82,7 +82,7 @@ POST /x/users/{id}/follow
 delete request to `/x/users/{id}/follow`
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
 ### Remove Follower
 
@@ -92,9 +92,9 @@ POST /x/users/{id}/remove-follower
 
 Remove a user from your followers without blocking them.
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
-**Usage:** Metered per call.
+Usage is metered per call.
 
 ### Send DM
 
@@ -102,7 +102,7 @@ Remove a user from your followers without blocking them.
 POST /x/dm/{userId}
 ```
 
-**Body:**
+The request body takes these fields.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
@@ -119,7 +119,7 @@ GET /x/dm/{userId}/history
 
 Get DM conversation history with a user. Requires a connected X account. Metered per returned result.
 
-**Sensitive:** Returns private DM conversations. Confirm with user before calling. Forward to other tools only after explicit approval.
+**Sensitive.** It returns private DM conversations. Confirm with the user before calling. Forward to other tools only after explicit approval.
 
 ### Update Profile
 
@@ -127,7 +127,7 @@ Get DM conversation history with a user. Requires a connected X account. Metered
 PATCH /x/profile
 ```
 
-**Body:** `{ "account": "username", "name": "...", "description": "...", "location": "...", "url": "..." }` (account required, others optional)
+The body is `{ "account": "username", "name": "...", "description": "...", "location": "...", "url": "..." }`. `account` is required, and the other fields are optional.
 
 ### Update Avatar
 
@@ -137,7 +137,7 @@ PATCH /x/profile/avatar
 
 Update profile avatar. Max 700 KB, GIF/JPEG/PNG. Metered.
 
-**Body:** FormData with `account` (required) and `file` (required, max 700 KB).
+The body is FormData with `account` (required) and `file` (required, max 700 KB).
 
 ### Update Banner
 
@@ -147,7 +147,7 @@ PATCH /x/profile/banner
 
 Update profile banner. Max 2 MB, GIF/JPEG/PNG. Metered.
 
-**Body:** FormData with `account` (required) and `file` (required, max 2 MB).
+The body is FormData with `account` (required) and `file` (required, max 2 MB).
 
 ### Upload Media
 
@@ -155,9 +155,9 @@ Update profile banner. Max 2 MB, GIF/JPEG/PNG. Metered.
 POST /x/media
 ```
 
-**Body:** FormData with `account` (required), `file` (required), and `is_long_video` (optional boolean). Alternatively, JSON body with `account` (required) and `url` (required, direct media URL) for URL-based upload.
+The body is FormData with `account` (required), `file` (required), and `is_long_video` (optional boolean). Alternatively, JSON body with `account` (required) and `url` (required, direct media URL) for URL-based upload.
 
-**Response:** Returns `mediaId`, `mediaUrl`, and `success`. Pass `mediaUrl` in the `media` array when creating a tweet.
+The response returns `mediaId`, `mediaUrl`, and `success`. Pass `mediaUrl` in the `media` array when creating a tweet.
 
 ### Create Community
 
@@ -165,7 +165,7 @@ POST /x/media
 POST /x/communities
 ```
 
-**Body:** `{ "account": "username", "name": "...", "description": "..." }` (all required)
+The body is `{ "account": "username", "name": "...", "description": "..." }`. All fields are required.
 
 ### Delete Community
 
@@ -173,7 +173,7 @@ POST /x/communities
 delete request to `/x/communities/{id}`
 ```
 
-**Body:** `{ "account": "username", "community_name": "..." }` (name required for confirmation)
+The body is `{ "account": "username", "community_name": "..." }`. The name is required for confirmation.
 
 ### Join Community
 
@@ -181,9 +181,9 @@ delete request to `/x/communities/{id}`
 POST /x/communities/{id}/join
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
-**Errors:** `409 already_member`
+It can return `409 already_member`.
 
 ### Leave Community
 
@@ -191,7 +191,7 @@ POST /x/communities/{id}/join
 delete request to `/x/communities/{id}/join`
 ```
 
-**Body:** `{ "account": "username" }`
+The body is `{ "account": "username" }`.
 
 ### Get Write Action Status
 

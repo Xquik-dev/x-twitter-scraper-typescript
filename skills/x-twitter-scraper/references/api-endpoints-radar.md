@@ -1,4 +1,4 @@
-# Xquik REST API Endpoints: Radar
+# Xquik REST API endpoints for Radar
 
 ### List Radar Items
 
@@ -8,17 +8,17 @@ GET /radar
 
 Get trending topics and news from supported trend and news sources.
 
-**Query parameters:**
+It takes these query parameters.
 
 | Param | Type | Description |
 |-------|------|-------------|
-| `source` | string | Filter by public source: `google_trends`, `hacker_news`, `polymarket`, `wikipedia`, `github`, `reddit`. Omit to include all supported sources |
-| `category` | string | Filter by category: `general`, `tech`, `dev`, `science`, `culture`, `politics`, `business`, `entertainment` |
+| `source` | string | Filter by public source, one of `google_trends`, `hacker_news`, `polymarket`, `wikipedia`, `github`, `reddit`. Omit to include all supported sources |
+| `category` | string | Filter by category, one of `general`, `tech`, `dev`, `science`, `culture`, `politics`, `business`, `entertainment` |
 | `limit` | number | Items per page (1-100, default 50) |
 | `hours` | number | Look-back window in hours (1-72, default 6) |
-| `region` | string | Region code: `US`, `GB`, `TR`, `ES`, `DE`, `FR`, `JP`, `IN`, `BR`, `CA`, `MX`, `global` (default) |
+| `region` | string | Region code, one of `US`, `GB`, `TR`, `ES`, `DE`, `FR`, `JP`, `IN`, `BR`, `CA`, `MX`, `global` (default) |
 
-**Response:**
+The response has this shape.
 ```json
 {
   "items": [
@@ -44,6 +44,6 @@ Get trending topics and news from supported trend and news sources.
 }
 ```
 
-Fields: `id`, `title`, `description?`, `url?`, `imageUrl?`, `source`, `sourceId`, `category`, `region`, `language`, `score`, `metadata`, `publishedAt`, `createdAt`. Response includes `hasMore` and `nextCursor` for pagination.
+Fields are `id`, `title`, `description?`, `url?`, `imageUrl?`, `source`, `sourceId`, `category`, `region`, `language`, `score`, `metadata`, `publishedAt` and `createdAt`. The response includes `hasMore` and `nextCursor` for pagination.
 
 ---

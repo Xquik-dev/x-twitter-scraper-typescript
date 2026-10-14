@@ -1,4 +1,4 @@
-# Xquik TypeScript Types: User Activity
+# Xquik TypeScript types for user activity
 
 ```typescript
 
