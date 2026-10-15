@@ -183,6 +183,12 @@ export interface AccountSetXUsernameResponse {
 
 export interface AccountUpdateLocaleResponse {
   success: true;
+
+  /**
+   * Fields the request sent that this route does not read, in the order sent. They
+   * changed nothing. The answer leaves this out when the route read every field.
+   */
+  ignoredFields?: Array<string>;
 }
 
 export interface AccountSetXUsernameParams {

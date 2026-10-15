@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -81,5 +82,25 @@ describe('resource keywords', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('retrieve: returns why Xquik paused the keyword monitor', async () => {
+    const example: XTwitterScraper.Monitors.KeywordRetrieveResponse = {
+      id: '21',
+      query: 'xquik OR "x api"',
+      eventTypes: ['tweet.new'],
+      isActive: false,
+      createdAt: '2025-01-15T12:00:00Z',
+      nextBillingAt: '2025-01-15T13:00:00Z',
+      pausedAt: '2025-01-15T13:00:00Z',
+      pausedReason: 'insufficient_credits',
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+
+    const response: XTwitterScraper.Monitors.KeywordRetrieveResponse =
+      await fixture.monitors.keywords.retrieve('21');
+
+    expect(requests).toEqual(['GET https://xquik.test/api/v1/monitors/keywords/21']);
+    expect(response).toEqual(example);
   });
 });

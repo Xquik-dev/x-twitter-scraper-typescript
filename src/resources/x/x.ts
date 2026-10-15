@@ -636,6 +636,11 @@ export namespace XAutocompleteSearchResponse {
     profilePicture?: string;
 
     /**
+     * The same avatar at full size.
+     */
+    profilePictureOriginal?: string;
+
+    /**
      * Whether the account protects its posts.
      */
     protected?: boolean;
@@ -908,6 +913,11 @@ export namespace XGetArticleResponse {
     profileBannerUrl?: string;
 
     profilePicture?: string;
+
+    /**
+     * The same profile picture at full size.
+     */
+    profilePictureOriginal?: string;
 
     protected?: boolean;
 

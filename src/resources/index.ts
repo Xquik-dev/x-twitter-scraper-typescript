@@ -25,6 +25,7 @@ export {
   Drafts,
   type Draft,
   type DraftDetail,
+  type DraftCreateResponse,
   type DraftListResponse,
   type DraftCreateParams,
   type DraftListParams,

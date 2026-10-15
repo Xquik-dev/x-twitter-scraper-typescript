@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -43,5 +44,23 @@ describe('resource media', () => {
       url: 'https://example.com/image.png',
       'Idempotency-Key': 'Idempotency-Key',
     });
+  });
+
+  test('upload: sends a file as multipart form data', async () => {
+    const { client: fixture, sent } = fixtureClient({});
+
+    await fixture.x.media.upload({
+      account: '@elonmusk',
+      file: new File(['binary-content'], 'clip.mp4', { type: 'video/mp4' }),
+      is_long_video: true,
+      'Idempotency-Key': 'Idempotency-Key',
+    });
+
+    const form = await sent[0]!.formData();
+    expect(sent[0]?.headers.get('content-type')).toMatch(/^multipart\/form-data; boundary=/);
+    expect(form.get('account')).toBe('@elonmusk');
+    expect(form.get('is_long_video')).toBe('true');
+    expect((form.get('file') as File).name).toBe('clip.mp4');
+    expect(await (form.get('file') as File).text()).toBe('binary-content');
   });
 });

@@ -378,9 +378,47 @@ export namespace ListRetrieveResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type ListRetrieveFollowersResponse =
-  Shared.PaginatedUsers | ListRetrieveFollowersResponse.UserListCoverageResponse;
+  ListRetrieveFollowersResponse.UserListPage | ListRetrieveFollowersResponse.UserListCoverageResponse;
 
 export namespace ListRetrieveFollowersResponse {
+  /**
+   * A relationship page. A filtered read's last page may name the scan limit that
+   * ended it.
+   */
+  export interface UserListPage extends Shared.PaginatedUsers {
+    /**
+     * Present on the last page of a filtered automatic read that sent no maxScan,
+     * once the list scanned 100,000 profiles across its pages. That page is the
+     * list's last.
+     */
+    scanLimit?: UserListPage.ScanLimit;
+  }
+
+  export namespace UserListPage {
+    /**
+     * Present on the last page of a filtered automatic read that sent no maxScan,
+     * once the list scanned 100,000 profiles across its pages. That page is the
+     * list's last.
+     */
+    export interface ScanLimit {
+      /**
+       * The profiles a filtered read scans of a list without maxScan.
+       */
+      limit: 100000;
+
+      /**
+       * What stopped the list & how to read further.
+       */
+      message: string;
+
+      /**
+       * Profiles the list read across its pages, kept or dropped by the filters. The
+       * last page may read past the limit.
+       */
+      rowsRead: number;
+    }
+  }
+
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -393,9 +431,9 @@ export namespace ListRetrieveFollowersResponse {
      */
     diagnostic: UserListCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace UserListCoverageResponse {
@@ -493,9 +531,47 @@ export namespace ListRetrieveFollowersResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type ListRetrieveMembersResponse =
-  Shared.PaginatedUsers | ListRetrieveMembersResponse.UserListCoverageResponse;
+  ListRetrieveMembersResponse.UserListPage | ListRetrieveMembersResponse.UserListCoverageResponse;
 
 export namespace ListRetrieveMembersResponse {
+  /**
+   * A relationship page. A filtered read's last page may name the scan limit that
+   * ended it.
+   */
+  export interface UserListPage extends Shared.PaginatedUsers {
+    /**
+     * Present on the last page of a filtered automatic read that sent no maxScan,
+     * once the list scanned 100,000 profiles across its pages. That page is the
+     * list's last.
+     */
+    scanLimit?: UserListPage.ScanLimit;
+  }
+
+  export namespace UserListPage {
+    /**
+     * Present on the last page of a filtered automatic read that sent no maxScan,
+     * once the list scanned 100,000 profiles across its pages. That page is the
+     * list's last.
+     */
+    export interface ScanLimit {
+      /**
+       * The profiles a filtered read scans of a list without maxScan.
+       */
+      limit: 100000;
+
+      /**
+       * What stopped the list & how to read further.
+       */
+      message: string;
+
+      /**
+       * Profiles the list read across its pages, kept or dropped by the filters. The
+       * last page may read past the limit.
+       */
+      rowsRead: number;
+    }
+  }
+
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -508,9 +584,9 @@ export namespace ListRetrieveMembersResponse {
      */
     diagnostic: UserListCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace UserListCoverageResponse {

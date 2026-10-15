@@ -59,11 +59,12 @@ Types
 
 - <code><a href="./src/resources/drafts.ts">Draft</a></code>
 - <code><a href="./src/resources/drafts.ts">DraftDetail</a></code>
+- <code><a href="./src/resources/drafts.ts">DraftCreateResponse</a></code>
 - <code><a href="./src/resources/drafts.ts">DraftListResponse</a></code>
 
 Methods
 
-- <code title="post /drafts">client.drafts.<a href="./src/resources/drafts.ts">create</a>({ ...params }) -> DraftDetail</code>
+- <code title="post /drafts">client.drafts.<a href="./src/resources/drafts.ts">create</a>({ ...params }) -> DraftCreateResponse</code>
 - <code title="get /drafts/{id}">client.drafts.<a href="./src/resources/drafts.ts">retrieve</a>(id) -> DraftDetail</code>
 - <code title="get /drafts">client.drafts.<a href="./src/resources/drafts.ts">list</a>({ ...params }) -> DraftListResponse</code>
 - <code title="delete /drafts/{id}">client.drafts.<a href="./src/resources/drafts.ts">delete</a>(id) -> void</code>

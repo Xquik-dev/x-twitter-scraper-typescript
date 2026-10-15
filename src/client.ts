@@ -40,6 +40,7 @@ import {
 import {
   Draft,
   DraftCreateParams,
+  DraftCreateResponse,
   DraftDetail,
   DraftListParams,
   DraftListResponse,
@@ -981,6 +982,7 @@ export declare namespace XTwitterScraper {
     Drafts as Drafts,
     type Draft as Draft,
     type DraftDetail as DraftDetail,
+    type DraftCreateResponse as DraftCreateResponse,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
     type DraftListParams as DraftListParams,

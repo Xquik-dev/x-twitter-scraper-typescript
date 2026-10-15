@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -63,5 +64,64 @@ describe('resource events', () => {
     await expect(
       client.events.stream({ 'Last-Event-ID': '42' }, { path: '/_stainless_unknown_path' }),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
+  test('retrieve: returns a follower event with the follow time', async () => {
+    const example: XTwitterScraper.EventDetail = {
+      id: '42',
+      type: 'follower.added',
+      username: 'elonmusk',
+      monitorId: '7',
+      monitorType: 'account',
+      occurredAt: '2025-01-15T12:00:00Z',
+      data: { id: '2244994945', followedAt: '2026-10-13T02:36:54.961Z', followedAtExact: true },
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+
+    const response: XTwitterScraper.EventDetail = await fixture.events.retrieve('42');
+
+    expect(requests).toEqual(['GET https://xquik.test/api/v1/events/42']);
+    expect(response).toEqual(example);
+  });
+
+  test('list: filters by a follow event type and returns removals & count changes', async () => {
+    const example: XTwitterScraper.EventListResponse = {
+      events: [
+        {
+          id: '43',
+          type: 'follower.removed',
+          username: 'elonmusk',
+          monitorId: '7',
+          monitorType: 'account',
+          occurredAt: '2025-01-15T12:00:00Z',
+          data: { id: '2244994945', reason: 'unfollowed' },
+        },
+        {
+          id: '44',
+          type: 'profile.followers.changed',
+          username: 'elonmusk',
+          monitorId: '7',
+          monitorType: 'account',
+          occurredAt: '2025-01-15T12:00:00Z',
+          data: {
+            field: 'followers',
+            userId: '44196397',
+            username: 'elonmusk',
+            previous: 1003,
+            current: 1000,
+            change: -3,
+          },
+        },
+      ],
+      hasMore: false,
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+
+    const response: XTwitterScraper.EventListResponse = await fixture.events.list({
+      eventType: 'follower.removed',
+    });
+
+    expect(requests).toEqual(['GET https://xquik.test/api/v1/events?eventType=follower.removed']);
+    expect(response).toEqual(example);
   });
 });

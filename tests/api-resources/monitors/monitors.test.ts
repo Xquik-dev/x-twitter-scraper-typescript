@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -81,5 +82,37 @@ describe('resource monitors', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('create: sends the follow and count event types', async () => {
+    const { client: fixture, sent } = fixtureClient({});
+
+    await fixture.monitors.create({
+      eventTypes: [
+        'follower.added',
+        'follower.removed',
+        'profile.followers.changed',
+        'profile.following.changed',
+      ],
+      username: 'elonmusk',
+    });
+
+    expect(await sent[0]?.json()).toEqual({
+      eventTypes: [
+        'follower.added',
+        'follower.removed',
+        'profile.followers.changed',
+        'profile.following.changed',
+      ],
+      username: 'elonmusk',
+    });
+  });
+
+  test('retrieve: returns a monitor paused for a low balance', async () => {
+    const { client: fixture } = fixtureClient({ pausedReason: 'insufficient_credits' });
+
+    const response: XTwitterScraper.Monitor = await fixture.monitors.retrieve('7');
+
+    expect(response.pausedReason).toBe('insufficient_credits');
   });
 });

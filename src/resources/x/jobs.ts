@@ -232,6 +232,11 @@ export namespace JobRetrieveResponse {
       profilePicture?: string;
 
       /**
+       * The job account's avatar at full size.
+       */
+      profilePictureOriginal?: string;
+
+      /**
        * Handle without @.
        */
       username?: string;
@@ -463,6 +468,11 @@ export namespace JobSearchResponse {
        * Avatar URL of the account that posted the job.
        */
       profilePicture?: string;
+
+      /**
+       * The job account's avatar at full size.
+       */
+      profilePictureOriginal?: string;
 
       /**
        * Handle without @.

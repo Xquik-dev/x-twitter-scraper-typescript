@@ -30,4 +30,13 @@ describe('resource compose', () => {
       styleUsername: 'example_user',
     });
   });
+
+  test('create: accepts the multiplier text the API sends now', () => {
+    const multiplier: XTwitterScraper.ComposeCreateResponse.ComposePrepareResult.EngagementMultiplier = {
+      action: 'Reply',
+      multiplier: 'Source default. Production value can vary.',
+    };
+
+    expect(multiplier.multiplier).toBe('Source default. Production value can vary.');
+  });
 });

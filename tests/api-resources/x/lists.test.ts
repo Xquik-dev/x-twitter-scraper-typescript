@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -226,5 +227,26 @@ describe('resource lists', () => {
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
+  test('retrieveFollowers: returns the scan limit that ended a filtered read', async () => {
+    const example: XTwitterScraper.X.ListRetrieveFollowersResponse = {
+      users: [],
+      has_next_page: false,
+      next_cursor: '',
+      scanLimit: {
+        limit: 100000,
+        rowsRead: 100000,
+        message:
+          'Stopped at the scan limit of 100,000 profiles. Read the list again with a higher maxScan to read further.',
+      },
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+
+    const response: XTwitterScraper.X.ListRetrieveFollowersResponse =
+      await fixture.x.lists.retrieveFollowers('1');
+
+    expect(requests).toEqual(['GET https://xquik.test/api/v1/x/lists/1/followers']);
+    expect(response).toEqual(example);
   });
 });

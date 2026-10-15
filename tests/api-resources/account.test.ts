@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -50,5 +51,19 @@ describe('resource account', () => {
 
   test('updateLocale: required and optional params', async () => {
     const response = await client.account.updateLocale({ locale: 'en' });
+  });
+
+  test('updateLocale: returns the fields the route did not read', async () => {
+    const example: XTwitterScraper.AccountUpdateLocaleResponse = {
+      success: true,
+      ignoredFields: ['timezone'],
+    };
+    const { client: fixture } = fixtureClient(example);
+
+    const response: XTwitterScraper.AccountUpdateLocaleResponse = await fixture.account.updateLocale({
+      locale: 'en',
+    });
+
+    expect(response).toEqual(example);
   });
 });

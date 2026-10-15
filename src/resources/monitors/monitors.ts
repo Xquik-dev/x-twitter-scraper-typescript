@@ -136,9 +136,12 @@ export interface Monitor {
   pausedAt?: string;
 
   /**
-   * Why Xquik automatically paused this monitor.
+   * Why Xquik paused this account monitor. `insufficient_credits` means the balance
+   * could not pay an hour, so add credits & resume. The other 2 mean X stopped
+   * showing the account. Absent when the monitor is active or you paused it
+   * yourself.
    */
-  pausedReason?: 'x_account_protected' | 'x_user_not_found';
+  pausedReason?: 'insufficient_credits' | 'x_account_protected' | 'x_user_not_found';
 }
 
 export interface MonitorCreateResponse {

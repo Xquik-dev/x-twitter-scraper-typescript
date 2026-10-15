@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -81,4 +82,22 @@ describe('resource profile', () => {
       'Idempotency-Key': 'Idempotency-Key',
     });
   });
+
+  test.each(['updateAvatar', 'updateBanner'] as const)(
+    '%s: sends a file as multipart form data',
+    async (method) => {
+      const { client: fixture, sent } = fixtureClient({});
+
+      await fixture.x.profile[method]({
+        account: '@elonmusk',
+        file: new File(['binary-content'], 'image.png', { type: 'image/png' }),
+        'Idempotency-Key': 'Idempotency-Key',
+      });
+
+      const form = await sent[0]!.formData();
+      expect(form.get('account')).toBe('@elonmusk');
+      expect((form.get('file') as File).name).toBe('image.png');
+      expect(form.has('url')).toBe(false);
+    },
+  );
 });

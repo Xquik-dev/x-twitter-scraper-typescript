@@ -282,6 +282,11 @@ export namespace SpaceRetrieveResponse {
       profilePicture?: string;
 
       /**
+       * The participant's profile picture at full size
+       */
+      profilePictureOriginal?: string;
+
+      /**
        * Business or Government badge type
        */
       verifiedType?: string;
@@ -365,6 +370,11 @@ export namespace SpaceRetrieveResponse {
       profilePicture?: string;
 
       /**
+       * The participant's profile picture at full size
+       */
+      profilePictureOriginal?: string;
+
+      /**
        * Business or Government badge type
        */
       verifiedType?: string;
@@ -446,6 +456,11 @@ export namespace SpaceRetrieveResponse {
        * Profile picture URL
        */
       profilePicture?: string;
+
+      /**
+       * The participant's profile picture at full size
+       */
+      profilePictureOriginal?: string;
 
       /**
        * Business or Government badge type
@@ -757,6 +772,11 @@ export namespace SpaceSearchResponse {
       profilePicture?: string;
 
       /**
+       * The participant's profile picture at full size
+       */
+      profilePictureOriginal?: string;
+
+      /**
        * Business or Government badge type
        */
       verifiedType?: string;
@@ -840,6 +860,11 @@ export namespace SpaceSearchResponse {
       profilePicture?: string;
 
       /**
+       * The participant's profile picture at full size
+       */
+      profilePictureOriginal?: string;
+
+      /**
        * Business or Government badge type
        */
       verifiedType?: string;
@@ -921,6 +946,11 @@ export namespace SpaceSearchResponse {
        * Profile picture URL
        */
       profilePicture?: string;
+
+      /**
+       * The participant's profile picture at full size
+       */
+      profilePictureOriginal?: string;
 
       /**
        * Business or Government badge type

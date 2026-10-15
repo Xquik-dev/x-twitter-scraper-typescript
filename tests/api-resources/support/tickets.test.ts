@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -98,5 +99,33 @@ describe('resource tickets', () => {
       body: 'Thank you for the update.',
       'Idempotency-Key': 'Idempotency-Key',
     });
+  });
+
+  test('create: sends each attachment under the attachments field', async () => {
+    const { client: fixture, sent } = fixtureClient({});
+
+    await fixture.support.tickets.create({
+      subject: 'Billing question',
+      attachments: [
+        new File(['first'], 'screen.png', { type: 'image/png' }),
+        new File(['second'], 'clip.mp4', { type: 'video/mp4' }),
+      ],
+    });
+
+    const form = await sent[0]!.formData();
+    expect(form.get('subject')).toBe('Billing question');
+    expect(form.has('body')).toBe(false);
+    expect(form.getAll('attachments').map((file) => (file as File).name)).toEqual(['screen.png', 'clip.mp4']);
+  });
+
+  test('reply: sends attachments without a body', async () => {
+    const { client: fixture, sent } = fixtureClient({});
+
+    await fixture.support.tickets.reply('1', {
+      attachments: [new File(['first'], 'screen.png', { type: 'image/png' })],
+    });
+
+    const form = await sent[0]!.formData();
+    expect(form.getAll('attachments').map((file) => (file as File).name)).toEqual(['screen.png']);
   });
 });

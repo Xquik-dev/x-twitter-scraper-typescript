@@ -749,10 +749,17 @@ export namespace Error {
  * Type of monitor event fired when account activity occurs. tweet.deleted fires
  * once X confirms the account deleted a post the monitor saw. Its data is the post
  * as last seen. broadcast.started & space.started fire when the account posts its
- * running live video or Space. Their data is that post. A live the account does
- * not post is not seen. following.added & following.removed fire when the account
- * follows or unfollows someone, with that account's profile. Keyword monitors take
- * the 10 post types only.
+ * running live video or Space. Their data is that post. Xquik misses a live video
+ * the account does not post. following.added & following.removed fire when the
+ * account follows or unfollows someone, with that account's profile.
+ * follower.added & follower.removed fire when someone follows the account or
+ * leaves its followers, with that account's profile. Xquik names lost followers
+ * for accounts with up to 100,000 followers. profile.followers.changed &
+ * profile.following.changed fire when the account's follower or following count
+ * moves, at most once a minute each. X shows counts that differ by a few between
+ * reads, so a monitor holds the lowest. A fall counts once 2 reads show it, & a
+ * rise once no read for a minute showed less. Keyword monitors take the 10 post
+ * types only.
  */
 export type EventType =
   | 'tweet.new'
@@ -780,7 +787,11 @@ export type EventType =
   | 'broadcast.started'
   | 'space.started'
   | 'following.added'
-  | 'following.removed';
+  | 'following.removed'
+  | 'follower.added'
+  | 'follower.removed'
+  | 'profile.followers.changed'
+  | 'profile.following.changed';
 
 /**
  * Follow next_cursor while the response reports more pages. A page can hold fewer
@@ -1666,6 +1677,10 @@ export namespace SearchTweet {
 
       export namespace Entity {
         export interface Ref {
+          screenName?: string;
+
+          text?: string;
+
           type?: string;
 
           url?: string;
@@ -2253,6 +2268,10 @@ export namespace SearchTweet {
 
       export namespace Entity {
         export interface Ref {
+          screenName?: string;
+
+          text?: string;
+
           type?: string;
 
           url?: string;
@@ -2766,6 +2785,12 @@ export interface UserProfile {
 
   profilePicture?: string;
 
+  /**
+   * The same profile picture at full size, as the account uploaded it. Download this
+   * one for the image.
+   */
+  profilePictureOriginal?: string;
+
   profileSortEnabled?: boolean;
 
   profileTranslatorType?: string;
@@ -2774,6 +2799,13 @@ export interface UserProfile {
    * Whether the profile protects its posts
    */
   protected?: boolean;
+
+  /**
+   * Handle x.com sends this profile's visitors to, such as the new handle of a
+   * renamed account whose old handle now holds a placeholder. Missing when x.com
+   * shows the profile itself.
+   */
+  redirectsToUsername?: string;
 
   /**
    * UTC repost time with includeRetweetTimestamp. Null if the newest profile page
