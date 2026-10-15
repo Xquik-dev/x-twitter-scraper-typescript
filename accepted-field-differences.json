@@ -1,0 +1,57 @@
+[
+  {
+    "reason": "Deprecated alias of minLikes, which the API still reads. The SDK keeps it so calls written for 0.12 still compile.",
+    "differences": [
+      "GET /api/v1/x/tweets/search request extra minFaves",
+      "GET /api/v1/x/users/{id}/tweets request extra minFaves",
+      "GET /api/v1/x/users/{id}/replies request extra minFaves",
+      "GET /api/v1/x/users/{id}/likes request extra minFaves",
+      "GET /api/v1/x/users/{id}/media request extra minFaves",
+      "GET /api/v1/x/tweets/{id}/quotes request extra minFaves",
+      "GET /api/v1/x/tweets/{id}/replies request extra minFaves",
+      "GET /api/v1/x/tweets/{id}/thread request extra minFaves",
+      "GET /api/v1/x/users/{id}/mentions request extra minFaves"
+    ]
+  },
+  {
+    "reason": "These routes no longer document these filters. The SDK keeps them as deprecated parameters so calls written for 0.12 still compile.",
+    "differences": [
+      "GET /api/v1/x/users/{id}/likes request extra cardName",
+      "GET /api/v1/x/users/{id}/likes request extra excludeSource",
+      "GET /api/v1/x/users/{id}/likes request extra geocode",
+      "GET /api/v1/x/users/{id}/likes request extra near",
+      "GET /api/v1/x/users/{id}/likes request extra news",
+      "GET /api/v1/x/users/{id}/likes request extra safe",
+      "GET /api/v1/x/users/{id}/likes request extra source",
+      "GET /api/v1/x/users/{id}/likes request extra within",
+      "GET /api/v1/x/users/{id}/media request extra cardName",
+      "GET /api/v1/x/users/{id}/media request extra excludeSource",
+      "GET /api/v1/x/users/{id}/media request extra geocode",
+      "GET /api/v1/x/users/{id}/media request extra near",
+      "GET /api/v1/x/users/{id}/media request extra news",
+      "GET /api/v1/x/users/{id}/media request extra safe",
+      "GET /api/v1/x/users/{id}/media request extra source",
+      "GET /api/v1/x/users/{id}/media request extra within",
+      "GET /api/v1/x/tweets/{id}/replies request extra cardName",
+      "GET /api/v1/x/tweets/{id}/replies request extra excludeSource",
+      "GET /api/v1/x/tweets/{id}/replies request extra geocode",
+      "GET /api/v1/x/tweets/{id}/replies request extra near",
+      "GET /api/v1/x/tweets/{id}/replies request extra news",
+      "GET /api/v1/x/tweets/{id}/replies request extra safe",
+      "GET /api/v1/x/tweets/{id}/replies request extra source",
+      "GET /api/v1/x/tweets/{id}/replies request extra within",
+      "GET /api/v1/x/users/{id}/mentions request extra cardName",
+      "GET /api/v1/x/users/{id}/mentions request extra excludeSource",
+      "GET /api/v1/x/users/{id}/mentions request extra geocode",
+      "GET /api/v1/x/users/{id}/mentions request extra near",
+      "GET /api/v1/x/users/{id}/mentions request extra news",
+      "GET /api/v1/x/users/{id}/mentions request extra safe",
+      "GET /api/v1/x/users/{id}/mentions request extra source",
+      "GET /api/v1/x/users/{id}/mentions request extra within"
+    ]
+  },
+  {
+    "reason": "The SDK keeps the multiplier text the API sent until 2026-10-14 beside the current text, so code that compares with the old text still compiles.",
+    "differences": ["POST /api/v1/compose response enum engagementMultipliers[].multiplier"]
+  }
+]

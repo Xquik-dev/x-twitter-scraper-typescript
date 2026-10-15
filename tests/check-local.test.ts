@@ -57,15 +57,20 @@ const sarif = ({
     ],
   });
 
-const coverageCheck = (exitCode: number, line: string) =>
+const fakeCheck = (exitCode: number, line: string) =>
   `process.${exitCode === 0 ? 'stdout' : 'stderr'}.write(${JSON.stringify(`${line}\n`)});\nprocess.exitCode = ${exitCode};\n`;
 
-const covered = coverageCheck(
+const covered = fakeCheck(
   0,
   'The SDK covers 180 of 186 API operations, and excluded-operations.json lists the other 6.',
 );
 
-const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered) => {
+const fieldsMatch = fakeCheck(
+  0,
+  "The SDK's fields match the API for 180 operations, and accepted-field-differences.json lists 42 accepted differences.",
+);
+
+const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, apiFields = fieldsMatch) => {
   const root = mkdtempSync(join(tmpdir(), 'check-local-'));
   try {
     const write = (path: string, content: string, mode = 0o755) => {
@@ -82,6 +87,7 @@ const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered) =
     write(join('project', 'scripts', 'test'), '#!/bin/sh\necho "Tests:       2 passed, 2 total"\n');
     write(join('project', 'scripts', 'utils', 'check-audit.cjs'), 'console.log("Audit passed.");\n', 0o644);
     write(join('project', 'scripts', 'utils', 'check-api-coverage.cjs'), apiCoverage, 0o644);
+    write(join('project', 'scripts', 'utils', 'check-api-fields.cjs'), apiFields, 0o644);
     write('codeql.sarif', codeqlSarif, 0o644);
     const result = spawnSync(join(root, 'project', 'bin', 'check-local'), ['--no-status'], {
       encoding: 'utf8',
@@ -104,20 +110,23 @@ describe('bin/check-local', () => {
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);
     expect(result.stdout).toContain(
-      '==> API coverage\n' +
+      '==> Install dependencies\n' +
+        '==> API coverage\n' +
         'The SDK covers 180 of 186 API operations, and excluded-operations.json lists the other 6.\n' +
-        '==> Install dependencies\n',
+        '==> API fields\n' +
+        "The SDK's fields match the API for 180 operations, and accepted-field-differences.json lists 42 accepted differences.\n" +
+        '==> Check license notices\n',
     );
     expect(result.stdout).toContain(
-      '==> Passed API coverage, install, REUSE, audit, lint & types, reproducible build, 2 tests, CodeQL\n',
+      '==> Passed install, API coverage, API fields, REUSE, audit, lint & types, reproducible build, 2 tests, CodeQL\n',
     );
   });
 
-  it('stops before installing when the SDK lags the API', () => {
+  it('stops before the slow checks when the SDK lags the API', () => {
     const result = checkLocal(
       sarif({}),
       passes,
-      coverageCheck(1, 'GET /api/v1/x/trends/history (getXTrendsHistory) is in the API but not in the SDK.'),
+      fakeCheck(1, 'GET /api/v1/x/trends/history (getXTrendsHistory) is in the API but not in the SDK.'),
     );
 
     expect(result.status).toBe(1);
@@ -125,7 +134,24 @@ describe('bin/check-local', () => {
       'GET /api/v1/x/trends/history (getXTrendsHistory) is in the API but not in the SDK.\n' +
         'Check failed at API coverage. Fix what the check reported above, then run bin/check-local again.\n',
     );
-    expect(result.stdout).not.toContain('==> Install dependencies');
+    expect(result.stdout).not.toContain('==> API fields');
+    expect(result.stdout).not.toContain('==> Check license notices');
+  });
+
+  it('stops before the slow checks when a field differs from the API', () => {
+    const result = checkLocal(
+      sarif({}),
+      passes,
+      covered,
+      fakeCheck(1, 'GET /api/v1/events response missing events[].data.followedAt'),
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toBe(
+      'GET /api/v1/events response missing events[].data.followedAt\n' +
+        'Check failed at API fields. Fix what the check reported above, then run bin/check-local again.\n',
+    );
+    expect(result.stdout).not.toContain('==> Check license notices');
   });
 
   it('stops with the upgrade step when pnpm cannot start the pinned pnpm', () => {
