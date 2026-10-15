@@ -85,7 +85,8 @@ Run every repository check before requesting review.
 bin/check-local
 ```
 
-It installs dependencies from the lockfile, then checks license notices with REUSE.
+It first checks that the SDK covers the API, as [API coverage](#api-coverage) describes.
+Then it installs dependencies from the lockfile and checks license notices with REUSE.
 REUSE runs at a pinned version through `uv`. Install `uv` with `brew install uv`.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
 Last, it runs the CodeQL `security-extended` queries for JavaScript and TypeScript.
@@ -101,6 +102,43 @@ Severity never excuses a finding.
 An unfixable development finding passes only when `audit-exceptions.json` lists it.
 Each entry names the advisory, the package path, the reason, and a recheck date within 30 days.
 An entry stops counting on its recheck date or once a fix is installable.
+
+## API coverage
+
+`bin/check-local` starts with `node scripts/utils/check-api-coverage.cjs`.
+It compares every operation in the API spec with every request in `src/resources`.
+
+- An operation is its method and its full path, such as `GET /api/v1/x/trends/history`.
+  The spec side joins the path of the operation's server with the path key.
+  Path parameter names do not matter, so `{id}` matches `${tweetID}`.
+- The SDK side joins the path of `DEFAULT_BASE_URL` in `src/client.ts` with each request path.
+  Write each request as `this._client.get('/path')` or ``this._client.get(path`/path/${id}`)``.
+  The check fails on a request it cannot read and names its file and line.
+- The check reads `https://xquik.com/openapi.json` by default.
+  Set `XQUIK_OPENAPI_SPEC` to a local file or another URL of a JSON spec to check against it.
+
+```sh
+XQUIK_OPENAPI_SPEC=../openapi.json node scripts/utils/check-api-coverage.cjs
+```
+
+The check fails when the API has an operation that the SDK neither implements nor excludes.
+Add each operation it names to the SDK.
+An operation the SDK leaves out on purpose goes in `excluded-operations.json` with a reason.
+The file holds a list of groups. Each group has a `reason` and at least 1 operation.
+An operation appears at most once in the file.
+
+```json
+[
+  {
+    "reason": "Searches the Xquik docs at https://xquik.com/ask, outside the SDK base URL https://xquik.com/api/v1.",
+    "operations": ["GET /ask", "POST /ask"]
+  }
+]
+```
+
+The check also fails when the file lists an operation that the API no longer has or the SDK already implements.
+Remove that entry.
+An SDK request that the spec lacks passes, such as `GET /api/v1/credits/topup/redirect`, which the public spec hides.
 
 ## Lint & format
 

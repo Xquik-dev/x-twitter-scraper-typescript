@@ -171,6 +171,8 @@ import {
 } from './internal/utils/log';
 import { isEmptyObj } from './internal/utils/values';
 
+const DEFAULT_BASE_URL = 'https://xquik.com/api/v1';
+
 export interface ClientOptions {
   /**
    * Defaults to process.env['X_TWITTER_SCRAPER_API_KEY'].
@@ -293,7 +295,7 @@ export class XTwitterScraper {
       apiKey,
       bearerToken,
       ...opts,
-      baseURL: baseURL || `https://xquik.com/api/v1`,
+      baseURL: baseURL || DEFAULT_BASE_URL,
     };
 
     this.baseURL = options.baseURL!;
@@ -349,7 +351,7 @@ export class XTwitterScraper {
   }
 
   #baseURLOverridden(): boolean {
-    return this.baseURL !== 'https://xquik.com/api/v1';
+    return this.baseURL !== DEFAULT_BASE_URL;
   }
 
   protected defaultQuery(): Record<string, string | undefined> | undefined {

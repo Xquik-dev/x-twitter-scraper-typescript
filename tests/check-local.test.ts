@@ -57,7 +57,15 @@ const sarif = ({
     ],
   });
 
-const checkLocal = (codeqlSarif: string, pnpm = passes) => {
+const coverageCheck = (exitCode: number, line: string) =>
+  `process.${exitCode === 0 ? 'stdout' : 'stderr'}.write(${JSON.stringify(`${line}\n`)});\nprocess.exitCode = ${exitCode};\n`;
+
+const covered = coverageCheck(
+  0,
+  'The SDK covers 180 of 186 API operations, and excluded-operations.json lists the other 6.',
+);
+
+const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered) => {
   const root = mkdtempSync(join(tmpdir(), 'check-local-'));
   try {
     const write = (path: string, content: string, mode = 0o755) => {
@@ -73,6 +81,7 @@ const checkLocal = (codeqlSarif: string, pnpm = passes) => {
     for (const check of ['lint', 'check-reproducible']) write(join('project', 'scripts', check), passes);
     write(join('project', 'scripts', 'test'), '#!/bin/sh\necho "Tests:       2 passed, 2 total"\n');
     write(join('project', 'scripts', 'utils', 'check-audit.cjs'), 'console.log("Audit passed.");\n', 0o644);
+    write(join('project', 'scripts', 'utils', 'check-api-coverage.cjs'), apiCoverage, 0o644);
     write('codeql.sarif', codeqlSarif, 0o644);
     const result = spawnSync(join(root, 'project', 'bin', 'check-local'), ['--no-status'], {
       encoding: 'utf8',
@@ -95,8 +104,28 @@ describe('bin/check-local', () => {
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);
     expect(result.stdout).toContain(
-      '==> Passed install, REUSE, audit, lint & types, reproducible build, 2 tests, CodeQL\n',
+      '==> API coverage\n' +
+        'The SDK covers 180 of 186 API operations, and excluded-operations.json lists the other 6.\n' +
+        '==> Install dependencies\n',
     );
+    expect(result.stdout).toContain(
+      '==> Passed API coverage, install, REUSE, audit, lint & types, reproducible build, 2 tests, CodeQL\n',
+    );
+  });
+
+  it('stops before installing when the SDK lags the API', () => {
+    const result = checkLocal(
+      sarif({}),
+      passes,
+      coverageCheck(1, 'GET /api/v1/x/trends/history (getXTrendsHistory) is in the API but not in the SDK.'),
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toBe(
+      'GET /api/v1/x/trends/history (getXTrendsHistory) is in the API but not in the SDK.\n' +
+        'Check failed at API coverage. Fix what the check reported above, then run bin/check-local again.\n',
+    );
+    expect(result.stdout).not.toContain('==> Install dependencies');
   });
 
   it('stops with the upgrade step when pnpm cannot start the pinned pnpm', () => {
