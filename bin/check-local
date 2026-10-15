@@ -146,6 +146,13 @@ for tool in pnpm node jq codeql uv; do
   fi
 done
 
+current_check="Start pnpm"
+if ! pnpm_output="$(pnpm --version 2>&1)"; then
+  printf '%s\n' "$pnpm_output" >&2
+  echo "Check failed because pnpm could not start the pnpm version that package.json pins. Upgrade pnpm to 11.28.4 or newer, then run bin/check-local again." >&2
+  exit 1
+fi
+
 run_check "Install dependencies" \
   "Run pnpm install and commit the updated pnpm-lock.yaml." \
   pnpm install --frozen-lockfile
