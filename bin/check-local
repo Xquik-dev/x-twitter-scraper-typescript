@@ -153,6 +153,11 @@ if ! pnpm_output="$(pnpm --version 2>&1)"; then
   exit 1
 fi
 
+run_check "API coverage" \
+  "Fix what the check reported above, then run bin/check-local again." \
+  node scripts/utils/check-api-coverage.cjs
+passed+=("API coverage")
+
 run_check "Install dependencies" \
   "Run pnpm install and commit the updated pnpm-lock.yaml." \
   pnpm install --frozen-lockfile
