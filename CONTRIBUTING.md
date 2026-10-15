@@ -85,6 +85,10 @@ Run every repository check before requesting review.
 bin/check-local
 ```
 
+When `git config checklocal.runner` names a command, `bin/check-local` runs that command with the checkout path and its own arguments instead.
+A maintainer can use it to run the checks on another machine.
+Set `CHECK_LOCAL_HERE=1` to run them here anyway.
+
 It first checks that the SDK covers the API, as [API coverage](#api-coverage) describes.
 Then it installs dependencies from the lockfile and checks that the SDK's fields match the API, as [API fields](#api-fields) describes.
 Next it checks license notices with REUSE.
