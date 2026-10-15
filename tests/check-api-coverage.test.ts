@@ -9,11 +9,13 @@ import { dirname, join, resolve } from 'node:path';
 
 const script = resolve(__dirname, '..', 'scripts', 'utils', 'check-api-coverage.cjs');
 
-type Exclusions = Array<{ reason?: unknown; operations?: unknown }> | Record<string, unknown>;
+type Exclusions = Array<Record<string, unknown>> | Record<string, unknown>;
 
 type Case = {
   spec?: string | object;
+  source?: string;
   exclusions?: string | Exclusions | null;
+  exclusionsAsDirectory?: boolean;
   resources?: Record<string, string>;
   client?: string;
 };
@@ -38,7 +40,9 @@ const resources = {
 
 const runCheck = ({
   spec = publicSpec,
+  source,
   exclusions = askExcluded,
+  exclusionsAsDirectory = false,
   resources: files = resources,
   client = "const DEFAULT_BASE_URL = 'https://xquik.com/api/v1';\n",
 }: Case = {}) => {
@@ -49,7 +53,9 @@ const runCheck = ({
       writeFileSync(join(root, file), content);
     };
     write('openapi.json', typeof spec === 'string' ? spec : JSON.stringify(spec));
-    if (exclusions !== null) {
+    if (exclusionsAsDirectory) {
+      mkdirSync(join(root, 'excluded-operations.json'));
+    } else if (exclusions !== null) {
       write(
         'excluded-operations.json',
         typeof exclusions === 'string' ? exclusions : JSON.stringify(exclusions),
@@ -59,7 +65,7 @@ const runCheck = ({
     for (const [file, content] of Object.entries(files)) write(join('src', 'resources', file), content);
     const result = spawnSync(process.execPath, [script, root], {
       encoding: 'utf8',
-      env: { ...process.env, XQUIK_OPENAPI_SPEC: join(root, 'openapi.json') },
+      env: { ...process.env, XQUIK_OPENAPI_SPEC: source ?? join(root, 'openapi.json') },
     });
     return { status: result.status, stdout: result.stdout, stderr: result.stderr, root };
   } finally {
@@ -121,6 +127,7 @@ describe('scripts/utils/check-api-coverage.cjs', () => {
     expect(result.stdout).toBe(
       'The SDK covers 3 of 4 API operations, and excluded-operations.json lists the other 1.\n',
     );
+    expect(result.status).toBe(0);
   });
 
   it('fails and names each operation the SDK neither implements nor excludes', () => {
@@ -181,7 +188,7 @@ describe('scripts/utils/check-api-coverage.cjs', () => {
 
   it.each<[string, string | Exclusions | null, string]>([
     ['is missing', null, 'The repository root has no such file'],
-    ['is not JSON', '[{"reason": "x",', 'It is not JSON'],
+    ['is not JSON', '[{"reason": "x" "operations": []}]', 'It is not JSON near position 16'],
     ['is not a list', { reason: 'x', operations: ['GET /ask'] }, 'It must hold a list of groups'],
     ['has a group without a reason', [{ reason: ' ', operations: ['GET /ask'] }], 'Group 1 needs a reason'],
     [
@@ -197,7 +204,7 @@ describe('scripts/utils/check-api-coverage.cjs', () => {
     [
       'lists an operation without a method',
       [{ reason: 'x', operations: ['/ask'] }],
-      'Group 1 lists "/ask", which is not a METHOD and path such as GET /api/v1/x/trends',
+      'Group 1 lists "/ask", which needs an upper case method and a path, such as GET /api/v1/x/trends',
     ],
     [
       'lists an operation twice',
@@ -215,6 +222,24 @@ describe('scripts/utils/check-api-coverage.cjs', () => {
     expect(result.status).toBe(1);
   });
 
+  it('names the read error when excluded-operations.json cannot be read', () => {
+    const result = runCheck({ exclusionsAsDirectory: true });
+
+    expect(result.stdout).toBe('');
+    expect(result.stderr).toBe('excluded-operations.json is not valid. It cannot be read (EISDIR).\n');
+    expect(result.status).toBe(1);
+  });
+
+  it('fails with the next step when the spec URL does not answer', () => {
+    const result = runCheck({ source: 'http://127.0.0.1:1/openapi.json' });
+
+    expect(result.stdout).toBe('');
+    expect(result.stderr).toBe(
+      'Could not read the API spec from http://127.0.0.1:1/openapi.json. Check network access, or set XQUIK_OPENAPI_SPEC to a local copy of https://xquik.com/openapi.json.\n',
+    );
+    expect(result.status).toBe(1);
+  });
+
   it.each([
     ['is not JSON', '{"paths": '],
     ['has no paths', '{"openapi": "3.1.0"}'],
@@ -228,32 +253,47 @@ describe('scripts/utils/check-api-coverage.cjs', () => {
     expect(result.status).toBe(1);
   });
 
-  it('names the file and line of a request whose path it cannot read', () => {
-    const result = runCheck({
-      resources: {
-        ...resources,
-        'x/media.ts':
-          "import { path } from '../../internal/utils/path';\n\n    return this._client.post(route, {});\n",
-      },
-    });
+  it.each([
+    [
+      'a variable path',
+      "import { path } from '../../internal/utils/path';\n\n    return this._client.post(route, {});\n",
+      3,
+    ],
+    ['a request method', "\n    return this._client.request({ method: 'get', path: '/x/search' });\n", 2],
+    [
+      'a path template with an added part',
+      "    return this._client.get(path`/x/tweets/${id}` + '/likes');\n",
+      1,
+    ],
+    ['a path string with an added part', "\n\n\n    return this._client.get('/x/users' + `/${id}`);\n", 4],
+    [
+      'a request after a block comment',
+      '/**\n * Lists media.\n */\n    return this._client.get(route);\n',
+      4,
+    ],
+  ])('names the file and line of a request with %s', (_, content, line) => {
+    const result = runCheck({ resources: { ...resources, 'x/media.ts': content } });
 
     expect(result.stdout).toBe('');
     expect(result.stderr).toBe(
-      "Could not read the method or path of the request at src/resources/x/media.ts line 3. Write it as this._client.get('/path') or this._client.get(path`/path/${id}`).\n",
+      `Could not read the method or path of the request at src/resources/x/media.ts line ${line}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).\n`,
     );
     expect(result.status).toBe(1);
   });
 
-  it('names the file and line of a request whose method it cannot read', () => {
+  it('ignores a request that only a comment mentions', () => {
     const result = runCheck({
-      resources: {
-        ...resources,
-        'search.ts': "\n    return this._client.request({ method: 'get', path: '/x/search' });\n",
+      spec: {
+        ...publicSpec,
+        paths: { ...publicSpec.paths, '/api/v1/x/lists': { get: { operationId: 'listLists' } } },
       },
+      resources: { ...resources, 'x/lists.ts': "/**\n * Calls this._client.get('/x/lists').\n */\n" },
     });
 
+    expect(result.stdout).toBe('');
     expect(result.stderr).toBe(
-      "Could not read the method or path of the request at src/resources/search.ts line 2. Write it as this._client.get('/path') or this._client.get(path`/path/${id}`).\n",
+      'GET /api/v1/x/lists (listLists) is in the API but not in the SDK.\n' +
+        'Add each operation above to the SDK, or list it in excluded-operations.json with a reason.\n',
     );
     expect(result.status).toBe(1);
   });
@@ -261,8 +301,9 @@ describe('scripts/utils/check-api-coverage.cjs', () => {
   it('fails when src/client.ts has no default base URL constant', () => {
     const result = runCheck({ client: "const baseURL = 'https://xquik.com/api/v1';\n" });
 
+    expect(result.stdout).toBe('');
     expect(result.stderr).toBe(
-      "Could not read the default base URL from src/client.ts. Keep it as const DEFAULT_BASE_URL = '<url>'; there.\n",
+      "Could not read the default base URL from src/client.ts. Define const DEFAULT_BASE_URL = '<url>' in src/client.ts.\n",
     );
     expect(result.status).toBe(1);
   });

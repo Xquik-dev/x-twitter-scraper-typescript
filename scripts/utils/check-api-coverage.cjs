@@ -12,14 +12,18 @@ const httpMethods = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch',
 const operationPattern = new RegExp(`^(${httpMethods.join('|').toUpperCase()}) (/\\S*)$`);
 const clientMember = /this\._client\s*(?:\?\.|\.|\[)/g;
 const requestCall =
-  /this\._client\.(get|post|put|patch|delete)\(\s*(?:'([^'\\]*)'|path`((?:[^`$\\]|\$\{[^{}`]*\})*)`)/y;
+  /this\._client\.(get|post|put|patch|delete)\(\s*(?:'([^'\\]*)'|path`((?:[^`$\\]|\$\{[^{}`]*\})*)`)\s*[,)]/y;
 const baseUrlConstant = /^const DEFAULT_BASE_URL = '([^']+)';$/m;
+const blockComment = /\/\*[\s\S]*?\*\//g;
 
 class CoverageError extends Error {}
 
 const urlPath = (url) => new URL(url, 'http://localhost').pathname.replace(/\/$/, '');
 
 const comparable = (operation) => operation.replace(/\{[^}]*\}/g, '{}');
+
+const withoutBlockComments = (source) =>
+  source.replace(blockComment, (comment) => comment.replace(/[^\n]/g, ''));
 
 const readSpec = async (source) => {
   try {
@@ -68,12 +72,12 @@ const sdkOperations = () => {
   const baseUrl = client.match(baseUrlConstant)?.[1];
   if (!baseUrl) {
     throw new CoverageError(
-      "Could not read the default base URL from src/client.ts. Keep it as const DEFAULT_BASE_URL = '<url>'; there.",
+      "Could not read the default base URL from src/client.ts. Define const DEFAULT_BASE_URL = '<url>' in src/client.ts.",
     );
   }
   const basePath = urlPath(baseUrl);
   return sourceFiles(path.join(root, 'src', 'resources')).flatMap((file) => {
-    const source = fs.readFileSync(file, 'utf8');
+    const source = withoutBlockComments(fs.readFileSync(file, 'utf8'));
     return [...source.matchAll(clientMember)].map(({ index }) => {
       requestCall.lastIndex = index;
       const call = requestCall.exec(source);
@@ -105,7 +109,7 @@ const exclusionProblem = (groups) => {
     }
     for (const operation of group.operations) {
       if (typeof operation !== 'string' || !operationPattern.test(operation)) {
-        return `${name} lists ${JSON.stringify(operation)}, which is not a METHOD and path such as GET /api/v1/x/trends`;
+        return `${name} lists ${JSON.stringify(operation)}, which needs an upper case method and a path, such as GET /api/v1/x/trends`;
       }
       if (seen.has(comparable(operation))) return `It lists ${operation} more than once`;
       seen.add(comparable(operation));
@@ -114,17 +118,26 @@ const exclusionProblem = (groups) => {
   return undefined;
 };
 
+const invalidExclusions = (problem) => new CoverageError(`${exclusionsFile} is not valid. ${problem}.`);
+
 const readExclusions = () => {
-  let groups;
+  let text;
   try {
-    groups = JSON.parse(fs.readFileSync(path.join(root, exclusionsFile), 'utf8'));
+    text = fs.readFileSync(path.join(root, exclusionsFile), 'utf8');
   } catch (error) {
-    throw new CoverageError(
-      `${exclusionsFile} is not valid. ${error.code === 'ENOENT' ? 'The repository root has no such file' : 'It is not JSON'}.`,
+    throw invalidExclusions(
+      error.code === 'ENOENT' ? 'The repository root has no such file' : `It cannot be read (${error.code})`,
     );
   }
+  let groups;
+  try {
+    groups = JSON.parse(text);
+  } catch (error) {
+    const position = error.message.match(/at position (\d+)/)?.[1];
+    throw invalidExclusions(`It is not JSON${position ? ` near position ${position}` : ''}`);
+  }
   const problem = exclusionProblem(groups);
-  if (problem) throw new CoverageError(`${exclusionsFile} is not valid. ${problem}.`);
+  if (problem) throw invalidExclusions(problem);
   return groups.flatMap((group) => group.operations);
 };
 
@@ -151,32 +164,25 @@ const coverage = async (source) => {
     return [];
   });
 
-  if (missing.length) {
-    return {
-      failures: [...missing, ...stale],
-      next: `Add each operation above to the SDK, or list it in ${exclusionsFile} with a reason.`,
-    };
+  if (missing.length || stale.length) {
+    const next =
+      missing.length ?
+        `Add each operation above to the SDK, or list it in ${exclusionsFile} with a reason.`
+      : `Remove each operation above from ${exclusionsFile}.`;
+    throw new CoverageError([...missing, ...stale, next].join('\n'));
   }
-  if (stale.length) return { failures: stale, next: `Remove each operation above from ${exclusionsFile}.` };
   const covered = operations.filter(({ key }) => sdk.has(key)).length;
-  return {
-    summary: `The SDK covers ${covered} of ${operations.length} API operations, and ${exclusionsFile} lists the other ${operations.length - covered}.`,
-  };
+  return `The SDK covers ${covered} of ${operations.length} API operations, and ${exclusionsFile} lists the other ${operations.length - covered}.`;
 };
 
 const main = async () => {
   try {
-    const result = await coverage(process.env['XQUIK_OPENAPI_SPEC'] || publicSpec);
-    if (result.summary) {
-      process.stdout.write(`${result.summary}\n`);
-      return;
-    }
-    process.stderr.write(`${[...result.failures, result.next].join('\n')}\n`);
+    process.stdout.write(`${await coverage(process.env['XQUIK_OPENAPI_SPEC'] || publicSpec)}\n`);
   } catch (error) {
     if (!(error instanceof CoverageError)) throw error;
     process.stderr.write(`${error.message}\n`);
+    process.exitCode = 1;
   }
-  process.exitCode = 1;
 };
 
 main();
