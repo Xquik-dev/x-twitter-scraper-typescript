@@ -79,6 +79,7 @@ type SpecOptions = {
   author?: Record<string, object>;
   statuses?: Array<string>;
   query?: Array<object>;
+  requiredLater?: Array<string>;
 };
 
 const makeSpec = ({
@@ -88,21 +89,54 @@ const makeSpec = ({
   author = { username: { type: 'string' }, name: { type: ['string', 'null'] } },
   statuses = ['queued'],
   query = [{ name: 'fields', in: 'query', schema: { type: 'string' } }],
-}: SpecOptions = {}): object => ({
-  servers: [{ url: 'https://xquik.com' }],
-  paths: {
-    '/api/v1/x/tweets/{tweetId}': {
-      get: {
-        parameters: [{ name: 'tweetId', in: 'path', required: true, schema: { type: 'string' } }, ...query],
-        responses: {
-          '200': {
+  requiredLater = [],
+}: SpecOptions = {}): object => {
+  const schema = {
+    type: 'object',
+    required,
+    properties: response,
+    ...(open ? { additionalProperties: true } : {}),
+  };
+  return {
+    servers: [{ url: 'https://xquik.com' }],
+    paths: {
+      '/api/v1/x/tweets/{tweetId}': {
+        get: {
+          parameters: [{ name: 'tweetId', in: 'path', required: true, schema: { type: 'string' } }, ...query],
+          responses: {
+            '200': {
+              content: {
+                'application/json': {
+                  schema:
+                    requiredLater.length ?
+                      { allOf: [schema, { type: 'object', required: requiredLater }] }
+                    : schema,
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/v1/x/tweets': {
+        post: {
+          requestBody: {
             content: {
               'application/json': {
                 schema: {
                   type: 'object',
-                  required,
-                  properties: response,
-                  ...(open ? { additionalProperties: true } : {}),
+                  required: ['account', 'text'],
+                  properties: { account: { type: 'string' }, text: { type: 'string' } },
+                },
+              },
+            },
+          },
+          responses: {
+            '201': {
+              content: {
+                'application/json': {
+                  schema: {
+                    oneOf: [{ $ref: '#/components/schemas/Queued' }, { $ref: '#/components/schemas/Sent' }],
+                  },
                 },
               },
             },
@@ -110,50 +144,28 @@ const makeSpec = ({
         },
       },
     },
-    '/api/v1/x/tweets': {
-      post: {
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                required: ['account', 'text'],
-                properties: { account: { type: 'string' }, text: { type: 'string' } },
-              },
-            },
-          },
+    components: {
+      schemas: {
+        Author: { type: 'object', required: ['username'], properties: author },
+        Queued: {
+          type: 'object',
+          required: ['id', 'status'],
+          properties: { id: { type: 'string' }, status: { type: 'string', enum: statuses } },
         },
-        responses: {
-          '201': {
-            content: {
-              'application/json': {
-                schema: {
-                  oneOf: [{ $ref: '#/components/schemas/Queued' }, { $ref: '#/components/schemas/Sent' }],
-                },
-              },
+        Sent: {
+          allOf: [
+            { type: 'object', required: ['id'], properties: { id: { type: 'string' } } },
+            {
+              type: 'object',
+              required: ['status'],
+              properties: { status: { type: 'string', const: 'sent' } },
             },
-          },
+          ],
         },
       },
     },
-  },
-  components: {
-    schemas: {
-      Author: { type: 'object', required: ['username'], properties: author },
-      Queued: {
-        type: 'object',
-        required: ['id', 'status'],
-        properties: { id: { type: 'string' }, status: { type: 'string', enum: statuses } },
-      },
-      Sent: {
-        allOf: [
-          { type: 'object', required: ['id'], properties: { id: { type: 'string' } } },
-          { type: 'object', required: ['status'], properties: { status: { type: 'string', const: 'sent' } } },
-        ],
-      },
-    },
-  },
-});
+  };
+};
 
 const runCheck = ({ spec: source = makeSpec(), accepted = [], resource = tweets }: Case = {}) => {
   const root = mkdtempSync(join(tmpdir(), 'check-api-fields-'));
@@ -164,6 +176,7 @@ const runCheck = ({ spec: source = makeSpec(), accepted = [], resource = tweets 
     };
     for (const [file, content] of Object.entries(core)) write(file, content);
     write('src/resources/tweets.ts', resource);
+    write('excluded-operations.json', '[]');
     write('openapi.json', typeof source === 'string' ? source : JSON.stringify(source));
     if (accepted !== null) {
       write(
@@ -240,6 +253,11 @@ describe('scripts/utils/check-api-fields.cjs', () => {
     [
       'a field the spec requires and the SDK leaves optional',
       { required: ['id', 'text', 'author', 'lang'] },
+      'GET /api/v1/x/tweets/{tweetId} response required lang',
+    ],
+    [
+      'a field a later allOf part requires and the SDK leaves optional',
+      { requiredLater: ['lang'] },
       'GET /api/v1/x/tweets/{tweetId} response required lang',
     ],
     [
@@ -360,5 +378,309 @@ export class Tweets extends APIResource {
       'Could not read the fields of retrieve at src/resources/tweets.ts line 6, because its path route is not a string or a path template.\n',
     );
     expect(result.status).toBe(1);
+  });
+
+  describe('with 1 operation', () => {
+    const operationSpec = (route: string, operation: object, schemas: object = {}): object => ({
+      servers: [{ url: 'https://xquik.com' }],
+      paths: { [`/api/v1${route}`]: operation },
+      components: { schemas },
+    });
+
+    const json = (schema: object) => ({ content: { 'application/json': { schema } } });
+
+    const resourceWith = (methods: string, types: string) =>
+      `${header}\nexport class Tweets extends APIResource {\n${methods}\n}\n\n${types}\n`;
+
+    const createMethod = `  create(body: TweetCreateParams, options?: object): APIPromise<TweetCreateResponse> {
+    return this._client.post('/x/tweets', { body, ...options });
+  }`;
+
+    const createBody = {
+      requestBody: json({
+        type: 'object',
+        required: ['account', 'text'],
+        properties: {
+          account: { type: 'string' },
+          text: { type: 'string' },
+          quoteTweetId: { type: 'string' },
+        },
+      }),
+    };
+
+    it.each<[string, string, string]>([
+      [
+        'a body field the SDK lacks',
+        'export interface TweetCreateParams {\n  account: string;\n  text: string;\n}',
+        'POST /api/v1/x/tweets request missing quoteTweetId',
+      ],
+      [
+        'a body field the spec lacks',
+        'export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n  draft?: boolean;\n}',
+        'POST /api/v1/x/tweets request extra draft',
+      ],
+    ])('fails on %s', (_, params, line) => {
+      const result = runCheck({
+        spec: operationSpec('/x/tweets', {
+          post: {
+            ...createBody,
+            responses: { '201': json({ type: 'object', properties: { id: { type: 'string' } } }) },
+          },
+        }),
+        resource: resourceWith(
+          createMethod,
+          `${params}\n\nexport interface TweetCreateResponse {\n  id?: string;\n}`,
+        ),
+      });
+
+      expect(result.stdout).toBe('');
+      expect(result.stderr).toBe(`${line}\n${next}`);
+      expect(result.status).toBe(1);
+    });
+
+    it('merges several 2xx bodies, where a field is required only when every body requires it', () => {
+      const result = runCheck({
+        spec: operationSpec('/x/tweets', {
+          post: {
+            ...createBody,
+            responses: {
+              '200': json({
+                type: 'object',
+                required: ['id', 'status'],
+                properties: { id: { type: 'string' }, status: { type: 'string' } },
+              }),
+              '202': json({ type: 'object', required: ['id'], properties: { id: { type: 'string' } } }),
+            },
+          },
+        }),
+        resource: resourceWith(
+          createMethod,
+          'export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n}\n\nexport interface TweetCreateResponse {\n  id: string;\n  status: string;\n}',
+        ),
+      });
+
+      expect(result.stderr).toBe(`POST /api/v1/x/tweets response required status\n${next}`);
+      expect(result.status).toBe(1);
+    });
+
+    it('intersects the items of an allOf of 2 arrays', () => {
+      const result = runCheck({
+        spec: operationSpec('/x/tweets', {
+          post: {
+            ...createBody,
+            responses: {
+              '201': json({
+                type: 'object',
+                properties: {
+                  tags: {
+                    allOf: [
+                      { type: 'array', items: { type: 'object', properties: { name: { type: 'string' } } } },
+                      { type: 'array', items: { type: 'object', properties: { url: { type: 'string' } } } },
+                    ],
+                  },
+                },
+              }),
+            },
+          },
+        }),
+        resource: resourceWith(
+          createMethod,
+          'export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n}\n\nexport interface TweetCreateResponse {\n  tags?: Array<{ name?: string }>;\n}',
+        ),
+      });
+
+      expect(result.stderr).toBe(`POST /api/v1/x/tweets response missing tags[].url\n${next}`);
+      expect(result.status).toBe(1);
+    });
+
+    it.each<[string, object, object, string]>([
+      ['a free-form object', { meta: { type: 'object' } }, {}, 'meta?: { source?: string };'],
+      [
+        'a cycle',
+        { thread: { $ref: '#/components/schemas/Thread' } },
+        { Thread: { type: 'object', properties: { reply: { $ref: '#/components/schemas/Thread' } } } },
+        'thread?: { reply?: { reply?: { depth?: number } } };',
+      ],
+    ])('stops the walk at %s', (_, properties, schemas, field) => {
+      const result = runCheck({
+        spec: operationSpec(
+          '/x/tweets',
+          { post: { ...createBody, responses: { '201': json({ type: 'object', properties }) } } },
+          schemas,
+        ),
+        resource: resourceWith(
+          createMethod,
+          `export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n}\n\nexport interface TweetCreateResponse {\n  ${field}\n}`,
+        ),
+      });
+
+      expect(result.stderr).toBe('');
+      expect(result.stdout).toBe(
+        "The SDK's fields match the API for 1 operation, and accepted-field-differences.json lists 0 accepted differences.\n",
+      );
+      expect(result.status).toBe(0);
+    });
+
+    it('drops an SDK parameter that carries a path parameter', () => {
+      const result = runCheck({
+        spec: operationSpec('/x/tweets/{tweetId}', {
+          get: {
+            parameters: [
+              { name: 'tweetId', in: 'path', required: true, schema: { type: 'string' } },
+              { name: 'fields', in: 'query', schema: { type: 'string' } },
+            ],
+            responses: { '200': json({ type: 'object', properties: { id: { type: 'string' } } }) },
+          },
+        }),
+        resource: resourceWith(
+          `  retrieve(query: TweetRetrieveParams): APIPromise<TweetRetrieveResponse> {
+    return this._client.get(path\`/x/tweets/\${query.tweetId}\`, { query });
+  }`,
+          'export interface TweetRetrieveParams {\n  tweetId: string;\n  fields?: string;\n}\n\nexport interface TweetRetrieveResponse {\n  id?: string;\n}',
+        ),
+      });
+
+      expect(result.stderr).toBe('');
+      expect(result.status).toBe(0);
+    });
+
+    it('reports a field the SDK types as another kind as missing', () => {
+      const result = runCheck({
+        spec: operationSpec('/x/tweets', {
+          post: {
+            ...createBody,
+            responses: {
+              '201': json({
+                type: 'object',
+                properties: { author: { type: 'object', properties: { username: { type: 'string' } } } },
+              }),
+            },
+          },
+        }),
+        resource: resourceWith(
+          createMethod,
+          'export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n}\n\nexport interface TweetCreateResponse {\n  author?: string;\n}',
+        ),
+      });
+
+      expect(result.stderr).toBe(`POST /api/v1/x/tweets response missing author\n${next}`);
+      expect(result.status).toBe(1);
+    });
+
+    it('reports a JSON response the SDK does not type', () => {
+      const result = runCheck({
+        spec: operationSpec('/x/tweets', {
+          post: {
+            ...createBody,
+            responses: {
+              '201': json({
+                type: 'object',
+                properties: { id: { type: 'string' }, status: { type: 'string' } },
+              }),
+            },
+          },
+        }),
+        resource: resourceWith(
+          `  create(body: TweetCreateParams, options?: object): APIPromise<void> {
+    return this._client.post('/x/tweets', { body, ...options });
+  }`,
+          'export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n}',
+        ),
+      });
+
+      expect(result.stderr).toBe(
+        `POST /api/v1/x/tweets response missing id\nPOST /api/v1/x/tweets response missing status\n${next}`,
+      );
+      expect(result.status).toBe(1);
+    });
+
+    it('reads each instance of a generic type on its own', () => {
+      const page = (properties: object) =>
+        json({
+          type: 'object',
+          properties: { data: { type: 'array', items: { type: 'object', properties } } },
+        });
+      const result = runCheck({
+        spec: {
+          servers: [{ url: 'https://xquik.com' }],
+          paths: {
+            '/api/v1/x/users': { get: { responses: { '200': page({ name: { type: 'string' } }) } } },
+            '/api/v1/x/tweets': { get: { responses: { '200': page({ text: { type: 'string' } }) } } },
+          },
+        },
+        resource: resourceWith(
+          `  users(): APIPromise<Page<User>> {
+    return this._client.get('/x/users');
+  }
+
+  tweets(): APIPromise<Page<Tweet>> {
+    return this._client.get('/x/tweets');
+  }`,
+          'export interface Page<T> {\n  data?: Array<T>;\n}\n\nexport interface User {\n  name?: string;\n}\n\nexport interface Tweet {\n  text?: string;\n}',
+        ),
+      });
+
+      expect(result.stderr).toBe('');
+      expect(result.status).toBe(0);
+    });
+
+    it.each<[string, string, string]>([
+      [
+        'an arrow property',
+        "  create = (body: TweetCreateParams): APIPromise<TweetCreateResponse> => this._client.post('/x/tweets', { body });",
+        '/x/tweets',
+      ],
+      ['a path the spec ends with a slash', createMethod, '/x/tweets/'],
+    ])('fails on an operation it cannot read from %s', (_, method, route) => {
+      const result = runCheck({
+        spec: operationSpec(route, {
+          post: {
+            ...createBody,
+            responses: { '201': json({ type: 'object', properties: { id: { type: 'string' } } }) },
+          },
+        }),
+        resource: resourceWith(
+          method,
+          'export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n}\n\nexport interface TweetCreateResponse {\n  id?: string;\n}',
+        ),
+      });
+
+      expect(result.stdout).toBe('');
+      expect(result.stderr).toBe(
+        `POST /api/v1${route} has no SDK method the field check can read.\n` +
+          'Write each operation above as a class method that calls this._client, or list it in excluded-operations.json.\n',
+      );
+      expect(result.status).toBe(1);
+    });
+
+    it('fails on a type the compiler cannot resolve', () => {
+      const result = runCheck({
+        resource: `import { Author } from './missing';\n${tweets.replace('author: { username: string; name?: string | null };', 'author: Author;')}`,
+      });
+
+      expect(result.stdout).toBe('');
+      expect(result.stderr).toMatch(
+        /^Could not read the SDK's types, because the TypeScript compiler reports Cannot find module '\.\/missing'.* at src\/resources\/tweets\.ts line 1\. Fix the type errors first\.\n$/,
+      );
+      expect(result.status).toBe(1);
+    });
+
+    it('fails on a reference the spec does not define', () => {
+      const result = runCheck({
+        spec: operationSpec('/x/tweets', {
+          post: { ...createBody, responses: { '201': json({ $ref: '#/components/schemas/Creatd' }) } },
+        }),
+        resource: resourceWith(
+          createMethod,
+          'export interface TweetCreateParams {\n  account: string;\n  text: string;\n  quoteTweetId?: string;\n}\n\nexport interface TweetCreateResponse {\n  id?: string;\n}',
+        ),
+      });
+
+      expect(result.stdout).toBe('');
+      expect(result.stderr).toBe(
+        'Could not resolve #/components/schemas/Creatd in the API spec. Check the spec source.\n',
+      );
+      expect(result.status).toBe(1);
+    });
   });
 });

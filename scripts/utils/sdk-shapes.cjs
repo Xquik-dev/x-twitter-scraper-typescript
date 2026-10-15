@@ -6,10 +6,21 @@ const fs = require('fs');
 const path = require('path');
 const ts = require('typescript');
 const { CheckError, comparable } = require('./api-spec.cjs');
-const { leaf, object } = require('./api-shapes.cjs');
+const { leaf, object } = require('./shapes.cjs');
 
 const verbs = new Set(['get', 'post', 'put', 'patch', 'delete']);
 const fileTypes = new Set(['Blob', 'File', 'Response', 'Date', 'ReadableStream']);
+const fallbackOptions = {
+  target: ts.ScriptTarget.ES2020,
+  lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'],
+  module: ts.ModuleKind.CommonJS,
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
+  strict: true,
+  exactOptionalPropertyTypes: true,
+  skipLibCheck: true,
+  noEmit: true,
+  types: [],
+};
 
 const sourceFiles = (directory) =>
   fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -29,25 +40,41 @@ const isNullish = (type) =>
 
 const unquoted = (text) => text.replace(/^['"]|['"]$/g, '');
 
+const compilerOptions = (root) => {
+  const configFile = path.join(root, 'tsconfig.json');
+  if (!fs.existsSync(configFile)) return fallbackOptions;
+  const { config, error } = ts.readConfigFile(configFile, ts.sys.readFile);
+  if (error)
+    throw new CheckError(
+      `Could not read tsconfig.json, because ${ts.flattenDiagnosticMessageText(error.messageText, ' ')}`,
+    );
+  return { ...ts.parseJsonConfigFileContent(config, ts.sys, root).options, noEmit: true };
+};
+
+const typeErrors = (program, root) =>
+  ts.getPreEmitDiagnostics(program).map((diagnostic) => {
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, ' ');
+    if (!diagnostic.file || diagnostic.start === undefined) return message;
+    const line = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line + 1;
+    return `${message} at ${path.relative(root, diagnostic.file.fileName)} line ${line}`;
+  });
+
 const sdkShapes = (root, basePath) => {
   const src = path.join(root, 'src');
-  const program = ts.createProgram(sourceFiles(src), {
-    target: ts.ScriptTarget.ES2020,
-    lib: ['lib.es2020.d.ts', 'lib.dom.d.ts'],
-    module: ts.ModuleKind.CommonJS,
-    moduleResolution: ts.ModuleResolutionKind.Bundler,
-    strict: true,
-    exactOptionalPropertyTypes: true,
-    skipLibCheck: true,
-    noEmit: true,
-    types: [],
-  });
+  const program = ts.createProgram(sourceFiles(src), compilerOptions(root));
+  const errors = typeErrors(program, root);
+  if (errors.length) {
+    throw new CheckError(
+      `Could not read the SDK's types, because the TypeScript compiler reports ${errors.slice(0, 3).join(', ')}. Fix the type errors first.`,
+    );
+  }
   const checker = program.getTypeChecker();
   const defs = {};
 
   const defName = (type) => {
     const symbol = type.aliasSymbol ?? type.getSymbol();
     if (!symbol || type.aliasTypeArguments?.length) return null;
+    if (type.objectFlags & ts.ObjectFlags.Reference && checker.getTypeArguments(type).length) return null;
     if (['__type', '__object', 'Array', 'Record'].includes(symbol.getName())) return null;
     const declaration = symbol.declarations?.[0];
     if (!declaration?.getSourceFile().fileName.startsWith(src + path.sep)) return null;
@@ -76,8 +103,8 @@ const sdkShapes = (root, basePath) => {
             leaf()
           : leaf(literals);
       }
-      const scalar = ts.TypeFlags.String | ts.TypeFlags.Number | ts.TypeFlags.Boolean;
-      if (parts.every((part) => literal(part) !== null || part.flags & scalar)) return leaf();
+      const primitive = ts.TypeFlags.String | ts.TypeFlags.Number | ts.TypeFlags.Boolean;
+      if (parts.every((part) => literal(part) !== null || part.flags & primitive)) return leaf();
       return parts.length === 1 ? node(parts[0]) : { t: 'union', variants: parts.map(node) };
     }
     const value = literal(type);
@@ -191,7 +218,12 @@ const sdkShapes = (root, basePath) => {
     if (ts.isObjectLiteralExpression(expression)) {
       return expression.properties.flatMap((property) => {
         if (ts.isShorthandPropertyAssignment(property)) {
-          return fieldsOf(property.name, property).map((field) => ({ ...field, name: property.name.text }));
+          const name = property.name.text;
+          return fieldsOf(property.name, property).map((field) =>
+            field.type ?
+              { name, symbol: checker.getShorthandAssignmentValueSymbol(property) }
+            : { ...field, name },
+          );
         }
         if (ts.isSpreadAssignment(property)) return fieldsOf(property.expression);
         if (ts.isPropertyAssignment(property)) {
@@ -241,6 +273,7 @@ const sdkShapes = (root, basePath) => {
   };
 
   const operation = (method, call) => {
+    if (!call.arguments.length) throw new Error('it passes no path');
     const route = routeOf(call.arguments[0]);
     let query = object({});
     let body = null;
@@ -258,9 +291,7 @@ const sdkShapes = (root, basePath) => {
       if (key === 'query') query = fieldsNode(fields);
       else body = fieldsNode(fields);
     }
-    const key = comparable(
-      `${call.expression.name.text.toUpperCase()} ${basePath}${route.replace(/\/$/, '')}`,
-    );
+    const key = comparable(`${call.expression.name.text.toUpperCase()} ${basePath}${route}`);
     return { key, query, body, response: responseNode(method) };
   };
 

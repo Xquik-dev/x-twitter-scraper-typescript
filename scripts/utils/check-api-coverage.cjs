@@ -7,17 +7,15 @@ const path = require('path');
 const {
   CheckError,
   comparable,
-  httpMethods,
+  exclusionsFile,
   readBasePath,
   readConfiguredSpec,
-  readGroups,
+  readExclusions,
   runCheck,
   specOperations,
 } = require('./api-spec.cjs');
 
 const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
-const exclusionsFile = 'excluded-operations.json';
-const operationPattern = new RegExp(`^(${httpMethods.join('|').toUpperCase()}) (/\\S*)$`);
 const clientMember = /this\._client\s*(?:\?\.|\.|\[)/g;
 const requestCall =
   /this\._client\.(get|post|put|patch|delete)\(\s*(?:'([^'\\]*)'|path`((?:[^`$\\]|\$\{[^{}`]*\})*)`)\s*[,)]/y;
@@ -56,12 +54,7 @@ const sdkOperations = () => {
 };
 
 const coverage = async () => {
-  const exclusions = readGroups(root, exclusionsFile, {
-    field: 'operations',
-    entryPattern: operationPattern,
-    entryHint: 'needs an upper case method and a path, such as GET /api/v1/x/trends',
-    key: comparable,
-  });
+  const exclusions = readExclusions(root);
   const sdk = new Set(sdkOperations().map(comparable));
   const operations = specOperations(await readConfiguredSpec());
   const inSpec = new Set(operations.map(({ key }) => key));

@@ -14,7 +14,7 @@
     ]
   },
   {
-    "reason": "These routes no longer document these filters. The SDK keeps them as deprecated parameters so calls written for 0.12 still compile.",
+    "reason": "The API ignores these filters on these routes. The SDK keeps them as deprecated parameters so calls written for 0.12 still compile.",
     "differences": [
       "GET /api/v1/x/users/{id}/likes request extra cardName",
       "GET /api/v1/x/users/{id}/likes request extra excludeSource",

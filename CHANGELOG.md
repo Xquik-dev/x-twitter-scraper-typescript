@@ -24,6 +24,14 @@
 * Coverage pages mark `has_next_page` and `next_cursor` required, and reply pages mark `tweets` required, because the API always sends them.
 * The compose multiplier type takes the text the API sends now and keeps the old text.
 
+### Documentation
+
+* The 8 deprecated filters on replies, likes, media and mentions say the API ignores them on those routes.
+
+### Chores
+
+* `bin/check-local` runs an API fields check after API coverage. It fails when a request or response field of an implemented operation differs from the API spec, unless `accepted-field-differences.json` lists it with a reason.
+
 ## 0.15.0 (2026-10-15)
 
 [Full changelog from v0.14.0 to v0.15.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.14.0...v0.15.0)

@@ -60,23 +60,23 @@ const readBasePath = (root) => {
   return urlPath(baseUrl);
 };
 
-const groupProblem = (groups, field, entryPattern, entryHint, key) => {
+const groupProblem = (groups, { field, noun, entryPattern, entryHint, key }) => {
   if (!Array.isArray(groups)) return 'It must hold a list of groups';
   const seen = new Set();
   for (const [index, group] of groups.entries()) {
-    const name = `Group ${index + 1}`;
+    const label = `Group ${index + 1}`;
     if (typeof group !== 'object' || group === null || Array.isArray(group)) {
-      return `${name} is not an object`;
+      return `${label} is not an object`;
     }
-    const extra = Object.keys(group).filter((name) => name !== 'reason' && name !== field);
-    if (extra.length) return `${name} has the unknown field ${extra[0]}`;
-    if (typeof group.reason !== 'string' || !group.reason.trim()) return `${name} needs a reason`;
+    const extra = Object.keys(group).filter((property) => property !== 'reason' && property !== field);
+    if (extra.length) return `${label} has the unknown field ${extra[0]}`;
+    if (typeof group.reason !== 'string' || !group.reason.trim()) return `${label} needs a reason`;
     if (!Array.isArray(group[field]) || !group[field].length) {
-      return `${name} needs at least 1 ${field === 'operations' ? 'operation' : 'difference'}`;
+      return `${label} needs at least 1 ${noun}`;
     }
     for (const entry of group[field]) {
       if (typeof entry !== 'string' || !entryPattern.test(entry)) {
-        return `${name} lists ${JSON.stringify(entry)}, which ${entryHint}`;
+        return `${label} lists ${JSON.stringify(entry)}, which ${entryHint}`;
       }
       if (seen.has(key(entry))) return `It lists ${entry} more than once`;
       seen.add(key(entry));
@@ -85,7 +85,7 @@ const groupProblem = (groups, field, entryPattern, entryHint, key) => {
   return undefined;
 };
 
-const readGroups = (root, file, { field, entryPattern, entryHint, key }) => {
+const readGroups = (root, file, rules) => {
   const invalid = (problem) => new CheckError(`${file} is not valid. ${problem}.`);
   let text;
   try {
@@ -102,10 +102,21 @@ const readGroups = (root, file, { field, entryPattern, entryHint, key }) => {
     const position = error.message.match(/at position (\d+)/)?.[1];
     throw invalid(`It is not JSON${position ? ` near position ${position}` : ''}`);
   }
-  const problem = groupProblem(groups, field, entryPattern, entryHint, key);
+  const problem = groupProblem(groups, rules);
   if (problem) throw invalid(problem);
-  return groups.flatMap((group) => group[field]);
+  return groups.flatMap((group) => group[rules.field]);
 };
+
+const exclusionsFile = 'excluded-operations.json';
+
+const readExclusions = (root) =>
+  readGroups(root, exclusionsFile, {
+    field: 'operations',
+    noun: 'operation',
+    entryPattern: new RegExp(`^(${httpMethods.join('|').toUpperCase()}) (/\\S*)$`),
+    entryHint: 'needs an upper case method and a path, such as GET /api/v1/x/trends',
+    key: comparable,
+  });
 
 const runCheck = async (check) => {
   try {
@@ -120,11 +131,12 @@ const runCheck = async (check) => {
 module.exports = {
   CheckError,
   comparable,
+  exclusionsFile,
   httpMethods,
   readBasePath,
   readConfiguredSpec,
+  readExclusions,
   readGroups,
   runCheck,
   specOperations,
-  urlPath,
 };

@@ -4248,7 +4248,7 @@ export interface TweetGetRepliesParams {
   blueVerifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   cardName?: string;
 
@@ -4280,7 +4280,7 @@ export interface TweetGetRepliesParams {
   excludeOriginalAuthor?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   excludeSource?: string;
 
@@ -4305,7 +4305,7 @@ export interface TweetGetRepliesParams {
   fromUser?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   geocode?: string;
 
@@ -4434,12 +4434,12 @@ export interface TweetGetRepliesParams {
   nativeRetweets?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   near?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   news?: boolean;
 
@@ -4482,7 +4482,7 @@ export interface TweetGetRepliesParams {
   retweetsOfTweetId?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   safe?: boolean;
 
@@ -4518,7 +4518,7 @@ export interface TweetGetRepliesParams {
   sort?: 'relevance' | 'latest' | 'oldest' | 'likes';
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   source?: string;
 
@@ -4549,7 +4549,7 @@ export interface TweetGetRepliesParams {
   verifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   within?: string;
 

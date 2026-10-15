@@ -85,8 +85,8 @@ Run every repository check before requesting review.
 bin/check-local
 ```
 
-It installs dependencies from the lockfile first.
-Then it checks that the SDK covers the API and that its fields match, as [API coverage](#api-coverage) and [API fields](#api-fields) describe.
+It first checks that the SDK covers the API, as [API coverage](#api-coverage) describes.
+Then it installs dependencies from the lockfile and checks that the SDK's fields match the API, as [API fields](#api-fields) describes.
 Next it checks license notices with REUSE.
 REUSE runs at a pinned version through `uv`. Install `uv` with `brew install uv`.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
@@ -143,17 +143,19 @@ An SDK request that the spec lacks passes, such as `GET /api/v1/credits/topup/re
 
 ## API fields
 
-`bin/check-local` runs `node scripts/utils/check-api-fields.cjs` right after the coverage check.
+`bin/check-local` runs `node scripts/utils/check-api-fields.cjs` after the coverage check and the install, because it needs the TypeScript compiler from the dependencies.
 For each operation the SDK implements, it compares the fields of the request and the response with the API spec.
 It reads the spec the way the coverage check does, so `XQUIK_OPENAPI_SPEC` works the same.
 
 - The request side holds the query parameters and the JSON or form body. Path and header parameters stay out.
 - The response side holds the JSON body of each 2xx answer.
-- The check reads the SDK's types with the TypeScript compiler.
-  It follows `$ref`, `allOf` and arrays.
+- The check reads the SDK's types with the TypeScript compiler and the settings in `tsconfig.json`.
+  It fails on a type error, and on an operation that is neither excluded nor read from a class method that calls `this._client`.
+- It follows `$ref`, `allOf` and arrays.
   It merges `oneOf`, `anyOf` and several 2xx bodies into 1 shape, where a field is required only when every variant requires it.
   A free-form object, a cycle or an untyped value stops the walk.
 - A field missing on 1 side counts once, at its top position.
+  A field the SDK types as another kind, such as a string for an object, counts as missing.
   An SDK field under an object the spec leaves open is allowed.
 
 Each difference prints on its own line, such as `GET /api/v1/events response missing events[].data.followedAt`.

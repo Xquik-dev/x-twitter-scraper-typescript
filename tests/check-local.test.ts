@@ -110,19 +110,19 @@ describe('bin/check-local', () => {
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);
     expect(result.stdout).toContain(
-      '==> Install dependencies\n' +
-        '==> API coverage\n' +
+      '==> API coverage\n' +
         'The SDK covers 180 of 186 API operations, and excluded-operations.json lists the other 6.\n' +
+        '==> Install dependencies\n' +
         '==> API fields\n' +
         "The SDK's fields match the API for 180 operations, and accepted-field-differences.json lists 42 accepted differences.\n" +
         '==> Check license notices\n',
     );
     expect(result.stdout).toContain(
-      '==> Passed install, API coverage, API fields, REUSE, audit, lint & types, reproducible build, 2 tests, CodeQL\n',
+      '==> Passed API coverage, install, API fields, REUSE, audit, lint & types, reproducible build, 2 tests, CodeQL\n',
     );
   });
 
-  it('stops before the slow checks when the SDK lags the API', () => {
+  it('stops before installing when the SDK lags the API', () => {
     const result = checkLocal(
       sarif({}),
       passes,
@@ -134,8 +134,7 @@ describe('bin/check-local', () => {
       'GET /api/v1/x/trends/history (getXTrendsHistory) is in the API but not in the SDK.\n' +
         'Check failed at API coverage. Fix what the check reported above, then run bin/check-local again.\n',
     );
-    expect(result.stdout).not.toContain('==> API fields');
-    expect(result.stdout).not.toContain('==> Check license notices');
+    expect(result.stdout).not.toContain('==> Install dependencies');
   });
 
   it('stops before the slow checks when a field differs from the API', () => {
