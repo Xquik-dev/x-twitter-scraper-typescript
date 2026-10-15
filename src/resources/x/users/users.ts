@@ -859,7 +859,7 @@ export interface UserRetrieveFollowerIDsResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type UserRetrieveFollowersResponse =
-  Shared.PaginatedUsers | UserRetrieveFollowersResponse.UserListCoverageResponse;
+  Shared.UserListPage | UserRetrieveFollowersResponse.UserListCoverageResponse;
 
 export namespace UserRetrieveFollowersResponse {
   /**
@@ -874,9 +874,9 @@ export namespace UserRetrieveFollowersResponse {
      */
     diagnostic: UserListCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace UserListCoverageResponse {
@@ -974,7 +974,7 @@ export namespace UserRetrieveFollowersResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type UserRetrieveFollowingResponse =
-  Shared.PaginatedUsers | UserRetrieveFollowingResponse.UserListCoverageResponse;
+  Shared.UserListPage | UserRetrieveFollowingResponse.UserListCoverageResponse;
 
 export namespace UserRetrieveFollowingResponse {
   /**
@@ -989,9 +989,9 @@ export namespace UserRetrieveFollowingResponse {
      */
     diagnostic: UserListCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace UserListCoverageResponse {
@@ -1975,6 +1975,11 @@ export namespace UserRetrieveLiveResponse {
       profilePicture?: string;
 
       /**
+       * The broadcaster's avatar at full size
+       */
+      profilePictureOriginal?: string;
+
+      /**
        * Live video username
        */
       username?: string;
@@ -1986,7 +1991,7 @@ export namespace UserRetrieveLiveResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type UserRetrieveVerifiedFollowersResponse =
-  Shared.PaginatedUsers | UserRetrieveVerifiedFollowersResponse.UserListCoverageResponse;
+  Shared.UserListPage | UserRetrieveVerifiedFollowersResponse.UserListCoverageResponse;
 
 export namespace UserRetrieveVerifiedFollowersResponse {
   /**
@@ -2001,9 +2006,9 @@ export namespace UserRetrieveVerifiedFollowersResponse {
      */
     diagnostic: UserListCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace UserListCoverageResponse {

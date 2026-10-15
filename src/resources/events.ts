@@ -76,7 +76,7 @@ export interface Event {
   /**
    * Post fields match REST. Legacy fields remain available.
    */
-  data: Event.MonitorPost | Event.MonitorProfileChange | Event.MonitorLegacyPost;
+  data: Event.MonitorPost | Event.MonitorProfileChange | Shared.MonitorFollow | Event.MonitorLegacyPost;
 
   /**
    * Account monitor ID for account events, or keyword monitor ID for keyword events.
@@ -94,10 +94,17 @@ export interface Event {
    * Type of monitor event fired when account activity occurs. tweet.deleted fires
    * once X confirms the account deleted a post the monitor saw. Its data is the post
    * as last seen. broadcast.started & space.started fire when the account posts its
-   * running live video or Space. Their data is that post. A live the account does
-   * not post is not seen. following.added & following.removed fire when the account
-   * follows or unfollows someone, with that account's profile. Keyword monitors take
-   * the 10 post types only.
+   * running live video or Space. Their data is that post. Xquik misses a live video
+   * the account does not post. following.added & following.removed fire when the
+   * account follows or unfollows someone, with that account's profile.
+   * follower.added & follower.removed fire when someone follows the account or
+   * leaves its followers, with that account's profile. Xquik names lost followers
+   * for accounts with up to 100,000 followers. profile.followers.changed &
+   * profile.following.changed fire when the account's follower or following count
+   * moves, at most once a minute each. X shows counts that differ by a few between
+   * reads, so a monitor holds the lowest. A fall counts once 2 reads show it, & a
+   * rise once no read for a minute showed less. Keyword monitors take the 10 post
+   * types only.
    */
   type: Shared.EventType;
 
@@ -946,6 +953,10 @@ export namespace Event {
 
         export namespace Entity {
           export interface Ref {
+            screenName?: string;
+
+            text?: string;
+
             type?: string;
 
             url?: string;
@@ -1610,6 +1621,10 @@ export namespace Event {
 
         export namespace Entity {
           export interface Ref {
+            screenName?: string;
+
+            text?: string;
+
             type?: string;
 
             url?: string;
@@ -1622,7 +1637,8 @@ export namespace Event {
   }
 
   /**
-   * Changed profile field with its previous and current values.
+   * Changed profile field with its previous and current values. The field of a count
+   * event is followers or following, with both counts as integers.
    */
   export interface MonitorProfileChange {
     field: string;
@@ -1638,14 +1654,19 @@ export namespace Event {
     username: string;
 
     /**
-     * Profile text, flag, or pinned post IDs. Missing values are omitted.
+     * Current count minus previous count. Only on the 2 count events.
      */
-    current?: string | boolean | Array<string>;
+    change?: number;
 
     /**
-     * Profile text, flag, or pinned post IDs. Missing values are omitted.
+     * Profile text, flag, count, or pinned post IDs. Missing values are omitted.
      */
-    previous?: string | boolean | Array<string>;
+    current?: string | boolean | number | Array<string>;
+
+    /**
+     * Profile text, flag, count, or pinned post IDs. Missing values are omitted.
+     */
+    previous?: string | boolean | number | Array<string>;
   }
 
   /**
@@ -1675,7 +1696,11 @@ export interface EventDetail {
   /**
    * Post or profile-change payload for the event type.
    */
-  data: EventDetail.MonitorPost | EventDetail.MonitorProfileChange | EventDetail.MonitorLegacyPost;
+  data:
+    | EventDetail.MonitorPost
+    | EventDetail.MonitorProfileChange
+    | Shared.MonitorFollow
+    | EventDetail.MonitorLegacyPost;
 
   /**
    * Monitor ID associated with this detailed event payload.
@@ -1693,10 +1718,17 @@ export interface EventDetail {
    * Type of monitor event fired when account activity occurs. tweet.deleted fires
    * once X confirms the account deleted a post the monitor saw. Its data is the post
    * as last seen. broadcast.started & space.started fire when the account posts its
-   * running live video or Space. Their data is that post. A live the account does
-   * not post is not seen. following.added & following.removed fire when the account
-   * follows or unfollows someone, with that account's profile. Keyword monitors take
-   * the 10 post types only.
+   * running live video or Space. Their data is that post. Xquik misses a live video
+   * the account does not post. following.added & following.removed fire when the
+   * account follows or unfollows someone, with that account's profile.
+   * follower.added & follower.removed fire when someone follows the account or
+   * leaves its followers, with that account's profile. Xquik names lost followers
+   * for accounts with up to 100,000 followers. profile.followers.changed &
+   * profile.following.changed fire when the account's follower or following count
+   * moves, at most once a minute each. X shows counts that differ by a few between
+   * reads, so a monitor holds the lowest. A fall counts once 2 reads show it, & a
+   * rise once no read for a minute showed less. Keyword monitors take the 10 post
+   * types only.
    */
   type: Shared.EventType;
 
@@ -2547,6 +2579,10 @@ export namespace EventDetail {
 
         export namespace Entity {
           export interface Ref {
+            screenName?: string;
+
+            text?: string;
+
             type?: string;
 
             url?: string;
@@ -3211,6 +3247,10 @@ export namespace EventDetail {
 
         export namespace Entity {
           export interface Ref {
+            screenName?: string;
+
+            text?: string;
+
             type?: string;
 
             url?: string;
@@ -3223,7 +3263,8 @@ export namespace EventDetail {
   }
 
   /**
-   * Changed profile field with its previous and current values.
+   * Changed profile field with its previous and current values. The field of a count
+   * event is followers or following, with both counts as integers.
    */
   export interface MonitorProfileChange {
     field: string;
@@ -3239,14 +3280,19 @@ export namespace EventDetail {
     username: string;
 
     /**
-     * Profile text, flag, or pinned post IDs. Missing values are omitted.
+     * Current count minus previous count. Only on the 2 count events.
      */
-    current?: string | boolean | Array<string>;
+    change?: number;
 
     /**
-     * Profile text, flag, or pinned post IDs. Missing values are omitted.
+     * Profile text, flag, count, or pinned post IDs. Missing values are omitted.
      */
-    previous?: string | boolean | Array<string>;
+    current?: string | boolean | number | Array<string>;
+
+    /**
+     * Profile text, flag, count, or pinned post IDs. Missing values are omitted.
+     */
+    previous?: string | boolean | number | Array<string>;
   }
 
   /**

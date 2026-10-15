@@ -4,6 +4,7 @@
 
 import { APIResource } from '../../core/resource';
 import { APIPromise } from '../../core/api-promise';
+import { type Uploadable } from '../../core/uploads';
 import { buildHeaders } from '../../internal/headers';
 import { RequestOptions } from '../../internal/request-options';
 import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
@@ -339,15 +340,27 @@ export interface MediaDownloadParams {
 
 export interface MediaUploadParams {
   /**
-   * Body param: X account (@username or ID) uploading media from URL
+   * Body param: X account (@username or ID) uploading media
    */
   account: string;
+
+  /**
+   * Body param: Media file to upload, up to 15 MB. A larger file gets 413
+   * `media_too_large` before any account lookup.
+   */
+  file?: Uploadable;
+
+  /**
+   * Body param: Set true only for video/mp4 multipart uploads longer than 140
+   * seconds.
+   */
+  is_long_video?: boolean;
 
   /**
    * Body param: HTTPS URL to download and upload as media, up to 15 MB. Another
    * scheme gets 400 `invalid_media_url`.
    */
-  url: string;
+  url?: string;
 
   /**
    * Header param: Use one unique value per intended write. Reuse it only for an

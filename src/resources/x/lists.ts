@@ -378,7 +378,7 @@ export namespace ListRetrieveResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type ListRetrieveFollowersResponse =
-  Shared.PaginatedUsers | ListRetrieveFollowersResponse.UserListCoverageResponse;
+  Shared.UserListPage | ListRetrieveFollowersResponse.UserListCoverageResponse;
 
 export namespace ListRetrieveFollowersResponse {
   /**
@@ -393,9 +393,9 @@ export namespace ListRetrieveFollowersResponse {
      */
     diagnostic: UserListCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace UserListCoverageResponse {
@@ -493,7 +493,7 @@ export namespace ListRetrieveFollowersResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type ListRetrieveMembersResponse =
-  Shared.PaginatedUsers | ListRetrieveMembersResponse.UserListCoverageResponse;
+  Shared.UserListPage | ListRetrieveMembersResponse.UserListCoverageResponse;
 
 export namespace ListRetrieveMembersResponse {
   /**
@@ -508,9 +508,9 @@ export namespace ListRetrieveMembersResponse {
      */
     diagnostic: UserListCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace UserListCoverageResponse {

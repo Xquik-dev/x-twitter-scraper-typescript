@@ -1171,6 +1171,10 @@ export namespace TweetDetail {
 
       export namespace Entity {
         export interface Ref {
+          screenName?: string;
+
+          text?: string;
+
           type?: string;
 
           url?: string;
@@ -1758,6 +1762,10 @@ export namespace TweetDetail {
 
       export namespace Entity {
         export interface Ref {
+          screenName?: string;
+
+          text?: string;
+
           type?: string;
 
           url?: string;
@@ -2506,6 +2514,8 @@ export namespace TweetGetInsightsResponse {
  * mode also returns nested replies and coverage diagnostics.
  */
 export interface TweetGetRepliesResponse extends Omit<Shared.PaginatedTweets, 'tweets'> {
+  tweets: Array<TweetGetRepliesResponse.Tweet>;
+
   /**
    * Direct-reply coverage & collection evidence.
    */
@@ -2542,7 +2552,12 @@ export interface TweetGetRepliesResponse extends Omit<Shared.PaginatedTweets, 't
    */
   orderPartial?: true;
 
-  tweets?: Array<TweetGetRepliesResponse.Tweet>;
+  /**
+   * Present on an answer that lacks replies of a large thread posted before this
+   * time. X shows only part of the replies older than 7 days. A retry returns about
+   * the same replies.
+   */
+  partialBefore?: string;
 }
 
 export namespace TweetGetRepliesResponse {
@@ -2949,9 +2964,9 @@ export namespace TweetSearchResponse {
      */
     diagnostic: TweetSearchCoverageResponse.Diagnostic;
 
-    has_next_page?: false;
+    has_next_page: false;
 
-    next_cursor?: '';
+    next_cursor: '';
   }
 
   export namespace TweetSearchCoverageResponse {

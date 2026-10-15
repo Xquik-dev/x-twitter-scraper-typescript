@@ -13,10 +13,12 @@ Types
 - <code><a href="./src/resources/shared.ts">EmbeddedTweet</a></code>
 - <code><a href="./src/resources/shared.ts">Error</a></code>
 - <code><a href="./src/resources/shared.ts">EventType</a></code>
+- <code><a href="./src/resources/shared.ts">MonitorFollow</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedTweets</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedUsers</a></code>
 - <code><a href="./src/resources/shared.ts">SearchTweet</a></code>
 - <code><a href="./src/resources/shared.ts">TweetMedia</a></code>
+- <code><a href="./src/resources/shared.ts">UserListPage</a></code>
 - <code><a href="./src/resources/shared.ts">UserProfile</a></code>
 
 # Account
@@ -59,11 +61,12 @@ Types
 
 - <code><a href="./src/resources/drafts.ts">Draft</a></code>
 - <code><a href="./src/resources/drafts.ts">DraftDetail</a></code>
+- <code><a href="./src/resources/drafts.ts">DraftCreateResponse</a></code>
 - <code><a href="./src/resources/drafts.ts">DraftListResponse</a></code>
 
 Methods
 
-- <code title="post /drafts">client.drafts.<a href="./src/resources/drafts.ts">create</a>({ ...params }) -> DraftDetail</code>
+- <code title="post /drafts">client.drafts.<a href="./src/resources/drafts.ts">create</a>({ ...params }) -> DraftCreateResponse</code>
 - <code title="get /drafts/{id}">client.drafts.<a href="./src/resources/drafts.ts">retrieve</a>(id) -> DraftDetail</code>
 - <code title="get /drafts">client.drafts.<a href="./src/resources/drafts.ts">list</a>({ ...params }) -> DraftListResponse</code>
 - <code title="delete /drafts/{id}">client.drafts.<a href="./src/resources/drafts.ts">delete</a>(id) -> void</code>

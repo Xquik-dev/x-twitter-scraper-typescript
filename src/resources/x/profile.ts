@@ -4,6 +4,7 @@
 
 import { APIResource } from '../../core/resource';
 import { APIPromise } from '../../core/api-promise';
+import { type Uploadable } from '../../core/uploads';
 import { buildHeaders } from '../../internal/headers';
 import { RequestOptions } from '../../internal/request-options';
 import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
@@ -889,14 +890,19 @@ export interface ProfileUpdateParams {
 
 export interface ProfileUpdateAvatarParams {
   /**
-   * Body param: X account (@username or ID) receiving avatar from URL
+   * Body param: X account (@username or ID) whose avatar to update
    */
   account: string;
 
   /**
+   * Body param: Avatar image (max 15 MiB)
+   */
+  file?: Uploadable;
+
+  /**
    * Body param: HTTPS URL to the avatar image to download
    */
-  url: string;
+  url?: string;
 
   /**
    * Header param: Use one unique value per intended write. Reuse it only for an
@@ -911,14 +917,19 @@ export interface ProfileUpdateAvatarParams {
 
 export interface ProfileUpdateBannerParams {
   /**
-   * Body param: X account (@username or ID) receiving banner from URL
+   * Body param: X account (@username or ID) whose banner to update
    */
   account: string;
 
   /**
+   * Body param: Banner image (max 15 MiB)
+   */
+  file?: Uploadable;
+
+  /**
    * Body param: HTTPS URL to the banner image to download
    */
-  url: string;
+  url?: string;
 
   /**
    * Header param: Use one unique value per intended write. Reuse it only for an

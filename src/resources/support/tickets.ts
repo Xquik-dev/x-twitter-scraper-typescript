@@ -4,6 +4,7 @@
 
 import { APIResource } from '../../core/resource';
 import { APIPromise } from '../../core/api-promise';
+import { type Uploadable } from '../../core/uploads';
 import { buildHeaders } from '../../internal/headers';
 import { RequestOptions } from '../../internal/request-options';
 import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
@@ -251,14 +252,19 @@ export namespace TicketReplyResponse {
 
 export interface TicketCreateParams {
   /**
-   * Body param: Non-empty support message text.
-   */
-  body: string;
-
-  /**
    * Body param: Non-empty support ticket subject.
    */
   subject: string;
+
+  /**
+   * Body param: 1 to 4 support image or video uploads.
+   */
+  attachments?: Array<Uploadable>;
+
+  /**
+   * Body param: Non-empty support message text.
+   */
+  body?: string;
 
   /**
    * Header param: Generate one random value per ticket or reply. Reuse it only when
@@ -287,9 +293,14 @@ export interface TicketListParams {
 
 export interface TicketReplyParams {
   /**
+   * Body param: 1 to 4 support image or video uploads.
+   */
+  attachments?: Array<Uploadable>;
+
+  /**
    * Body param: Non-empty support message text.
    */
-  body: string;
+  body?: string;
 
   /**
    * Header param: Generate one random value per ticket or reply. Reuse it only when

@@ -121,7 +121,7 @@ export namespace ComposeCreateResponse {
        */
       action: string;
 
-      multiplier: 'Source default; production value can vary';
+      multiplier: 'Source default. Production value can vary.' | 'Source default; production value can vary';
     }
 
     /**

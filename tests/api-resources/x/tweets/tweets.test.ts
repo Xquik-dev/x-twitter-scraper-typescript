@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -719,5 +720,51 @@ describe('resource tweets', () => {
       fields: 'id,text,author.username',
       omit: 'entities,media',
     });
+  });
+
+  test('getReplies: returns the time before which X shows only part of the replies', async () => {
+    const example: XTwitterScraper.X.TweetGetRepliesResponse = {
+      tweets: [],
+      has_next_page: false,
+      next_cursor: '',
+      partialBefore: '2026-10-06T00:00:00.000Z',
+    };
+    const { client: fixture } = fixtureClient(example);
+
+    const response: XTwitterScraper.X.TweetGetRepliesResponse = await fixture.x.tweets.getReplies('1');
+
+    expect(response).toEqual(example);
+  });
+
+  test('retrieve: returns the account a tombstone mentions', async () => {
+    const example: XTwitterScraper.X.TweetRetrieveResponse = {
+      tweet: {
+        id: '1',
+        text: '',
+        bookmarkCount: 0,
+        likeCount: 0,
+        quoteCount: 0,
+        replyCount: 0,
+        retweetCount: 0,
+        viewCount: 0,
+        tombstone: {
+          text: {
+            text: 'This post is from an account that no longer exists.',
+            entities: [
+              {
+                fromIndex: 0,
+                toIndex: 4,
+                ref: { type: 'TimelineMention', screenName: 'xquikcom', text: 'xquikcom' },
+              },
+            ],
+          },
+        },
+      },
+    };
+    const { client: fixture } = fixtureClient(example);
+
+    const response: XTwitterScraper.X.TweetRetrieveResponse = await fixture.x.tweets.retrieve('1');
+
+    expect(response).toEqual(example);
   });
 });

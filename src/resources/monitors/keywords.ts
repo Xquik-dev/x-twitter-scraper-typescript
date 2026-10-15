@@ -120,6 +120,17 @@ export interface KeywordCreateResponse {
    * Customer-set label of the keyword monitor, when set.
    */
   name?: string;
+
+  /**
+   * When Xquik paused this keyword monitor.
+   */
+  pausedAt?: string;
+
+  /**
+   * Why Xquik paused this keyword monitor. The balance could not pay an hour, so add
+   * credits & resume. Absent when the monitor is active or you paused it yourself.
+   */
+  pausedReason?: 'insufficient_credits';
 }
 
 /**
@@ -148,6 +159,17 @@ export interface KeywordRetrieveResponse {
    * Customer-set label of the keyword monitor, when set.
    */
   name?: string;
+
+  /**
+   * When Xquik paused this keyword monitor.
+   */
+  pausedAt?: string;
+
+  /**
+   * Why Xquik paused this keyword monitor. The balance could not pay an hour, so add
+   * credits & resume. Absent when the monitor is active or you paused it yourself.
+   */
+  pausedReason?: 'insufficient_credits';
 }
 
 /**
@@ -176,6 +198,17 @@ export interface KeywordUpdateResponse {
    * Customer-set label of the keyword monitor, when set.
    */
   name?: string;
+
+  /**
+   * When Xquik paused this keyword monitor.
+   */
+  pausedAt?: string;
+
+  /**
+   * Why Xquik paused this keyword monitor. The balance could not pay an hour, so add
+   * credits & resume. Absent when the monitor is active or you paused it yourself.
+   */
+  pausedReason?: 'insufficient_credits';
 }
 
 export interface KeywordListResponse {
@@ -218,6 +251,17 @@ export namespace KeywordListResponse {
      * Customer-set label of the keyword monitor, when set.
      */
     name?: string;
+
+    /**
+     * When Xquik paused this keyword monitor.
+     */
+    pausedAt?: string;
+
+    /**
+     * Why Xquik paused this keyword monitor. The balance could not pay an hour, so add
+     * credits & resume. Absent when the monitor is active or you paused it yourself.
+     */
+    pausedReason?: 'insufficient_credits';
   }
 }
 

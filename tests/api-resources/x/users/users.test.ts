@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -1113,5 +1114,22 @@ describe('resource users', () => {
       fields: 'id,text,author.username',
       omit: 'entities,media',
     });
+  });
+
+  test('retrieve: returns the full-size picture and the handle a profile redirects to', async () => {
+    const example: XTwitterScraper.UserProfile = {
+      id: '11348282',
+      name: 'NASA',
+      username: 'NASA',
+      profilePicture: 'https://pbs.twimg.com/profile_images/1321163587679784960/0ZxKlEKB_normal.jpg',
+      profilePictureOriginal: 'https://pbs.twimg.com/profile_images/1321163587679784960/0ZxKlEKB.jpg',
+      redirectsToUsername: 'spacexsi',
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+
+    const response: XTwitterScraper.UserProfile = await fixture.x.users.retrieve('NASA');
+
+    expect(requests).toEqual(['GET https://xquik.test/api/v1/x/users/NASA']);
+    expect(response).toEqual(example);
   });
 });

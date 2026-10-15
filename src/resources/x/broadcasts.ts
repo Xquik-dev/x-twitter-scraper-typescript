@@ -190,6 +190,11 @@ export namespace BroadcastRetrieveResponse {
       profilePicture?: string;
 
       /**
+       * The broadcaster's avatar at full size
+       */
+      profilePictureOriginal?: string;
+
+      /**
        * Live video username
        */
       username?: string;

@@ -40,6 +40,7 @@ import {
 import {
   Draft,
   DraftCreateParams,
+  DraftCreateResponse,
   DraftDetail,
   DraftListParams,
   DraftListResponse,
@@ -981,6 +982,7 @@ export declare namespace XTwitterScraper {
     Drafts as Drafts,
     type Draft as Draft,
     type DraftDetail as DraftDetail,
+    type DraftCreateResponse as DraftCreateResponse,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
     type DraftListParams as DraftListParams,
@@ -1130,9 +1132,11 @@ export declare namespace XTwitterScraper {
   export type EmbeddedTweet = API.EmbeddedTweet;
   export type Error = API.Error;
   export type EventType = API.EventType;
+  export type MonitorFollow = API.MonitorFollow;
   export type PaginatedTweets = API.PaginatedTweets;
   export type PaginatedUsers = API.PaginatedUsers;
   export type SearchTweet = API.SearchTweet;
   export type TweetMedia = API.TweetMedia;
+  export type UserListPage = API.UserListPage;
   export type UserProfile = API.UserProfile;
 }

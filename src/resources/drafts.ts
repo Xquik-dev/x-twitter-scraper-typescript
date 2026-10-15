@@ -17,14 +17,14 @@ export class Drafts extends APIResource {
    *
    * @example
    * ```ts
-   * const draftDetail = await client.drafts.create({
+   * const response = await client.drafts.create({
    *   text: 'AI is the future of productivity',
    *   goal: 'engagement',
    *   topic: 'AI trends',
    * });
    * ```
    */
-  create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftDetail> {
+  create(body: DraftCreateParams, options?: RequestOptions): APIPromise<DraftCreateResponse> {
     return this._client.post('/drafts', { body, ...options });
   }
 
@@ -93,6 +93,17 @@ export interface DraftDetail extends Draft {
   updatedAt: string;
 }
 
+/**
+ * The created draft, with the fields the request sent that the route did not read.
+ */
+export interface DraftCreateResponse extends DraftDetail {
+  /**
+   * Fields the request sent that this route does not read, in the order sent. They
+   * changed nothing. The answer leaves this out when the route read every field.
+   */
+  ignoredFields?: Array<string>;
+}
+
 export interface DraftListResponse {
   drafts: Array<Draft>;
 
@@ -129,6 +140,7 @@ export declare namespace Drafts {
   export {
     type Draft as Draft,
     type DraftDetail as DraftDetail,
+    type DraftCreateResponse as DraftCreateResponse,
     type DraftListResponse as DraftListResponse,
     type DraftCreateParams as DraftCreateParams,
     type DraftListParams as DraftListParams,
