@@ -180,6 +180,7 @@ describe('resource x', () => {
     await expect(
       client.x.getTrends(
         {
+          at: '2026-10-13T14:00:00Z',
           count: 1,
           country: 'country',
           fields: 'id,text,author.username',
@@ -265,6 +266,47 @@ describe('resource x', () => {
 
     expect(requests).toEqual([
       'GET https://xquik.test/api/v1/x/news/x.com%2Fi%2Ftrending%2F2110209733533598095/versions',
+    ]);
+    expect(response).toEqual(example);
+  });
+
+  test('getTrends: reads the stored list nearest at and returns its times', async () => {
+    const example: XTwitterScraper.X.XGetTrendsResponse = {
+      trends: [
+        {
+          name: '#AI',
+          description: 'Artificial intelligence discussions',
+          promotedContent: null,
+          query: '%23AI',
+          rank: 1,
+          tweetVolume: 250000,
+          url: 'https://x.com/search?q=%23AI',
+        },
+      ],
+      count: 1,
+      woeid: 2344116,
+      location: {
+        woeid: 2344116,
+        name: 'Istanbul',
+        country: 'Turkey',
+        countryCode: 'TR',
+        placeType: 'Town',
+        placeTypeCode: 7,
+        parentWoeid: 23424969,
+        url: 'http://where.yahooapis.com/v1/place/2344116',
+      },
+      capturedAt: '2026-10-13T14:00:26.000Z',
+      requestedAt: '2026-10-13T14:00:00.000Z',
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+
+    const response: XTwitterScraper.X.XGetTrendsResponse = await fixture.x.getTrends({
+      location: 'Istanbul',
+      at: '2026-10-13T14:00:00Z',
+    });
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/x/trends?location=Istanbul&at=2026-10-13T14%3A00%3A00Z',
     ]);
     expect(response).toEqual(example);
   });
