@@ -120,7 +120,6 @@ describe('resource communityNotes', () => {
       'GET https://xquik.test/api/v1/x/community-notes/contributors/ardent-beach-friarbird/deleted-notes?cursor=-1767098234260&pageSize=10',
     ]);
     expect(response).toEqual(example);
-    expect(response.notes[0]?.tombstone).toBe('This note has been deleted');
   });
 
   test('listContributorNotes: requests the page and returns the notes with their posts', async () => {
@@ -186,7 +185,6 @@ describe('resource communityNotes', () => {
       'GET https://xquik.test/api/v1/x/community-notes/contributors/ardent-beach-friarbird/notes?pageSize=10',
     ]);
     expect(response).toEqual(example);
-    expect(response.notes[0]?.post?.author?.username).toBe('discord');
   });
 
   test('retrieveContributor: requests the alias and returns the contributor counts', async () => {
@@ -220,6 +218,5 @@ describe('resource communityNotes', () => {
       'GET https://xquik.test/api/v1/x/community-notes/contributors/x.com%2Fi%2Fcommunitynotes%2Fu%2Fardent-beach-friarbird',
     ]);
     expect(response).toEqual(example);
-    expect(response.contributor.ratingsCount?.successful?.total).toBe(49);
   });
 });

@@ -68,20 +68,20 @@ Import the typed SDK from the same npm package.
 
 ## Common Twitter & X tasks
 
-| Task                            | REST route                                    | Usage                                     |
-| ------------------------------- | --------------------------------------------- | ----------------------------------------- |
-| Search tweets without the X API | `GET /x/tweets/search`                        | Use keyword or advanced operator queries. |
-| Read an X profile timeline      | `GET /x/users/{id}/tweets`                    | Paginate bounded results.                 |
-| Scrape Twitter followers        | `GET /x/users/{id}/followers`                 | Use an extraction for complete datasets.  |
-| Scrape following accounts       | `GET /x/users/{id}/following`                 | Use an extraction for complete datasets.  |
-| Read a home timeline            | `GET /x/timeline`                             | Approve this private read.                |
-| Read past trends of a place     | `GET /x/trends/history`                       | Pick a range & a step between lists.      |
-| Read a Community Notes writer   | `GET /x/community-notes/contributors/{alias}` | List their notes & deleted notes.         |
-| Export large X datasets         | `POST /extractions`                           | Poll status, then download results.       |
-| Download or upload media        | `/x/media/*`                                  | Use typed file helpers.                   |
-| Monitor an account              | `POST /monitors`                              | Deliver events through HMAC webhooks.     |
-| Run a giveaway draw             | `POST /draws`                                 | Confirm the tweet and entry rules.        |
-| Post or reply                   | `POST /x/tweets`                              | Confirm the account and payload.          |
+| Task                               | REST route                                    | Usage                                     |
+| ---------------------------------- | --------------------------------------------- | ----------------------------------------- |
+| Search tweets without the X API    | `GET /x/tweets/search`                        | Use keyword or advanced operator queries. |
+| Read an X profile timeline         | `GET /x/users/{id}/tweets`                    | Paginate bounded results.                 |
+| Scrape Twitter followers           | `GET /x/users/{id}/followers`                 | Use an extraction for complete datasets.  |
+| Scrape following accounts          | `GET /x/users/{id}/following`                 | Use an extraction for complete datasets.  |
+| Read a home timeline               | `GET /x/timeline`                             | Approve this private read.                |
+| Read past trends of a place        | `GET /x/trends/history`                       | Pick a range & a step between lists.      |
+| Read a Community Notes contributor | `GET /x/community-notes/contributors/{alias}` | List their notes & deleted notes.         |
+| Export large X datasets            | `POST /extractions`                           | Poll status, then download results.       |
+| Download or upload media           | `/x/media/*`                                  | Use typed file helpers.                   |
+| Monitor an account                 | `POST /monitors`                              | Deliver events through HMAC webhooks.     |
+| Run a giveaway draw                | `POST /draws`                                 | Confirm the tweet and entry rules.        |
+| Post or reply                      | `POST /x/tweets`                              | Confirm the account and payload.          |
 
 ## AI agent workflows with MCP
 

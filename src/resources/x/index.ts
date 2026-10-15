@@ -47,15 +47,6 @@ export {
 } from './bookmarks';
 export { Broadcasts, type BroadcastRetrieveResponse, type BroadcastRetrieveParams } from './broadcasts';
 export {
-  CommunityNotes,
-  type CommunityNoteListContributorDeletedNotesResponse,
-  type CommunityNoteListContributorNotesResponse,
-  type CommunityNoteRetrieveContributorResponse,
-  type CommunityNoteListContributorDeletedNotesParams,
-  type CommunityNoteListContributorNotesParams,
-  type CommunityNoteRetrieveContributorParams,
-} from './community-notes';
-export {
   Communities,
   type CommunityCreateResponse,
   type CommunityDeleteResponse,
@@ -74,6 +65,15 @@ export {
   type CommunityRetrieveSearchParams,
   type CommunitySearchMembersParams,
 } from './communities/index';
+export {
+  CommunityNotes,
+  type CommunityNoteListContributorDeletedNotesResponse,
+  type CommunityNoteListContributorNotesResponse,
+  type CommunityNoteRetrieveContributorResponse,
+  type CommunityNoteListContributorDeletedNotesParams,
+  type CommunityNoteListContributorNotesParams,
+  type CommunityNoteRetrieveContributorParams,
+} from './community-notes';
 export {
   Dm,
   type DmDeleteMessageResponse,

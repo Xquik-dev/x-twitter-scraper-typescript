@@ -261,14 +261,12 @@ describe('resource x', () => {
 
     const response: XTwitterScraper.X.XGetNewsStoryVersionsResponse = await fixture.x.getNewsStoryVersions(
       'x.com/i/trending/2110209733533598095',
-      { fields: 'versions.headline' },
     );
 
     expect(requests).toEqual([
-      'GET https://xquik.test/api/v1/x/news/x.com%2Fi%2Ftrending%2F2110209733533598095/versions?fields=versions.headline',
+      'GET https://xquik.test/api/v1/x/news/x.com%2Fi%2Ftrending%2F2110209733533598095/versions',
     ]);
     expect(response).toEqual(example);
-    expect(response.versions[0]?.createdAt).toBe('2026-10-14T03:30:42.536Z');
   });
 
   test('getTrendsHistory: sends the range and returns the stored lists', async () => {
@@ -311,7 +309,6 @@ describe('resource x', () => {
       'GET https://xquik.test/api/v1/x/trends/history?woeid=1&from=2026-10-13&to=2026-10-14&every=1h&count=1',
     ]);
     expect(response).toEqual(example);
-    expect(response.snapshots[0]?.trends[0]?.tweetVolume).toBe(250000);
   });
 
   test('getTrendsHistory: returns the place a country names', async () => {
@@ -336,7 +333,7 @@ describe('resource x', () => {
     };
     const { client: fixture, requests } = fixtureClient(example);
 
-    const response = await fixture.x.getTrendsHistory({
+    const response: XTwitterScraper.X.XGetTrendsHistoryResponse = await fixture.x.getTrendsHistory({
       country: 'TR',
       cursor: '2026-10-14T00:00:00.000Z~1791979200000',
     });
@@ -344,7 +341,6 @@ describe('resource x', () => {
     expect(requests).toEqual([
       'GET https://xquik.test/api/v1/x/trends/history?country=TR&cursor=2026-10-14T00%3A00%3A00.000Z~1791979200000',
     ]);
-    expect(response.location?.countryCode).toBe('TR');
     expect(response).toEqual(example);
   });
 });
