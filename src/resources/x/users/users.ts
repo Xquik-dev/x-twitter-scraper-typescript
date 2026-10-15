@@ -3640,7 +3640,7 @@ export interface UserRetrieveLikesParams {
   blueVerifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   cardName?: string;
 
@@ -3666,7 +3666,7 @@ export interface UserRetrieveLikesParams {
   exactPhrase?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   excludeSource?: string;
 
@@ -3691,7 +3691,7 @@ export interface UserRetrieveLikesParams {
   fromUser?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   geocode?: string;
 
@@ -3786,12 +3786,12 @@ export interface UserRetrieveLikesParams {
   nativeRetweets?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   near?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   news?: boolean;
 
@@ -3834,7 +3834,7 @@ export interface UserRetrieveLikesParams {
   retweetsOfTweetId?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   safe?: boolean;
 
@@ -3849,7 +3849,7 @@ export interface UserRetrieveLikesParams {
   sinceId?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   source?: string;
 
@@ -3874,7 +3874,7 @@ export interface UserRetrieveLikesParams {
   verifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   within?: string;
 
@@ -3978,7 +3978,7 @@ export interface UserRetrieveMediaParams {
   blueVerifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   cardName?: string;
 
@@ -4004,7 +4004,7 @@ export interface UserRetrieveMediaParams {
   exactPhrase?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   excludeSource?: string;
 
@@ -4029,7 +4029,7 @@ export interface UserRetrieveMediaParams {
   fromUser?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   geocode?: string;
 
@@ -4124,12 +4124,12 @@ export interface UserRetrieveMediaParams {
   nativeRetweets?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   near?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   news?: boolean;
 
@@ -4172,7 +4172,7 @@ export interface UserRetrieveMediaParams {
   retweetsOfTweetId?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   safe?: boolean;
 
@@ -4187,7 +4187,7 @@ export interface UserRetrieveMediaParams {
   sinceId?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   source?: string;
 
@@ -4212,7 +4212,7 @@ export interface UserRetrieveMediaParams {
   verifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   within?: string;
 
@@ -4236,7 +4236,7 @@ export interface UserRetrieveMentionsParams {
   blueVerifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   cardName?: string;
 
@@ -4262,7 +4262,7 @@ export interface UserRetrieveMentionsParams {
   exactPhrase?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   excludeSource?: string;
 
@@ -4287,7 +4287,7 @@ export interface UserRetrieveMentionsParams {
   fromUser?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   geocode?: string;
 
@@ -4382,12 +4382,12 @@ export interface UserRetrieveMentionsParams {
   nativeRetweets?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   near?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   news?: boolean;
 
@@ -4430,7 +4430,7 @@ export interface UserRetrieveMentionsParams {
   retweetsOfTweetId?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   safe?: boolean;
 
@@ -4451,7 +4451,7 @@ export interface UserRetrieveMentionsParams {
   sinceTime?: string;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   source?: string;
 
@@ -4482,7 +4482,7 @@ export interface UserRetrieveMentionsParams {
   verifiedOnly?: boolean;
 
   /**
-   * @deprecated This endpoint no longer documents this filter. Remove it.
+   * @deprecated The API ignores this filter on this route. Remove it.
    */
   within?: string;
 

@@ -163,6 +163,11 @@ run_check "Install dependencies" \
   pnpm install --frozen-lockfile
 passed+=("install")
 
+run_check "API fields" \
+  "Fix what the check reported above, then run bin/check-local again." \
+  node scripts/utils/check-api-fields.cjs
+passed+=("API fields")
+
 run_check "Check license notices" \
   "Add the missing license notice or REUSE.toml entry." \
   uvx --from "reuse==${reuse_version}" reuse lint

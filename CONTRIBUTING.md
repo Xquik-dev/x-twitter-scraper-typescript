@@ -86,7 +86,8 @@ bin/check-local
 ```
 
 It first checks that the SDK covers the API, as [API coverage](#api-coverage) describes.
-Then it installs dependencies from the lockfile and checks license notices with REUSE.
+Then it installs dependencies from the lockfile and checks that the SDK's fields match the API, as [API fields](#api-fields) describes.
+Next it checks license notices with REUSE.
 REUSE runs at a pinned version through `uv`. Install `uv` with `brew install uv`.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
 Last, it runs the CodeQL `security-extended` queries for JavaScript and TypeScript.
@@ -139,6 +140,43 @@ An operation appears at most once in the file.
 The check also fails when the file lists an operation that the API no longer has or the SDK already implements.
 Remove that entry.
 An SDK request that the spec lacks passes, such as `GET /api/v1/credits/topup/redirect`, which the public spec hides.
+
+## API fields
+
+`bin/check-local` runs `node scripts/utils/check-api-fields.cjs` after the coverage check and the install, because it needs the TypeScript compiler from the dependencies.
+For each operation the SDK implements, it compares the fields of the request and the response with the API spec.
+It reads the spec the way the coverage check does, so `XQUIK_OPENAPI_SPEC` works the same.
+
+- The request side holds the query parameters and the JSON or form body. Path and header parameters stay out.
+- The response side holds the JSON body of each 2xx answer.
+- The check reads the SDK's types with the TypeScript compiler and the settings in `tsconfig.json`.
+  It fails on a type error, and on an operation that is neither excluded nor read from a class method that calls `this._client`.
+- It follows `$ref`, `allOf` and arrays.
+  It merges `oneOf`, `anyOf` and several 2xx bodies into 1 shape, where a field is required only when every variant requires it.
+  A free-form object, a cycle or an untyped value stops the walk.
+- A field missing on 1 side counts once, at its top position.
+  A field the SDK types as another kind, such as a string for an object, counts as missing.
+  An SDK field under an object the spec leaves open is allowed.
+
+Each difference prints on its own line, such as `GET /api/v1/events response missing events[].data.followedAt`.
+It names the method, the path, request or response, a kind and the field.
+The kinds are `missing` (in the spec, not the SDK), `extra` (in the SDK, not the spec), `enum` (the values differ), `required` and `nullable` (the flag differs).
+
+Fix each field in the SDK.
+Never remove or rename a public field or parameter to pass the check.
+Keep it, and list the difference in `accepted-field-differences.json` with the reason the SDK keeps it.
+The file has the shape of `excluded-operations.json`, with `differences` in place of `operations`.
+
+```json
+[
+  {
+    "reason": "Deprecated alias of minLikes, which the API still reads. The SDK keeps it so calls written for 0.12 still compile.",
+    "differences": ["GET /api/v1/x/tweets/search request extra minFaves"]
+  }
+]
+```
+
+The check also fails on an accepted difference it no longer finds. Remove that entry.
 
 ## Lint & format
 
