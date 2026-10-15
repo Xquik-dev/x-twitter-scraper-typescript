@@ -57,7 +57,7 @@ const sarif = ({
     ],
   });
 
-const checkLocal = (codeqlSarif: string) => {
+const checkLocal = (codeqlSarif: string, pnpm = passes) => {
   const root = mkdtempSync(join(tmpdir(), 'check-local-'));
   try {
     const write = (path: string, content: string, mode = 0o755) => {
@@ -67,7 +67,8 @@ const checkLocal = (codeqlSarif: string) => {
     };
     mkdirSync(join(root, 'project', 'bin'), { recursive: true });
     copyFileSync(script, join(root, 'project', 'bin', 'check-local'));
-    for (const tool of ['pnpm', 'uv', 'uvx']) write(join('tools', tool), passes);
+    for (const tool of ['uv', 'uvx']) write(join('tools', tool), passes);
+    write(join('tools', 'pnpm'), pnpm);
     write(join('tools', 'codeql'), fakeCodeql);
     for (const check of ['lint', 'check-reproducible']) write(join('project', 'scripts', check), passes);
     write(join('project', 'scripts', 'test'), '#!/bin/sh\necho "Tests:       2 passed, 2 total"\n');
@@ -96,6 +97,24 @@ describe('bin/check-local', () => {
     expect(result.stdout).toContain(
       '==> Passed install, REUSE, audit, lint & types, reproducible build, 2 tests, CodeQL\n',
     );
+  });
+
+  it('stops with the upgrade step when pnpm cannot start the pinned pnpm', () => {
+    const oldPnpm = `#!/bin/sh
+if [ "$1" = "--version" ]; then
+  echo " ERROR  Failed to switch pnpm to v12.10.1." >&2
+  exit 1
+fi
+`;
+
+    const result = checkLocal(sarif({}), oldPnpm);
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toBe(
+      ' ERROR  Failed to switch pnpm to v12.10.1.\n' +
+        'Check failed because pnpm could not start the pnpm version that package.json pins. Upgrade pnpm to 11.28.4 or newer, then run bin/check-local again.\n',
+    );
+    expect(result.stdout).not.toContain('==> Install dependencies');
   });
 
   it('fails and names each file that CodeQL could not parse', () => {

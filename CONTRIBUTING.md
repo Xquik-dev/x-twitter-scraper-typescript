@@ -2,7 +2,7 @@
 
 This repository uses [`pnpm`](https://pnpm.io/).
 Other package managers may work but are not officially supported for development.
-`package.json` pins pnpm 12.10.1, and pnpm 11.28.4 or newer switches to it on its own.
+The `packageManager` field in `package.json` pins the pnpm version, and pnpm 11.28.4 or newer switches to it on its own.
 Older pnpm releases fail to start pnpm 12 on macOS and Windows, so upgrade pnpm first.
 
 Install dependencies and build `dist/`.
