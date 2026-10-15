@@ -378,8 +378,10 @@ export class X extends APIResource {
 
   /**
    * Returns X's current trends for a place you choose. Pick it by woeid, country or
-   * location name. Without one, trends are worldwide. Each request costs 1 credit,
-   * however many trends it returns.
+   * location name. Without one, trends are worldwide. Add at to read what was
+   * trending on Twitter at a past time, such as yesterday. Xquik keeps a Twitter
+   * trends archive from 2026-10-13 02:20 UTC on, with 1 list per place every 5
+   * minutes. Each request costs 1 credit, however many trends it returns.
    *
    * @example
    * ```ts
@@ -1126,10 +1128,22 @@ export interface XGetTrendsResponse {
   woeid: number;
 
   /**
+   * When Xquik read this list from X. It comes from the stored list and is never
+   * estimated.
+   */
+  capturedAt?: string;
+
+  /**
    * The place country or location named. Absent when woeid picked the place or the
    * request named none.
    */
   location?: XGetTrendsResponse.Location;
+
+  /**
+   * The time at asked for, as Xquik read it. A span such as 24h shows here as the
+   * time it counted back to. Present only with at.
+   */
+  requestedAt?: string;
 }
 
 export namespace XGetTrendsResponse {
@@ -1679,6 +1693,17 @@ export interface XGetTrendLocationsParams {
 }
 
 export interface XGetTrendsParams {
+  /**
+   * A past time, to read what was trending on Twitter then. Takes an ISO 8601 time,
+   * a date such as 2026-10-13, or Unix seconds. A time without a zone reads as UTC.
+   * It also takes a span back from now, as a number & s, m, h or d. So at=24h reads
+   * what was trending on Twitter yesterday at this hour, on every run of a schedule.
+   * The answer is the stored list nearest that time, with its own time in
+   * capturedAt. History starts 2026-10-13 02:20 UTC. A time over 24 hours from every
+   * stored list answers 400 at no charge.
+   */
+  at?: string;
+
   /**
    * Number of trending topics to return (1-50, default 30)
    */

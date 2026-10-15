@@ -50,9 +50,10 @@ export class Spaces extends APIResource {
   }
 
   /**
-   * Returns the public Spaces that posts matching the query share, live, scheduled
-   * or ended. Each page reads up to pageSize posts, 20 by default, and returns each
-   * Space once. Costs 1 credit per Space.
+   * Returns public Spaces each once, as GET /x/spaces/{id} serves them. Latest & Top
+   * find the Spaces that matching posts share, live, scheduled or ended. Live &
+   * Upcoming read X's own Spaces search, in X's order. It finds live or scheduled
+   * Spaces by the words in their titles. Costs 1 credit per Space.
    *
    * @example
    * ```ts
@@ -1021,8 +1022,9 @@ export interface SpaceRetrieveReplayParams {
 
 export interface SpaceSearchParams {
   /**
-   * Words, hashtags or X search operators, such as from:solana. The search adds
-   * filter:spaces. Alias query.
+   * Words, hashtags or X search operators, such as from:solana. Latest & Top add
+   * filter:spaces. Live & Upcoming match title words only, without operators. Alias
+   * query.
    */
   q: string;
 
@@ -1049,17 +1051,20 @@ export interface SpaceSearchParams {
   omit?: string;
 
   /**
-   * Posts a page reads, 20 at a time (1-100, default 20). Posts often share the same
-   * Space, so a page returns fewer Spaces. Send 100 to read a search fastest.
-   * Aliases: limit, count, max_results, maxItems, max_items & per_page.
+   * For Latest & Top, the posts a page reads, 20 at a time (1-100, default 20). Posts
+   * often share the same Space, so a page returns fewer Spaces. Send 100 to read a
+   * search fastest. For Live & Upcoming, the most Spaces a page returns. Its aliases
+   * are limit, count, max_results, maxItems, max_items & per_page.
    */
   pageSize?: number;
 
   /**
-   * Latest sorts by post time. Top ranks by engagement. Any case works. Aliases
-   * result_type, sort_order, type, search_type, product, category & section.
+   * Latest finds Spaces in the newest posts. Top finds them in the most engaging
+   * posts. Live lists Spaces on air now. Upcoming lists scheduled ones, as X's Spaces
+   * search does. Any case works. Aliases result_type, sort_order, type, search_type,
+   * product, category & section.
    */
-  queryType?: 'Latest' | 'Top';
+  queryType?: 'Latest' | 'Top' | 'Live' | 'Upcoming';
 }
 
 export declare namespace Spaces {

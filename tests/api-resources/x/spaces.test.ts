@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -74,4 +75,39 @@ describe('resource spaces', () => {
       queryType: 'Latest',
     });
   });
+
+  test.each(['Live', 'Upcoming'] as const)(
+    'search: sends queryType %s and returns the Spaces',
+    async (queryType) => {
+      const example: XTwitterScraper.X.SpaceSearchResponse = {
+        spaces: [
+          {
+            id: '1OGwblLjnQMKB',
+            title: 'Extending the Network to the Edge',
+            state: 'Ended',
+            startedAt: '2026-03-11T17:00:26.227Z',
+            endedAt: '2026-03-11T17:49:29.190Z',
+            totalLiveListeners: 841,
+            totalReplayWatched: 609,
+            admins: [{ id: '951329744804392960', username: 'solana', name: 'Solana' }],
+            speakers: [],
+            listeners: [],
+          },
+        ],
+        has_next_page: true,
+        next_cursor: 'DAACCgACGRElMJcAAA',
+      };
+      const { client: fixture, requests } = fixtureClient(example);
+
+      const response: XTwitterScraper.X.SpaceSearchResponse = await fixture.x.spaces.search({
+        q: 'Network',
+        queryType,
+      });
+
+      expect(requests).toEqual([
+        `GET https://xquik.test/api/v1/x/spaces/search?q=Network&queryType=${queryType}`,
+      ]);
+      expect(response).toEqual(example);
+    },
+  );
 });

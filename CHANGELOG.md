@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.14.1 (2026-10-15)
+
+[Full changelog from v0.14.0 to v0.14.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.14.0...v0.14.1)
+
+### Bug fixes
+
+* `x.getTrends()` takes `at` to read the stored trend list nearest a past time. Its response type adds `capturedAt` and `requestedAt`.
+* `x.spaces.search()` takes `Live` and `Upcoming` as `queryType`. They read X's own Spaces search for Spaces on air now or scheduled.
+
 ## 0.14.0 (2026-10-15)
 
 [Full changelog from v0.13.3 to v0.14.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.3...v0.14.0)
