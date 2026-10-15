@@ -9,19 +9,18 @@
 ### Features
 
 * Monitors, webhooks and events take the follow event types `follower.added`, `follower.removed`, `profile.followers.changed` and `profile.following.changed`.
-* Event data adds `MonitorFollow` with `followedAt`, `followedAtExact` and `reason`. Profile changes add `change`, and their values can be counts.
-* User profiles add `profilePictureOriginal` and `redirectsToUsername`. Job accounts, broadcasters, Space participants, search suggestions and Article authors add `profilePictureOriginal`.
+* Event data adds the shared `MonitorFollow` type with `followedAt`, `followedAtExact` and `reason`. Profile changes add `change`, and their values can be counts.
+* User profiles add `profilePictureOriginal` and `redirectsToUsername`. Community member previews, job accounts, broadcasters, Space participants, search suggestions and Article authors add `profilePictureOriginal`.
 * Mentions in tombstone and interstitial text add `screenName` and `text`.
 * Paused account monitors can report `insufficient_credits`. Keyword monitors add `pausedAt` and `pausedReason`.
 * `account.updateLocale()`, `drafts.create()` and `webhooks.create()` return `ignoredFields`. `drafts.create()` returns `DraftCreateResponse`, which is `DraftDetail` with that field.
 * `x.media.upload()`, `x.profile.updateAvatar()` and `x.profile.updateBanner()` take a `file` upload. `x.media.upload()` also takes `is_long_video`, and `url` is optional on all 3.
-* `support.tickets.create()` and `reply()` take up to 4 `attachments`, and `body` is optional.
-* Relationship pages add `scanLimit`, and `x.tweets.getReplies()` adds `partialBefore`.
+* `support.tickets.create()` and `reply()` take up to 4 `attachments`.
+* Relationship pages add the shared `UserListPage` type with `scanLimit`. `x.tweets.getReplies()` adds `partialBefore`.
 
 ### Bug fixes
 
 * A multipart array repeats its field name, as the API reads it, instead of adding `[]` to it.
-* `GuestWalletCreateResponse` marks `api_key`, `authorization` and `credential_notice` optional, because only the first create returns them. Code that reads `api_key` now handles a replay without it.
 * Coverage pages mark `has_next_page` and `next_cursor` required, and reply pages mark `tweets` required, because the API always sends them.
 * The compose multiplier type takes the text the API sends now and keeps the old text.
 

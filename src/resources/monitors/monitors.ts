@@ -131,7 +131,7 @@ export interface Monitor {
   name?: string;
 
   /**
-   * When Xquik automatically paused this monitor.
+   * When Xquik paused this account monitor.
    */
   pausedAt?: string;
 

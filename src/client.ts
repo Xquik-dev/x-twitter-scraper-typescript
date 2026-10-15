@@ -1132,9 +1132,11 @@ export declare namespace XTwitterScraper {
   export type EmbeddedTweet = API.EmbeddedTweet;
   export type Error = API.Error;
   export type EventType = API.EventType;
+  export type MonitorFollow = API.MonitorFollow;
   export type PaginatedTweets = API.PaginatedTweets;
   export type PaginatedUsers = API.PaginatedUsers;
   export type SearchTweet = API.SearchTweet;
   export type TweetMedia = API.TweetMedia;
+  export type UserListPage = API.UserListPage;
   export type UserProfile = API.UserProfile;
 }

@@ -378,47 +378,9 @@ export namespace ListRetrieveResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type ListRetrieveFollowersResponse =
-  ListRetrieveFollowersResponse.UserListPage | ListRetrieveFollowersResponse.UserListCoverageResponse;
+  Shared.UserListPage | ListRetrieveFollowersResponse.UserListCoverageResponse;
 
 export namespace ListRetrieveFollowersResponse {
-  /**
-   * A relationship page. A filtered read's last page may name the scan limit that
-   * ended it.
-   */
-  export interface UserListPage extends Shared.PaginatedUsers {
-    /**
-     * Present on the last page of a filtered automatic read that sent no maxScan,
-     * once the list scanned 100,000 profiles across its pages. That page is the
-     * list's last.
-     */
-    scanLimit?: UserListPage.ScanLimit;
-  }
-
-  export namespace UserListPage {
-    /**
-     * Present on the last page of a filtered automatic read that sent no maxScan,
-     * once the list scanned 100,000 profiles across its pages. That page is the
-     * list's last.
-     */
-    export interface ScanLimit {
-      /**
-       * The profiles a filtered read scans of a list without maxScan.
-       */
-      limit: 100000;
-
-      /**
-       * What stopped the list & how to read further.
-       */
-      message: string;
-
-      /**
-       * Profiles the list read across its pages, kept or dropped by the filters. The
-       * last page may read past the limit.
-       */
-      rowsRead: number;
-    }
-  }
-
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -531,47 +493,9 @@ export namespace ListRetrieveFollowersResponse {
  * A standard or terminal maximum-coverage relationship page.
  */
 export type ListRetrieveMembersResponse =
-  ListRetrieveMembersResponse.UserListPage | ListRetrieveMembersResponse.UserListCoverageResponse;
+  Shared.UserListPage | ListRetrieveMembersResponse.UserListCoverageResponse;
 
 export namespace ListRetrieveMembersResponse {
-  /**
-   * A relationship page. A filtered read's last page may name the scan limit that
-   * ended it.
-   */
-  export interface UserListPage extends Shared.PaginatedUsers {
-    /**
-     * Present on the last page of a filtered automatic read that sent no maxScan,
-     * once the list scanned 100,000 profiles across its pages. That page is the
-     * list's last.
-     */
-    scanLimit?: UserListPage.ScanLimit;
-  }
-
-  export namespace UserListPage {
-    /**
-     * Present on the last page of a filtered automatic read that sent no maxScan,
-     * once the list scanned 100,000 profiles across its pages. That page is the
-     * list's last.
-     */
-    export interface ScanLimit {
-      /**
-       * The profiles a filtered read scans of a list without maxScan.
-       */
-      limit: 100000;
-
-      /**
-       * What stopped the list & how to read further.
-       */
-      message: string;
-
-      /**
-       * Profiles the list read across its pages, kept or dropped by the filters. The
-       * last page may read past the limit.
-       */
-      rowsRead: number;
-    }
-  }
-
   /**
    * Terminal relationship coverage response with diagnostics.
    */

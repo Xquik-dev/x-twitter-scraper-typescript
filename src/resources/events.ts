@@ -76,7 +76,7 @@ export interface Event {
   /**
    * Post fields match REST. Legacy fields remain available.
    */
-  data: Event.MonitorPost | Event.MonitorProfileChange | Event.MonitorFollow | Event.MonitorLegacyPost;
+  data: Event.MonitorPost | Event.MonitorProfileChange | Shared.MonitorFollow | Event.MonitorLegacyPost;
 
   /**
    * Account monitor ID for account events, or keyword monitor ID for keyword events.
@@ -1670,40 +1670,6 @@ export namespace Event {
   }
 
   /**
-   * The other account of a following or follower event, with the profile fields a
-   * user lookup returns. It holds the ID alone when X fails the profile lookup.
-   */
-  export interface MonitorFollow {
-    /**
-     * The other account's X user ID.
-     */
-    id: string;
-
-    /**
-     * X's time of the follow, on following.added & follower.added. It is missing when
-     * X gives none, as for an account that returns to a list.
-     */
-    followedAt?: string;
-
-    /**
-     * Whether followedAt is X's exact time of this follow. When several accounts join
-     * between 2 checks, X times the first, the second & the last. Each other one holds
-     * the earliest time its follow can have, with false here.
-     */
-    followedAtExact?: boolean;
-
-    /**
-     * Why the account left the list, on following.removed & follower.removed.
-     * unavailable means X no longer serves the account. unfollowed means X's follow
-     * check says the follow ended. It is missing when X fails the check. Xquik sends no
-     * removal while X still confirms the follow.
-     */
-    reason?: 'unavailable' | 'unfollowed';
-
-    [k: string]: unknown;
-  }
-
-  /**
    * Older stored posts remain readable. Fields can be missing or null.
    */
   export interface MonitorLegacyPost {
@@ -1733,7 +1699,7 @@ export interface EventDetail {
   data:
     | EventDetail.MonitorPost
     | EventDetail.MonitorProfileChange
-    | EventDetail.MonitorFollow
+    | Shared.MonitorFollow
     | EventDetail.MonitorLegacyPost;
 
   /**
@@ -3327,40 +3293,6 @@ export namespace EventDetail {
      * Profile text, flag, count, or pinned post IDs. Missing values are omitted.
      */
     previous?: string | boolean | number | Array<string>;
-  }
-
-  /**
-   * The other account of a following or follower event, with the profile fields a
-   * user lookup returns. It holds the ID alone when X fails the profile lookup.
-   */
-  export interface MonitorFollow {
-    /**
-     * The other account's X user ID.
-     */
-    id: string;
-
-    /**
-     * X's time of the follow, on following.added & follower.added. It is missing when
-     * X gives none, as for an account that returns to a list.
-     */
-    followedAt?: string;
-
-    /**
-     * Whether followedAt is X's exact time of this follow. When several accounts join
-     * between 2 checks, X times the first, the second & the last. Each other one holds
-     * the earliest time its follow can have, with false here.
-     */
-    followedAtExact?: boolean;
-
-    /**
-     * Why the account left the list, on following.removed & follower.removed.
-     * unavailable means X no longer serves the account. unfollowed means X's follow
-     * check says the follow ended. It is missing when X fails the check. Xquik sends no
-     * removal while X still confirms the follow.
-     */
-    reason?: 'unavailable' | 'unfollowed';
-
-    [k: string]: unknown;
   }
 
   /**

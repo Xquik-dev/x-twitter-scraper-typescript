@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -67,5 +68,25 @@ describe('resource drafts', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('create: returns the fields the route did not read', async () => {
+    const example: XTwitterScraper.DraftCreateResponse = {
+      id: '42',
+      text: 'AI is the future of productivity',
+      topic: 'AI trends',
+      goal: 'engagement',
+      createdAt: '2025-01-15T12:00:00Z',
+      updatedAt: '2025-01-16T09:30:00Z',
+      ignoredFields: ['mood'],
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+
+    const response: XTwitterScraper.DraftCreateResponse = await fixture.drafts.create({
+      text: 'AI is the future of productivity',
+    });
+
+    expect(requests).toEqual(['POST https://xquik.test/api/v1/drafts']);
+    expect(response).toEqual(example);
   });
 });

@@ -109,10 +109,22 @@ describe('resource monitors', () => {
   });
 
   test('retrieve: returns a monitor paused for a low balance', async () => {
-    const { client: fixture } = fixtureClient({ pausedReason: 'insufficient_credits' });
+    const example: XTwitterScraper.Monitor = {
+      id: '42',
+      username: 'elonmusk',
+      xUserId: '1234567890',
+      eventTypes: ['tweet.new', 'tweet.reply'],
+      isActive: false,
+      createdAt: '2025-01-15T12:00:00Z',
+      nextBillingAt: '2025-01-15T13:00:00Z',
+      pausedAt: '2025-01-15T12:00:00Z',
+      pausedReason: 'insufficient_credits',
+    };
+    const { client: fixture, requests } = fixtureClient(example);
 
-    const response: XTwitterScraper.Monitor = await fixture.monitors.retrieve('7');
+    const response: XTwitterScraper.Monitor = await fixture.monitors.retrieve('42');
 
-    expect(response.pausedReason).toBe('insufficient_credits');
+    expect(requests).toEqual(['GET https://xquik.test/api/v1/monitors/42']);
+    expect(response).toEqual(example);
   });
 });

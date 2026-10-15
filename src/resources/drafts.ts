@@ -94,7 +94,7 @@ export interface DraftDetail extends Draft {
 }
 
 /**
- * Full private Xquik draft including update timestamp.
+ * The created draft, with the fields the request sent that the route did not read.
  */
 export interface DraftCreateResponse extends DraftDetail {
   /**

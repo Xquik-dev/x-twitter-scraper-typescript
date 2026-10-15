@@ -67,6 +67,11 @@ describe('resource events', () => {
   });
 
   test('retrieve: returns a follower event with the follow time', async () => {
+    const follow: XTwitterScraper.MonitorFollow = {
+      id: '2244994945',
+      followedAt: '2026-10-13T02:36:54.961Z',
+      followedAtExact: true,
+    };
     const example: XTwitterScraper.EventDetail = {
       id: '42',
       type: 'follower.added',
@@ -74,7 +79,7 @@ describe('resource events', () => {
       monitorId: '7',
       monitorType: 'account',
       occurredAt: '2025-01-15T12:00:00Z',
-      data: { id: '2244994945', followedAt: '2026-10-13T02:36:54.961Z', followedAtExact: true },
+      data: follow,
     };
     const { client: fixture, requests } = fixtureClient(example);
 
@@ -85,6 +90,15 @@ describe('resource events', () => {
   });
 
   test('list: filters by a follow event type and returns removals & count changes', async () => {
+    const removal: XTwitterScraper.MonitorFollow = { id: '2244994945', reason: 'unfollowed' };
+    const countChange: XTwitterScraper.Event.MonitorProfileChange = {
+      field: 'followers',
+      userId: '44196397',
+      username: 'elonmusk',
+      previous: 1003,
+      current: 1000,
+      change: -3,
+    };
     const example: XTwitterScraper.EventListResponse = {
       events: [
         {
@@ -94,7 +108,7 @@ describe('resource events', () => {
           monitorId: '7',
           monitorType: 'account',
           occurredAt: '2025-01-15T12:00:00Z',
-          data: { id: '2244994945', reason: 'unfollowed' },
+          data: removal,
         },
         {
           id: '44',
@@ -103,14 +117,7 @@ describe('resource events', () => {
           monitorId: '7',
           monitorType: 'account',
           occurredAt: '2025-01-15T12:00:00Z',
-          data: {
-            field: 'followers',
-            userId: '44196397',
-            username: 'elonmusk',
-            previous: 1003,
-            current: 1000,
-            change: -3,
-          },
+          data: countChange,
         },
       ],
       hasMore: false,

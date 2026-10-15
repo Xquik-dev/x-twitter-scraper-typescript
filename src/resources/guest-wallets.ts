@@ -103,9 +103,19 @@ export interface GuestWalletCreateResponse {
   amount: GuestWalletAmount;
 
   /**
+   * Paid-read bearer credential returned only by initial creation. Store it as a
+   * secret. Never place it in a URL or log.
+   */
+  api_key: string;
+
+  authorization: GuestWalletCreateResponse.Authorization;
+
+  /**
    * Hosted checkout URL for user interaction.
    */
   checkout_url: string;
+
+  credential_notice: 'Store api_key and the Idempotency-Key securely before sharing checkout_url. No email recovery is available.';
 
   /**
    * Credits granted after verified payment.
@@ -136,16 +146,6 @@ export interface GuestWalletCreateResponse {
   status_url: 'https://xquik.com/api/v1/guest-wallets/status';
 
   wallet_id: string;
-
-  /**
-   * Paid-read bearer credential returned only by initial creation. Store it as a
-   * secret. Never place it in a URL or log.
-   */
-  api_key?: string;
-
-  authorization?: GuestWalletCreateResponse.Authorization;
-
-  credential_notice?: 'Store api_key and the Idempotency-Key securely before sharing checkout_url. No email recovery is available.';
 }
 
 export namespace GuestWalletCreateResponse {

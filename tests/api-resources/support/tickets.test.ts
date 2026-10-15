@@ -106,6 +106,7 @@ describe('resource tickets', () => {
 
     await fixture.support.tickets.create({
       subject: 'Billing question',
+      body: 'The screenshot shows the charge.',
       attachments: [
         new File(['first'], 'screen.png', { type: 'image/png' }),
         new File(['second'], 'clip.mp4', { type: 'video/mp4' }),
@@ -114,14 +115,15 @@ describe('resource tickets', () => {
 
     const form = await sent[0]!.formData();
     expect(form.get('subject')).toBe('Billing question');
-    expect(form.has('body')).toBe(false);
+    expect(form.get('body')).toBe('The screenshot shows the charge.');
     expect(form.getAll('attachments').map((file) => (file as File).name)).toEqual(['screen.png', 'clip.mp4']);
   });
 
-  test('reply: sends attachments without a body', async () => {
+  test('reply: sends attachments with the message', async () => {
     const { client: fixture, sent } = fixtureClient({});
 
     await fixture.support.tickets.reply('1', {
+      body: 'Here is the screenshot.',
       attachments: [new File(['first'], 'screen.png', { type: 'image/png' })],
     });
 

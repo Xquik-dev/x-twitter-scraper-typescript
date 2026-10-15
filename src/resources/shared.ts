@@ -212,6 +212,11 @@ export namespace Community {
      * Profile picture URL of the member
      */
     profilePicture?: string;
+
+    /**
+     * The member's profile picture at full size
+     */
+    profilePictureOriginal?: string;
   }
 
   /**
@@ -792,6 +797,40 @@ export type EventType =
   | 'follower.removed'
   | 'profile.followers.changed'
   | 'profile.following.changed';
+
+/**
+ * The other account of a following or follower event, with the profile fields a
+ * user lookup returns. It holds the ID alone when X fails the profile lookup.
+ */
+export interface MonitorFollow {
+  /**
+   * The other account's X user ID.
+   */
+  id: string;
+
+  /**
+   * X's time of the follow, on following.added & follower.added. It is missing when
+   * X gives none, as for an account that returns to a list.
+   */
+  followedAt?: string;
+
+  /**
+   * Whether followedAt is X's exact time of this follow. When several accounts join
+   * between 2 checks, X times the first, the second & the last. Each other one holds
+   * the earliest time its follow can have, with false here.
+   */
+  followedAtExact?: boolean;
+
+  /**
+   * Why the account left the list, on following.removed & follower.removed.
+   * unavailable means X no longer serves the account. unfollowed means X's follow
+   * check says the follow ended. It is missing when X fails the check. Xquik sends no
+   * removal while X still confirms the follow.
+   */
+  reason?: 'unavailable' | 'unfollowed';
+
+  [k: string]: unknown;
+}
 
 /**
  * Follow next_cursor while the response reports more pages. A page can hold fewer
@@ -2552,6 +2591,44 @@ export namespace TweetMedia {
      * Whole number from 0.
      */
     bitrate?: number;
+  }
+}
+
+/**
+ * A relationship page. A filtered read's last page may name the scan limit that
+ * ended it.
+ */
+export interface UserListPage extends PaginatedUsers {
+  /**
+   * Present on the last page of a filtered automatic read that sent no maxScan,
+   * once the list scanned 100,000 profiles across its pages. That page is the
+   * list's last.
+   */
+  scanLimit?: UserListPage.ScanLimit;
+}
+
+export namespace UserListPage {
+  /**
+   * Present on the last page of a filtered automatic read that sent no maxScan,
+   * once the list scanned 100,000 profiles across its pages. That page is the
+   * list's last.
+   */
+  export interface ScanLimit {
+    /**
+     * The profiles a filtered read scans of a list without maxScan.
+     */
+    limit: 100000;
+
+    /**
+     * What stopped the list & how to read further.
+     */
+    message: string;
+
+    /**
+     * Profiles the list read across its pages, kept or dropped by the filters. The
+     * last page may read past the limit.
+     */
+    rowsRead: number;
   }
 }
 
