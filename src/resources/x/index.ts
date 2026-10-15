@@ -47,6 +47,15 @@ export {
 } from './bookmarks';
 export { Broadcasts, type BroadcastRetrieveResponse, type BroadcastRetrieveParams } from './broadcasts';
 export {
+  CommunityNotes,
+  type CommunityNoteListContributorDeletedNotesResponse,
+  type CommunityNoteListContributorNotesResponse,
+  type CommunityNoteRetrieveContributorResponse,
+  type CommunityNoteListContributorDeletedNotesParams,
+  type CommunityNoteListContributorNotesParams,
+  type CommunityNoteRetrieveContributorParams,
+} from './community-notes';
+export {
   Communities,
   type CommunityCreateResponse,
   type CommunityDeleteResponse,
@@ -206,16 +215,20 @@ export {
   type XAutocompleteSearchResponse,
   type XGetArticleResponse,
   type XGetHashflagsResponse,
+  type XGetNewsStoryVersionsResponse,
   type XGetNotificationsResponse,
   type XGetTrendLocationsResponse,
   type XGetTrendsResponse,
+  type XGetTrendsHistoryResponse,
   type XSearchPlacesResponse,
   type XAutocompleteSearchParams,
   type XGetArticleParams,
   type XGetHashflagsParams,
   type XGetHomeTimelineParams,
+  type XGetNewsStoryVersionsParams,
   type XGetNotificationsParams,
   type XGetTrendLocationsParams,
   type XGetTrendsParams,
+  type XGetTrendsHistoryParams,
   type XSearchPlacesParams,
 } from './x';

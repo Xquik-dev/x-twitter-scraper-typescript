@@ -218,9 +218,11 @@ Types
 - <code><a href="./src/resources/x/x.ts">XAutocompleteSearchResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XGetArticleResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XGetHashflagsResponse</a></code>
+- <code><a href="./src/resources/x/x.ts">XGetNewsStoryVersionsResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XGetNotificationsResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XGetTrendLocationsResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XGetTrendsResponse</a></code>
+- <code><a href="./src/resources/x/x.ts">XGetTrendsHistoryResponse</a></code>
 - <code><a href="./src/resources/x/x.ts">XSearchPlacesResponse</a></code>
 
 Methods
@@ -229,9 +231,11 @@ Methods
 - <code title="get /x/articles/{tweetId}">client.x.<a href="./src/resources/x/x.ts">getArticle</a>(tweetID, { ...params }) -> XGetArticleResponse</code>
 - <code title="get /x/hashflags">client.x.<a href="./src/resources/x/x.ts">getHashflags</a>({ ...params }) -> XGetHashflagsResponse</code>
 - <code title="get /x/timeline">client.x.<a href="./src/resources/x/x.ts">getHomeTimeline</a>({ ...params }) -> PaginatedTweets</code>
+- <code title="get /x/news/{id}/versions">client.x.<a href="./src/resources/x/x.ts">getNewsStoryVersions</a>(id, { ...params }) -> XGetNewsStoryVersionsResponse</code>
 - <code title="get /x/notifications">client.x.<a href="./src/resources/x/x.ts">getNotifications</a>({ ...params }) -> XGetNotificationsResponse</code>
 - <code title="get /x/trends/locations">client.x.<a href="./src/resources/x/x.ts">getTrendLocations</a>({ ...params }) -> XGetTrendLocationsResponse</code>
 - <code title="get /x/trends">client.x.<a href="./src/resources/x/x.ts">getTrends</a>({ ...params }) -> XGetTrendsResponse</code>
+- <code title="get /x/trends/history">client.x.<a href="./src/resources/x/x.ts">getTrendsHistory</a>({ ...params }) -> XGetTrendsHistoryResponse</code>
 - <code title="get /x/places/search">client.x.<a href="./src/resources/x/x.ts">searchPlaces</a>({ ...params }) -> XSearchPlacesResponse</code>
 
 ## WriteActions
@@ -580,6 +584,20 @@ Types
 Methods
 
 - <code title="get /x/broadcasts/{id}">client.x.broadcasts.<a href="./src/resources/x/broadcasts.ts">retrieve</a>(id, { ...params }) -> BroadcastRetrieveResponse</code>
+
+## CommunityNotes
+
+Types
+
+- <code><a href="./src/resources/x/community-notes.ts">CommunityNoteListContributorDeletedNotesResponse</a></code>
+- <code><a href="./src/resources/x/community-notes.ts">CommunityNoteListContributorNotesResponse</a></code>
+- <code><a href="./src/resources/x/community-notes.ts">CommunityNoteRetrieveContributorResponse</a></code>
+
+Methods
+
+- <code title="get /x/community-notes/contributors/{alias}/deleted-notes">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">listContributorDeletedNotes</a>(alias, { ...params }) -> CommunityNoteListContributorDeletedNotesResponse</code>
+- <code title="get /x/community-notes/contributors/{alias}/notes">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">listContributorNotes</a>(alias, { ...params }) -> CommunityNoteListContributorNotesResponse</code>
+- <code title="get /x/community-notes/contributors/{alias}">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">retrieveContributor</a>(alias, { ...params }) -> CommunityNoteRetrieveContributorResponse</code>
 
 ## Spaces
 

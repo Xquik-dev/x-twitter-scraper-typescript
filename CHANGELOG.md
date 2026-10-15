@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.14.0 (2026-10-15)
+
+[Full changelog from v0.13.3 to v0.14.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.3...v0.14.0)
+
+### Features
+
+The SDK now covers 180 operations of the current API spec. These methods are new.
+
+* Trends: `x.getTrendsHistory()` reads the trend lists X showed in a place over a range of time, stored every 5 minutes since 2026-10-13.
+* News: `x.getNewsStoryVersions()` lists every version X wrote of a news story, oldest first.
+* Community Notes: `x.communityNotes.retrieveContributor()` reads a contributor's note & rating counts. `listContributorNotes()` lists their notes with the posts they are on. `listContributorDeletedNotes()` lists the notes they deleted.
+
 ## 0.13.3 (2026-10-14)
 
 [Full changelog from v0.13.2 to v0.13.3](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.13.2...v0.13.3)

@@ -54,6 +54,16 @@ import {
 } from './bookmarks';
 import * as BroadcastsAPI from './broadcasts';
 import { BroadcastRetrieveParams, BroadcastRetrieveResponse, Broadcasts } from './broadcasts';
+import * as CommunityNotesAPI from './community-notes';
+import {
+  CommunityNoteListContributorDeletedNotesParams,
+  CommunityNoteListContributorDeletedNotesResponse,
+  CommunityNoteListContributorNotesParams,
+  CommunityNoteListContributorNotesResponse,
+  CommunityNoteRetrieveContributorParams,
+  CommunityNoteRetrieveContributorResponse,
+  CommunityNotes,
+} from './community-notes';
 import * as DmAPI from './dm';
 import {
   Dm,
@@ -243,6 +253,7 @@ export class X extends APIResource {
   bookmarks: BookmarksAPI.Bookmarks = new BookmarksAPI.Bookmarks(this._client);
   lists: ListsAPI.Lists = new ListsAPI.Lists(this._client);
   broadcasts: BroadcastsAPI.Broadcasts = new BroadcastsAPI.Broadcasts(this._client);
+  communityNotes: CommunityNotesAPI.CommunityNotes = new CommunityNotesAPI.CommunityNotes(this._client);
   spaces: SpacesAPI.Spaces = new SpacesAPI.Spaces(this._client);
 
   /**
@@ -316,6 +327,25 @@ export class X extends APIResource {
   }
 
   /**
+   * Returns each version X wrote of 1 news story, the AI trends x.com shows under
+   * Explore & News. Each version has its time, headline & text, oldest first, so you
+   * can see how the story changed. X lists every version at once. Each request costs
+   * 1 credit.
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getNewsStoryVersions('id');
+   * ```
+   */
+  getNewsStoryVersions(
+    id: string,
+    query: XGetNewsStoryVersionsParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<XGetNewsStoryVersionsResponse> {
+    return this._client.get(path`/x/news/${id}/versions`, { query, ...options });
+  }
+
+  /**
    * Returns your X account's notifications, else 424 `account_required`.
    *
    * @example
@@ -361,6 +391,30 @@ export class X extends APIResource {
     options?: RequestOptions,
   ): APIPromise<XGetTrendsResponse> {
     return this._client.get('/x/trends', { query, ...options });
+  }
+
+  /**
+   * Returns the Twitter trends archive of a place, as the lists X showed there over a
+   * range of time. Use it for trending on Twitter yesterday, last week or any day
+   * since 2026-10-13 02:20 UTC. Xquik stores 1 list per place every 5 minutes and
+   * keeps it for 25 months. Pick the place by woeid, country or location name, the
+   * range with from & to, and the step with every. from & to take a time or a span
+   * back from now, such as 7d, so a schedule can read the last day on every run.
+   * Each step returns the first list stored in it, with its own time. Each returned
+   * list costs 1 credit, so 24 lists cost 24 credits. A step with no stored list
+   * returns none and costs nothing. 1 request returns 24 lists, or up to 100 with
+   * limit.
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.getTrendsHistory();
+   * ```
+   */
+  getTrendsHistory(
+    query: XGetTrendsHistoryParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<XGetTrendsHistoryResponse> {
+    return this._client.get('/x/trends/history', { query, ...options });
   }
 
   /**
@@ -939,6 +993,48 @@ export namespace XGetHashflagsResponse {
   }
 }
 
+export interface XGetNewsStoryVersionsResponse {
+  /**
+   * The story's ID, as the request named it.
+   */
+  id: string;
+
+  /**
+   * Versions returned.
+   */
+  count: number;
+
+  versions: Array<XGetNewsStoryVersionsResponse.Version>;
+}
+
+export namespace XGetNewsStoryVersionsResponse {
+  /**
+   * 1 version X wrote of a news story.
+   */
+  export interface Version {
+    /**
+     * The version's ID.
+     */
+    id: string;
+
+    /**
+     * When X wrote the version, in UTC, from its ID.
+     */
+    createdAt: string;
+
+    /**
+     * The story's headline in this version.
+     */
+    headline: string;
+
+    /**
+     * The story's text in this version, without the time line X writes above it in
+     * the reader's time zone.
+     */
+    text: string;
+  }
+}
+
 export interface XGetNotificationsResponse {
   has_next_page: boolean;
 
@@ -1065,6 +1161,137 @@ export namespace XGetTrendsResponse {
   /**
    * The place country or location named. Absent when woeid picked the place or the
    * request named none.
+   */
+  export interface Location {
+    /**
+     * Country name. Null for Worldwide.
+     */
+    country: string | null;
+
+    /**
+     * 2-letter country code. Null for Worldwide.
+     */
+    countryCode: string | null;
+
+    name: string;
+
+    /**
+     * WOEID of the country or region above it. Null for Worldwide.
+     */
+    parentWoeid: number | null;
+
+    /**
+     * X's kind of place. Town, Country, Supername for Worldwide, or Unknown.
+     */
+    placeType: string | null;
+
+    /**
+     * X's numeric code for the kind of place.
+     */
+    placeTypeCode: number | null;
+
+    /**
+     * X's legacy Yahoo GeoPlanet reference. It may not resolve.
+     */
+    url: string | null;
+
+    /**
+     * Location ID. Pass it as woeid to /x/trends.
+     */
+    woeid: number;
+  }
+}
+
+export interface XGetTrendsHistoryResponse {
+  /**
+   * Lists returned & charged.
+   */
+  count: number;
+
+  /**
+   * Start of the range as Xquik read it. A span such as 7d shows here as the time it
+   * counted back to.
+   */
+  fromTime: string;
+
+  /**
+   * Whether the range holds more lists.
+   */
+  has_next_page: boolean;
+
+  /**
+   * Send it as cursor for the next lists. Empty on the last page.
+   */
+  next_cursor: string;
+
+  /**
+   * 1 stored list per step, oldest first. A step with no stored list is left out.
+   */
+  snapshots: Array<XGetTrendsHistoryResponse.Snapshot>;
+
+  /**
+   * End of the range as Xquik read it, which the range leaves out. Without to, it is
+   * the time of the first request.
+   */
+  toTime: string;
+
+  woeid: number;
+
+  /**
+   * The place the request named by country or location. Absent when it sent a woeid
+   * or named no place.
+   */
+  location?: XGetTrendsHistoryResponse.Location;
+}
+
+export namespace XGetTrendsHistoryResponse {
+  export interface Snapshot {
+    /**
+     * When Xquik read this stored list from X. Xquik never estimates it.
+     */
+    capturedAt: string;
+
+    /**
+     * Trends in this list.
+     */
+    count: number;
+
+    trends: Array<Snapshot.Trend>;
+  }
+
+  export namespace Snapshot {
+    export interface Trend {
+      name: string;
+
+      description?: string;
+
+      /**
+       * X's promotion ID of a promoted trend. Null for the others.
+       */
+      promotedContent?: string | null;
+
+      query?: string;
+
+      /**
+       * The trend's place in X's list at that time.
+       */
+      rank?: number;
+
+      /**
+       * X's post count for the trend at that time, when X showed one.
+       */
+      tweetVolume?: number | null;
+
+      /**
+       * The trend's search link on X.
+       */
+      url?: string;
+    }
+  }
+
+  /**
+   * The place the request named by country or location. Absent when it sent a woeid
+   * or named no place.
    */
   export interface Location {
     /**
@@ -1380,6 +1607,24 @@ export interface XGetHomeTimelineParams {
   seenTweetIds?: string;
 }
 
+export interface XGetNewsStoryVersionsParams {
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+   * author.username. A list keeps the field in each item. Case & underscores do not
+   * matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+   * always stay. An unknown name answers 400 unknown_field with the valid names,
+   * before any read. The price stays the same. SDK row types then hold only the
+   * named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+}
+
 export interface XGetNotificationsParams {
   /**
    * Pagination cursor for collection results. Also read as next_cursor, next_token,
@@ -1474,6 +1719,81 @@ export interface XGetTrendsParams {
   woeid?: number;
 }
 
+export interface XGetTrendsHistoryParams {
+  /**
+   * Trends to return in each list, from 1 to 50.
+   */
+  count?: number;
+
+  /**
+   * Country to read trends history for, by name or 2-letter code, such as Turkey or
+   * TR. Case insensitive.
+   */
+  country?: string;
+
+  /**
+   * The next_cursor of the page before, for the next lists. It keeps the time of the
+   * first request, so a range of spans stays the same on every page.
+   */
+  cursor?: string;
+
+  /**
+   * Step between 2 returned lists, as a number & m, h or d, such as 15m, 1h or 1d. A
+   * step under 5m returns every stored list.
+   */
+  every?: string;
+
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+   * author.username. A list keeps the field in each item. Case & underscores do not
+   * matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+   * always stay. An unknown name answers 400 unknown_field with the valid names,
+   * before any read. The price stays the same. SDK row types then hold only the
+   * named fields.
+   */
+  fields?: string;
+
+  /**
+   * Start of the range. Takes an ISO 8601 time, a date such as 2026-10-13, or Unix
+   * seconds. A time without a zone reads as UTC. It also takes a span back from now,
+   * as a number & s, m, h or d, so from=7d reads the last 7 days. Defaults to 24
+   * hours before to. History starts 2026-10-13 02:20 UTC, and a range that begins
+   * earlier returns the stored part. Alias sinceTime.
+   */
+  from?: string;
+
+  /**
+   * Maximum lists 1 request returns & charges. A wider range gives a next_cursor for
+   * the next lists. A low credit balance can return fewer.
+   */
+  limit?: number;
+
+  /**
+   * Town or country to read trends history for, by name, such as Istanbul. Case
+   * insensitive. Add country when 2 towns share a name. /x/trends/locations lists
+   * every name.
+   */
+  location?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+
+  /**
+   * End of the range, which it leaves out. Takes the forms of from, so from=2d with
+   * to=1d reads the day before the last 24 hours. Defaults to now. Alias untilTime.
+   */
+  to?: string;
+
+  /**
+   * WOEID of the place, such as 1 for Worldwide or 23424969 for Turkey. It wins over
+   * country & location. /x/trends/locations lists every WOEID.
+   */
+  woeid?: number;
+}
+
 export interface XSearchPlacesParams {
   /**
    * Place name to search for, such as istanbul. Alias query.
@@ -1519,6 +1839,7 @@ X.AccountConnectionAttempts = AccountConnectionAttempts;
 X.Bookmarks = Bookmarks;
 X.Lists = Lists;
 X.Broadcasts = Broadcasts;
+X.CommunityNotes = CommunityNotes;
 X.Spaces = Spaces;
 
 export declare namespace X {
@@ -1526,17 +1847,21 @@ export declare namespace X {
     type XAutocompleteSearchResponse as XAutocompleteSearchResponse,
     type XGetArticleResponse as XGetArticleResponse,
     type XGetHashflagsResponse as XGetHashflagsResponse,
+    type XGetNewsStoryVersionsResponse as XGetNewsStoryVersionsResponse,
     type XGetNotificationsResponse as XGetNotificationsResponse,
     type XGetTrendLocationsResponse as XGetTrendLocationsResponse,
     type XGetTrendsResponse as XGetTrendsResponse,
+    type XGetTrendsHistoryResponse as XGetTrendsHistoryResponse,
     type XSearchPlacesResponse as XSearchPlacesResponse,
     type XAutocompleteSearchParams as XAutocompleteSearchParams,
     type XGetArticleParams as XGetArticleParams,
     type XGetHashflagsParams as XGetHashflagsParams,
     type XGetHomeTimelineParams as XGetHomeTimelineParams,
+    type XGetNewsStoryVersionsParams as XGetNewsStoryVersionsParams,
     type XGetNotificationsParams as XGetNotificationsParams,
     type XGetTrendLocationsParams as XGetTrendLocationsParams,
     type XGetTrendsParams as XGetTrendsParams,
+    type XGetTrendsHistoryParams as XGetTrendsHistoryParams,
     type XSearchPlacesParams as XSearchPlacesParams,
   };
 
@@ -1752,6 +2077,16 @@ export declare namespace X {
     Broadcasts as Broadcasts,
     type BroadcastRetrieveResponse as BroadcastRetrieveResponse,
     type BroadcastRetrieveParams as BroadcastRetrieveParams,
+  };
+
+  export {
+    CommunityNotes as CommunityNotes,
+    type CommunityNoteListContributorDeletedNotesResponse as CommunityNoteListContributorDeletedNotesResponse,
+    type CommunityNoteListContributorNotesResponse as CommunityNoteListContributorNotesResponse,
+    type CommunityNoteRetrieveContributorResponse as CommunityNoteRetrieveContributorResponse,
+    type CommunityNoteListContributorDeletedNotesParams as CommunityNoteListContributorDeletedNotesParams,
+    type CommunityNoteListContributorNotesParams as CommunityNoteListContributorNotesParams,
+    type CommunityNoteRetrieveContributorParams as CommunityNoteRetrieveContributorParams,
   };
 
   export {
