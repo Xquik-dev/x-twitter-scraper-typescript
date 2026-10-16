@@ -62,8 +62,15 @@ finish() {
   else
     post_commit_status failure "${current_check} failed. Run bin/check-local to see why."
   fi
-  rm -rf -- "${work_directory:?}"
+  remove_work_directory
   exit "$exit_code"
+}
+
+remove_work_directory() {
+  if [[ -n "${work_directory:-}" && -d "$work_directory" ]]; then
+    chmod -R u+w -- "$work_directory" 2>/dev/null || true
+    rm -rf -- "$work_directory"
+  fi
 }
 
 run_check() {
@@ -129,8 +136,13 @@ else
   echo "==> Posting the ${status_context} status to ${commit:0:12}"
 fi
 
-work_directory="$(mktemp -d)"
+work_directory="$(mktemp -d "${TMPDIR:-/tmp}/xquik-typescript-check.XXXXXX")"
 trap finish EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
+export TMPDIR="${work_directory}/tmp"
+mkdir "$TMPDIR"
 post_commit_status pending "Local checks are running."
 
 current_check="Find tools"

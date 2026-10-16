@@ -2,8 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { spawnSync } from 'node:child_process';
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -17,14 +26,19 @@ const checkCopy = (change: (directory: string) => void) => {
   const directory = mkdtempSync(join(tmpdir(), 'consumer-types-'));
   try {
     cpSync(dist, join(directory, 'package'), { recursive: true });
+    mkdirSync(join(directory, 'tmp'));
     change(join(directory, 'package'));
-    const result = spawnSync(process.execPath, [script, join(directory, 'package')], { encoding: 'utf8' });
+    const result = spawnSync(process.execPath, [script, join(directory, 'package')], {
+      encoding: 'utf8',
+      env: { ...process.env, TMPDIR: join(directory, 'tmp') },
+    });
     return {
       status: result.status,
       output: result.stdout + result.stderr,
       failures: (result.stdout + result.stderr)
         .split('\n')
         .filter((line) => line.startsWith('Consumer types failed')),
+      leftovers: readdirSync(join(directory, 'tmp')),
     };
   } finally {
     rmSync(directory, { recursive: true, force: true });
@@ -99,6 +113,38 @@ describe('scripts/utils/check-consumer-types.cjs', () => {
 
       expect(result.failures).toEqual(expected);
       expect(result.status).toBe(1);
+      expect(result.leftovers).toEqual([]);
+    },
+    60_000,
+  );
+
+  it.each([
+    ['SIGTERM', 143],
+    ['SIGINT', 130],
+    ['SIGHUP', 129],
+  ] as const)(
+    'removes its workspace when %s stops it mid-run',
+    async (signal, code) => {
+      const directory = mkdtempSync(join(tmpdir(), 'consumer-types-'));
+      const temp = join(directory, 'tmp');
+      mkdirSync(temp);
+      try {
+        const child = spawn(process.execPath, [script, dist], {
+          env: { ...process.env, TMPDIR: temp },
+          stdio: 'ignore',
+        });
+        const exited = new Promise<number | null>((resolve) => child.on('exit', (status) => resolve(status)));
+        const deadline = Date.now() + 30_000;
+        while (readdirSync(temp).length === 0 && Date.now() < deadline) {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+        }
+        child.kill(signal);
+
+        expect(await exited).toBe(code);
+        expect(readdirSync(temp)).toEqual([]);
+      } finally {
+        rmSync(directory, { recursive: true, force: true });
+      }
     },
     60_000,
   );
