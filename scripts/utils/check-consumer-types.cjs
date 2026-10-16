@@ -4,7 +4,7 @@
 
 // @ts-check
 
-const { spawnSync } = require('child_process');
+const { spawn } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -70,12 +70,44 @@ const writeProject = (project, mode) => {
   fs.writeFileSync(path.join(project, 'index.ts'), program);
 };
 
-const main = () => {
+/** @type {Set<import('child_process').ChildProcess>} */
+const running = new Set();
+
+const compile = (compiler, project, workspace) =>
+  new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [compiler.bin, '--project', project, '--pretty', 'false'], {
+      env: { ...process.env, TMPDIR: workspace },
+    });
+    running.add(child);
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (chunk) => (stdout += chunk));
+    child.stderr.on('data', (chunk) => (stderr += chunk));
+    child.on('error', reject);
+    child.on('close', (status) => {
+      running.delete(child);
+      resolve({ status, output: `${stdout}${stderr}`.trimEnd() });
+    });
+  });
+
+const main = async () => {
   if (!fs.existsSync(path.join(packageDirectory, 'package.json'))) {
     console.error(`${packageDirectory} has no package.json. Run pnpm build first.`);
     process.exit(1);
   }
-  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'consumer-types-'));
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
+  const removeWorkspace = () => fs.rmSync(workspace, { recursive: true, force: true });
+  for (const [signal, code] of [
+    ['SIGINT', 130],
+    ['SIGTERM', 143],
+    ['SIGHUP', 129],
+  ]) {
+    process.on(signal, () => {
+      for (const child of running) child.kill(signal);
+      removeWorkspace();
+      process.exit(code);
+    });
+  }
   /** @type {string[]} */
   const failures = [];
   try {
@@ -83,16 +115,8 @@ const main = () => {
       const project = path.join(workspace, mode.name.replace(/\W+/g, '-'));
       writeProject(project, mode);
       for (const compiler of compilers) {
-        const result = spawnSync(
-          process.execPath,
-          [compiler.bin, '--project', project, '--pretty', 'false'],
-          {
-            encoding: 'utf8',
-          },
-        );
-        if (result.error) throw result.error;
-        if (result.status !== 0) {
-          const output = `${result.stdout}${result.stderr}`.trimEnd();
+        const { status, output } = await compile(compiler, project, workspace);
+        if (status !== 0) {
           failures.push(
             `${output}\nConsumer types failed for ${mode.name} under ${compiler.name}.`.trimStart(),
           );
@@ -100,7 +124,7 @@ const main = () => {
       }
     }
   } finally {
-    fs.rmSync(workspace, { recursive: true, force: true });
+    removeWorkspace();
   }
   if (failures.length > 0) {
     console.error(failures.join('\n'));

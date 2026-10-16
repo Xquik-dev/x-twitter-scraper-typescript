@@ -8,9 +8,20 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-reproducibility_directory="$(mktemp -d)"
-trap 'rm -rf "$reproducibility_directory"' EXIT
-mkdir "$reproducibility_directory/first" "$reproducibility_directory/second"
+remove_reproducibility_directory() {
+  if [[ -n "${reproducibility_directory:-}" && -d "$reproducibility_directory" ]]; then
+    chmod -R u+w -- "$reproducibility_directory" 2>/dev/null || true
+    rm -rf -- "$reproducibility_directory"
+  fi
+}
+
+reproducibility_directory="$(mktemp -d "${TMPDIR:-/tmp}/xquik-typescript-reproducible.XXXXXX")"
+trap remove_reproducibility_directory EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+trap 'exit 129' HUP
+export TMPDIR="${reproducibility_directory}/tmp"
+mkdir "$TMPDIR" "$reproducibility_directory/first" "$reproducibility_directory/second"
 
 pnpm build
 (cd dist && npm pack --silent --pack-destination "$reproducibility_directory/first" >/dev/null)

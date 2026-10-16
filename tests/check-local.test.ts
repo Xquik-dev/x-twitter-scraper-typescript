@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { leftoverStep, runUntilStarted, waitingStep } from './signal-run';
 import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, resolve } from 'node:path';
 
@@ -70,33 +71,48 @@ const fieldsMatch = fakeCheck(
   "The SDK's fields match the API for 180 operations, and accepted-field-differences.json lists 42 accepted differences.",
 );
 
-const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, apiFields = fieldsMatch) => {
+type Setup = { pnpm?: string; apiCoverage?: string; apiFields?: string; lint?: string };
+
+const setUp = (
+  codeqlSarif: string,
+  { pnpm = passes, apiCoverage = covered, apiFields = fieldsMatch, lint = passes }: Setup = {},
+) => {
   const root = mkdtempSync(join(tmpdir(), 'check-local-'));
+  const write = (path: string, content: string, mode = 0o755) => {
+    mkdirSync(dirname(join(root, path)), { recursive: true });
+    writeFileSync(join(root, path), content);
+    chmodSync(join(root, path), mode);
+  };
+  mkdirSync(join(root, 'project', 'bin'), { recursive: true });
+  mkdirSync(join(root, 'tmp'));
+  copyFileSync(script, join(root, 'project', 'bin', 'check-local'));
+  for (const tool of ['uv', 'uvx']) write(join('tools', tool), passes);
+  write(join('tools', 'pnpm'), pnpm);
+  write(join('tools', 'codeql'), fakeCodeql);
+  write(join('project', 'scripts', 'lint'), lint);
+  write(join('project', 'scripts', 'check-reproducible'), passes);
+  write(join('project', 'scripts', 'test'), '#!/bin/sh\necho "Tests:       2 passed, 2 total"\n');
+  write(join('project', 'scripts', 'utils', 'check-audit.cjs'), 'console.log("Audit passed.");\n', 0o644);
+  write(join('project', 'scripts', 'utils', 'check-api-coverage.cjs'), apiCoverage, 0o644);
+  write(join('project', 'scripts', 'utils', 'check-api-fields.cjs'), apiFields, 0o644);
+  write('codeql.sarif', codeqlSarif, 0o644);
+  return {
+    root,
+    temp: join(root, 'tmp'),
+    command: join(root, 'project', 'bin', 'check-local'),
+    env: {
+      ...process.env,
+      PATH: `${join(root, 'tools')}${delimiter}${process.env['PATH'] ?? ''}`,
+      FAKE_CODEQL_SARIF: join(root, 'codeql.sarif'),
+      TMPDIR: join(root, 'tmp'),
+    },
+  };
+};
+
+const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, apiFields = fieldsMatch) => {
+  const { root, command, env } = setUp(codeqlSarif, { pnpm, apiCoverage, apiFields });
   try {
-    const write = (path: string, content: string, mode = 0o755) => {
-      mkdirSync(dirname(join(root, path)), { recursive: true });
-      writeFileSync(join(root, path), content);
-      chmodSync(join(root, path), mode);
-    };
-    mkdirSync(join(root, 'project', 'bin'), { recursive: true });
-    copyFileSync(script, join(root, 'project', 'bin', 'check-local'));
-    for (const tool of ['uv', 'uvx']) write(join('tools', tool), passes);
-    write(join('tools', 'pnpm'), pnpm);
-    write(join('tools', 'codeql'), fakeCodeql);
-    for (const check of ['lint', 'check-reproducible']) write(join('project', 'scripts', check), passes);
-    write(join('project', 'scripts', 'test'), '#!/bin/sh\necho "Tests:       2 passed, 2 total"\n');
-    write(join('project', 'scripts', 'utils', 'check-audit.cjs'), 'console.log("Audit passed.");\n', 0o644);
-    write(join('project', 'scripts', 'utils', 'check-api-coverage.cjs'), apiCoverage, 0o644);
-    write(join('project', 'scripts', 'utils', 'check-api-fields.cjs'), apiFields, 0o644);
-    write('codeql.sarif', codeqlSarif, 0o644);
-    const result = spawnSync(join(root, 'project', 'bin', 'check-local'), ['--no-status'], {
-      encoding: 'utf8',
-      env: {
-        ...process.env,
-        PATH: `${join(root, 'tools')}${delimiter}${process.env['PATH'] ?? ''}`,
-        FAKE_CODEQL_SARIF: join(root, 'codeql.sarif'),
-      },
-    });
+    const result = spawnSync(command, ['--no-status'], { encoding: 'utf8', env });
     return { status: result.status, stdout: result.stdout, stderr: result.stderr };
   } finally {
     rmSync(root, { recursive: true, force: true });
@@ -196,5 +212,33 @@ fi
       'The CodeQL scan lacks js/diagnostics/extraction-errors, so it cannot show that it read every file. Make the suite in bin/check-local run that diagnostic query.\n' +
         'Check failed at Run CodeQL. Fix what CodeQL reported above, then run bin/check-local again.\n',
     );
+  });
+
+  it('removes its temp directory and what its steps left in TMPDIR when a step fails', () => {
+    const { root, temp, command, env } = setUp(sarif({}), { lint: `${leftoverStep}exit 1\n` });
+    try {
+      const result = spawnSync(command, ['--no-status'], { encoding: 'utf8', env });
+
+      expect(result.status).toBe(1);
+      expect(readdirSync(temp)).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it.each([
+    ['SIGTERM', 143],
+    ['SIGINT', 130],
+    ['SIGHUP', 129],
+  ] as const)('removes its temp directory when %s stops it mid-run', async (signal, code) => {
+    const { root, temp, command, env } = setUp(sarif({}), { lint: waitingStep });
+    try {
+      const result = await runUntilStarted(command, ['--no-status'], { env, root, signal });
+
+      expect(result.code).toBe(code);
+      expect(readdirSync(temp)).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
