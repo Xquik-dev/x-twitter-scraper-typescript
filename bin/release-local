@@ -48,7 +48,7 @@ remove_work_directory() {
 
 work_directory="$(mktemp -d "${TMPDIR:-/tmp}/xquik-typescript-release.XXXXXX")"
 trap remove_work_directory EXIT
-trap 'exit 130' INT
+trap 'trap - INT; kill -INT "$$"' INT
 trap 'exit 143' TERM
 trap 'exit 129' HUP
 export TMPDIR="${work_directory}/tmp"

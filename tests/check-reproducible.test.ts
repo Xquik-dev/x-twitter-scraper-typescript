@@ -2,7 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { delimiter, join, resolve } from 'node:path';
@@ -45,14 +54,33 @@ describe('scripts/check-reproducible', () => {
 
   it.each([
     ['SIGTERM', 143],
-    ['SIGINT', 130],
+    ['SIGINT', null],
     ['SIGHUP', 129],
   ] as const)('removes its temp directory when %s stops it mid-run', async (signal, code) => {
     const { root, temp, command, env } = setUp(waitingStep);
     try {
       const result = await runUntilStarted(command, [], { env, root, signal });
 
-      expect(result.code).toBe(code);
+      expect(result).toEqual({ code, signal: signal === 'SIGINT' ? signal : null });
+      expect(readdirSync(temp)).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('stops its bash parent before the next command when SIGINT reaches the process group', async () => {
+    const { root, temp, command, env } = setUp(waitingStep);
+    const continued = join(root, 'parent-continued');
+    try {
+      const result = await runUntilStarted('bash', ['-c', '"$1"\ntouch "$2"\n', 'bash', command, continued], {
+        env,
+        root,
+        signal: 'SIGINT',
+        processGroup: true,
+      });
+
+      expect(result).toEqual({ code: null, signal: 'SIGINT' });
+      expect(existsSync(continued)).toBe(false);
       expect(readdirSync(temp)).toEqual([]);
     } finally {
       rmSync(root, { recursive: true, force: true });

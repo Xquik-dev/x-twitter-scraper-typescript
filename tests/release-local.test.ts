@@ -87,14 +87,14 @@ describe('bin/release-local', () => {
 
     it.each([
       ['SIGTERM', 143],
-      ['SIGINT', 130],
+      ['SIGINT', null],
       ['SIGHUP', 129],
     ] as const)('removes its temp directory when %s stops it mid-run', async (signal, code) => {
       const { root, temp, command, env } = setUp(waitingStep);
       try {
         const result = await runUntilStarted(command, [], { env, root, signal });
 
-        expect(result.code).toBe(code);
+        expect(result).toEqual({ code, signal: signal === 'SIGINT' ? signal : null });
         expect(readdirSync(temp)).toEqual([]);
       } finally {
         rmSync(root, { recursive: true, force: true });

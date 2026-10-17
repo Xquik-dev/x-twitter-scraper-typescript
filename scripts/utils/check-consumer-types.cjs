@@ -97,15 +97,12 @@ const main = async () => {
   }
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
   const removeWorkspace = () => fs.rmSync(workspace, { recursive: true, force: true });
-  for (const [signal, code] of [
-    ['SIGINT', 130],
-    ['SIGTERM', 143],
-    ['SIGHUP', 129],
-  ]) {
+  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
     process.on(signal, () => {
       for (const child of running) child.kill(signal);
       removeWorkspace();
-      process.exit(code);
+      process.removeAllListeners(signal);
+      process.kill(process.pid, signal);
     });
   }
   /** @type {string[]} */

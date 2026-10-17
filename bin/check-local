@@ -138,7 +138,7 @@ fi
 
 work_directory="$(mktemp -d "${TMPDIR:-/tmp}/xquik-typescript-check.XXXXXX")"
 trap finish EXIT
-trap 'exit 130' INT
+trap 'trap - INT; kill -INT "$$"' INT
 trap 'exit 143' TERM
 trap 'exit 129' HUP
 export TMPDIR="${work_directory}/tmp"

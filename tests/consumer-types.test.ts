@@ -118,13 +118,9 @@ describe('scripts/utils/check-consumer-types.cjs', () => {
     60_000,
   );
 
-  it.each([
-    ['SIGTERM', 143],
-    ['SIGINT', 130],
-    ['SIGHUP', 129],
-  ] as const)(
+  it.each(['SIGTERM', 'SIGINT', 'SIGHUP'] as const)(
     'removes its workspace when %s stops it mid-run',
-    async (signal, code) => {
+    async (signal) => {
       const directory = mkdtempSync(join(tmpdir(), 'consumer-types-'));
       const temp = join(directory, 'tmp');
       mkdirSync(temp);
@@ -133,14 +129,16 @@ describe('scripts/utils/check-consumer-types.cjs', () => {
           env: { ...process.env, TMPDIR: temp },
           stdio: 'ignore',
         });
-        const exited = new Promise<number | null>((resolve) => child.on('exit', (status) => resolve(status)));
+        const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve) =>
+          child.on('exit', (code, stopSignal) => resolve({ code, signal: stopSignal })),
+        );
         const deadline = Date.now() + 30_000;
         while (readdirSync(temp).length === 0 && Date.now() < deadline) {
           await new Promise((resolve) => setTimeout(resolve, 10));
         }
         child.kill(signal);
 
-        expect(await exited).toBe(code);
+        expect(await exited).toEqual({ code: null, signal });
         expect(readdirSync(temp)).toEqual([]);
       } finally {
         rmSync(directory, { recursive: true, force: true });

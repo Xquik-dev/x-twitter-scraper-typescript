@@ -17,7 +17,7 @@ remove_reproducibility_directory() {
 
 reproducibility_directory="$(mktemp -d "${TMPDIR:-/tmp}/xquik-typescript-reproducible.XXXXXX")"
 trap remove_reproducibility_directory EXIT
-trap 'exit 130' INT
+trap 'trap - INT; kill -INT "$$"' INT
 trap 'exit 143' TERM
 trap 'exit 129' HUP
 export TMPDIR="${reproducibility_directory}/tmp"
