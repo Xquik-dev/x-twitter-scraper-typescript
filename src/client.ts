@@ -1125,6 +1125,7 @@ export declare namespace XTwitterScraper {
     type GuestWalletTopupParams as GuestWalletTopupParams,
   };
 
+  export type Broadcast = API.Broadcast;
   export type Community = API.Community;
   export type CommunityPage = API.CommunityPage;
   export type CommunityTopic = API.CommunityTopic;

@@ -3,6 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import {
+  type Space,
+  type SpaceRetrieveResponse,
+  type SpaceSearchResponse,
+} from 'x-twitter-scraper/resources/x/spaces';
 import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
@@ -111,5 +116,70 @@ describe('resource spaces', () => {
       `GET https://xquik.test/api/v1/x/spaces/search?q=Network&queryType=${queryType}`,
     ]);
     expect(response).toEqual(example);
+  });
+
+  test('retrieve and search return the same Space model', async () => {
+    const retrieveExample: SpaceRetrieveResponse = {
+      space: {
+        id: '1OGwblLjnQMKB',
+        title: 'Extending the Network to the Edge',
+        state: 'Ended',
+        startedAt: '2026-03-11T17:00:26.227Z',
+        endedAt: '2026-03-11T17:49:29.190Z',
+        totalLiveListeners: 841,
+        totalReplayWatched: 609,
+        creator: {
+          id: '951329744804392960',
+          username: 'solana',
+          name: 'Solana',
+        },
+        admins: [
+          {
+            id: '951329744804392960',
+            username: 'solana',
+            name: 'Solana',
+          },
+        ],
+        speakers: [],
+        listeners: [],
+      },
+    };
+    const searchExample: SpaceSearchResponse = {
+      spaces: [
+        {
+          id: '1OGwblLjnQMKB',
+          title: 'Extending the Network to the Edge',
+          state: 'Ended',
+          startedAt: '2026-03-11T17:00:26.227Z',
+          endedAt: '2026-03-11T17:49:29.190Z',
+          totalLiveListeners: 841,
+          totalReplayWatched: 609,
+          admins: [
+            {
+              id: '951329744804392960',
+              username: 'solana',
+              name: 'Solana',
+            },
+          ],
+          speakers: [],
+          listeners: [],
+        },
+      ],
+      has_next_page: true,
+      next_cursor: 'DAACCgACGRElMJcAAA',
+    };
+    const retrieveFixture = fixtureClient(retrieveExample);
+    const searchFixture = fixtureClient(searchExample);
+
+    const retrieved = await retrieveFixture.client.x.spaces.retrieve('1OGwblLjnQMKB');
+    const searched = await searchFixture.client.x.spaces.search({ q: 'Network' });
+    const spaceId = (space: Space): string => space.id;
+    const spaces: Array<Space> = [retrieved.space, ...searched.spaces];
+
+    expect(spaces.map(spaceId)).toEqual(['1OGwblLjnQMKB', '1OGwblLjnQMKB']);
+    expect(retrieved).toEqual(retrieveExample);
+    expect(searched).toEqual(searchExample);
+    expect(retrieveFixture.requests).toEqual(['GET https://xquik.test/api/v1/x/spaces/1OGwblLjnQMKB']);
+    expect(searchFixture.requests).toEqual(['GET https://xquik.test/api/v1/x/spaces/search?q=Network']);
   });
 });

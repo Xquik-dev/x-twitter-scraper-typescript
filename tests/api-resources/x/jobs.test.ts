@@ -3,6 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import {
+  type Job,
+  type JobRetrieveResponse,
+  type JobSearchResponse,
+} from 'x-twitter-scraper/resources/x/jobs';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -77,5 +83,73 @@ describe('resource jobs', () => {
       pageSize: 1,
       seniority: 'senior,lead',
     });
+  });
+
+  test('retrieve and search return the same Job model', async () => {
+    const retrieveExample: JobRetrieveResponse = {
+      job: {
+        id: '1899202395210649861',
+        title: 'Engineer',
+        url: 'https://x.com/i/jobs/1899202395210649861',
+        applyUrl: 'https://xquik.com/example',
+        location: 'United States',
+        locationType: 'remote',
+        employmentType: 'full_time',
+        seniorityLevel: 'lead',
+        jobFunction: 'software_engineering',
+        formattedSalary: 'Starting at $225K',
+        salaryMin: 225000,
+        salaryCurrencyCode: 'USD',
+        salaryInterval: 'annually',
+        featured: true,
+        shortDescription: 'Commonware is hiring founding engineers.',
+        description: 'What is Commonware? We build open primitives.',
+        descriptionMarkdown: '# What is Commonware?',
+        account: {
+          id: '1812126202804711425',
+          username: 'commonwarexyz',
+          name: 'commonware',
+          verified: true,
+          verifiedType: 'Business',
+        },
+      },
+    };
+    const searchExample: JobSearchResponse = {
+      jobs: [
+        {
+          id: '1899202395210649861',
+          title: 'Engineer',
+          url: 'https://x.com/i/jobs/1899202395210649861',
+          applyUrl: 'https://xquik.com/example',
+          location: 'United States',
+          formattedSalary: 'Starting at $225K',
+          salaryMin: 225000,
+          salaryCurrencyCode: 'USD',
+          salaryInterval: 'annually',
+          account: {
+            id: '1812126202804711425',
+            username: 'commonwarexyz',
+            name: 'commonware',
+            verified: true,
+            verifiedType: 'Business',
+          },
+        },
+      ],
+      has_next_page: true,
+      next_cursor: 'DAACCgACGRElMJcAAA',
+    };
+    const retrieveFixture = fixtureClient(retrieveExample);
+    const searchFixture = fixtureClient(searchExample);
+
+    const retrieved = await retrieveFixture.client.x.jobs.retrieve('1899202395210649861');
+    const searched = await searchFixture.client.x.jobs.search({ q: 'engineer' });
+    const jobId = (job: Job): string => job.id;
+    const jobs: Array<Job> = [retrieved.job, ...searched.jobs];
+
+    expect(jobs.map(jobId)).toEqual(['1899202395210649861', '1899202395210649861']);
+    expect(retrieved).toEqual(retrieveExample);
+    expect(searched).toEqual(searchExample);
+    expect(retrieveFixture.requests).toEqual(['GET https://xquik.test/api/v1/x/jobs/1899202395210649861']);
+    expect(searchFixture.requests).toEqual(['GET https://xquik.test/api/v1/x/jobs/search?q=engineer']);
   });
 });

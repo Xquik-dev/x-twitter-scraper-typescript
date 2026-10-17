@@ -67,6 +67,9 @@ export {
 } from './communities/index';
 export {
   CommunityNotes,
+  type CommunityNotesContributor,
+  type CommunityNotesRatingOutcome,
+  type PaginatedCommunityNotes,
   type CommunityNoteListContributorDeletedNotesResponse,
   type CommunityNoteListContributorNotesResponse,
   type CommunityNoteRetrieveContributorResponse,
@@ -86,6 +89,7 @@ export {
 export { Followers, type FollowerCheckResponse, type FollowerCheckParams } from './followers';
 export {
   Jobs,
+  type Job,
   type JobRetrieveResponse,
   type JobListLocationsResponse,
   type JobSearchResponse,
@@ -123,6 +127,8 @@ export {
 } from './profile';
 export {
   Spaces,
+  type Space,
+  type SpaceParticipant,
   type SpaceRetrieveResponse,
   type SpaceRetrieveReplayResponse,
   type SpaceSearchResponse,
