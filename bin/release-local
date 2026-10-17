@@ -39,8 +39,7 @@ if ((dry_run == 0)); then
     fail "NPM_KEYCHAIN_ACCOUNT is unset. Set it to the Keychain account that holds the npm token, then run bin/release-local again."
 fi
 
-work_directory="$(mktemp -d)"
-trap 'rm -rf -- "${work_directory:?}"' EXIT
+source scripts/temp-directory.sh xquik-typescript-release
 
 step "Checking the release tools"
 for tool in gh git jq node npm pnpm security; do
