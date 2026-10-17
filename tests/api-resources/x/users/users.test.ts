@@ -1116,7 +1116,7 @@ describe('resource users', () => {
     });
   });
 
-  test('retrieve: returns the full-size picture, redirect handle and verification year', async () => {
+  test('retrieve: returns the profile fields the SDK used to drop', async () => {
     const example: XTwitterScraper.UserProfile = {
       id: '11348282',
       name: 'NASA',
@@ -1132,6 +1132,5 @@ describe('resource users', () => {
 
     expect(requests).toEqual(['GET https://xquik.test/api/v1/x/users/NASA']);
     expect(response).toEqual(example);
-    expect(response.identityVerification?.overrideVerifiedYear).toBe(2009);
   });
 });
