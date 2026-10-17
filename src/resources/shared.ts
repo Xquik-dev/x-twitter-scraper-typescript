@@ -512,7 +512,7 @@ export interface EmbeddedTweet {
   /**
    * The post this one replies to, with the same fields.
    */
-  parentTweet?: { [key: string]: unknown };
+  parentTweet?: EmbeddedTweet;
 
   /**
    * Describes public place metadata on a geotagged tweet.
@@ -534,7 +534,7 @@ export interface EmbeddedTweet {
   /**
    * The post this one quotes, with the same fields.
    */
-  quoted_tweet?: { [key: string]: unknown };
+  quoted_tweet?: EmbeddedTweet;
 
   quotedTweetId?: string;
 
@@ -557,7 +557,7 @@ export interface EmbeddedTweet {
   /**
    * The post this one reposts, with the same fields.
    */
-  retweeted_tweet?: { [key: string]: unknown };
+  retweeted_tweet?: EmbeddedTweet;
 
   /**
    * Repost event time in UTC. Null when unavailable. Omitted for other posts.

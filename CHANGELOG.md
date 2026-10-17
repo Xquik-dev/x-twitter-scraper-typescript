@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### BREAKING CHANGES
+
+* Callers now pass request options as the 2nd argument to `bulkRetry`, for example `bulkRetry({}, { timeout })`.
+
 ### Features
 
 * Bulk retry can target specific accounts with `accountIds`.

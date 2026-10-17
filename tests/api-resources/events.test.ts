@@ -91,6 +91,14 @@ describe('resource events', () => {
 
   test('retrieve: returns embedded monitor post fields and legacy author fields', async () => {
     const retweeted: XTwitterScraper.Event.MonitorPost.RetweetedTweet = {
+      id: '2',
+      bookmarkCount: 0,
+      likeCount: 0,
+      quoteCount: 0,
+      replyCount: 0,
+      retweetCount: 0,
+      text: 'Just launched!',
+      viewCount: 0,
       createdAt: '2025-01-15T12:00:00Z',
       entities: { hashtags: [{ text: 'Artemis' }] },
       author: {
@@ -100,7 +108,17 @@ describe('resource events', () => {
         rawVerified: true,
         userName: 'NASA',
       },
-      parentTweet: { custom: 'preserved' },
+      parentTweet: {
+        id: '3',
+        bookmarkCount: 0,
+        likeCount: 0,
+        quoteCount: 0,
+        replyCount: 0,
+        retweetCount: 0,
+        text: 'Launch preparation',
+        viewCount: 0,
+        custom: 'preserved',
+      },
     };
     const quoted: XTwitterScraper.Event.MonitorPost.QuotedTweet = retweeted;
     const post: XTwitterScraper.EventDetail.MonitorPost = {
