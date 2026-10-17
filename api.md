@@ -6,6 +6,7 @@
 
 Types
 
+- <code><a href="./src/resources/shared.ts">Broadcast</a></code>
 - <code><a href="./src/resources/shared.ts">Community</a></code>
 - <code><a href="./src/resources/shared.ts">CommunityPage</a></code>
 - <code><a href="./src/resources/shared.ts">CommunityTopic</a></code>
@@ -410,6 +411,7 @@ Methods
 
 Types
 
+- <code><a href="./src/resources/x/jobs.ts">Job</a></code>
 - <code><a href="./src/resources/x/jobs.ts">JobRetrieveResponse</a></code>
 - <code><a href="./src/resources/x/jobs.ts">JobListLocationsResponse</a></code>
 - <code><a href="./src/resources/x/jobs.ts">JobSearchResponse</a></code>
@@ -592,20 +594,25 @@ Methods
 
 Types
 
+- <code><a href="./src/resources/x/community-notes.ts">CommunityNotesContributor</a></code>
+- <code><a href="./src/resources/x/community-notes.ts">CommunityNotesRatingOutcome</a></code>
+- <code><a href="./src/resources/x/community-notes.ts">PaginatedCommunityNotes</a></code>
 - <code><a href="./src/resources/x/community-notes.ts">CommunityNoteListContributorDeletedNotesResponse</a></code>
 - <code><a href="./src/resources/x/community-notes.ts">CommunityNoteListContributorNotesResponse</a></code>
 - <code><a href="./src/resources/x/community-notes.ts">CommunityNoteRetrieveContributorResponse</a></code>
 
 Methods
 
-- <code title="get /x/community-notes/contributors/{alias}/deleted-notes">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">listContributorDeletedNotes</a>(alias, { ...params }) -> CommunityNoteListContributorDeletedNotesResponse</code>
-- <code title="get /x/community-notes/contributors/{alias}/notes">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">listContributorNotes</a>(alias, { ...params }) -> CommunityNoteListContributorNotesResponse</code>
+- <code title="get /x/community-notes/contributors/{alias}/deleted-notes">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">listContributorDeletedNotes</a>(alias, { ...params }) -> PaginatedCommunityNotes</code>
+- <code title="get /x/community-notes/contributors/{alias}/notes">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">listContributorNotes</a>(alias, { ...params }) -> PaginatedCommunityNotes</code>
 - <code title="get /x/community-notes/contributors/{alias}">client.x.communityNotes.<a href="./src/resources/x/community-notes.ts">retrieveContributor</a>(alias, { ...params }) -> CommunityNoteRetrieveContributorResponse</code>
 
 ## Spaces
 
 Types
 
+- <code><a href="./src/resources/x/spaces.ts">Space</a></code>
+- <code><a href="./src/resources/x/spaces.ts">SpaceParticipant</a></code>
 - <code><a href="./src/resources/x/spaces.ts">SpaceRetrieveResponse</a></code>
 - <code><a href="./src/resources/x/spaces.ts">SpaceRetrieveReplayResponse</a></code>
 - <code><a href="./src/resources/x/spaces.ts">SpaceSearchResponse</a></code>
