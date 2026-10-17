@@ -1348,7 +1348,7 @@ export namespace Event {
     /**
      * Embedded post with public fields and legacy profile aliases.
      */
-    export interface QuotedTweet extends Partial<Shared.EmbeddedTweet> {
+    export interface QuotedTweet extends Omit<Shared.EmbeddedTweet, 'author'> {
       /**
        * Public profile with retained legacy monitor fields.
        */
@@ -1432,7 +1432,7 @@ export namespace Event {
     /**
      * Embedded post with public fields and legacy profile aliases.
      */
-    export interface RetweetedTweet extends Partial<Shared.EmbeddedTweet> {
+    export interface RetweetedTweet extends Omit<Shared.EmbeddedTweet, 'author'> {
       /**
        * Public profile with retained legacy monitor fields.
        */
@@ -2974,7 +2974,7 @@ export namespace EventDetail {
     /**
      * Embedded post with public fields and legacy profile aliases.
      */
-    export interface QuotedTweet extends Partial<Shared.EmbeddedTweet> {
+    export interface QuotedTweet extends Omit<Shared.EmbeddedTweet, 'author'> {
       /**
        * Public profile with retained legacy monitor fields.
        */
@@ -3058,7 +3058,7 @@ export namespace EventDetail {
     /**
      * Embedded post with public fields and legacy profile aliases.
      */
-    export interface RetweetedTweet extends Partial<Shared.EmbeddedTweet> {
+    export interface RetweetedTweet extends Omit<Shared.EmbeddedTweet, 'author'> {
       /**
        * Public profile with retained legacy monitor fields.
        */

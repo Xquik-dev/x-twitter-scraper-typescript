@@ -91,6 +91,14 @@ describe('resource events', () => {
 
   test('retrieve: returns embedded monitor post fields and legacy author fields', async () => {
     const retweeted: XTwitterScraper.Event.MonitorPost.RetweetedTweet = {
+      id: '2',
+      text: 'Artemis update',
+      bookmarkCount: 0,
+      likeCount: 0,
+      quoteCount: 0,
+      replyCount: 0,
+      retweetCount: 0,
+      viewCount: 0,
       createdAt: '2025-01-15T12:00:00Z',
       entities: { hashtags: [{ text: 'Artemis' }] },
       author: {
