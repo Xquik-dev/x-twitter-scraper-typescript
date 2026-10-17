@@ -70,7 +70,6 @@ const writeProject = (project, mode) => {
   fs.writeFileSync(path.join(project, 'index.ts'), program);
 };
 
-/** @type {Set<import('child_process').ChildProcess>} */
 const running = new Set();
 
 const compile = (compiler, project, workspace) =>
