@@ -71,16 +71,21 @@ export class Accounts extends APIResource {
   }
 
   /**
-   * Clears loginFailedAt and loginFailureReason for all accounts with transient or
-   * automated failure reasons, making them eligible for retry on next use.
+   * Clears loginFailedAt and loginFailureReason for every account with a transient
+   * or automated failure reason. Each can then retry on its next use. Name accounts
+   * in accountIds to retry only those. Needs a dashboard session, since each retry
+   * signs in to X again.
    *
    * @example
    * ```ts
    * const response = await client.x.accounts.bulkRetry();
    * ```
    */
-  bulkRetry(options?: RequestOptions): APIPromise<AccountBulkRetryResponse> {
-    return this._client.post('/x/accounts/bulk-retry', options);
+  bulkRetry(
+    body: AccountBulkRetryParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<AccountBulkRetryResponse> {
+    return this._client.post('/x/accounts/bulk-retry', { body, ...options });
   }
 
   /**
@@ -290,6 +295,15 @@ export interface AccountListParams {
   limit?: number;
 }
 
+export interface AccountBulkRetryParams {
+  /**
+   * IDs of the X accounts to retry. Accounts that failed for another reason, or
+   * belong to someone else, stay as they are. Accepts 1 to 1,000 IDs. Omit accountIds
+   * to retry every account with a transient or automated failure.
+   */
+  accountIds?: Array<string>;
+}
+
 export interface AccountReauthParams {
   /**
    * Updated account password
@@ -318,6 +332,7 @@ export declare namespace Accounts {
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
     type AccountListParams as AccountListParams,
+    type AccountBulkRetryParams as AccountBulkRetryParams,
     type AccountReauthParams as AccountReauthParams,
   };
 }

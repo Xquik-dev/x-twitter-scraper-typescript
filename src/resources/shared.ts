@@ -360,9 +360,258 @@ export interface EmbeddedTweet {
   viewCount: number;
 
   /**
+   * Describes an X Article preview and its lifecycle metadata.
+   */
+  article?: SearchTweet.Article;
+
+  /**
    * Public X profile.
    */
   author?: UserProfile;
+
+  /**
+   * Why the tweet has no author. X serves a suspended or deleted account as an
+   * unavailable user with a reason such as Suspended or NotFound. Omitted when the
+   * author is available.
+   */
+  authorUnavailable?: SearchTweet.AuthorUnavailable;
+
+  /**
+   * Describes a public card and its referenced profiles.
+   */
+  card?: SearchTweet.Card;
+
+  /**
+   * Price charts the author attached under the post, 1 per cashtag. Absent when the
+   * post has none. X may send a cashtag without a chart window.
+   */
+  cashtagAttachments?: Array<SearchTweet.CashtagAttachment>;
+
+  /**
+   * Community ID.
+   */
+  communityId?: string;
+
+  /**
+   * Community name. Present when X sends it with the post.
+   */
+  communityName?: string;
+
+  /**
+   * Community Note presentation metadata returned by X.
+   */
+  communityNote?: SearchTweet.CommunityNote;
+
+  /**
+   * Content disclosure metadata shown by X when a tweet is labeled as paid
+   * partnership content or AI-generated media.
+   */
+  contentDisclosure?: ContentDisclosure;
+
+  /**
+   * Reply policy & conversation owner.
+   */
+  conversationControl?: SearchTweet.ConversationControl;
+
+  conversationId?: string;
+
+  /**
+   * Author-published point, with longitude before latitude.
+   */
+  coordinates?: SearchTweet.Coordinates;
+
+  createdAt?: string;
+
+  displayTextRange?: Array<number>;
+
+  /**
+   * Lists edit-chain identifiers and the remaining edit window.
+   */
+  edit?: SearchTweet.Edit;
+
+  /**
+   * Lists hashtags, symbols, links, and mentions from tweet text.
+   */
+  entities?: SearchTweet.Entities;
+
+  /**
+   * Marks a subscriber-only post with the creator whose subscription unlocks it.
+   * Non-subscribers get the preview text & the subscribe link. Omitted on public
+   * posts.
+   */
+  exclusiveContent?: SearchTweet.ExclusiveContent;
+
+  /**
+   * Author-published point, with latitude before longitude.
+   */
+  geo?: SearchTweet.Geo;
+
+  /**
+   * Public metadata whose fields are defined by X.
+   */
+  grokShareAttachment?: { [key: string]: unknown };
+
+  /**
+   * Grok's translation of the post, as X shows it.
+   */
+  grokTranslatedPost?: { [key: string]: unknown };
+
+  /**
+   * Whether X holds Community Notes on the post, shown or not.
+   */
+  hasCommunityNotes?: boolean;
+
+  inReplyToId?: string;
+
+  inReplyToUserId?: string;
+
+  inReplyToUsername?: string;
+
+  /**
+   * The notice x.com covers the post with until the reader views it, such as X's
+   * public interest notice on a post that broke its rules but stays up.
+   */
+  interstitial?: SearchTweet.Interstitial;
+
+  isLimitedReply?: boolean;
+
+  isNoteTweet?: boolean;
+
+  isPinned?: boolean;
+
+  isQuoteStatus?: boolean;
+
+  isReply?: boolean;
+
+  isRetweet?: boolean;
+
+  isTranslatable?: boolean;
+
+  /**
+   * Public metadata whose fields are defined by X.
+   */
+  jetfuelAttachment?: { [key: string]: unknown };
+
+  lang?: string;
+
+  /**
+   * Public restrictions & prompts.
+   */
+  limitedActions?: Array<SearchTweet.LimitedAction>;
+
+  /**
+   * Media, omitted when unavailable.
+   */
+  media?: Array<TweetMedia>;
+
+  /**
+   * Complete Note Tweet content and rich-text metadata.
+   */
+  noteTweet?: SearchTweet.NoteTweet;
+
+  /**
+   * The post this one replies to, with the same fields.
+   */
+  parentTweet?: EmbeddedTweet;
+
+  /**
+   * Describes public place metadata on a geotagged tweet.
+   */
+  place?: SearchTweet.Place;
+
+  possiblySensitive?: boolean;
+
+  /**
+   * Public metadata whose fields are defined by X.
+   */
+  postCta?: { [key: string]: unknown };
+
+  /**
+   * Engagement counts retained from a prior tweet edit.
+   */
+  previousCounts?: SearchTweet.PreviousCounts;
+
+  /**
+   * The post this one quotes, with the same fields.
+   */
+  quoted_tweet?: EmbeddedTweet;
+
+  quotedTweetId?: string;
+
+  /**
+   * The quoted post's link, kept when X withholds that post.
+   */
+  quotedTweetPermalink?: SearchTweet.QuotedTweetPermalink;
+
+  /**
+   * Why X shows no quoted post. Omitted when X names no reason, as its legacy
+   * answers never do.
+   */
+  quotedTweetUnavailable?: SearchTweet.QuotedTweetUnavailable;
+
+  /**
+   * Public post & user this reaction references.
+   */
+  reactionContext?: SearchTweet.ReactionContext;
+
+  /**
+   * The post this one reposts, with the same fields.
+   */
+  retweeted_tweet?: EmbeddedTweet;
+
+  /**
+   * Repost event time in UTC. Null when unavailable. Omitted for other posts.
+   */
+  retweetedAt?: string | null;
+
+  /**
+   * Public metadata whose fields are defined by X.
+   */
+  scopes?: { [key: string]: unknown };
+
+  /**
+   * The app the post was sent from, as X labels it. X sends it for some posts only.
+   */
+  source?: string;
+
+  /**
+   * Game metadata attached to this post.
+   */
+  sportsContext?: SearchTweet.SportsContext;
+
+  /**
+   * The Subscriber badge X shows on a reply. The reply's author subscribes to the
+   * creator who started the conversation. Omitted on a post without the badge.
+   */
+  subscriberBadge?: SearchTweet.SubscriberBadge;
+
+  /**
+   * Where `text` matches the search, on each row a search read. Offsets count code
+   * points of `text`, as `displayTextRange` does. Empty when X marks nothing in the
+   * post. X marks matches only in a post's first 280 characters.
+   */
+  textHighlights?: Array<SearchTweet.TextHighlight>;
+
+  /**
+   * Public visibility notice attached to an available tweet.
+   */
+  tombstone?: SearchTweet.Tombstone;
+
+  type?: string;
+
+  /**
+   * The author's ID when X withholds the author's profile.
+   */
+  unavailableAuthorId?: string;
+
+  /**
+   * User IDs that left this conversation.
+   */
+  unmentionedUserIds?: Array<string>;
+
+  url?: string;
+
+  viewState?: string;
 
   [k: string]: unknown;
 }

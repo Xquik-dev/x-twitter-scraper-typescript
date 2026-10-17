@@ -17,6 +17,7 @@ import {
 } from './account-connection-challenges';
 import * as AccountsAPI from './accounts';
 import {
+  AccountBulkRetryParams,
   AccountBulkRetryResponse,
   AccountCreateParams,
   AccountCreateResponse,
@@ -2074,6 +2075,7 @@ export declare namespace X {
     type AccountReauthResponse as AccountReauthResponse,
     type AccountCreateParams as AccountCreateParams,
     type AccountListParams as AccountListParams,
+    type AccountBulkRetryParams as AccountBulkRetryParams,
     type AccountReauthParams as AccountReauthParams,
   };
 

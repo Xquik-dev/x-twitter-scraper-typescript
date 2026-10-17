@@ -2,8 +2,14 @@
 
 ## Unreleased
 
+### BREAKING CHANGES
+
+* Callers now pass request options as the 2nd argument to `bulkRetry`, for example `bulkRetry({}, { timeout })`.
+
 ### Features
 
+* Bulk retry can target specific accounts with `accountIds`.
+* Embedded parent, quoted and retweeted posts carry every tweet field and the author.
 * User identity verification adds optional `overrideVerifiedYear`, the year X shows as the start of verification in place of `verifiedSinceMsec`.
 
 ## 0.16.0 (2026-10-15)
