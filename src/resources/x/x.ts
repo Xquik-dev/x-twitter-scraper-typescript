@@ -63,6 +63,9 @@ import {
   CommunityNoteRetrieveContributorParams,
   CommunityNoteRetrieveContributorResponse,
   CommunityNotes,
+  CommunityNotesContributor,
+  CommunityNotesRatingOutcome,
+  PaginatedCommunityNotes,
 } from './community-notes';
 import * as DmAPI from './dm';
 import {
@@ -78,6 +81,7 @@ import * as FollowersAPI from './followers';
 import { FollowerCheckParams, FollowerCheckResponse, Followers } from './followers';
 import * as JobsAPI from './jobs';
 import {
+  Job,
   JobListLocationsParams,
   JobListLocationsResponse,
   JobRetrieveParams,
@@ -119,6 +123,8 @@ import {
 } from './profile';
 import * as SpacesAPI from './spaces';
 import {
+  Space,
+  SpaceParticipant,
   SpaceRetrieveParams,
   SpaceRetrieveReplayParams,
   SpaceRetrieveReplayResponse,
@@ -2007,6 +2013,7 @@ export declare namespace X {
 
   export {
     Jobs as Jobs,
+    type Job as Job,
     type JobRetrieveResponse as JobRetrieveResponse,
     type JobListLocationsResponse as JobListLocationsResponse,
     type JobSearchResponse as JobSearchResponse,
@@ -2116,6 +2123,9 @@ export declare namespace X {
 
   export {
     CommunityNotes as CommunityNotes,
+    type CommunityNotesContributor as CommunityNotesContributor,
+    type CommunityNotesRatingOutcome as CommunityNotesRatingOutcome,
+    type PaginatedCommunityNotes as PaginatedCommunityNotes,
     type CommunityNoteListContributorDeletedNotesResponse as CommunityNoteListContributorDeletedNotesResponse,
     type CommunityNoteListContributorNotesResponse as CommunityNoteListContributorNotesResponse,
     type CommunityNoteRetrieveContributorResponse as CommunityNoteRetrieveContributorResponse,
@@ -2126,6 +2136,8 @@ export declare namespace X {
 
   export {
     Spaces as Spaces,
+    type Space as Space,
+    type SpaceParticipant as SpaceParticipant,
     type SpaceRetrieveResponse as SpaceRetrieveResponse,
     type SpaceRetrieveReplayResponse as SpaceRetrieveReplayResponse,
     type SpaceSearchResponse as SpaceSearchResponse,

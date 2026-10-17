@@ -4,6 +4,7 @@
 
 import { APIResource } from '../../core/resource';
 import * as Shared from '../shared';
+import * as SpacesAPI from './spaces';
 import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
@@ -67,149 +68,177 @@ export class Spaces extends APIResource {
   }
 }
 
-export interface SpaceRetrieveResponse {
+/**
+ * X Space
+ */
+export interface Space {
   /**
-   * X Space
+   * Space ID
    */
-  space: SpaceRetrieveResponse.Space;
+  id: string;
+
+  /**
+   * Hosts and co-hosts
+   */
+  admins: Array<SpaceParticipant>;
+
+  /**
+   * Accounts X lists as listeners
+   */
+  listeners: Array<SpaceParticipant>;
+
+  /**
+   * Accounts X lists as speakers
+   */
+  speakers: Array<SpaceParticipant>;
+
+  /**
+   * Audio or video kind, as X names it
+   */
+  contentType?: string;
+
+  /**
+   * X's code for who may speak
+   */
+  conversationControls?: number;
+
+  /**
+   * When the Space was made
+   */
+  createdAt?: string;
+
+  /**
+   * Public X profile.
+   */
+  creator?: Shared.UserProfile;
+
+  /**
+   * Whether X lets no more accounts join
+   */
+  disallowJoin?: boolean;
+
+  /**
+   * When the Space ended
+   */
+  endedAt?: string;
+
+  /**
+   * Whether listeners may clip the Space
+   */
+  isAvailableForClipping?: boolean;
+
+  /**
+   * Whether X offers a recording
+   */
+  isAvailableForReplay?: boolean;
+
+  /**
+   * Whether only X employees may join
+   */
+  isEmployeeOnly?: boolean;
+
+  /**
+   * Whether the host locked the Space
+   */
+  isLocked?: boolean;
+
+  /**
+   * Most hosts and co-hosts the Space allows
+   */
+  maxAdminCapacity?: number;
+
+  /**
+   * X's media key for the Space's audio
+   */
+  mediaKey?: string;
+
+  /**
+   * IDs of the accounts the host tagged
+   */
+  mentionedUserIds?: Array<string>;
+
+  /**
+   * Whether anonymous listening is off
+   */
+  noIncognito?: boolean;
+
+  /**
+   * Accounts in the Space now, while it is live
+   */
+  participantCount?: number;
+
+  /**
+   * When the Space was set to start
+   */
+  scheduledStart?: string;
+
+  /**
+   * Posts the hosts and speakers shared in the Space, in X's order. Only when X
+   * lists them.
+   */
+  sharings?: Array<Space.Sharing>;
+
+  /**
+   * When the Space went live
+   */
+  startedAt?: string;
+
+  /**
+   * NotStarted (scheduled), Running (live), Ended, Canceled (scheduled, never
+   * started) or TimedOut (closed by X, not by its host)
+   */
+  state?: string;
+
+  /**
+   * Space title
+   */
+  title?: string;
+
+  /**
+   * Accounts that listened live
+   */
+  totalLiveListeners?: number;
+
+  /**
+   * Accounts that played the recording
+   */
+  totalReplayWatched?: number;
+
+  /**
+   * Search tweet with author. Zero metrics may mean X omitted counts.
+   */
+  tweet?: Shared.SearchTweet;
+
+  /**
+   * ID of the post that announces the Space
+   */
+  tweetId?: string;
+
+  /**
+   * When X last changed the Space
+   */
+  updatedAt?: string;
 }
 
-export namespace SpaceRetrieveResponse {
+export namespace Space {
   /**
-   * X Space
+   * A post shared in a Space, & the account that shared it.
    */
-  export interface Space {
+  export interface Sharing {
     /**
-     * Space ID
+     * X's ID of the sharing, not of the post
      */
-    id: string;
+    id?: string;
 
     /**
-     * Hosts and co-hosts
+     * When the post was shared
      */
-    admins: Array<Space.Admin>;
-
-    /**
-     * Accounts X lists as listeners
-     */
-    listeners: Array<Space.Listener>;
-
-    /**
-     * Accounts X lists as speakers
-     */
-    speakers: Array<Space.Speaker>;
-
-    /**
-     * Audio or video kind, as X names it
-     */
-    contentType?: string;
-
-    /**
-     * X's code for who may speak
-     */
-    conversationControls?: number;
-
-    /**
-     * When the Space was made
-     */
-    createdAt?: string;
+    sharedAt?: string;
 
     /**
      * Public X profile.
      */
-    creator?: Shared.UserProfile;
-
-    /**
-     * Whether X lets no more accounts join
-     */
-    disallowJoin?: boolean;
-
-    /**
-     * When the Space ended
-     */
-    endedAt?: string;
-
-    /**
-     * Whether listeners may clip the Space
-     */
-    isAvailableForClipping?: boolean;
-
-    /**
-     * Whether X offers a recording
-     */
-    isAvailableForReplay?: boolean;
-
-    /**
-     * Whether only X employees may join
-     */
-    isEmployeeOnly?: boolean;
-
-    /**
-     * Whether the host locked the Space
-     */
-    isLocked?: boolean;
-
-    /**
-     * Most hosts and co-hosts the Space allows
-     */
-    maxAdminCapacity?: number;
-
-    /**
-     * X's media key for the Space's audio
-     */
-    mediaKey?: string;
-
-    /**
-     * IDs of the accounts the host tagged
-     */
-    mentionedUserIds?: Array<string>;
-
-    /**
-     * Whether anonymous listening is off
-     */
-    noIncognito?: boolean;
-
-    /**
-     * Accounts in the Space now, while it is live
-     */
-    participantCount?: number;
-
-    /**
-     * When the Space was set to start
-     */
-    scheduledStart?: string;
-
-    /**
-     * Posts the hosts and speakers shared in the Space, in X's order. Only when X
-     * lists them.
-     */
-    sharings?: Array<Space.Sharing>;
-
-    /**
-     * When the Space went live
-     */
-    startedAt?: string;
-
-    /**
-     * NotStarted (scheduled), Running (live), Ended, Canceled (scheduled, never
-     * started) or TimedOut (closed by X, not by its host)
-     */
-    state?: string;
-
-    /**
-     * Space title
-     */
-    title?: string;
-
-    /**
-     * Accounts that listened live
-     */
-    totalLiveListeners?: number;
-
-    /**
-     * Accounts that played the recording
-     */
-    totalReplayWatched?: number;
+    sharedBy?: Shared.UserProfile;
 
     /**
      * Search tweet with author. Zero metrics may mean X omitted counts.
@@ -217,310 +246,130 @@ export namespace SpaceRetrieveResponse {
     tweet?: Shared.SearchTweet;
 
     /**
-     * ID of the post that announces the Space
-     */
-    tweetId?: string;
-
-    /**
-     * When X last changed the Space
+     * When X last changed the sharing
      */
     updatedAt?: string;
   }
+}
+
+/**
+ * An account on a Space's stage or in its audience, as X lists it there.
+ */
+export interface SpaceParticipant {
+  id: string;
+
+  /**
+   * Name the account shows in the Space
+   */
+  name: string;
+
+  username: string;
+
+  /**
+   * Organization affiliation label shown on an X profile.
+   */
+  affiliatesHighlightedLabel?: SpaceParticipant.AffiliatesHighlightedLabel;
+
+  /**
+   * Whether the account has X Premium verification
+   */
+  isBlueVerified?: boolean;
+
+  /**
+   * Whether a host muted the account
+   */
+  isMutedByAdmin?: boolean;
+
+  /**
+   * Whether the account muted itself
+   */
+  isMutedByGuest?: boolean;
+
+  /**
+   * Whether X shows a verified badge in the Space
+   */
+  isVerified?: boolean;
+
+  /**
+   * When the account joined the Space
+   */
+  joinedAt?: string;
+
+  /**
+   * The account's ID in X's broadcast service
+   */
+  periscopeUserId?: string;
+
+  /**
+   * Profile picture URL
+   */
+  profilePicture?: string;
+
+  /**
+   * The participant's profile picture at full size
+   */
+  profilePictureOriginal?: string;
+
+  /**
+   * Business or Government badge type
+   */
+  verifiedType?: string;
+}
+
+export namespace SpaceParticipant {
+  /**
+   * Organization affiliation label shown on an X profile.
+   */
+  export interface AffiliatesHighlightedLabel {
+    badgeUrl?: string;
+
+    description?: string;
+
+    /**
+     * Public text, ranges, references, and mention data.
+     */
+    longDescription?: { [key: string]: unknown };
+
+    url?: string;
+
+    urlType?: string;
+
+    userLabelDisplayType?: string;
+
+    userLabelType?: string;
+  }
+}
+
+export interface SpaceRetrieveResponse {
+  /**
+   * X Space
+   */
+  space: Space;
+}
+
+export namespace SpaceRetrieveResponse {
+  export type Space = SpacesAPI.Space;
 
   export namespace Space {
-    /**
-     * An account on a Space's stage or in its audience, as X lists it there.
-     */
-    export interface Admin {
-      id: string;
-
-      /**
-       * Name the account shows in the Space
-       */
-      name: string;
-
-      username: string;
-
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      affiliatesHighlightedLabel?: Admin.AffiliatesHighlightedLabel;
-
-      /**
-       * Whether the account has X Premium verification
-       */
-      isBlueVerified?: boolean;
-
-      /**
-       * Whether a host muted the account
-       */
-      isMutedByAdmin?: boolean;
-
-      /**
-       * Whether the account muted itself
-       */
-      isMutedByGuest?: boolean;
-
-      /**
-       * Whether X shows a verified badge in the Space
-       */
-      isVerified?: boolean;
-
-      /**
-       * When the account joined the Space
-       */
-      joinedAt?: string;
-
-      /**
-       * The account's ID in X's broadcast service
-       */
-      periscopeUserId?: string;
-
-      /**
-       * Profile picture URL
-       */
-      profilePicture?: string;
-
-      /**
-       * The participant's profile picture at full size
-       */
-      profilePictureOriginal?: string;
-
-      /**
-       * Business or Government badge type
-       */
-      verifiedType?: string;
-    }
+    export type Admin = SpacesAPI.SpaceParticipant;
 
     export namespace Admin {
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      export interface AffiliatesHighlightedLabel {
-        badgeUrl?: string;
-
-        description?: string;
-
-        /**
-         * Public text, ranges, references, and mention data.
-         */
-        longDescription?: { [key: string]: unknown };
-
-        url?: string;
-
-        urlType?: string;
-
-        userLabelDisplayType?: string;
-
-        userLabelType?: string;
-      }
+      export type AffiliatesHighlightedLabel = SpacesAPI.SpaceParticipant.AffiliatesHighlightedLabel;
     }
 
-    /**
-     * An account on a Space's stage or in its audience, as X lists it there.
-     */
-    export interface Listener {
-      id: string;
-
-      /**
-       * Name the account shows in the Space
-       */
-      name: string;
-
-      username: string;
-
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      affiliatesHighlightedLabel?: Listener.AffiliatesHighlightedLabel;
-
-      /**
-       * Whether the account has X Premium verification
-       */
-      isBlueVerified?: boolean;
-
-      /**
-       * Whether a host muted the account
-       */
-      isMutedByAdmin?: boolean;
-
-      /**
-       * Whether the account muted itself
-       */
-      isMutedByGuest?: boolean;
-
-      /**
-       * Whether X shows a verified badge in the Space
-       */
-      isVerified?: boolean;
-
-      /**
-       * When the account joined the Space
-       */
-      joinedAt?: string;
-
-      /**
-       * The account's ID in X's broadcast service
-       */
-      periscopeUserId?: string;
-
-      /**
-       * Profile picture URL
-       */
-      profilePicture?: string;
-
-      /**
-       * The participant's profile picture at full size
-       */
-      profilePictureOriginal?: string;
-
-      /**
-       * Business or Government badge type
-       */
-      verifiedType?: string;
-    }
+    export type Listener = SpacesAPI.SpaceParticipant;
 
     export namespace Listener {
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      export interface AffiliatesHighlightedLabel {
-        badgeUrl?: string;
-
-        description?: string;
-
-        /**
-         * Public text, ranges, references, and mention data.
-         */
-        longDescription?: { [key: string]: unknown };
-
-        url?: string;
-
-        urlType?: string;
-
-        userLabelDisplayType?: string;
-
-        userLabelType?: string;
-      }
+      export type AffiliatesHighlightedLabel = SpacesAPI.SpaceParticipant.AffiliatesHighlightedLabel;
     }
 
-    /**
-     * An account on a Space's stage or in its audience, as X lists it there.
-     */
-    export interface Speaker {
-      id: string;
-
-      /**
-       * Name the account shows in the Space
-       */
-      name: string;
-
-      username: string;
-
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      affiliatesHighlightedLabel?: Speaker.AffiliatesHighlightedLabel;
-
-      /**
-       * Whether the account has X Premium verification
-       */
-      isBlueVerified?: boolean;
-
-      /**
-       * Whether a host muted the account
-       */
-      isMutedByAdmin?: boolean;
-
-      /**
-       * Whether the account muted itself
-       */
-      isMutedByGuest?: boolean;
-
-      /**
-       * Whether X shows a verified badge in the Space
-       */
-      isVerified?: boolean;
-
-      /**
-       * When the account joined the Space
-       */
-      joinedAt?: string;
-
-      /**
-       * The account's ID in X's broadcast service
-       */
-      periscopeUserId?: string;
-
-      /**
-       * Profile picture URL
-       */
-      profilePicture?: string;
-
-      /**
-       * The participant's profile picture at full size
-       */
-      profilePictureOriginal?: string;
-
-      /**
-       * Business or Government badge type
-       */
-      verifiedType?: string;
-    }
+    export type Speaker = SpacesAPI.SpaceParticipant;
 
     export namespace Speaker {
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      export interface AffiliatesHighlightedLabel {
-        badgeUrl?: string;
-
-        description?: string;
-
-        /**
-         * Public text, ranges, references, and mention data.
-         */
-        longDescription?: { [key: string]: unknown };
-
-        url?: string;
-
-        urlType?: string;
-
-        userLabelDisplayType?: string;
-
-        userLabelType?: string;
-      }
+      export type AffiliatesHighlightedLabel = SpacesAPI.SpaceParticipant.AffiliatesHighlightedLabel;
     }
 
-    /**
-     * A post shared in a Space, & the account that shared it.
-     */
-    export interface Sharing {
-      /**
-       * X's ID of the sharing, not of the post
-       */
-      id?: string;
-
-      /**
-       * When the post was shared
-       */
-      sharedAt?: string;
-
-      /**
-       * Public X profile.
-       */
-      sharedBy?: Shared.UserProfile;
-
-      /**
-       * Search tweet with author. Zero metrics may mean X omitted counts.
-       */
-      tweet?: Shared.SearchTweet;
-
-      /**
-       * When X last changed the sharing
-       */
-      updatedAt?: string;
-    }
+    export type Sharing = SpacesAPI.Space.Sharing;
   }
 }
 
@@ -561,456 +410,32 @@ export interface SpaceSearchResponse {
   /**
    * Public Spaces, in the order the posts share them
    */
-  spaces: Array<SpaceSearchResponse.Space>;
+  spaces: Array<Space>;
 }
 
 export namespace SpaceSearchResponse {
-  /**
-   * X Space
-   */
-  export interface Space {
-    /**
-     * Space ID
-     */
-    id: string;
-
-    /**
-     * Hosts and co-hosts
-     */
-    admins: Array<Space.Admin>;
-
-    /**
-     * Accounts X lists as listeners
-     */
-    listeners: Array<Space.Listener>;
-
-    /**
-     * Accounts X lists as speakers
-     */
-    speakers: Array<Space.Speaker>;
-
-    /**
-     * Audio or video kind, as X names it
-     */
-    contentType?: string;
-
-    /**
-     * X's code for who may speak
-     */
-    conversationControls?: number;
-
-    /**
-     * When the Space was made
-     */
-    createdAt?: string;
-
-    /**
-     * Public X profile.
-     */
-    creator?: Shared.UserProfile;
-
-    /**
-     * Whether X lets no more accounts join
-     */
-    disallowJoin?: boolean;
-
-    /**
-     * When the Space ended
-     */
-    endedAt?: string;
-
-    /**
-     * Whether listeners may clip the Space
-     */
-    isAvailableForClipping?: boolean;
-
-    /**
-     * Whether X offers a recording
-     */
-    isAvailableForReplay?: boolean;
-
-    /**
-     * Whether only X employees may join
-     */
-    isEmployeeOnly?: boolean;
-
-    /**
-     * Whether the host locked the Space
-     */
-    isLocked?: boolean;
-
-    /**
-     * Most hosts and co-hosts the Space allows
-     */
-    maxAdminCapacity?: number;
-
-    /**
-     * X's media key for the Space's audio
-     */
-    mediaKey?: string;
-
-    /**
-     * IDs of the accounts the host tagged
-     */
-    mentionedUserIds?: Array<string>;
-
-    /**
-     * Whether anonymous listening is off
-     */
-    noIncognito?: boolean;
-
-    /**
-     * Accounts in the Space now, while it is live
-     */
-    participantCount?: number;
-
-    /**
-     * When the Space was set to start
-     */
-    scheduledStart?: string;
-
-    /**
-     * Posts the hosts and speakers shared in the Space, in X's order. Only when X
-     * lists them.
-     */
-    sharings?: Array<Space.Sharing>;
-
-    /**
-     * When the Space went live
-     */
-    startedAt?: string;
-
-    /**
-     * NotStarted (scheduled), Running (live), Ended, Canceled (scheduled, never
-     * started) or TimedOut (closed by X, not by its host)
-     */
-    state?: string;
-
-    /**
-     * Space title
-     */
-    title?: string;
-
-    /**
-     * Accounts that listened live
-     */
-    totalLiveListeners?: number;
-
-    /**
-     * Accounts that played the recording
-     */
-    totalReplayWatched?: number;
-
-    /**
-     * Search tweet with author. Zero metrics may mean X omitted counts.
-     */
-    tweet?: Shared.SearchTweet;
-
-    /**
-     * ID of the post that announces the Space
-     */
-    tweetId?: string;
-
-    /**
-     * When X last changed the Space
-     */
-    updatedAt?: string;
-  }
+  export type Space = SpacesAPI.Space;
 
   export namespace Space {
-    /**
-     * An account on a Space's stage or in its audience, as X lists it there.
-     */
-    export interface Admin {
-      id: string;
-
-      /**
-       * Name the account shows in the Space
-       */
-      name: string;
-
-      username: string;
-
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      affiliatesHighlightedLabel?: Admin.AffiliatesHighlightedLabel;
-
-      /**
-       * Whether the account has X Premium verification
-       */
-      isBlueVerified?: boolean;
-
-      /**
-       * Whether a host muted the account
-       */
-      isMutedByAdmin?: boolean;
-
-      /**
-       * Whether the account muted itself
-       */
-      isMutedByGuest?: boolean;
-
-      /**
-       * Whether X shows a verified badge in the Space
-       */
-      isVerified?: boolean;
-
-      /**
-       * When the account joined the Space
-       */
-      joinedAt?: string;
-
-      /**
-       * The account's ID in X's broadcast service
-       */
-      periscopeUserId?: string;
-
-      /**
-       * Profile picture URL
-       */
-      profilePicture?: string;
-
-      /**
-       * The participant's profile picture at full size
-       */
-      profilePictureOriginal?: string;
-
-      /**
-       * Business or Government badge type
-       */
-      verifiedType?: string;
-    }
+    export type Admin = SpacesAPI.SpaceParticipant;
 
     export namespace Admin {
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      export interface AffiliatesHighlightedLabel {
-        badgeUrl?: string;
-
-        description?: string;
-
-        /**
-         * Public text, ranges, references, and mention data.
-         */
-        longDescription?: { [key: string]: unknown };
-
-        url?: string;
-
-        urlType?: string;
-
-        userLabelDisplayType?: string;
-
-        userLabelType?: string;
-      }
+      export type AffiliatesHighlightedLabel = SpacesAPI.SpaceParticipant.AffiliatesHighlightedLabel;
     }
 
-    /**
-     * An account on a Space's stage or in its audience, as X lists it there.
-     */
-    export interface Listener {
-      id: string;
-
-      /**
-       * Name the account shows in the Space
-       */
-      name: string;
-
-      username: string;
-
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      affiliatesHighlightedLabel?: Listener.AffiliatesHighlightedLabel;
-
-      /**
-       * Whether the account has X Premium verification
-       */
-      isBlueVerified?: boolean;
-
-      /**
-       * Whether a host muted the account
-       */
-      isMutedByAdmin?: boolean;
-
-      /**
-       * Whether the account muted itself
-       */
-      isMutedByGuest?: boolean;
-
-      /**
-       * Whether X shows a verified badge in the Space
-       */
-      isVerified?: boolean;
-
-      /**
-       * When the account joined the Space
-       */
-      joinedAt?: string;
-
-      /**
-       * The account's ID in X's broadcast service
-       */
-      periscopeUserId?: string;
-
-      /**
-       * Profile picture URL
-       */
-      profilePicture?: string;
-
-      /**
-       * The participant's profile picture at full size
-       */
-      profilePictureOriginal?: string;
-
-      /**
-       * Business or Government badge type
-       */
-      verifiedType?: string;
-    }
+    export type Listener = SpacesAPI.SpaceParticipant;
 
     export namespace Listener {
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      export interface AffiliatesHighlightedLabel {
-        badgeUrl?: string;
-
-        description?: string;
-
-        /**
-         * Public text, ranges, references, and mention data.
-         */
-        longDescription?: { [key: string]: unknown };
-
-        url?: string;
-
-        urlType?: string;
-
-        userLabelDisplayType?: string;
-
-        userLabelType?: string;
-      }
+      export type AffiliatesHighlightedLabel = SpacesAPI.SpaceParticipant.AffiliatesHighlightedLabel;
     }
 
-    /**
-     * An account on a Space's stage or in its audience, as X lists it there.
-     */
-    export interface Speaker {
-      id: string;
-
-      /**
-       * Name the account shows in the Space
-       */
-      name: string;
-
-      username: string;
-
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      affiliatesHighlightedLabel?: Speaker.AffiliatesHighlightedLabel;
-
-      /**
-       * Whether the account has X Premium verification
-       */
-      isBlueVerified?: boolean;
-
-      /**
-       * Whether a host muted the account
-       */
-      isMutedByAdmin?: boolean;
-
-      /**
-       * Whether the account muted itself
-       */
-      isMutedByGuest?: boolean;
-
-      /**
-       * Whether X shows a verified badge in the Space
-       */
-      isVerified?: boolean;
-
-      /**
-       * When the account joined the Space
-       */
-      joinedAt?: string;
-
-      /**
-       * The account's ID in X's broadcast service
-       */
-      periscopeUserId?: string;
-
-      /**
-       * Profile picture URL
-       */
-      profilePicture?: string;
-
-      /**
-       * The participant's profile picture at full size
-       */
-      profilePictureOriginal?: string;
-
-      /**
-       * Business or Government badge type
-       */
-      verifiedType?: string;
-    }
+    export type Speaker = SpacesAPI.SpaceParticipant;
 
     export namespace Speaker {
-      /**
-       * Organization affiliation label shown on an X profile.
-       */
-      export interface AffiliatesHighlightedLabel {
-        badgeUrl?: string;
-
-        description?: string;
-
-        /**
-         * Public text, ranges, references, and mention data.
-         */
-        longDescription?: { [key: string]: unknown };
-
-        url?: string;
-
-        urlType?: string;
-
-        userLabelDisplayType?: string;
-
-        userLabelType?: string;
-      }
+      export type AffiliatesHighlightedLabel = SpacesAPI.SpaceParticipant.AffiliatesHighlightedLabel;
     }
 
-    /**
-     * A post shared in a Space, & the account that shared it.
-     */
-    export interface Sharing {
-      /**
-       * X's ID of the sharing, not of the post
-       */
-      id?: string;
-
-      /**
-       * When the post was shared
-       */
-      sharedAt?: string;
-
-      /**
-       * Public X profile.
-       */
-      sharedBy?: Shared.UserProfile;
-
-      /**
-       * Search tweet with author. Zero metrics may mean X omitted counts.
-       */
-      tweet?: Shared.SearchTweet;
-
-      /**
-       * When X last changed the sharing
-       */
-      updatedAt?: string;
-    }
+    export type Sharing = SpacesAPI.Space.Sharing;
   }
 }
 
@@ -1099,6 +524,8 @@ export interface SpaceSearchParams {
 
 export declare namespace Spaces {
   export {
+    type Space as Space,
+    type SpaceParticipant as SpaceParticipant,
     type SpaceRetrieveResponse as SpaceRetrieveResponse,
     type SpaceRetrieveReplayResponse as SpaceRetrieveReplayResponse,
     type SpaceSearchResponse as SpaceSearchResponse,
