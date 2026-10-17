@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Features
+
+* User identity verification adds optional `overrideVerifiedYear`, the year X shows as the start of verification in place of `verifiedSinceMsec`.
+
 ## 0.16.0 (2026-10-15)
 
 [Full changelog from v0.15.0 to v0.16.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.15.0...v0.16.0)
