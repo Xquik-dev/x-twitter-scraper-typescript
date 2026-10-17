@@ -89,6 +89,56 @@ describe('resource events', () => {
     expect(response).toEqual(example);
   });
 
+  test('retrieve: returns embedded monitor post fields and legacy author fields', async () => {
+    const retweeted: XTwitterScraper.Event.MonitorPost.RetweetedTweet = {
+      createdAt: '2025-01-15T12:00:00Z',
+      entities: { hashtags: [{ text: 'Artemis' }] },
+      author: {
+        id: '11348282',
+        name: 'NASA',
+        username: 'NASA',
+        rawVerified: true,
+        userName: 'NASA',
+      },
+      parentTweet: { custom: 'preserved' },
+    };
+    const quoted: XTwitterScraper.Event.MonitorPost.QuotedTweet = retweeted;
+    const post: XTwitterScraper.EventDetail.MonitorPost = {
+      id: '1',
+      bookmarkCount: 0,
+      likeCount: 0,
+      quoteCount: 0,
+      replyCount: 0,
+      retweetCount: 0,
+      text: 'Launch update',
+      viewCount: 0,
+      quoted_tweet: quoted,
+      retweeted_tweet: retweeted,
+    };
+    const example: XTwitterScraper.EventDetail = {
+      id: '42',
+      type: 'tweet.new',
+      username: 'NASA',
+      monitorId: '7',
+      monitorType: 'account',
+      occurredAt: '2025-01-15T12:00:00Z',
+      data: post,
+    };
+    const { client: fixture } = fixtureClient(example);
+
+    const response: XTwitterScraper.EventDetail = await fixture.events.retrieve('42');
+    const data = response.data as XTwitterScraper.EventDetail.MonitorPost;
+    const createdAt: string | undefined = data.retweeted_tweet?.createdAt;
+
+    expect(response).toEqual(example);
+    expect(createdAt).toBe('2025-01-15T12:00:00Z');
+    expect(data.retweeted_tweet?.entities?.hashtags?.[0]?.text).toBe('Artemis');
+    expect(data.retweeted_tweet?.author?.userName).toBe('NASA');
+    expect(data.retweeted_tweet?.parentTweet?.['custom']).toBe('preserved');
+    expect(data.quoted_tweet?.entities?.hashtags?.[0]?.text).toBe('Artemis');
+    expect(data.quoted_tweet?.author?.rawVerified).toBe(true);
+  });
+
   test('list: filters by a follow event type and returns removals & count changes', async () => {
     const removal: XTwitterScraper.MonitorFollow = { id: '2244994945', reason: 'unfollowed' };
     const countChange: XTwitterScraper.Event.MonitorProfileChange = {
