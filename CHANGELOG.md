@@ -4,6 +4,7 @@
 
 ### Features
 
+* Bulk retry can target specific accounts with `accountIds`.
 * Embedded parent, quoted and retweeted posts carry every tweet field and the author.
 * User identity verification adds optional `overrideVerifiedYear`, the year X shows as the start of verification in place of `verifiedSinceMsec`.
 

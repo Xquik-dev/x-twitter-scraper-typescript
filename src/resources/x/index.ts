@@ -22,6 +22,7 @@ export {
   type AccountReauthResponse,
   type AccountCreateParams,
   type AccountListParams,
+  type AccountBulkRetryParams,
   type AccountReauthParams,
 } from './accounts';
 export {

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -84,6 +85,24 @@ describe('resource accounts', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('bulkRetry sends accountIds in the JSON body', async () => {
+    const { client: fixture, requests, sent } = fixtureClient({ cleared: 2 });
+
+    await fixture.x.accounts.bulkRetry({ accountIds: ['1', 'xacct_2'] });
+
+    expect(requests).toEqual(['POST https://xquik.test/api/v1/x/accounts/bulk-retry']);
+    expect(await sent[0]!.json()).toEqual({ accountIds: ['1', 'xacct_2'] });
+  });
+
+  test('bulkRetry omits accountIds when no params are provided', async () => {
+    const { client: fixture, requests, sent } = fixtureClient({ cleared: 2 });
+
+    await fixture.x.accounts.bulkRetry();
+
+    expect(requests).toEqual(['POST https://xquik.test/api/v1/x/accounts/bulk-retry']);
+    expect(await sent[0]!.json()).toEqual({});
   });
 
   test('reauth: only required params', async () => {

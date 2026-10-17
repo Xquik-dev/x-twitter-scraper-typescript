@@ -527,7 +527,7 @@ Methods
 - <code title="get /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">retrieve</a>(id) -> XAccountDetail</code>
 - <code title="get /x/accounts">client.x.accounts.<a href="./src/resources/x/accounts.ts">list</a>({ ...params }) -> AccountListResponse</code>
 - <code title="delete /x/accounts/{id}">client.x.accounts.<a href="./src/resources/x/accounts.ts">delete</a>(id) -> AccountDeleteResponse</code>
-- <code title="post /x/accounts/bulk-retry">client.x.accounts.<a href="./src/resources/x/accounts.ts">bulkRetry</a>() -> AccountBulkRetryResponse</code>
+- <code title="post /x/accounts/bulk-retry">client.x.accounts.<a href="./src/resources/x/accounts.ts">bulkRetry</a>({ ...params }) -> AccountBulkRetryResponse</code>
 - <code title="post /x/accounts/{id}/reauth">client.x.accounts.<a href="./src/resources/x/accounts.ts">reauth</a>(id, { ...params }) -> AccountReauthResponse</code>
 
 ## AccountConnectionChallenges
