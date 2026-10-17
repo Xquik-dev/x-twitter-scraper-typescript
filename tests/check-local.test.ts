@@ -2,7 +2,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { delimiter, dirname, join, resolve } from 'node:path';
@@ -70,7 +78,13 @@ const fieldsMatch = fakeCheck(
   "The SDK's fields match the API for 180 operations, and accepted-field-differences.json lists 42 accepted differences.",
 );
 
-const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, apiFields = fieldsMatch) => {
+const checkLocal = (
+  codeqlSarif: string,
+  pnpm = passes,
+  apiCoverage = covered,
+  apiFields = fieldsMatch,
+  env: Record<string, string> = {},
+) => {
   const root = mkdtempSync(join(tmpdir(), 'check-local-'));
   try {
     const write = (path: string, content: string, mode = 0o755) => {
@@ -95,9 +109,38 @@ const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, a
         ...process.env,
         PATH: `${join(root, 'tools')}${delimiter}${process.env['PATH'] ?? ''}`,
         FAKE_CODEQL_SARIF: join(root, 'codeql.sarif'),
+        CHECK_LOCAL_HERE: '',
+        ...env,
       },
     });
     return { status: result.status, stdout: result.stdout, stderr: result.stderr };
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+};
+
+const handOff = () => {
+  const root = mkdtempSync(join(tmpdir(), 'check-local-'));
+  try {
+    mkdirSync(join(root, 'project', 'bin'), { recursive: true });
+    copyFileSync(script, join(root, 'project', 'bin', 'check-local'));
+    writeFileSync(join(root, 'runner'), '#!/bin/sh\nprintf "%s|" "$@"\nexit 3\n');
+    chmodSync(join(root, 'runner'), 0o755);
+    const result = spawnSync(join(root, 'project', 'bin', 'check-local'), ['--no-status', 'two words'], {
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        CHECK_LOCAL_HERE: '',
+        GIT_CONFIG_COUNT: '1',
+        GIT_CONFIG_KEY_0: 'checklocal.runner',
+        GIT_CONFIG_VALUE_0: join(root, 'runner'),
+      },
+    });
+    return {
+      status: result.status,
+      stdout: result.stdout.replaceAll(realpathSync(join(root, 'project')), '<project>'),
+      stderr: result.stderr,
+    };
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -196,5 +239,21 @@ fi
       'The CodeQL scan lacks js/diagnostics/extraction-errors, so it cannot show that it read every file. Make the suite in bin/check-local run that diagnostic query.\n' +
         'Check failed at Run CodeQL. Fix what CodeQL reported above, then run bin/check-local again.\n',
     );
+  });
+
+  it('hands its run to the command that git config checklocal.runner names', () => {
+    expect(handOff()).toEqual({ status: 3, stdout: '<project>|--no-status|two words|', stderr: '' });
+  });
+
+  it('runs the checks here when CHECK_LOCAL_HERE=1, despite a configured runner', () => {
+    const result = checkLocal(sarif({}), passes, covered, fieldsMatch, {
+      CHECK_LOCAL_HERE: '1',
+      GIT_CONFIG_COUNT: '1',
+      GIT_CONFIG_KEY_0: 'checklocal.runner',
+      GIT_CONFIG_VALUE_0: '/nonexistent/runner',
+    });
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('==> Passed API coverage, install, API fields');
   });
 });
