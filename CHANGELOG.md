@@ -182,7 +182,7 @@ Full Changelog: [v0.12.1...v0.12.2](https://github.com/Xquik-dev/x-twitter-scrap
 
 ### Documentation
 
-* refine public TypeScript SDK text ([#59](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/59)) ([ef08541](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ef085416c97354686f981f2c1257702689f4e79f))
+* refine public TypeScript SDK text ([ef08541](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/ef085416c97354686f981f2c1257702689f4e79f))
 
 ## 0.12.1 (2026-08-18)
 
@@ -230,7 +230,7 @@ Full Changelog: [v0.8.3...v0.8.4](https://github.com/Xquik-dev/x-twitter-scraper
 
 ### Bug Fixes
 
-* target repository for release asset uploads ([#50](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/50)) ([afc1b32](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/afc1b326f738e4013f16cc9477a8ebe8316000cb))
+* target repository for release asset uploads ([afc1b32](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/afc1b326f738e4013f16cc9477a8ebe8316000cb))
 
 ## 0.8.3 (2026-08-11)
 
@@ -258,7 +258,7 @@ Full Changelog: [v0.7.1...v0.8.0](https://github.com/Xquik-dev/x-twitter-scraper
 
 ### Features
 
-* **api:** align reply extraction contracts ([#29](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/29)) ([986132c](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/986132c28a0059bde23d727c323b99fec6ef4a60))
+* **api:** align reply extraction contracts ([986132c](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/986132c28a0059bde23d727c323b99fec6ef4a60))
 
 ## 0.7.1 (2026-07-30)
 
@@ -310,7 +310,7 @@ Full Changelog: [v0.5.1...v0.5.2](https://github.com/Xquik-dev/x-twitter-scraper
 
 ### Documentation
 
-* map common X data tasks ([#11](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues/11)) ([f4fa511](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/f4fa5119c650a2ce80681af2a5a8555f1879e897))
+* map common X data tasks ([f4fa511](https://github.com/Xquik-dev/x-twitter-scraper-typescript/commit/f4fa5119c650a2ce80681af2a5a8555f1879e897))
 
 ## 0.5.1 (2026-07-22)
 
