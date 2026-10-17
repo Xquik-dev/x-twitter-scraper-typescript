@@ -3085,6 +3085,11 @@ export namespace UserProfile {
     isIdentityVerified?: boolean;
 
     /**
+     * The year X shows as the start of verification, in place of verifiedSinceMsec.
+     */
+    overrideVerifiedYear?: number;
+
+    /**
      * When X verified the account, in milliseconds since 1970, as text.
      */
     verifiedSinceMsec?: string;

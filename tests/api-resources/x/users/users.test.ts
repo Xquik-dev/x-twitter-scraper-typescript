@@ -1116,7 +1116,7 @@ describe('resource users', () => {
     });
   });
 
-  test('retrieve: returns the full-size picture and the handle a profile redirects to', async () => {
+  test('retrieve: returns the full-size picture, redirect handle and verification year', async () => {
     const example: XTwitterScraper.UserProfile = {
       id: '11348282',
       name: 'NASA',
@@ -1124,6 +1124,7 @@ describe('resource users', () => {
       profilePicture: 'https://pbs.twimg.com/profile_images/1321163587679784960/0ZxKlEKB_normal.jpg',
       profilePictureOriginal: 'https://pbs.twimg.com/profile_images/1321163587679784960/0ZxKlEKB.jpg',
       redirectsToUsername: 'spacexsi',
+      identityVerification: { overrideVerifiedYear: 2009 },
     };
     const { client: fixture, requests } = fixtureClient(example);
 
@@ -1131,5 +1132,6 @@ describe('resource users', () => {
 
     expect(requests).toEqual(['GET https://xquik.test/api/v1/x/users/NASA']);
     expect(response).toEqual(example);
+    expect(response.identityVerification?.overrideVerifiedYear).toBe(2009);
   });
 });
