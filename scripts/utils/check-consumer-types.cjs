@@ -95,8 +95,10 @@ const main = async () => {
     console.error(`${packageDirectory} has no package.json. Run pnpm build first.`);
     process.exit(1);
   }
-  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
-  const removeWorkspace = () => fs.rmSync(workspace, { recursive: true, force: true });
+  let workspace;
+  const removeWorkspace = () => {
+    if (workspace) fs.rmSync(workspace, { recursive: true, force: true });
+  };
   for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
     process.on(signal, () => {
       for (const child of running) child.kill(signal);
@@ -105,6 +107,7 @@ const main = async () => {
       process.kill(process.pid, signal);
     });
   }
+  workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
   /** @type {string[]} */
   const failures = [];
   try {

@@ -44,9 +44,14 @@ describe('bin/release-local', () => {
     const setUp = (gh: string) => {
       const root = mkdtempSync(join(tmpdir(), 'release-local-'));
       mkdirSync(join(root, 'project', 'bin'), { recursive: true });
+      mkdirSync(join(root, 'project', 'scripts'));
       mkdirSync(join(root, 'tools'));
       mkdirSync(join(root, 'tmp'));
       copyFileSync(script, join(root, 'project', 'bin', 'release-local'));
+      copyFileSync(
+        resolve(__dirname, '..', 'scripts', 'temp-directory.sh'),
+        join(root, 'project', 'scripts', 'temp-directory.sh'),
+      );
       for (const [tool, content] of [
         ['gh', gh],
         ['npm', '#!/bin/sh\n'],

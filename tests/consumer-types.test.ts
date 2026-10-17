@@ -119,6 +119,41 @@ describe('scripts/utils/check-consumer-types.cjs', () => {
   );
 
   it.each(['SIGTERM', 'SIGINT', 'SIGHUP'] as const)(
+    'handles %s before allocating its workspace',
+    (signal) => {
+      const directory = mkdtempSync(join(tmpdir(), 'consumer-types-'));
+      const temp = join(directory, 'tmp');
+      const preload = join(directory, 'interrupt.cjs');
+      mkdirSync(temp);
+      try {
+        writeFileSync(
+          preload,
+          `const fs = require('node:fs');
+const mkdtempSync = fs.mkdtempSync;
+fs.mkdtempSync = (...args) => {
+  process.emit('${signal}');
+  return mkdtempSync(...args);
+};
+`,
+        );
+        const result = spawnSync(process.execPath, ['--require', preload, script, dist], {
+          encoding: 'utf8',
+          env: { ...process.env, TMPDIR: temp },
+          timeout: 30_000,
+        });
+
+        expect(result.stderr).toBe('');
+        expect(result.status).toBeNull();
+        expect(result.signal).toBe(signal);
+        expect(readdirSync(temp)).toEqual([]);
+      } finally {
+        rmSync(directory, { recursive: true, force: true });
+      }
+    },
+    60_000,
+  );
+
+  it.each(['SIGTERM', 'SIGINT', 'SIGHUP'] as const)(
     'removes its workspace when %s stops it mid-run',
     async (signal) => {
       const directory = mkdtempSync(join(tmpdir(), 'consumer-types-'));

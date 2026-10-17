@@ -25,6 +25,10 @@ const setUp = (pnpm: string) => {
   mkdirSync(join(root, 'tools'));
   mkdirSync(join(root, 'tmp'));
   copyFileSync(script, join(root, 'project', 'scripts', 'check-reproducible'));
+  copyFileSync(
+    resolve(__dirname, '..', 'scripts', 'temp-directory.sh'),
+    join(root, 'project', 'scripts', 'temp-directory.sh'),
+  );
   writeFileSync(join(root, 'tools', 'pnpm'), pnpm);
   chmodSync(join(root, 'tools', 'pnpm'), 0o755);
   return {

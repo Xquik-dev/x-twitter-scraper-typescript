@@ -2,10 +2,6 @@
 
 ## Unreleased
 
-### Features
-
-* `support.tickets.create()` and `reply()` can send `attachments` without a `body`, which the API now accepts.
-
 ### Chores
 
 * `bin/check-local`, `bin/release-local`, the reproducible build check and the consumer types check remove their temp directory on any exit, including INT, TERM and HUP. Their steps write temp files inside that directory, so nothing stays under `TMPDIR`.

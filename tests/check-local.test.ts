@@ -95,6 +95,10 @@ const setUp = (
   write(join('project', 'scripts', 'utils', 'check-audit.cjs'), 'console.log("Audit passed.");\n', 0o644);
   write(join('project', 'scripts', 'utils', 'check-api-coverage.cjs'), apiCoverage, 0o644);
   write(join('project', 'scripts', 'utils', 'check-api-fields.cjs'), apiFields, 0o644);
+  copyFileSync(
+    resolve(__dirname, '..', 'scripts', 'temp-directory.sh'),
+    join(root, 'project', 'scripts', 'temp-directory.sh'),
+  );
   write('codeql.sarif', codeqlSarif, 0o644);
   return {
     root,

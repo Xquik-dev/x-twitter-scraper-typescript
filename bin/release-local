@@ -39,20 +39,7 @@ if ((dry_run == 0)); then
     fail "NPM_KEYCHAIN_ACCOUNT is unset. Set it to the Keychain account that holds the npm token, then run bin/release-local again."
 fi
 
-remove_work_directory() {
-  if [[ -n "${work_directory:-}" && -d "$work_directory" ]]; then
-    chmod -R u+w -- "$work_directory" 2>/dev/null || true
-    rm -rf -- "$work_directory"
-  fi
-}
-
-work_directory="$(mktemp -d "${TMPDIR:-/tmp}/xquik-typescript-release.XXXXXX")"
-trap remove_work_directory EXIT
-trap 'trap - INT; kill -INT "$$"' INT
-trap 'exit 143' TERM
-trap 'exit 129' HUP
-export TMPDIR="${work_directory}/tmp"
-mkdir "$TMPDIR"
+source scripts/temp-directory.sh xquik-typescript-release
 
 step "Checking the release tools"
 for tool in gh git jq node npm pnpm security; do
