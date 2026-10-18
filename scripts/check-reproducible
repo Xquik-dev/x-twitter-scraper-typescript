@@ -8,18 +8,17 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-reproducibility_directory="$(mktemp -d)"
-trap 'rm -rf "$reproducibility_directory"' EXIT
-mkdir "$reproducibility_directory/first" "$reproducibility_directory/second"
+source scripts/temp-directory.sh xquik-typescript-reproducible
+mkdir "$work_directory/first" "$work_directory/second"
 
 pnpm build
-(cd dist && npm pack --silent --pack-destination "$reproducibility_directory/first" >/dev/null)
+(cd dist && npm pack --silent --pack-destination "$work_directory/first" >/dev/null)
 
 pnpm build
-(cd dist && npm pack --silent --pack-destination "$reproducibility_directory/second" >/dev/null)
+(cd dist && npm pack --silent --pack-destination "$work_directory/second" >/dev/null)
 
-first_archive="$(find "$reproducibility_directory/first" -type f -name '*.tgz' -print -quit)"
-second_archive="$(find "$reproducibility_directory/second" -type f -name '*.tgz' -print -quit)"
+first_archive="$(find "$work_directory/first" -type f -name '*.tgz' -print -quit)"
+second_archive="$(find "$work_directory/second" -type f -name '*.tgz' -print -quit)"
 
 if [[ -z "$first_archive" || -z "$second_archive" ]]; then
   echo "Package archives are missing. Build both archives." >&2
