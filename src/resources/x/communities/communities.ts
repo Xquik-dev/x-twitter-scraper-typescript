@@ -148,6 +148,12 @@ export class Communities extends APIResource {
    * Returns community activity for X's latest period. Includes likes, new members,
    * posts, replies & unique posters. Each metric has a count and a changePercent.
    * Each request costs 1 credit.
+   *
+   * @example
+   * ```ts
+   * const communityAnalytics =
+   *   await client.x.communities.retrieveAnalytics('id');
+   * ```
    */
   retrieveAnalytics(
     id: string,
@@ -282,14 +288,29 @@ export namespace CommunityAnalytics {
    * the distinct accounts that posted.
    */
   export interface Metrics {
+    /**
+     * A community metric for X's latest period & its percent change.
+     */
     likes: CommunityAnalyticsMetric;
 
+    /**
+     * A community metric for X's latest period & its percent change.
+     */
     newMembers: CommunityAnalyticsMetric;
 
+    /**
+     * A community metric for X's latest period & its percent change.
+     */
     posts: CommunityAnalyticsMetric;
 
+    /**
+     * A community metric for X's latest period & its percent change.
+     */
     replies: CommunityAnalyticsMetric;
 
+    /**
+     * A community metric for X's latest period & its percent change.
+     */
     uniquePosters: CommunityAnalyticsMetric;
   }
 }

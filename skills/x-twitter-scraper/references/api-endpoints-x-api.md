@@ -166,8 +166,6 @@ GET /x/communities/{id}/tweets
 
 Search communities and read community metadata, members, moderators, or tweets. Community writes are listed under X Write and require confirmation.
 
-Read activity counts and daily changes with `x.communities.retrieveAnalytics(id)`.
-
 ### Get Bookmarks
 
 ```

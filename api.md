@@ -489,14 +489,6 @@ Methods
 - <code title="get /x/communities/search">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveSearch</a>({ ...params }) -> PaginatedTweets</code>
 - <code title="get /x/communities/{id}/members/search">client.x.communities.<a href="./src/resources/x/communities/communities.ts">searchMembers</a>(id, { ...params }) -> PaginatedUsers</code>
 
-Use `retrieveAnalytics` to read the latest period for one credit.
-Pass `fields` to keep fields and `omit` to drop fields.
-Use dots to select nested fields.
-`CommunityAnalytics` requires `id`, `periodEndsAt`, and `metrics`.
-`periodEndsAt` holds the period end as a UTC date-time string.
-`CommunityAnalytics.Metrics` requires `likes`, `newMembers`, `posts`, `replies`, and `uniquePosters`.
-Each `CommunityAnalyticsMetric` requires numeric `count` and unrounded daily `changePercent` values.
-
 ### Join
 
 Types

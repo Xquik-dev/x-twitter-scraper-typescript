@@ -77,7 +77,7 @@ Import the typed SDK from the same npm package.
 | Read a home timeline               | `GET /x/timeline`                             | Approve this private read.                |
 | Read past trends of a place        | `GET /x/trends/history`                       | Pick a range & a step between lists.      |
 | Read a Community Notes contributor | `GET /x/community-notes/contributors/{alias}` | List their notes & deleted notes.         |
-| Read Community analytics           | `GET /x/communities/{id}/analytics`           | Read activity counts and daily changes.   |
+| Read Community analytics           | `GET /x/communities/{id}/analytics`           | Read activity counts & daily changes.     |
 | Export large X datasets            | `POST /extractions`                           | Poll status, then download results.       |
 | Download or upload media           | `/x/media/*`                                  | Use typed file helpers.                   |
 | Monitor an account                 | `POST /monitors`                              | Deliver events through HMAC webhooks.     |
