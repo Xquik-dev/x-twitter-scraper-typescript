@@ -347,6 +347,11 @@ export interface EmbeddedTweet {
 
   bookmarkCount: number;
 
+  /**
+   * X did not send these counts for this post, so treat each 0 as unknown.
+   */
+  unknownCounts?: Array<string>;
+
   likeCount: number;
 
   quoteCount: number;
@@ -1183,6 +1188,11 @@ export interface SearchTweet {
   id: string;
 
   bookmarkCount: number;
+
+  /**
+   * X did not send these counts for this post, so treat each 0 as unknown.
+   */
+  unknownCounts?: Array<string>;
 
   likeCount: number;
 

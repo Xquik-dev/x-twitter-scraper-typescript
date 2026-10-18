@@ -145,6 +145,11 @@ export namespace Event {
 
     bookmarkCount: number;
 
+    /**
+     * X did not send these counts for this post, so treat each 0 as unknown.
+     */
+    unknownCounts?: Array<string>;
+
     likeCount: number;
 
     quoteCount: number;
@@ -1770,6 +1775,11 @@ export namespace EventDetail {
     id: string;
 
     bookmarkCount: number;
+
+    /**
+     * X did not send these counts for this post, so treat each 0 as unknown.
+     */
+    unknownCounts?: Array<string>;
 
     likeCount: number;
 

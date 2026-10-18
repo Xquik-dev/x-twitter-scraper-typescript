@@ -925,6 +925,40 @@ describe('resource tweets', () => {
     expect(retweeted?.retweeted_tweet?.['custom']).toBe('preserved');
   });
 
+  test.each<{ unknownCounts?: Array<string> }>([
+    { unknownCounts: ['bookmarkCount', 'viewCount'] },
+    { unknownCounts: ['futureCount'] },
+    {},
+  ])('retrieve preserves optional unknown count lists %j', async (counts) => {
+    const tweet: XTwitterScraper.X.TweetDetail = {
+      id: '1',
+      bookmarkCount: 0,
+      likeCount: 0,
+      quoteCount: 0,
+      replyCount: 0,
+      retweetCount: 0,
+      text: 'Just launched!',
+      viewCount: 0,
+      ...counts,
+    };
+    const example: XTwitterScraper.X.TweetRetrieveResponse = {
+      tweet: {
+        ...tweet,
+        retweeted_tweet: { ...tweet, id: '2' },
+      },
+    };
+    const { client: fixture } = fixtureClient(example);
+
+    const response: XTwitterScraper.X.TweetRetrieveResponse = await fixture.x.tweets.retrieve('1');
+
+    expect(response.tweet.unknownCounts).toEqual(counts.unknownCounts);
+    expect(response.tweet.retweeted_tweet?.unknownCounts).toEqual(counts.unknownCounts);
+    if (counts.unknownCounts === undefined) {
+      expect(response.tweet).not.toHaveProperty('unknownCounts');
+      expect(response.tweet.retweeted_tweet).not.toHaveProperty('unknownCounts');
+    }
+  });
+
   test('retrieve: returns the account a tombstone mentions', async () => {
     const example: XTwitterScraper.X.TweetRetrieveResponse = {
       tweet: {

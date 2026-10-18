@@ -389,6 +389,11 @@ export interface TweetDetail {
 
   bookmarkCount: number;
 
+  /**
+   * X did not send these counts for this post, so treat each 0 as unknown.
+   */
+  unknownCounts?: Array<string>;
+
   likeCount: number;
 
   quoteCount: number;
