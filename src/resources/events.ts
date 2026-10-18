@@ -145,11 +145,6 @@ export namespace Event {
 
     bookmarkCount: number;
 
-    /**
-     * X did not send these counts for this post, so treat each 0 as unknown.
-     */
-    unknownCounts?: Array<string>;
-
     likeCount: number;
 
     quoteCount: number;
@@ -401,6 +396,13 @@ export namespace Event {
      * The author's ID when X withholds the author's profile.
      */
     unavailableAuthorId?: string;
+
+    /**
+     * X did not send these counts, so each 0 means unknown.
+     */
+    unknownCounts?: Array<
+      'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
+    >;
 
     /**
      * User IDs that left this conversation.
@@ -1776,11 +1778,6 @@ export namespace EventDetail {
 
     bookmarkCount: number;
 
-    /**
-     * X did not send these counts for this post, so treat each 0 as unknown.
-     */
-    unknownCounts?: Array<string>;
-
     likeCount: number;
 
     quoteCount: number;
@@ -2032,6 +2029,13 @@ export namespace EventDetail {
      * The author's ID when X withholds the author's profile.
      */
     unavailableAuthorId?: string;
+
+    /**
+     * X did not send these counts, so each 0 means unknown.
+     */
+    unknownCounts?: Array<
+      'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
+    >;
 
     /**
      * User IDs that left this conversation.

@@ -347,11 +347,6 @@ export interface EmbeddedTweet {
 
   bookmarkCount: number;
 
-  /**
-   * X did not send these counts for this post, so treat each 0 as unknown.
-   */
-  unknownCounts?: Array<string>;
-
   likeCount: number;
 
   quoteCount: number;
@@ -608,6 +603,13 @@ export interface EmbeddedTweet {
    * The author's ID when X withholds the author's profile.
    */
   unavailableAuthorId?: string;
+
+  /**
+   * X did not send these counts, so each 0 means unknown.
+   */
+  unknownCounts?: Array<
+    'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
+  >;
 
   /**
    * User IDs that left this conversation.
@@ -1189,11 +1191,6 @@ export interface SearchTweet {
 
   bookmarkCount: number;
 
-  /**
-   * X did not send these counts for this post, so treat each 0 as unknown.
-   */
-  unknownCounts?: Array<string>;
-
   likeCount: number;
 
   quoteCount: number;
@@ -1453,6 +1450,13 @@ export interface SearchTweet {
    * The author's ID when X withholds the author's profile.
    */
   unavailableAuthorId?: string;
+
+  /**
+   * X did not send these counts, so each 0 means unknown.
+   */
+  unknownCounts?: Array<
+    'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
+  >;
 
   /**
    * User IDs that left this conversation.
