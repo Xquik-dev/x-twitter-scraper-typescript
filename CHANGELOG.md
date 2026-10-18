@@ -12,7 +12,7 @@
 * Bulk retry can target specific accounts with `accountIds`.
 * Embedded parent, quoted and retweeted posts carry every tweet field and the author.
 * User identity verification adds optional `overrideVerifiedYear`, the year X shows as the start of verification in place of `verifiedSinceMsec`.
-* Jobs, Spaces, broadcasts and Community Notes use named models and keep every existing response type as a compatible alias.
+* Jobs, Spaces, broadcasts and Community Notes share named models. Old response type names stay as aliases.
 
 ### Chores
 

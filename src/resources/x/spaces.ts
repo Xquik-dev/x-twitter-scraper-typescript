@@ -320,24 +320,7 @@ export namespace SpaceParticipant {
   /**
    * Organization affiliation label shown on an X profile.
    */
-  export interface AffiliatesHighlightedLabel {
-    badgeUrl?: string;
-
-    description?: string;
-
-    /**
-     * Public text, ranges, references, and mention data.
-     */
-    longDescription?: { [key: string]: unknown };
-
-    url?: string;
-
-    urlType?: string;
-
-    userLabelDisplayType?: string;
-
-    userLabelType?: string;
-  }
+  export type AffiliatesHighlightedLabel = Shared.UserProfile.AffiliatesHighlightedLabel;
 }
 
 export interface SpaceRetrieveResponse {
