@@ -157,6 +157,7 @@ Read list followers, members, or list timeline tweets by list ID.
 ```
 GET /x/communities/search
 GET /x/communities/tweets
+GET /x/communities/{id}/analytics
 GET /x/communities/{id}/info
 GET /x/communities/{id}/members
 GET /x/communities/{id}/moderators
@@ -164,6 +165,8 @@ GET /x/communities/{id}/tweets
 ```
 
 Search communities and read community metadata, members, moderators, or tweets. Community writes are listed under X Write and require confirmation.
+
+Read activity counts and daily changes with `x.communities.retrieveAnalytics(id)`.
 
 ### Get Bookmarks
 

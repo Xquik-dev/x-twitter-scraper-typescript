@@ -8,6 +8,7 @@
 
 ### Features
 
+* Communities add the analytics read through `x.communities.retrieveAnalytics()`.
 * Posts and embedded posts name the counts X did not send in `unknownCounts`.
 * Bulk retry can target specific accounts with `accountIds`.
 * Embedded parent, quoted and retweeted posts carry every tweet field and the author.

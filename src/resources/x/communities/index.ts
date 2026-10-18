@@ -4,6 +4,8 @@
 
 export {
   Communities,
+  type CommunityAnalytics,
+  type CommunityAnalyticsMetric,
   type CommunityCreateResponse,
   type CommunityDeleteResponse,
   type CommunityListSuggestedResponse,
@@ -15,6 +17,7 @@ export {
   type CommunityListPopularParams,
   type CommunityListSuggestedParams,
   type CommunityListTopicsParams,
+  type CommunityRetrieveAnalyticsParams,
   type CommunityRetrieveInfoParams,
   type CommunityRetrieveMembersParams,
   type CommunityRetrieveModeratorsParams,

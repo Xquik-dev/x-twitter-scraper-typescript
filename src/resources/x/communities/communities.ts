@@ -145,6 +145,19 @@ export class Communities extends APIResource {
   }
 
   /**
+   * Returns community activity for X's latest period. Includes likes, new members,
+   * posts, replies & unique posters. Each metric has a count and a changePercent.
+   * Each request costs 1 credit.
+   */
+  retrieveAnalytics(
+    id: string,
+    query: CommunityRetrieveAnalyticsParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<CommunityAnalytics> {
+    return this._client.get(path`/x/communities/${id}/analytics`, { query, ...options });
+  }
+
+  /**
    * Returns one community's public identity, rules, join question, search tags,
    * membership counts, and the profiles of its creator, admin and previewed members.
    *
@@ -236,6 +249,64 @@ export class Communities extends APIResource {
   ): APIPromise<Shared.PaginatedUsers> {
     return this._client.get(path`/x/communities/${id}/members/search`, { query, ...options });
   }
+}
+
+/**
+ * Community activity & growth for X's latest period.
+ */
+export interface CommunityAnalytics {
+  /**
+   * The community ID from your request.
+   */
+  id: string;
+
+  /**
+   * The period's activity, each metric with its count and changePercent. likes
+   * counts likes on community posts and newMembers the accounts that joined. posts
+   * counts the community posts and replies the replies to them. uniquePosters counts
+   * the distinct accounts that posted.
+   */
+  metrics: CommunityAnalytics.Metrics;
+
+  /**
+   * The end of X's latest period, in UTC.
+   */
+  periodEndsAt: string;
+}
+
+export namespace CommunityAnalytics {
+  /**
+   * The period's activity, each metric with its count and changePercent. likes
+   * counts likes on community posts and newMembers the accounts that joined. posts
+   * counts the community posts and replies the replies to them. uniquePosters counts
+   * the distinct accounts that posted.
+   */
+  export interface Metrics {
+    likes: CommunityAnalyticsMetric;
+
+    newMembers: CommunityAnalyticsMetric;
+
+    posts: CommunityAnalyticsMetric;
+
+    replies: CommunityAnalyticsMetric;
+
+    uniquePosters: CommunityAnalyticsMetric;
+  }
+}
+
+/**
+ * A community metric for X's latest period & its percent change.
+ */
+export interface CommunityAnalyticsMetric {
+  /**
+   * Change in percent from the same figure 1 day earlier. Values stay unrounded.
+   */
+  changePercent: number;
+
+  /**
+   * Total for this metric during X's latest period.
+   */
+  count: number;
 }
 
 /**
@@ -955,6 +1026,24 @@ export interface CommunityListTopicsParams {
   omit?: string;
 }
 
+export interface CommunityRetrieveAnalyticsParams {
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+   * author.username. A list keeps the field in each item. Case & underscores do not
+   * matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+   * always stay. An unknown name answers 400 unknown_field with the valid names,
+   * before any read. The price stays the same. SDK row types then hold only the
+   * named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+}
+
 export interface CommunityRetrieveInfoParams {
   /**
    * Fields to keep in each row, comma-separated. Use dots for nested fields, such as
@@ -1561,6 +1650,8 @@ Communities.Media = Media;
 
 export declare namespace Communities {
   export {
+    type CommunityAnalytics as CommunityAnalytics,
+    type CommunityAnalyticsMetric as CommunityAnalyticsMetric,
     type CommunityCreateResponse as CommunityCreateResponse,
     type CommunityDeleteResponse as CommunityDeleteResponse,
     type CommunityListSuggestedResponse as CommunityListSuggestedResponse,
@@ -1572,6 +1663,7 @@ export declare namespace Communities {
     type CommunityListPopularParams as CommunityListPopularParams,
     type CommunityListSuggestedParams as CommunityListSuggestedParams,
     type CommunityListTopicsParams as CommunityListTopicsParams,
+    type CommunityRetrieveAnalyticsParams as CommunityRetrieveAnalyticsParams,
     type CommunityRetrieveInfoParams as CommunityRetrieveInfoParams,
     type CommunityRetrieveMembersParams as CommunityRetrieveMembersParams,
     type CommunityRetrieveModeratorsParams as CommunityRetrieveModeratorsParams,
