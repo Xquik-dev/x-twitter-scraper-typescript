@@ -930,7 +930,7 @@ describe('resource tweets', () => {
     { unknownCounts: ['futureCount'] },
     {},
   ])('retrieve preserves optional unknown count lists %j', async (counts) => {
-    const tweet: XTwitterScraper.X.TweetDetail = {
+    const tweet = {
       id: '1',
       bookmarkCount: 0,
       likeCount: 0,
@@ -941,13 +941,12 @@ describe('resource tweets', () => {
       viewCount: 0,
       ...counts,
     };
-    const example: XTwitterScraper.X.TweetRetrieveResponse = {
+    const { client: fixture } = fixtureClient({
       tweet: {
         ...tweet,
         retweeted_tweet: { ...tweet, id: '2' },
       },
-    };
-    const { client: fixture } = fixtureClient(example);
+    });
 
     const response: XTwitterScraper.X.TweetRetrieveResponse = await fixture.x.tweets.retrieve('1');
 
