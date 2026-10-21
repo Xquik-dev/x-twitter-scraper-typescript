@@ -157,6 +157,7 @@ Read list followers, members, or list timeline tweets by list ID.
 ```
 GET /x/communities/search
 GET /x/communities/tweets
+GET /x/communities/{id}/analytics
 GET /x/communities/{id}/info
 GET /x/communities/{id}/members
 GET /x/communities/{id}/moderators

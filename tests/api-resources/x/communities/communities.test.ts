@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../../../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -144,6 +145,66 @@ describe('resource communities', () => {
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
+  test('retrieveAnalytics', async () => {
+    const responsePromise = client.x.communities.retrieveAnalytics('id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  test('retrieveAnalytics forwards request options', async () => {
+    await expect(
+      client.x.communities.retrieveAnalytics(
+        'id',
+        { fields: 'id,periodEndsAt,metrics', omit: 'metrics.likes' },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(XTwitterScraper.NotFoundError);
+  });
+
+  test('retrieveAnalytics requests analytics and returns every metric', async () => {
+    const example: XTwitterScraper.X.CommunityAnalytics = {
+      id: '1493446837214187523',
+      periodEndsAt: '2026-10-16T23:59:59.999Z',
+      metrics: {
+        likes: { count: 15298, changePercent: -1.2076202776880853 },
+        newMembers: { count: 557, changePercent: -1.5901060070671376 },
+        posts: { count: 5108, changePercent: 0.5907837731390311 },
+        replies: { count: 6851, changePercent: -0.8251302837290099 },
+        uniquePosters: { count: 1800, changePercent: -0.33222591362126247 },
+      },
+    };
+    const { client: fixture, requests } = fixtureClient(example);
+    const query: XTwitterScraper.X.Communities.CommunityRetrieveAnalyticsParams = {
+      fields: 'id,periodEndsAt,metrics',
+      omit: 'metrics.likes',
+    };
+
+    const response: XTwitterScraper.X.CommunityAnalytics = await fixture.x.communities.retrieveAnalytics(
+      '1493446837214187523',
+      query,
+    );
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/x/communities/1493446837214187523/analytics?fields=id%2CperiodEndsAt%2Cmetrics&omit=metrics.likes',
+    ]);
+    expect(response).toEqual(example);
+    expect(response.metrics.likes.count).toBe(15298);
+    expect(response.metrics.likes.changePercent).toBe(-1.2076202776880853);
+    expect(response.metrics.newMembers.count).toBe(557);
+    expect(response.metrics.newMembers.changePercent).toBe(-1.5901060070671376);
+    expect(response.metrics.posts.count).toBe(5108);
+    expect(response.metrics.posts.changePercent).toBe(0.5907837731390311);
+    expect(response.metrics.replies.count).toBe(6851);
+    expect(response.metrics.replies.changePercent).toBe(-0.8251302837290099);
+    expect(response.metrics.uniquePosters.count).toBe(1800);
+    expect(response.metrics.uniquePosters.changePercent).toBe(-0.33222591362126247);
   });
 
   test('retrieveInfo', async () => {

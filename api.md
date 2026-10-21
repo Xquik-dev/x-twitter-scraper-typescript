@@ -466,6 +466,8 @@ Methods
 
 Types
 
+- <code><a href="./src/resources/x/communities/communities.ts">CommunityAnalytics</a></code>
+- <code><a href="./src/resources/x/communities/communities.ts">CommunityAnalyticsMetric</a></code>
 - <code><a href="./src/resources/x/communities/communities.ts">CommunityCreateResponse</a></code>
 - <code><a href="./src/resources/x/communities/communities.ts">CommunityDeleteResponse</a></code>
 - <code><a href="./src/resources/x/communities/communities.ts">CommunityListSuggestedResponse</a></code>
@@ -480,6 +482,7 @@ Methods
 - <code title="get /x/communities/popular">client.x.communities.<a href="./src/resources/x/communities/communities.ts">listPopular</a>({ ...params }) -> CommunityPage</code>
 - <code title="get /x/communities/suggested">client.x.communities.<a href="./src/resources/x/communities/communities.ts">listSuggested</a>({ ...params }) -> CommunityListSuggestedResponse</code>
 - <code title="get /x/communities/topics">client.x.communities.<a href="./src/resources/x/communities/communities.ts">listTopics</a>({ ...params }) -> CommunityListTopicsResponse</code>
+- <code title="get /x/communities/{id}/analytics">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveAnalytics</a>(id, { ...params }) -> CommunityAnalytics</code>
 - <code title="get /x/communities/{id}/info">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveInfo</a>(id, { ...params }) -> CommunityRetrieveInfoResponse</code>
 - <code title="get /x/communities/{id}/members">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveMembers</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/communities/{id}/moderators">client.x.communities.<a href="./src/resources/x/communities/communities.ts">retrieveModerators</a>(id, { ...params }) -> PaginatedUsers</code>

@@ -139,6 +139,8 @@ import { WriteActionRetrieveResponse, WriteActions } from './write-actions';
 import * as CommunitiesAPI from './communities/communities';
 import {
   Communities,
+  CommunityAnalytics,
+  CommunityAnalyticsMetric,
   CommunityCreateParams,
   CommunityCreateResponse,
   CommunityDeleteParams,
@@ -149,6 +151,7 @@ import {
   CommunityListSuggestedResponse,
   CommunityListTopicsParams,
   CommunityListTopicsResponse,
+  CommunityRetrieveAnalyticsParams,
   CommunityRetrieveInfoParams,
   CommunityRetrieveInfoResponse,
   CommunityRetrieveMembersParams,
@@ -2053,6 +2056,8 @@ export declare namespace X {
 
   export {
     Communities as Communities,
+    type CommunityAnalytics as CommunityAnalytics,
+    type CommunityAnalyticsMetric as CommunityAnalyticsMetric,
     type CommunityCreateResponse as CommunityCreateResponse,
     type CommunityDeleteResponse as CommunityDeleteResponse,
     type CommunityListSuggestedResponse as CommunityListSuggestedResponse,
@@ -2064,6 +2069,7 @@ export declare namespace X {
     type CommunityListPopularParams as CommunityListPopularParams,
     type CommunityListSuggestedParams as CommunityListSuggestedParams,
     type CommunityListTopicsParams as CommunityListTopicsParams,
+    type CommunityRetrieveAnalyticsParams as CommunityRetrieveAnalyticsParams,
     type CommunityRetrieveInfoParams as CommunityRetrieveInfoParams,
     type CommunityRetrieveMembersParams as CommunityRetrieveMembersParams,
     type CommunityRetrieveModeratorsParams as CommunityRetrieveModeratorsParams,
