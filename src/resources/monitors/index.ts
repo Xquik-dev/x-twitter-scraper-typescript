@@ -24,3 +24,23 @@ export {
   type MonitorUpdateParams,
   type MonitorListParams,
 } from './monitors';
+export {
+  Posts,
+  type PostEventType,
+  type PostMetricReading,
+  type PostMetrics,
+  type PostMonitor,
+  type PostMetricPoint,
+  type PostMonitorMetricsBucketMetrics,
+  type PostMonitorMetricsBucket,
+  type PostMonitorMetrics,
+  type MonitorPostMetricChange,
+  type MonitorPostEdit,
+  type MonitorPostDeleted,
+  type PostListResponse,
+  type PostDeleteResponse,
+  type PostCreateParams,
+  type PostUpdateParams,
+  type PostListParams,
+  type PostRetrieveMetricsParams,
+} from './posts';
