@@ -1,16 +1,10 @@
 # Changelog
 
-## 0.17.0 (2026-10-22)
+## 0.17.0 (2026-10-23)
 
 [Full changelog from v0.16.0 to v0.17.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.16.0...v0.17.0)
 
-This release adds the Community analytics read, the `softIntervention` label and named models. 1 change breaks callers of `bulkRetry`.
-
-### Features
-
-* `client.monitors.posts` adds post monitors with `create`, `retrieve`, `update`, `list`, `delete` and the hourly `retrieveMetrics`.
-* Events carry `postId`, `postUrl`, `authorId` and `authorUsername` for post events, and `client.events.list` filters by `postMonitorId`.
-* `client.x.sports` adds the NFL & college football reads `listGames`, `retrieveScoreboard`, `retrieveBoxScore` and `retrievePlays`.
+This release adds post monitors, NFL & college football reads, the Community analytics read, the `softIntervention` label and named models. 1 change breaks callers of `bulkRetry`.
 
 ### BREAKING CHANGES
 
@@ -18,6 +12,9 @@ This release adds the Community analytics read, the `softIntervention` label and
 
 ### Features
 
+* `client.monitors.posts` adds post monitors with `create`, `retrieve`, `update`, `list`, `delete` and the hourly `retrieveMetrics`.
+* Events carry `postId`, `postUrl`, `authorId` and `authorUsername` for post events, and `client.events.list` filters by `postMonitorId`.
+* `client.x.sports` adds the NFL & college football reads `listGames`, `retrieveScoreboard`, `retrieveBoxScore` and `retrievePlays`.
 * Every request sends `X-Xquik-SDK: js` beside the platform headers it already sends.
 * Posts and embedded posts return `softIntervention`, the label X shows under a post whose reach it limits.
 * `Error` adds 7 codes from the API, such as `topup_in_progress`, and names its code list `Error.Code`.

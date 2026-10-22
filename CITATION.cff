@@ -5,7 +5,7 @@ type: software
 authors:
   - name: Xquik
 version: 0.17.0
-date-released: 2026-10-22
+date-released: 2026-10-23
 url: https://github.com/Xquik-dev/x-twitter-scraper-typescript
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-typescript
 license: Apache-2.0
