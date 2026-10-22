@@ -8,6 +8,7 @@
 
 ### Features
 
+* Every request sends `X-Xquik-SDK: js` beside the platform headers it already sends.
 * Posts and embedded posts return `softIntervention`, the label X shows under a post whose reach it limits.
 * `Error` adds 7 codes from the API, such as `topup_in_progress`.
 * Keyword monitors, Lists, List banners, trend locations, support receipts and user ID pages share named models. Old response type names stay as aliases.
