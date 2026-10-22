@@ -28,7 +28,7 @@ Public advisories will credit reporters unless they request anonymity.
 
 ## Security boundary
 
-This package includes the generated TypeScript SDK and bundled agent Skills.
+This package includes the TypeScript SDK and bundled agent Skills.
 
 The SDK constructs HTTPS requests and parses remote responses.
 
@@ -53,7 +53,7 @@ These threats are in scope.
 - Credentials exposed through logs, source files, URLs, or untrusted endpoints.
 - Malicious responses exploiting parsing, streaming, upload, or retry behavior.
 - Dependency or release-process compromise.
-- Generated-code drift weakening validation or security behavior.
+- SDK changes that weaken validation or security behavior.
 - Unreviewed write actions causing unintended external changes.
 
 These mitigations are required.

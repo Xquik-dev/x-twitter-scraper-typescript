@@ -6,11 +6,11 @@
   "rules": [
     "Use README.md first for install, API key setup, TypeScript and JavaScript examples, webhooks, and common workflows.",
     "Use https://docs.xquik.com/mcp/overview for current MCP authentication and client compatibility. MCP access is separate from this REST SDK.",
-    "Use api.md for the generated resource map, method names, request parameters, response types, and endpoint coverage.",
+    "Use api.md for the resource map, method names, request parameters, response types, and endpoint coverage.",
     "Use package.json and the npm package x-twitter-scraper for package metadata, exports, and supported runtimes.",
     "Prefer X_TWITTER_SCRAPER_API_KEY environment configuration; never put API keys in source files or examples.",
-    "For TypeScript code, import the default XTwitterScraper client and use generated namespace types for request and response shapes.",
-    "Keep generated code conventions intact and align feature claims with the Xquik OpenAPI and docs surface."
+    "For TypeScript code, import the default XTwitterScraper client and use the XTwitterScraper namespace types for request and response shapes.",
+    "Follow the code style of the files around a change, and match feature claims to the Xquik OpenAPI spec and docs."
   ],
   "url": "https://context7.com/xquik-dev/x-twitter-scraper-typescript",
   "public_key": "pk_oCPeRRqZFJsY4cCUSotDD"

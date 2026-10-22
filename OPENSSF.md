@@ -8,7 +8,7 @@ The live badge entry is [OpenSSF project 13740](https://www.bestpractices.dev/pr
 
 The project releases the `x-twitter-scraper` npm package.
 
-The package includes the generated TypeScript SDK and bundled agent Skills.
+The package includes the TypeScript SDK and bundled agent Skills.
 
 The shared Xquik documentation site supports this released project.
 
