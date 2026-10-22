@@ -2689,14 +2689,14 @@ export namespace SoftIntervention {
   export namespace Text {
     export interface Entity {
       /**
-       * Whole number from 0.
+       * Position in the label's text where the entity starts, counted from 0.
        */
       fromIndex?: number;
 
       ref?: Entity.Ref;
 
       /**
-       * Whole number from 0.
+       * Position in the label's text where the entity ends, counted from 0.
        */
       toIndex?: number;
     }
