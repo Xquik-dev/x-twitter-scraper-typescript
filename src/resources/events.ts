@@ -77,7 +77,14 @@ export interface Event {
   /**
    * Post fields match REST. Legacy fields remain available.
    */
-  data: Event.MonitorPost | Event.MonitorProfileChange | Shared.MonitorFollow | Event.MonitorLegacyPost;
+  data:
+    | Event.MonitorPost
+    | Event.MonitorProfileChange
+    | Shared.MonitorFollow
+    | PostsAPI.MonitorPostMetricChange
+    | PostsAPI.MonitorPostEdit
+    | PostsAPI.MonitorPostDeleted
+    | Event.MonitorLegacyPost;
 
   /**
    * Account monitor ID for account events, or keyword monitor ID for keyword events.
@@ -1734,6 +1741,9 @@ export interface EventDetail {
     | EventDetail.MonitorPost
     | EventDetail.MonitorProfileChange
     | Shared.MonitorFollow
+    | PostsAPI.MonitorPostMetricChange
+    | PostsAPI.MonitorPostEdit
+    | PostsAPI.MonitorPostDeleted
     | EventDetail.MonitorLegacyPost;
 
   /**
@@ -3378,7 +3388,7 @@ export interface EventListParams {
   /**
    * Filter events by type
    */
-  eventType?: Shared.EventType;
+  eventType?: Shared.EventType | PostsAPI.PostEventType;
 
   /**
    * Keyword monitor ID. The keyword_monitor_id alias also works.

@@ -304,6 +304,63 @@ export interface PostMonitorMetrics {
   buckets: Array<PostMonitorMetricsBucket>;
 }
 
+/**
+ * A post metric's change since its last event, on post.likes.changed,
+ * post.retweets.changed, post.replies.changed, post.quotes.changed,
+ * post.bookmarks.changed & post.views.changed.
+ */
+export interface MonitorPostMetricChange {
+  /**
+   * Current count minus previous count.
+   */
+  change: number;
+
+  /**
+   * The count X shows now.
+   */
+  current: number;
+
+  /**
+   * The metric that changed.
+   */
+  metric: 'bookmarks' | 'likes' | 'quotes' | 'replies' | 'retweets' | 'views';
+
+  /**
+   * The count the last event of this metric reported.
+   */
+  previous: number;
+}
+
+/**
+ * The post's text before & after an edit, on post.edited.
+ */
+export interface MonitorPostEdit {
+  /**
+   * The text before the edit.
+   */
+  previousText: string;
+
+  /**
+   * The text of the newest version.
+   */
+  text: string;
+
+  /**
+   * X's ID of the newest version of the post.
+   */
+  versionId: string;
+}
+
+/**
+ * The last text the monitor saw, on post.deleted.
+ */
+export interface MonitorPostDeleted {
+  /**
+   * The post's text before its author deleted it.
+   */
+  text: string;
+}
+
 export interface PostListResponse {
   hasMore: boolean;
 
@@ -393,6 +450,9 @@ export declare namespace Posts {
     type PostMonitorMetricsBucketMetrics as PostMonitorMetricsBucketMetrics,
     type PostMonitorMetricsBucket as PostMonitorMetricsBucket,
     type PostMonitorMetrics as PostMonitorMetrics,
+    type MonitorPostMetricChange as MonitorPostMetricChange,
+    type MonitorPostEdit as MonitorPostEdit,
+    type MonitorPostDeleted as MonitorPostDeleted,
     type PostListResponse as PostListResponse,
     type PostDeleteResponse as PostDeleteResponse,
     type PostCreateParams as PostCreateParams,
