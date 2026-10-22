@@ -6,51 +6,47 @@ import XTwitterScraper from 'x-twitter-scraper';
 import { fixtureClient } from '../../fixture-client';
 
 const monitor: XTwitterScraper.Monitors.PostMonitor = {
-  "id": "31",
-  "name": "Launch post",
-  "postId": "2104984505677430978",
-  "postUrl": "https://x.com/xquik/status/2104984505677430978",
-  "authorId": "1661816432185823232",
-  "authorUsername": "xquik",
-  "authorName": "Xquik",
-  "text": "We shipped post monitors.",
-  "postedAt": "2026-09-29T17:19:49.000Z",
-  "eventTypes": [
-    "post.reply.new",
-    "post.quote.new",
-    "post.likes.changed"
-  ],
-  "isActive": true,
-  "createdAt": "2025-01-15T12:00:00Z",
-  "nextBillingAt": "2026-10-22T12:00:00Z",
-  "pausedReason": "x_post_deleted",
-  "pausedAt": "2026-10-22T12:00:00Z",
-  "metrics": {
-    "views": {
-      "current": 1885,
-      "gain": 12
+  id: '31',
+  name: 'Launch post',
+  postId: '2104984505677430978',
+  postUrl: 'https://x.com/xquik/status/2104984505677430978',
+  authorId: '1661816432185823232',
+  authorUsername: 'xquik',
+  authorName: 'Xquik',
+  text: 'We shipped post monitors.',
+  postedAt: '2026-09-29T17:19:49.000Z',
+  eventTypes: ['post.reply.new', 'post.quote.new', 'post.likes.changed'],
+  isActive: true,
+  createdAt: '2025-01-15T12:00:00Z',
+  nextBillingAt: '2026-10-22T12:00:00Z',
+  pausedReason: 'x_post_deleted',
+  pausedAt: '2026-10-22T12:00:00Z',
+  metrics: {
+    views: {
+      current: 1885,
+      gain: 12,
     },
-    "likes": {
-      "current": 1885,
-      "gain": 12
+    likes: {
+      current: 1885,
+      gain: 12,
     },
-    "retweets": {
-      "current": 1885,
-      "gain": 12
+    retweets: {
+      current: 1885,
+      gain: 12,
     },
-    "replies": {
-      "current": 1885,
-      "gain": 12
+    replies: {
+      current: 1885,
+      gain: 12,
     },
-    "quotes": {
-      "current": 1885,
-      "gain": 12
+    quotes: {
+      current: 1885,
+      gain: 12,
     },
-    "bookmarks": {
-      "current": 1885,
-      "gain": 12
-    }
-  }
+    bookmarks: {
+      current: 1885,
+      gain: 12,
+    },
+  },
 };
 
 describe('resource posts', () => {
@@ -124,38 +120,38 @@ describe('resource posts', () => {
 
   test('retrieveMetrics passes hours and returns hourly buckets', async () => {
     const metrics: XTwitterScraper.Monitors.PostMonitorMetrics = {
-      "hours": 12,
-      "buckets": [
+      hours: 12,
+      buckets: [
         {
-          "at": "2026-10-22T11:00:00.000Z",
-          "metrics": {
-            "views": {
-              "value": 541600,
-              "gain": 500
+          at: '2026-10-22T11:00:00.000Z',
+          metrics: {
+            views: {
+              value: 541600,
+              gain: 500,
             },
-            "likes": {
-              "value": 1890,
-              "gain": 5
+            likes: {
+              value: 1890,
+              gain: 5,
             },
-            "retweets": {
-              "value": 112,
-              "gain": 0
+            retweets: {
+              value: 112,
+              gain: 0,
             },
-            "replies": {
-              "value": 86,
-              "gain": 1
+            replies: {
+              value: 86,
+              gain: 1,
             },
-            "quotes": {
-              "value": 87,
-              "gain": 0
+            quotes: {
+              value: 87,
+              gain: 0,
             },
-            "bookmarks": {
-              "value": 471,
-              "gain": 1
-            }
-          }
-        }
-      ]
+            bookmarks: {
+              value: 471,
+              gain: 1,
+            },
+          },
+        },
+      ],
     };
     const { client, requests } = fixtureClient(metrics);
 
@@ -167,24 +163,24 @@ describe('resource posts', () => {
 
   test('events filter by post monitor & carry the post', async () => {
     const page = {
-      "events": [
+      events: [
         {
-          "id": "9001",
-          "type": "post.reply.new",
-          "monitorId": "31",
-          "monitorType": "post",
-          "monitorName": "Launch post",
-          "occurredAt": "2026-10-22T11:05:00.000Z",
-          "postId": "2104984505677430978",
-          "postUrl": "https://x.com/xquik/status/2104984505677430978",
-          "authorId": "1661816432185823232",
-          "authorUsername": "xquik",
-          "data": {
-            "replyId": "2104990000000000000"
-          }
-        }
+          id: '9001',
+          type: 'post.reply.new',
+          monitorId: '31',
+          monitorType: 'post',
+          monitorName: 'Launch post',
+          occurredAt: '2026-10-22T11:05:00.000Z',
+          postId: '2104984505677430978',
+          postUrl: 'https://x.com/xquik/status/2104984505677430978',
+          authorId: '1661816432185823232',
+          authorUsername: 'xquik',
+          data: {
+            replyId: '2104990000000000000',
+          },
+        },
       ],
-      "hasMore": false
+      hasMore: false,
     };
     const { client, requests } = fixtureClient(page);
 

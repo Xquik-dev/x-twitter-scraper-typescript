@@ -306,5 +306,4 @@ export declare namespace Monitors {
     type PostListParams as PostListParams,
     type PostRetrieveMetricsParams as PostRetrieveMetricsParams,
   };
-
 }

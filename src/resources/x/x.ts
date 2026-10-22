@@ -2180,5 +2180,4 @@ export declare namespace X {
     type SportRetrieveBoxScoreParams as SportRetrieveBoxScoreParams,
     type SportRetrievePlaysParams as SportRetrievePlaysParams,
   };
-
 }
