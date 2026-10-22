@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Features
+
+* `client.monitors.posts` adds post monitors with `create`, `retrieve`, `update`, `list`, `delete` and the hourly `retrieveMetrics`.
+* Events carry `postId`, `postUrl`, `authorId` and `authorUsername` for post events, and `client.events.list` filters by `postMonitorId`.
+* `client.x.sports` adds the NFL & college football reads `listGames`, `retrieveScoreboard`, `retrieveBoxScore` and `retrievePlays`.
+
 ### BREAKING CHANGES
 
 * Callers now pass request options as the 2nd argument to `bulkRetry`, for example `bulkRetry({}, { timeout })`.

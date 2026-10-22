@@ -4,6 +4,24 @@
 
 import { APIResource } from '../../core/resource';
 import * as Shared from '../shared';
+import * as PostsAPI from './posts';
+import {
+  PostCreateParams,
+  PostDeleteResponse,
+  PostEventType,
+  PostListParams,
+  PostListResponse,
+  PostMetricPoint,
+  PostMetricReading,
+  PostMetrics,
+  PostMonitor,
+  PostMonitorMetrics,
+  PostMonitorMetricsBucket,
+  PostMonitorMetricsBucketMetrics,
+  PostRetrieveMetricsParams,
+  PostUpdateParams,
+  Posts,
+} from './posts';
 import * as KeywordsAPI from './keywords';
 import {
   KeywordCreateParams,
@@ -26,6 +44,7 @@ import { path } from '../../internal/utils/path';
  */
 export class Monitors extends APIResource {
   keywords: KeywordsAPI.Keywords = new KeywordsAPI.Keywords(this._client);
+  posts: PostsAPI.Posts = new PostsAPI.Posts(this._client);
 
   /**
    * Creates an account monitor, with no count limit. Active monitors check every
@@ -238,6 +257,7 @@ export interface MonitorListParams {
 }
 
 Monitors.Keywords = Keywords;
+Monitors.Posts = Posts;
 
 export declare namespace Monitors {
   export {
@@ -262,4 +282,23 @@ export declare namespace Monitors {
     type KeywordUpdateParams as KeywordUpdateParams,
     type KeywordListParams as KeywordListParams,
   };
+
+  export {
+    Posts as Posts,
+    type PostEventType as PostEventType,
+    type PostMetricReading as PostMetricReading,
+    type PostMetrics as PostMetrics,
+    type PostMonitor as PostMonitor,
+    type PostMetricPoint as PostMetricPoint,
+    type PostMonitorMetricsBucketMetrics as PostMonitorMetricsBucketMetrics,
+    type PostMonitorMetricsBucket as PostMonitorMetricsBucket,
+    type PostMonitorMetrics as PostMonitorMetrics,
+    type PostListResponse as PostListResponse,
+    type PostDeleteResponse as PostDeleteResponse,
+    type PostCreateParams as PostCreateParams,
+    type PostUpdateParams as PostUpdateParams,
+    type PostListParams as PostListParams,
+    type PostRetrieveMetricsParams as PostRetrieveMetricsParams,
+  };
+
 }
