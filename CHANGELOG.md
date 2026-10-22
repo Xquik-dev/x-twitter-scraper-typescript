@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.17.0 (2026-10-22)
+
+[Full changelog from v0.16.0 to v0.17.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.16.0...v0.17.0)
+
+This release adds the Community analytics read, the `softIntervention` label and named models. 1 change breaks callers of `bulkRetry`.
 
 ### BREAKING CHANGES
 
