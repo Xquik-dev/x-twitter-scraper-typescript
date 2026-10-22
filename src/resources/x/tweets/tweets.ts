@@ -238,7 +238,7 @@ export class Tweets extends APIResource {
     id: string,
     query: TweetGetRetweeterIDsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<TweetGetRetweeterIDsResponse> {
+  ): APIPromise<Shared.PaginatedUserIds> {
     return this._client.get(path`/x/tweets/${id}/retweeter-ids`, { query, ...options });
   }
 
@@ -614,6 +614,12 @@ export interface TweetDetail {
    * Public metadata whose fields are defined by X.
    */
   scopes?: { [key: string]: unknown };
+
+  /**
+   * The label X shows under a post whose reach it limits. It links to the page that
+   * explains it.
+   */
+  softIntervention?: Shared.SoftIntervention;
 
   /**
    * The app the post was sent from, as X labels it. X sends it for some posts only.
@@ -2815,20 +2821,7 @@ export namespace TweetGetRepliesResponse {
   }
 }
 
-/**
- * A page of user IDs without profiles. Follow next_cursor while the response
- * reports more pages.
- */
-export interface TweetGetRetweeterIDsResponse {
-  has_next_page: boolean;
-
-  /**
-   * X user IDs, newest relationship first.
-   */
-  ids: Array<string>;
-
-  next_cursor: string;
-}
+export type TweetGetRetweeterIDsResponse = Shared.PaginatedUserIds;
 
 export interface TweetGetSubtitlesResponse {
   /**

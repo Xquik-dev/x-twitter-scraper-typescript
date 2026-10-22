@@ -11,6 +11,7 @@ import {
   KeywordDeactivateResponse,
   KeywordListParams,
   KeywordListResponse,
+  KeywordMonitor,
   KeywordRetrieveResponse,
   KeywordUpdateParams,
   KeywordUpdateResponse,
@@ -251,6 +252,7 @@ export declare namespace Monitors {
 
   export {
     Keywords as Keywords,
+    type KeywordMonitor as KeywordMonitor,
     type KeywordCreateResponse as KeywordCreateResponse,
     type KeywordRetrieveResponse as KeywordRetrieveResponse,
     type KeywordUpdateResponse as KeywordUpdateResponse,

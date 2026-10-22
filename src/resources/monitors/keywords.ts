@@ -26,7 +26,7 @@ export class Keywords extends APIResource {
    * });
    * ```
    */
-  create(body: KeywordCreateParams, options?: RequestOptions): APIPromise<KeywordCreateResponse> {
+  create(body: KeywordCreateParams, options?: RequestOptions): APIPromise<KeywordMonitor> {
     return this._client.post('/monitors/keywords', { body, ...options });
   }
 
@@ -40,7 +40,7 @@ export class Keywords extends APIResource {
    * );
    * ```
    */
-  retrieve(id: string, options?: RequestOptions): APIPromise<KeywordRetrieveResponse> {
+  retrieve(id: string, options?: RequestOptions): APIPromise<KeywordMonitor> {
     return this._client.get(path`/monitors/keywords/${id}`, options);
   }
 
@@ -59,7 +59,7 @@ export class Keywords extends APIResource {
    * );
    * ```
    */
-  update(id: string, body: KeywordUpdateParams, options?: RequestOptions): APIPromise<KeywordUpdateResponse> {
+  update(id: string, body: KeywordUpdateParams, options?: RequestOptions): APIPromise<KeywordMonitor> {
     return this._client.patch(path`/monitors/keywords/${id}`, { body, ...options });
   }
 
@@ -97,7 +97,7 @@ export class Keywords extends APIResource {
 /**
  * Keyword monitor that tracks matching public X activity.
  */
-export interface KeywordCreateResponse {
+export interface KeywordMonitor {
   id: string;
 
   createdAt: string;
@@ -133,88 +133,16 @@ export interface KeywordCreateResponse {
   pausedReason?: 'insufficient_credits';
 }
 
-/**
- * Keyword monitor that tracks matching public X activity.
- */
-export interface KeywordRetrieveResponse {
-  id: string;
+export type KeywordCreateResponse = KeywordMonitor;
 
-  createdAt: string;
+export type KeywordRetrieveResponse = KeywordMonitor;
 
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<Shared.EventType>;
-
-  isActive: boolean;
-
-  /**
-   * Next hourly credit charge time for this keyword query monitor.
-   */
-  nextBillingAt: string;
-
-  query: string;
-
-  /**
-   * Customer-set label of the keyword monitor, when set.
-   */
-  name?: string;
-
-  /**
-   * When Xquik paused this keyword monitor.
-   */
-  pausedAt?: string;
-
-  /**
-   * Why Xquik paused this keyword monitor. The balance could not pay an hour, so add
-   * credits & resume. Absent when the monitor is active or you paused it yourself.
-   */
-  pausedReason?: 'insufficient_credits';
-}
-
-/**
- * Keyword monitor that tracks matching public X activity.
- */
-export interface KeywordUpdateResponse {
-  id: string;
-
-  createdAt: string;
-
-  /**
-   * Array of event types to subscribe to.
-   */
-  eventTypes: Array<Shared.EventType>;
-
-  isActive: boolean;
-
-  /**
-   * Next hourly credit charge time for this keyword query monitor.
-   */
-  nextBillingAt: string;
-
-  query: string;
-
-  /**
-   * Customer-set label of the keyword monitor, when set.
-   */
-  name?: string;
-
-  /**
-   * When Xquik paused this keyword monitor.
-   */
-  pausedAt?: string;
-
-  /**
-   * Why Xquik paused this keyword monitor. The balance could not pay an hour, so add
-   * credits & resume. Absent when the monitor is active or you paused it yourself.
-   */
-  pausedReason?: 'insufficient_credits';
-}
+export type KeywordUpdateResponse = KeywordMonitor;
 
 export interface KeywordListResponse {
   hasMore: boolean;
 
-  monitors: Array<KeywordListResponse.Monitor>;
+  monitors: Array<KeywordMonitor>;
 
   /**
    * Keyword monitors on this page.
@@ -225,44 +153,7 @@ export interface KeywordListResponse {
 }
 
 export namespace KeywordListResponse {
-  /**
-   * Keyword monitor that tracks matching public X activity.
-   */
-  export interface Monitor {
-    id: string;
-
-    createdAt: string;
-
-    /**
-     * Array of event types to subscribe to.
-     */
-    eventTypes: Array<Shared.EventType>;
-
-    isActive: boolean;
-
-    /**
-     * Next hourly credit charge time for this keyword query monitor.
-     */
-    nextBillingAt: string;
-
-    query: string;
-
-    /**
-     * Customer-set label of the keyword monitor, when set.
-     */
-    name?: string;
-
-    /**
-     * When Xquik paused this keyword monitor.
-     */
-    pausedAt?: string;
-
-    /**
-     * Why Xquik paused this keyword monitor. The balance could not pay an hour, so add
-     * credits & resume. Absent when the monitor is active or you paused it yourself.
-     */
-    pausedReason?: 'insufficient_credits';
-  }
+  export type Monitor = KeywordMonitor;
 }
 
 export interface KeywordDeactivateResponse {
@@ -323,6 +214,7 @@ export interface KeywordListParams {
 
 export declare namespace Keywords {
   export {
+    type KeywordMonitor as KeywordMonitor,
     type KeywordCreateResponse as KeywordCreateResponse,
     type KeywordRetrieveResponse as KeywordRetrieveResponse,
     type KeywordUpdateResponse as KeywordUpdateResponse,

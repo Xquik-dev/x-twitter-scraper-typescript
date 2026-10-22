@@ -222,6 +222,7 @@ export {
 export { WriteActions, type WriteActionRetrieveResponse } from './write-actions';
 export {
   X,
+  type TrendLocation,
   type XAutocompleteSearchResponse,
   type XGetArticleResponse,
   type XGetHashflagsResponse,

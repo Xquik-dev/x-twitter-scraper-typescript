@@ -163,7 +163,7 @@ const normalizePlatform = (platform: string): PlatformName => {
   return 'Unknown';
 };
 
-let _platformHeaders: PlatformProperties;
+let _platformHeaders: { 'X-Xquik-SDK': 'js' } & PlatformProperties;
 export const getPlatformHeaders = () => {
-  return (_platformHeaders ??= getPlatformProperties());
+  return (_platformHeaders ??= { 'X-Xquik-SDK': 'js', ...getPlatformProperties() });
 };

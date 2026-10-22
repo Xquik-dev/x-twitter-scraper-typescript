@@ -25,7 +25,7 @@ export class Tickets extends APIResource {
    * });
    * ```
    */
-  create(params: TicketCreateParams, options?: RequestOptions): APIPromise<TicketCreateResponse> {
+  create(params: TicketCreateParams, options?: RequestOptions): APIPromise<SupportReceipt> {
     const { 'Idempotency-Key': idempotencyKey, ...body } = params;
     return this._client.post(
       '/support/tickets',
@@ -98,7 +98,7 @@ export class Tickets extends APIResource {
    * );
    * ```
    */
-  reply(id: string, params: TicketReplyParams, options?: RequestOptions): APIPromise<TicketReplyResponse> {
+  reply(id: string, params: TicketReplyParams, options?: RequestOptions): APIPromise<SupportReceipt> {
     const { 'Idempotency-Key': idempotencyKey, ...body } = params;
     return this._client.post(
       path`/support/tickets/${id}/messages`,
@@ -120,13 +120,13 @@ export class Tickets extends APIResource {
 /**
  * Support submission receipt.
  */
-export interface TicketCreateResponse {
-  attachments: Array<TicketCreateResponse.Attachment>;
+export interface SupportReceipt {
+  attachments: Array<SupportReceipt.Attachment>;
 
   publicId: string;
 }
 
-export namespace TicketCreateResponse {
+export namespace SupportReceipt {
   /**
    * Attachment identifier and initial processing state.
    */
@@ -135,6 +135,12 @@ export namespace TicketCreateResponse {
 
     status: 'pending' | 'ready' | 'failed';
   }
+}
+
+export type TicketCreateResponse = SupportReceipt;
+
+export namespace TicketCreateResponse {
+  export type Attachment = SupportReceipt.Attachment;
 }
 
 export interface TicketRetrieveResponse {
@@ -230,24 +236,10 @@ export namespace TicketListResponse {
   }
 }
 
-/**
- * Support submission receipt.
- */
-export interface TicketReplyResponse {
-  attachments: Array<TicketReplyResponse.Attachment>;
-
-  publicId: string;
-}
+export type TicketReplyResponse = SupportReceipt;
 
 export namespace TicketReplyResponse {
-  /**
-   * Attachment identifier and initial processing state.
-   */
-  export interface Attachment {
-    publicId: string;
-
-    status: 'pending' | 'ready' | 'failed';
-  }
+  export type Attachment = SupportReceipt.Attachment;
 }
 
 export interface TicketCreateParams {
@@ -311,6 +303,7 @@ export interface TicketReplyParams {
 
 export declare namespace Tickets {
   export {
+    type SupportReceipt as SupportReceipt,
     type TicketCreateResponse as TicketCreateResponse,
     type TicketRetrieveResponse as TicketRetrieveResponse,
     type TicketUpdateResponse as TicketUpdateResponse,

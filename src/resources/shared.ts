@@ -732,6 +732,12 @@ export interface EmbeddedTweet {
   scopes?: { [key: string]: unknown };
 
   /**
+   * The label X shows under a post whose reach it limits. It links to the page that
+   * explains it.
+   */
+  softIntervention?: SoftIntervention;
+
+  /**
    * The app the post was sent from, as X labels it. X sends it for some posts only.
    */
   source?: string;
@@ -790,7 +796,46 @@ export interface EmbeddedTweet {
  * `xquik-api-contract: 2026-04-29` for the structured best-practice error object.
  */
 export interface Error {
-  error:
+  error: Error.Code | Error.StructuredError;
+
+  /**
+   * With unknown_field: the valid names where the first unknown name in fields or
+   * omit stopped.
+   */
+  allowedFields?: Array<string>;
+
+  /**
+   * With unknown_field: each unknown name in fields or omit, with the name it most
+   * likely meant.
+   */
+  fieldErrors?: Array<Error.FieldError>;
+
+  /**
+   * Human-readable error guidance.
+   */
+  message?: string;
+
+  /**
+   * Machine-readable reason. A login failure names its cause, such as
+   * temporary_issue. A user_not_found answer names why X shows no profile: not_found
+   * or suspended. A tweet_not_found answer names why X shows no post, when X said:
+   * deleted, author_suspended or protected.
+   */
+  reason?: string;
+
+  /**
+   * Seconds until the next permitted request.
+   */
+  retryAfter?: number;
+
+  /**
+   * Required wait in milliseconds.
+   */
+  retryAfterMs?: number;
+}
+
+export namespace Error {
+  export type Code =
     | 'internal_error'
     | 'account_already_connected'
     | 'account_needs_reauth'
@@ -831,6 +876,7 @@ export interface Error {
     | 'payment_failed'
     | 'rate_limit_exceeded'
     | 'service_unavailable'
+    | 'session_required'
     | 'style_not_found'
     | 'subscription_inactive'
     | 'tweet_not_found'
@@ -843,6 +889,7 @@ export interface Error {
     | 'checkout_unavailable'
     | 'connection_challenge_expired'
     | 'connection_challenge_inactive'
+    | 'contributor_not_found'
     | 'coverage_cursor_gone'
     | 'coverage_cursor_unavailable'
     | 'cursor_account_unavailable'
@@ -861,6 +908,7 @@ export interface Error {
     | 'invalid_community_id'
     | 'invalid_community_topic'
     | 'invalid_complete_replies_request'
+    | 'invalid_contributor_alias'
     | 'invalid_coverage_cursor'
     | 'invalid_coverage_request'
     | 'invalid_cursor'
@@ -868,6 +916,7 @@ export interface Error {
     | 'invalid_job_filter'
     | 'invalid_job_id'
     | 'invalid_list_id'
+    | 'invalid_news_id'
     | 'invalid_output_options'
     | 'invalid_payment_amount'
     | 'invalid_range'
@@ -880,6 +929,7 @@ export interface Error {
     | 'missing_idempotency_key'
     | 'missing_ids'
     | 'missing_url'
+    | 'news_not_found'
     | 'no_cached_style'
     | 'pagination_stalled'
     | 'passkey_required'
@@ -897,6 +947,7 @@ export interface Error {
     | 'too_many_ids'
     | 'too_many_streams'
     | 'too_many_tweets'
+    | 'topup_in_progress'
     | 'unknown_field'
     | 'unsupported_media_combination'
     | 'unsupported_media_type'
@@ -938,198 +989,12 @@ export interface Error {
     | 'x_target_not_found'
     | 'x_transient_error'
     | 'x_user_lookup_failed'
+    | 'x_video_too_large'
     | 'x_write_ambiguous'
-    | 'x_write_failed'
-    | Error.StructuredError;
+    | 'x_write_failed';
 
-  /**
-   * With unknown_field: the valid names where the first unknown name in fields or
-   * omit stopped.
-   */
-  allowedFields?: Array<string>;
-
-  /**
-   * With unknown_field: each unknown name in fields or omit, with the name it most
-   * likely meant.
-   */
-  fieldErrors?: Array<Error.FieldError>;
-
-  /**
-   * Human-readable error guidance.
-   */
-  message?: string;
-
-  /**
-   * Machine-readable reason. A login failure names its cause, such as
-   * temporary_issue. A user_not_found answer names why X shows no profile: not_found
-   * or suspended. A tweet_not_found answer names why X shows no post, when X said:
-   * deleted, author_suspended or protected.
-   */
-  reason?: string;
-
-  /**
-   * Seconds until the next permitted request.
-   */
-  retryAfter?: number;
-
-  /**
-   * Required wait in milliseconds.
-   */
-  retryAfterMs?: number;
-}
-
-export namespace Error {
   export interface StructuredError {
-    code:
-      | 'internal_error'
-      | 'account_already_connected'
-      | 'account_needs_reauth'
-      | 'account_not_found'
-      | 'account_required'
-      | 'account_restricted'
-      | 'api_key_limit_reached'
-      | 'article_not_found'
-      | 'closed'
-      | 'dm_not_permitted'
-      | 'invalid_format'
-      | 'invalid_id'
-      | 'invalid_input'
-      | 'invalid_media_url'
-      | 'invalid_message_id'
-      | 'invalid_params'
-      | 'invalid_tool_type'
-      | 'invalid_tweet_id'
-      | 'invalid_tweet_url'
-      | 'invalid_user_id'
-      | 'invalid_user_ids'
-      | 'invalid_username'
-      | 'invalid_json'
-      | 'insufficient_credits'
-      | 'job_not_found'
-      | 'login_cooldown'
-      | 'login_failed'
-      | 'media_download_failed'
-      | 'media_too_large'
-      | 'missing_params'
-      | 'missing_query'
-      | 'monitor_already_exists'
-      | 'monitor_profile_unavailable'
-      | 'no_media'
-      | 'no_credits'
-      | 'no_subscription'
-      | 'not_found'
-      | 'payment_failed'
-      | 'rate_limit_exceeded'
-      | 'service_unavailable'
-      | 'style_not_found'
-      | 'subscription_inactive'
-      | 'tweet_not_found'
-      | 'unauthenticated'
-      | 'unsupported_field'
-      | 'user_not_found'
-      | 'body_too_large'
-      | 'bookmark_folders_unavailable'
-      | 'broadcast_not_found'
-      | 'checkout_unavailable'
-      | 'connection_challenge_expired'
-      | 'connection_challenge_inactive'
-      | 'coverage_cursor_gone'
-      | 'coverage_cursor_unavailable'
-      | 'cursor_account_unavailable'
-      | 'draft_not_found'
-      | 'draw_too_large'
-      | 'expired'
-      | 'favoriters_unavailable'
-      | 'forbidden'
-      | 'guest_wallet_unavailable'
-      | 'guest_wallets_disabled'
-      | 'guest_wallets_unavailable'
-      | 'idempotency_conflict'
-      | 'idempotency_in_progress'
-      | 'idempotency_key_conflict'
-      | 'invalid_broadcast_id'
-      | 'invalid_community_id'
-      | 'invalid_community_topic'
-      | 'invalid_complete_replies_request'
-      | 'invalid_coverage_cursor'
-      | 'invalid_coverage_request'
-      | 'invalid_cursor'
-      | 'invalid_idempotency_key'
-      | 'invalid_job_filter'
-      | 'invalid_job_id'
-      | 'invalid_list_id'
-      | 'invalid_output_options'
-      | 'invalid_payment_amount'
-      | 'invalid_range'
-      | 'invalid_reply_options'
-      | 'invalid_space_id'
-      | 'likes_unavailable'
-      | 'list_not_found'
-      | 'login_rate_limited'
-      | 'login_service_unavailable'
-      | 'missing_idempotency_key'
-      | 'missing_ids'
-      | 'missing_url'
-      | 'no_cached_style'
-      | 'pagination_stalled'
-      | 'passkey_required'
-      | 'rate_limited'
-      | 'read_request_timeout'
-      | 'replay_unavailable'
-      | 'replies_incomplete'
-      | 'retweeters_incomplete'
-      | 'search_unavailable'
-      | 'space_canceled'
-      | 'space_not_ended'
-      | 'support_media_rate_limit'
-      | 'support_request_rate_limit'
-      | 'telegram_unavailable'
-      | 'too_many_ids'
-      | 'too_many_streams'
-      | 'too_many_tweets'
-      | 'unknown_field'
-      | 'unsupported_media_combination'
-      | 'unsupported_media_type'
-      | 'webhook_inactive'
-      | 'write_tracking_unavailable'
-      | 'x_write_unconfirmed'
-      | 'x_account_feature_required'
-      | 'x_account_protected'
-      | 'x_account_suspended'
-      | 'x_api_rate_limited'
-      | 'x_api_unavailable'
-      | 'x_api_unauthorized'
-      | 'x_auth_failure'
-      | 'x_automation_refused'
-      | 'x_community_not_joined'
-      | 'x_community_not_selectable'
-      | 'x_community_post_public'
-      | 'x_community_post_removed'
-      | 'x_content_too_long'
-      | 'x_daily_limit'
-      | 'x_dm_not_allowed'
-      | 'x_dm_not_deleted'
-      | 'x_dm_not_sent'
-      | 'x_duplicate_action'
-      | 'x_login_auth_failed'
-      | 'x_login_challenge'
-      | 'x_login_denied'
-      | 'x_login_failed'
-      | 'x_login_rate_limited'
-      | 'x_login_service_unavailable'
-      | 'x_login_suspended'
-      | 'x_image_invalid'
-      | 'x_media_rejected'
-      | 'x_post_not_sent'
-      | 'x_rate_limited'
-      | 'x_rejected'
-      | 'x_reply_not_allowed'
-      | 'x_reply_target_unavailable'
-      | 'x_target_not_found'
-      | 'x_transient_error'
-      | 'x_user_lookup_failed'
-      | 'x_write_ambiguous'
-      | 'x_write_failed';
+    code: Code;
 
     message: string;
 
@@ -1251,6 +1116,18 @@ export interface MonitorFollow {
 }
 
 /**
+ * 1 page of public X Lists. Follow next_cursor while the response reports more
+ * pages. Each returned List costs 1 credit.
+ */
+export interface PaginatedLists {
+  has_next_page: boolean;
+
+  lists: Array<XList>;
+
+  next_cursor: string;
+}
+
+/**
  * Follow next_cursor while the response reports more pages. A page can hold fewer
  * rows than its limit & still report more. That report decides, not the row count.
  * A page can be empty & still report more, filtered or not. Automatic search, user
@@ -1325,6 +1202,21 @@ export namespace PaginatedTweets {
       supportsOhlc?: boolean;
     }
   }
+}
+
+/**
+ * A page of user IDs without profiles. Follow next_cursor while the response
+ * reports more pages.
+ */
+export interface PaginatedUserIds {
+  has_next_page: boolean;
+
+  /**
+   * X user IDs, newest relationship first.
+   */
+  ids: Array<string>;
+
+  next_cursor: string;
 }
 
 /**
@@ -1577,6 +1469,12 @@ export interface SearchTweet {
    * Public metadata whose fields are defined by X.
    */
   scopes?: { [key: string]: unknown };
+
+  /**
+   * The label X shows under a post whose reach it limits. It links to the page that
+   * explains it.
+   */
+  softIntervention?: SoftIntervention;
 
   /**
    * The app the post was sent from, as X labels it. X sends it for some posts only.
@@ -2748,6 +2646,87 @@ export namespace SearchTweet {
 }
 
 /**
+ * The label X shows under a post whose reach it limits. It links to the page that
+ * explains it.
+ */
+export interface SoftIntervention {
+  /**
+   * The label's kind. `Fosnr` marks a post X keeps up but shows to fewer people.
+   */
+  displayType?: string;
+
+  /**
+   * Whether X prompts readers before they engage with the post.
+   */
+  engagementNudge?: boolean;
+
+  text?: SoftIntervention.Text;
+
+  /**
+   * The page that explains the label.
+   */
+  url?: SoftIntervention.URL;
+}
+
+export namespace SoftIntervention {
+  export interface Text {
+    /**
+     * Links inside the label, by character range.
+     */
+    entities?: Array<Text.Entity>;
+
+    /**
+     * Whether the label reads right to left.
+     */
+    rtl?: boolean;
+
+    /**
+     * The label's text.
+     */
+    text?: string;
+  }
+
+  export namespace Text {
+    export interface Entity {
+      /**
+       * Position in the label's text where the entity starts, counted from 0.
+       */
+      fromIndex?: number;
+
+      ref?: Entity.Ref;
+
+      /**
+       * Position in the label's text where the entity ends, counted from 0.
+       */
+      toIndex?: number;
+    }
+
+    export namespace Entity {
+      export interface Ref {
+        screenName?: string;
+
+        text?: string;
+
+        type?: string;
+
+        url?: string;
+
+        urlType?: string;
+      }
+    }
+  }
+
+  /**
+   * The page that explains the label.
+   */
+  export interface URL {
+    url?: string;
+
+    urlType?: string;
+  }
+}
+
+/**
  * Tweet media.
  */
 export interface TweetMedia {
@@ -3586,5 +3565,169 @@ export namespace UserProfile {
 
       urlType?: string;
     }
+  }
+}
+
+/**
+ * Public X List with its owner's public profile. Leaves out what X tells the
+ * reading account, such as whether it follows the List.
+ */
+export interface XList {
+  /**
+   * Numeric ID of the List.
+   */
+  id: string;
+
+  /**
+   * Name the owner gave the List.
+   */
+  name: string;
+
+  /**
+   * URL of the banner the owner uploaded. Absent when the owner uploaded none.
+   */
+  bannerUrl?: string;
+
+  /**
+   * When the owner made the List.
+   */
+  createdAt?: string;
+
+  /**
+   * Banner the owner uploaded.
+   */
+  customBanner?: XListBanner;
+
+  /**
+   * Banner X shows when the owner uploaded none. X picks it per reading account, so
+   * 2 calls can return different ones.
+   */
+  defaultBanner?: XListBanner;
+
+  /**
+   * About text of the List. Empty when the owner wrote none.
+   */
+  description?: string;
+
+  /**
+   * Avatar URLs of a few List members, which X may pick per request.
+   */
+  facepileUrls?: Array<string>;
+
+  /**
+   * Accounts on the List.
+   */
+  memberCount?: number;
+
+  /**
+   * Member count as X words it, such as 35 members.
+   */
+  membersContext?: string;
+
+  /**
+   * Public profile of the account that owns the List.
+   */
+  owner?: UserProfile;
+
+  /**
+   * Accounts that follow the List, which X calls followers.
+   */
+  subscriberCount?: number;
+
+  /**
+   * List page on x.com.
+   */
+  url?: string;
+}
+
+/**
+ * Banner image of an X List.
+ */
+export interface XListBanner {
+  /**
+   * Banner image URL.
+   */
+  url: string;
+
+  /**
+   * Banner height in pixels.
+   */
+  height?: number;
+
+  /**
+   * Media ID of an uploaded banner.
+   */
+  mediaId?: string;
+
+  /**
+   * Stable media key of an uploaded banner.
+   */
+  mediaKey?: string;
+
+  /**
+   * Dominant colors of an uploaded banner and their shares.
+   */
+  palette?: Array<XListBanner.Palette>;
+
+  /**
+   * Area X marks as the subject of the banner, in pixels.
+   */
+  salientRect?: XListBanner.SalientRect;
+
+  /**
+   * Banner width in pixels.
+   */
+  width?: number;
+}
+
+export namespace XListBanner {
+  export interface Palette {
+    /**
+     * Share of the banner, from 0 to 100.
+     */
+    percentage?: number;
+
+    /**
+     * The color's red, green and blue values.
+     */
+    rgb?: Palette.Rgb;
+  }
+
+  export namespace Palette {
+    /**
+     * The color's red, green and blue values.
+     */
+    export interface Rgb {
+      blue?: number;
+
+      green?: number;
+
+      red?: number;
+    }
+  }
+
+  /**
+   * Area X marks as the subject of the banner, in pixels.
+   */
+  export interface SalientRect {
+    /**
+     * Height of the marked area.
+     */
+    height?: number;
+
+    /**
+     * Pixels from the banner's left.
+     */
+    left?: number;
+
+    /**
+     * Pixels from the banner's top.
+     */
+    top?: number;
+
+    /**
+     * Width of the marked area.
+     */
+    width?: number;
   }
 }

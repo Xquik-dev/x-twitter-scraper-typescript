@@ -52,6 +52,26 @@ describe('instantiate client', () => {
       expect(req.headers.has('x-my-default-header')).toBe(false);
     });
   });
+
+  test('requests name the SDK in X-Xquik-SDK and keep the language header', async () => {
+    let capturedRequest: RequestInit | undefined;
+    const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+      capturedRequest = init;
+      return new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } });
+    };
+    const client = new XTwitterScraper({
+      apiKey: 'My API Key',
+      bearerToken: 'My Bearer Token',
+      fetch: testFetch,
+    });
+
+    await client.request({ path: '/foo', method: 'get' });
+
+    const headers = capturedRequest!.headers as Headers;
+    expect(headers.get('x-xquik-sdk')).toEqual('js');
+    expect(headers.get('x-stainless-lang')).toEqual('js');
+  });
+
   describe('logging', () => {
     const env = process.env;
 

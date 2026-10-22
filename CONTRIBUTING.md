@@ -21,14 +21,35 @@ ESLint and ts-node load the TypeScript 6.0 API from the `typescript` alias, as t
 
 Follow the shared [Xquik contribution policy](https://github.com/Xquik-dev/.github/blob/main/CONTRIBUTING.md).
 
-## Contribute code
+## Change the SDK by hand
 
-Most SDK code is generated. Manual patches persist but may conflict with later generations.
-The generator leaves `examples/` unchanged.
+Maintainers write and review every file in this repository by hand.
+No code generator runs.
+
+When the API changes, the [API coverage](#api-coverage) and [API fields](#api-fields) checks fail.
+Each failure names the operation or field that the SDK lacks.
+Add each one in the style of the code around it.
+
+1. Add the method to its resource class in `src/resources`.
+2. Add its params and response types beside the method, or in `src/resources/shared.ts` when several resources return the type.
+3. Export the types from the resource's `index.ts`, its parent resource, and the `XTwitterScraper` namespace in `src/client.ts`.
+4. List the method and its types in `api.md`.
+5. Add tests in `tests/api-resources`, or in `tests` when they cover several resources.
+6. Add a line to the `Unreleased` section of `CHANGELOG.md`.
+
+Keep every change additive.
+Never remove or rename a public method, parameter, type, field, or the `x-twitter-scraper` package.
+To rename something, add the new name beside the old one and keep the old one working.
+
+Each request sends `X-Xquik-SDK: js`, which Xquik reads to count SDK requests.
+Keep the other headers that `getPlatformHeaders` in `src/internal/detect-platform.ts` sets, since changing them changes every request the SDK sends.
+
+Publish each release from a local machine, as [Publish releases](#publish-releases) describes.
 
 ## Add examples
 
-The generator leaves `examples/` unchanged. Edit or add files there.
+Add each example as a script in `examples/`.
+`tests/examples.test.ts` runs every example with `pnpm tsn -T` and fails when one writes to stderr or exits with an error.
 
 ```ts
 // add an example to examples/<your-example>.ts

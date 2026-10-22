@@ -4,6 +4,7 @@
 
 export {
   Keywords,
+  type KeywordMonitor,
   type KeywordCreateResponse,
   type KeywordRetrieveResponse,
   type KeywordUpdateResponse,

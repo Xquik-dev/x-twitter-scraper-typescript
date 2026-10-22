@@ -7,6 +7,7 @@ import * as AttachmentsAPI from './attachments';
 import { AttachmentDownloadParams, Attachments } from './attachments';
 import * as TicketsAPI from './tickets';
 import {
+  SupportReceipt,
   TicketCreateParams,
   TicketCreateResponse,
   TicketListParams,
@@ -32,6 +33,7 @@ export declare namespace Support {
 
   export {
     Tickets as Tickets,
+    type SupportReceipt as SupportReceipt,
     type TicketCreateResponse as TicketCreateResponse,
     type TicketRetrieveResponse as TicketRetrieveResponse,
     type TicketUpdateResponse as TicketUpdateResponse,
