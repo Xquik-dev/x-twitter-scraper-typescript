@@ -38,36 +38,7 @@ const labeledPost = {
   softIntervention: label,
 };
 
-const labelFields = [
-  'Fosnr',
-  true,
-  "This Post may violate X's rules against Abuse.",
-  false,
-  0,
-  9,
-  'TimelineUrl',
-  'https://help.x.com/rules-and-policies/public-interest',
-  'ExternalUrl',
-  'https://help.x.com/rules-and-policies/enforcement-options',
-  'ExternalUrl',
-];
-
-const readLabel = (soft: XTwitterScraper.SoftIntervention | undefined): Array<unknown> => {
-  const entity = soft?.text?.entities?.[0];
-  return [
-    soft?.displayType,
-    soft?.engagementNudge,
-    soft?.text?.text,
-    soft?.text?.rtl,
-    entity?.fromIndex,
-    entity?.toIndex,
-    entity?.ref?.type,
-    entity?.ref?.url,
-    entity?.ref?.urlType,
-    soft?.url?.url,
-    soft?.url?.urlType,
-  ];
-};
+type Labels = Array<XTwitterScraper.SoftIntervention | undefined>;
 
 describe('softIntervention', () => {
   test('a post detail returns the label on the post and its parent, quoted and reposted posts', async () => {
@@ -82,15 +53,15 @@ describe('softIntervention', () => {
 
     const { tweet } = await client.x.tweets.retrieve('1');
 
-    expect(
-      [
-        tweet.softIntervention,
-        tweet.parentTweet?.softIntervention,
-        tweet.quoted_tweet?.softIntervention,
-        tweet.retweeted_tweet?.softIntervention,
-        tweet.retweeted_tweet?.parentTweet?.softIntervention,
-      ].map(readLabel),
-    ).toEqual(Array(5).fill(labelFields));
+    const labels: Labels = [
+      tweet.softIntervention,
+      tweet.parentTweet?.softIntervention,
+      tweet.quoted_tweet?.softIntervention,
+      tweet.retweeted_tweet?.softIntervention,
+      tweet.retweeted_tweet?.parentTweet?.softIntervention,
+    ];
+
+    expect(labels).toEqual(Array(5).fill(label));
   });
 
   test('a post page returns the label on each post and its quoted post', async () => {
@@ -102,10 +73,9 @@ describe('softIntervention', () => {
 
     const { tweets } = await client.x.lists.retrieveTweets('1');
 
-    expect([tweets[0]?.softIntervention, tweets[0]?.quoted_tweet?.softIntervention].map(readLabel)).toEqual([
-      labelFields,
-      labelFields,
-    ]);
+    const labels: Labels = [tweets[0]?.softIntervention, tweets[0]?.quoted_tweet?.softIntervention];
+
+    expect(labels).toEqual([label, label]);
   });
 
   test('an event detail returns the label on the post and its quoted post', async () => {
@@ -121,10 +91,9 @@ describe('softIntervention', () => {
     const response = await client.events.retrieve('42');
     const data = response.data as XTwitterScraper.EventDetail.MonitorPost;
 
-    expect([data.softIntervention, data.quoted_tweet?.softIntervention].map(readLabel)).toEqual([
-      labelFields,
-      labelFields,
-    ]);
+    const labels: Labels = [data.softIntervention, data.quoted_tweet?.softIntervention];
+
+    expect(labels).toEqual([label, label]);
   });
 
   test('an event list returns the label on each post and its reposted post', async () => {
@@ -145,9 +114,8 @@ describe('softIntervention', () => {
     const response = await client.events.list();
     const data = response.events[0]?.data as XTwitterScraper.Event.MonitorPost;
 
-    expect([data.softIntervention, data.retweeted_tweet?.softIntervention].map(readLabel)).toEqual([
-      labelFields,
-      labelFields,
-    ]);
+    const labels: Labels = [data.softIntervention, data.retweeted_tweet?.softIntervention];
+
+    expect(labels).toEqual([label, label]);
   });
 });

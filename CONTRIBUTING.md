@@ -34,7 +34,7 @@ Add each one in the style of the code around it.
 2. Add its params and response types beside the method, or in `src/resources/shared.ts` when several resources return the type.
 3. Export the types from the resource's `index.ts`, its parent resource, and the `XTwitterScraper` namespace in `src/client.ts`.
 4. List the method and its types in `api.md`.
-5. Add tests in `tests/api-resources`.
+5. Add tests in `tests/api-resources`, or in `tests` when they cover several resources.
 6. Add a line to the `Unreleased` section of `CHANGELOG.md`.
 
 Keep every change additive.

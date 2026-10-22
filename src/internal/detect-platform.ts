@@ -41,7 +41,6 @@ type PlatformName =
   'MacOS' | 'Linux' | 'Windows' | 'FreeBSD' | 'OpenBSD' | 'iOS' | 'Android' | `Other:${string}` | 'Unknown';
 type Browser = 'ie' | 'edge' | 'chrome' | 'firefox' | 'safari';
 type PlatformProperties = {
-  'X-Xquik-SDK': 'js';
   'X-Stainless-Lang': 'js';
   'X-Stainless-Package-Version': string;
   'X-Stainless-OS': PlatformName;
@@ -53,7 +52,6 @@ const getPlatformProperties = (): PlatformProperties => {
   const detectedPlatform = getDetectedPlatform();
   if (detectedPlatform === 'deno') {
     return {
-      'X-Xquik-SDK': 'js',
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
       'X-Stainless-OS': normalizePlatform(Deno.build.os),
@@ -65,7 +63,6 @@ const getPlatformProperties = (): PlatformProperties => {
   }
   if (typeof EdgeRuntime !== 'undefined') {
     return {
-      'X-Xquik-SDK': 'js',
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
       'X-Stainless-OS': 'Unknown',
@@ -76,7 +73,6 @@ const getPlatformProperties = (): PlatformProperties => {
   }
   if (detectedPlatform === 'node') {
     return {
-      'X-Xquik-SDK': 'js',
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
       'X-Stainless-OS': normalizePlatform((globalThis as any).process.platform ?? 'unknown'),
@@ -89,7 +85,6 @@ const getPlatformProperties = (): PlatformProperties => {
   const browserInfo = getBrowserInfo();
   if (browserInfo) {
     return {
-      'X-Xquik-SDK': 'js',
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
       'X-Stainless-OS': 'Unknown',
@@ -100,7 +95,6 @@ const getPlatformProperties = (): PlatformProperties => {
   }
 
   return {
-    'X-Xquik-SDK': 'js',
     'X-Stainless-Lang': 'js',
     'X-Stainless-Package-Version': VERSION,
     'X-Stainless-OS': 'Unknown',
@@ -169,7 +163,7 @@ const normalizePlatform = (platform: string): PlatformName => {
   return 'Unknown';
 };
 
-let _platformHeaders: PlatformProperties;
+let _platformHeaders: { 'X-Xquik-SDK': 'js' } & PlatformProperties;
 export const getPlatformHeaders = () => {
-  return (_platformHeaders ??= getPlatformProperties());
+  return (_platformHeaders ??= { 'X-Xquik-SDK': 'js', ...getPlatformProperties() });
 };

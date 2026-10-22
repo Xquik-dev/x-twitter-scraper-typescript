@@ -2842,7 +2842,33 @@ export namespace SoftIntervention {
   }
 
   export namespace Text {
-    export type Entity = SearchTweet.Interstitial.Text.Entity;
+    export interface Entity {
+      /**
+       * Whole number from 0.
+       */
+      fromIndex?: number;
+
+      ref?: Entity.Ref;
+
+      /**
+       * Whole number from 0.
+       */
+      toIndex?: number;
+    }
+
+    export namespace Entity {
+      export interface Ref {
+        screenName?: string;
+
+        text?: string;
+
+        type?: string;
+
+        url?: string;
+
+        urlType?: string;
+      }
+    }
   }
 
   /**
@@ -3812,7 +3838,7 @@ export interface XListBanner {
 export namespace XListBanner {
   export interface Palette {
     /**
-     * Share of the banner
+     * Share of the banner, from 0 to 100.
      */
     percentage?: number;
 

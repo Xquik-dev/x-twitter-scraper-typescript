@@ -53,7 +53,7 @@ describe('instantiate client', () => {
     });
   });
 
-  test('requests name the SDK in X-Xquik-SDK beside X-Stainless-Lang', async () => {
+  test('requests name the SDK in X-Xquik-SDK and keep the language header', async () => {
     let capturedRequest: RequestInit | undefined;
     const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       capturedRequest = init;
