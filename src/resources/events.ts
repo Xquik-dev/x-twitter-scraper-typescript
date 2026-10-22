@@ -4,6 +4,7 @@
 
 import { APIResource } from '../core/resource';
 import * as Shared from './shared';
+import * as PostsAPI from './monitors/posts';
 import { APIPromise } from '../core/api-promise';
 import { Stream } from '../core/streaming';
 import { buildHeaders } from '../internal/headers';
@@ -76,7 +77,14 @@ export interface Event {
   /**
    * Post fields match REST. Legacy fields remain available.
    */
-  data: Event.MonitorPost | Event.MonitorProfileChange | Shared.MonitorFollow | Event.MonitorLegacyPost;
+  data:
+    | Event.MonitorPost
+    | Event.MonitorProfileChange
+    | Shared.MonitorFollow
+    | PostsAPI.MonitorPostMetricChange
+    | PostsAPI.MonitorPostEdit
+    | PostsAPI.MonitorPostDeleted
+    | Event.MonitorLegacyPost;
 
   /**
    * Account monitor ID for account events, or keyword monitor ID for keyword events.
@@ -86,7 +94,7 @@ export interface Event {
   /**
    * Source monitor type.
    */
-  monitorType: 'account' | 'keyword';
+  monitorType: 'account' | 'keyword' | 'post';
 
   occurredAt: string;
 
@@ -106,7 +114,17 @@ export interface Event {
    * rise once no read for a minute showed less. Keyword monitors take the 10 post
    * types only.
    */
-  type: Shared.EventType;
+  type: Shared.EventType | PostsAPI.PostEventType;
+
+  /**
+   * Permanent X user ID of the monitored post's author, present for post events.
+   */
+  authorId?: string;
+
+  /**
+   * Username of the monitored post's author, present for post events.
+   */
+  authorUsername?: string;
 
   /**
    * Keyword monitor ID, present for keyword monitor events.
@@ -118,6 +136,16 @@ export interface Event {
    * leaves the event's label unchanged.
    */
   monitorName?: string;
+
+  /**
+   * ID of the monitored post, present for post events.
+   */
+  postId?: string;
+
+  /**
+   * Link to the monitored post, present for post events.
+   */
+  postUrl?: string;
 
   /**
    * Keyword query, present for keyword monitor events.
@@ -1713,6 +1741,9 @@ export interface EventDetail {
     | EventDetail.MonitorPost
     | EventDetail.MonitorProfileChange
     | Shared.MonitorFollow
+    | PostsAPI.MonitorPostMetricChange
+    | PostsAPI.MonitorPostEdit
+    | PostsAPI.MonitorPostDeleted
     | EventDetail.MonitorLegacyPost;
 
   /**
@@ -1723,7 +1754,7 @@ export interface EventDetail {
   /**
    * Source monitor type for this detailed event.
    */
-  monitorType: 'account' | 'keyword';
+  monitorType: 'account' | 'keyword' | 'post';
 
   occurredAt: string;
 
@@ -1743,7 +1774,7 @@ export interface EventDetail {
    * rise once no read for a minute showed less. Keyword monitors take the 10 post
    * types only.
    */
-  type: Shared.EventType;
+  type: Shared.EventType | PostsAPI.PostEventType;
 
   /**
    * Keyword monitor ID included on detailed keyword events.
@@ -3357,7 +3388,7 @@ export interface EventListParams {
   /**
    * Filter events by type
    */
-  eventType?: Shared.EventType;
+  eventType?: Shared.EventType | PostsAPI.PostEventType;
 
   /**
    * Keyword monitor ID. The keyword_monitor_id alias also works.
@@ -3374,6 +3405,11 @@ export interface EventListParams {
    * Account monitor ID. The monitor_id alias also works.
    */
   monitorId?: string;
+
+  /**
+   * Post monitor ID. The post_monitor_id alias also works.
+   */
+  postMonitorId?: string;
 }
 
 export interface EventStreamParams {

@@ -4,6 +4,7 @@
 
 import { APIResource } from '../core/resource';
 import * as Shared from './shared';
+import * as PostsAPI from './monitors/posts';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -179,7 +180,7 @@ export interface Webhook {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<Shared.EventType>;
+  eventTypes: Array<Shared.EventType | PostsAPI.PostEventType>;
 
   /**
    * Maximum reported failures before needs_attention. It does not pause delivery.
@@ -199,7 +200,7 @@ export interface WebhookCreateResponse {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<Shared.EventType>;
+  eventTypes: Array<Shared.EventType | PostsAPI.PostEventType>;
 
   /**
    * Plaintext HMAC signing secret returned only at creation.
@@ -270,7 +271,7 @@ export interface WebhookCreateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes: Array<Shared.EventType>;
+  eventTypes: Array<Shared.EventType | PostsAPI.PostEventType>;
 
   /**
    * HTTPS URL. A Discord channel webhook URL gets each event as a Discord message, &
@@ -284,7 +285,7 @@ export interface WebhookUpdateParams {
   /**
    * Array of event types to subscribe to.
    */
-  eventTypes?: Array<Shared.EventType>;
+  eventTypes?: Array<Shared.EventType | PostsAPI.PostEventType>;
 
   isActive?: boolean;
 

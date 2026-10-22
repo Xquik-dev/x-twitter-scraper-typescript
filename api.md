@@ -144,6 +144,30 @@ Methods
 - <code title="get /monitors/keywords">client.monitors.keywords.<a href="./src/resources/monitors/keywords.ts">list</a>({ ...params }) -> KeywordListResponse</code>
 - <code title="delete /monitors/keywords/{id}">client.monitors.keywords.<a href="./src/resources/monitors/keywords.ts">deactivate</a>(id) -> KeywordDeactivateResponse</code>
 
+## Posts
+
+Types
+
+- <code><a href="./src/resources/monitors/posts.ts">PostEventType</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostMetricReading</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostMetrics</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostMonitor</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostMetricPoint</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostMonitorMetricsBucketMetrics</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostMonitorMetricsBucket</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostMonitorMetrics</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostListResponse</a></code>
+- <code><a href="./src/resources/monitors/posts.ts">PostDeleteResponse</a></code>
+
+Methods
+
+- <code title="post /monitors/posts">client.monitors.posts.<a href="./src/resources/monitors/posts.ts">create</a>({ ...params }) -> PostMonitor</code>
+- <code title="get /monitors/posts/{id}">client.monitors.posts.<a href="./src/resources/monitors/posts.ts">retrieve</a>(id) -> PostMonitor</code>
+- <code title="patch /monitors/posts/{id}">client.monitors.posts.<a href="./src/resources/monitors/posts.ts">update</a>(id, { ...params }) -> PostMonitor</code>
+- <code title="get /monitors/posts">client.monitors.posts.<a href="./src/resources/monitors/posts.ts">list</a>({ ...params }) -> PostListResponse</code>
+- <code title="delete /monitors/posts/{id}">client.monitors.posts.<a href="./src/resources/monitors/posts.ts">delete</a>(id) -> PostDeleteResponse</code>
+- <code title="get /monitors/posts/{id}/metrics">client.monitors.posts.<a href="./src/resources/monitors/posts.ts">retrieveMetrics</a>(id, { ...params }) -> PostMonitorMetrics</code>
+
 # Events
 
 Types
@@ -632,6 +656,62 @@ Methods
 - <code title="get /x/spaces/{id}">client.x.spaces.<a href="./src/resources/x/spaces.ts">retrieve</a>(id, { ...params }) -> SpaceRetrieveResponse</code>
 - <code title="get /x/spaces/{id}/replay">client.x.spaces.<a href="./src/resources/x/spaces.ts">retrieveReplay</a>(id, { ...params }) -> SpaceRetrieveReplayResponse</code>
 - <code title="get /x/spaces/search">client.x.spaces.<a href="./src/resources/x/spaces.ts">search</a>({ ...params }) -> SpaceSearchResponse</code>
+
+## Sports
+
+Types
+
+- <code><a href="./src/resources/x/sports.ts">FootballLeague</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballTeamScore</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballSchedulePeriod</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballOdds</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballScheduleGameOdds</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballScheduleGame</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsTeamColor</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsTeamLogos</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsTeam</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballSchedule</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballScoreboardSituation</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballSide</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPeriod</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayScore</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayStart</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayOnField</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayDetailPlayer</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayDetailPenalty</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayDetail</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayPost</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlay</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerHeadshots</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerXUser</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayer</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballScoreboard</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballTeamTotalsThirdDowns</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballFumbleStats</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPassingStats</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballTeamTotalsPenalties</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballRushingStats</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballTeamTotals</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerStatsReceiving</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerStatsDefense</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballReturnStats</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerStatsPunts</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerStatsFieldGoals</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerStatsExtraPoints</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerStatsConversions</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerStats</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballTeamBox</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballBoxScore</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballDrive</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballQuarter</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlays</a></code>
+
+Methods
+
+- <code title="get /x/sports/{league}/games">client.x.sports.<a href="./src/resources/x/sports.ts">listGames</a>(league, { ...params }) -> FootballSchedule</code>
+- <code title="get /x/sports/{league}/games/{id}">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveScoreboard</a>(id, { ...params }) -> FootballScoreboard</code>
+- <code title="get /x/sports/{league}/games/{id}/box-score">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveBoxScore</a>(id, { ...params }) -> FootballBoxScore</code>
+- <code title="get /x/sports/{league}/games/{id}/plays">client.x.sports.<a href="./src/resources/x/sports.ts">retrievePlays</a>(id, { ...params }) -> FootballPlays</code>
 
 # Trends
 

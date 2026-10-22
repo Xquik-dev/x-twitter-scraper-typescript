@@ -122,6 +122,58 @@ import {
   ProfileUpdateParams,
   ProfileUpdateResponse,
 } from './profile';
+import * as SportsAPI from './sports';
+import {
+  FootballBoxScore,
+  FootballDrive,
+  FootballFumbleStats,
+  FootballLeague,
+  FootballOdds,
+  FootballPassingStats,
+  FootballPeriod,
+  FootballPlay,
+  FootballPlayDetail,
+  FootballPlayDetailPenalty,
+  FootballPlayDetailPlayer,
+  FootballPlayOnField,
+  FootballPlayPost,
+  FootballPlayScore,
+  FootballPlayStart,
+  FootballPlayer,
+  FootballPlayerHeadshots,
+  FootballPlayerStats,
+  FootballPlayerStatsConversions,
+  FootballPlayerStatsDefense,
+  FootballPlayerStatsExtraPoints,
+  FootballPlayerStatsFieldGoals,
+  FootballPlayerStatsPunts,
+  FootballPlayerStatsReceiving,
+  FootballPlayerXUser,
+  FootballPlays,
+  FootballQuarter,
+  FootballReturnStats,
+  FootballRushingStats,
+  FootballSchedule,
+  FootballScheduleGame,
+  FootballScheduleGameOdds,
+  FootballSchedulePeriod,
+  FootballScoreboard,
+  FootballScoreboardSituation,
+  FootballSide,
+  FootballTeamBox,
+  FootballTeamScore,
+  FootballTeamTotals,
+  FootballTeamTotalsPenalties,
+  FootballTeamTotalsThirdDowns,
+  SportListGamesParams,
+  SportRetrieveBoxScoreParams,
+  SportRetrievePlaysParams,
+  SportRetrieveScoreboardParams,
+  Sports,
+  SportsTeam,
+  SportsTeamColor,
+  SportsTeamLogos,
+} from './sports';
 import * as SpacesAPI from './spaces';
 import {
   Space,
@@ -265,6 +317,7 @@ export class X extends APIResource {
   broadcasts: BroadcastsAPI.Broadcasts = new BroadcastsAPI.Broadcasts(this._client);
   communityNotes: CommunityNotesAPI.CommunityNotes = new CommunityNotesAPI.CommunityNotes(this._client);
   spaces: SpacesAPI.Spaces = new SpacesAPI.Spaces(this._client);
+  sports: SportsAPI.Sports = new SportsAPI.Sports(this._client);
 
   /**
    * Returns the accounts, topics, hashtags & cashtags X suggests while someone types
@@ -1806,6 +1859,7 @@ X.Lists = Lists;
 X.Broadcasts = Broadcasts;
 X.CommunityNotes = CommunityNotes;
 X.Spaces = Spaces;
+X.Sports = Sports;
 
 export declare namespace X {
   export {
@@ -2073,5 +2127,57 @@ export declare namespace X {
     type SpaceRetrieveParams as SpaceRetrieveParams,
     type SpaceRetrieveReplayParams as SpaceRetrieveReplayParams,
     type SpaceSearchParams as SpaceSearchParams,
+  };
+
+  export {
+    Sports as Sports,
+    type FootballLeague as FootballLeague,
+    type FootballTeamScore as FootballTeamScore,
+    type FootballSchedulePeriod as FootballSchedulePeriod,
+    type FootballOdds as FootballOdds,
+    type FootballScheduleGameOdds as FootballScheduleGameOdds,
+    type FootballScheduleGame as FootballScheduleGame,
+    type SportsTeamColor as SportsTeamColor,
+    type SportsTeamLogos as SportsTeamLogos,
+    type SportsTeam as SportsTeam,
+    type FootballSchedule as FootballSchedule,
+    type FootballScoreboardSituation as FootballScoreboardSituation,
+    type FootballSide as FootballSide,
+    type FootballPeriod as FootballPeriod,
+    type FootballPlayScore as FootballPlayScore,
+    type FootballPlayStart as FootballPlayStart,
+    type FootballPlayOnField as FootballPlayOnField,
+    type FootballPlayDetailPlayer as FootballPlayDetailPlayer,
+    type FootballPlayDetailPenalty as FootballPlayDetailPenalty,
+    type FootballPlayDetail as FootballPlayDetail,
+    type FootballPlayPost as FootballPlayPost,
+    type FootballPlay as FootballPlay,
+    type FootballPlayerHeadshots as FootballPlayerHeadshots,
+    type FootballPlayerXUser as FootballPlayerXUser,
+    type FootballPlayer as FootballPlayer,
+    type FootballScoreboard as FootballScoreboard,
+    type FootballTeamTotalsThirdDowns as FootballTeamTotalsThirdDowns,
+    type FootballFumbleStats as FootballFumbleStats,
+    type FootballPassingStats as FootballPassingStats,
+    type FootballTeamTotalsPenalties as FootballTeamTotalsPenalties,
+    type FootballRushingStats as FootballRushingStats,
+    type FootballTeamTotals as FootballTeamTotals,
+    type FootballPlayerStatsReceiving as FootballPlayerStatsReceiving,
+    type FootballPlayerStatsDefense as FootballPlayerStatsDefense,
+    type FootballReturnStats as FootballReturnStats,
+    type FootballPlayerStatsPunts as FootballPlayerStatsPunts,
+    type FootballPlayerStatsFieldGoals as FootballPlayerStatsFieldGoals,
+    type FootballPlayerStatsExtraPoints as FootballPlayerStatsExtraPoints,
+    type FootballPlayerStatsConversions as FootballPlayerStatsConversions,
+    type FootballPlayerStats as FootballPlayerStats,
+    type FootballTeamBox as FootballTeamBox,
+    type FootballBoxScore as FootballBoxScore,
+    type FootballDrive as FootballDrive,
+    type FootballQuarter as FootballQuarter,
+    type FootballPlays as FootballPlays,
+    type SportListGamesParams as SportListGamesParams,
+    type SportRetrieveScoreboardParams as SportRetrieveScoreboardParams,
+    type SportRetrieveBoxScoreParams as SportRetrieveBoxScoreParams,
+    type SportRetrievePlaysParams as SportRetrievePlaysParams,
   };
 }
