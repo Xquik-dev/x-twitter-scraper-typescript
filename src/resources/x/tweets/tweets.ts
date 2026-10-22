@@ -616,6 +616,12 @@ export interface TweetDetail {
   scopes?: { [key: string]: unknown };
 
   /**
+   * The label X shows under a post whose reach it limits. It links to the page that
+   * explains it.
+   */
+  softIntervention?: Shared.SoftIntervention;
+
+  /**
    * The app the post was sent from, as X labels it. X sends it for some posts only.
    */
   source?: string;

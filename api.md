@@ -18,6 +18,7 @@ Types
 - <code><a href="./src/resources/shared.ts">PaginatedTweets</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedUsers</a></code>
 - <code><a href="./src/resources/shared.ts">SearchTweet</a></code>
+- <code><a href="./src/resources/shared.ts">SoftIntervention</a></code>
 - <code><a href="./src/resources/shared.ts">TweetMedia</a></code>
 - <code><a href="./src/resources/shared.ts">UserListPage</a></code>
 - <code><a href="./src/resources/shared.ts">UserProfile</a></code>

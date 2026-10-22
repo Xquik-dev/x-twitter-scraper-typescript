@@ -732,6 +732,12 @@ export interface EmbeddedTweet {
   scopes?: { [key: string]: unknown };
 
   /**
+   * The label X shows under a post whose reach it limits. It links to the page that
+   * explains it.
+   */
+  softIntervention?: SoftIntervention;
+
+  /**
    * The app the post was sent from, as X labels it. X sends it for some posts only.
    */
   source?: string;
@@ -1577,6 +1583,12 @@ export interface SearchTweet {
    * Public metadata whose fields are defined by X.
    */
   scopes?: { [key: string]: unknown };
+
+  /**
+   * The label X shows under a post whose reach it limits. It links to the page that
+   * explains it.
+   */
+  softIntervention?: SoftIntervention;
 
   /**
    * The app the post was sent from, as X labels it. X sends it for some posts only.
@@ -2744,6 +2756,61 @@ export namespace SearchTweet {
         }
       }
     }
+  }
+}
+
+/**
+ * The label X shows under a post whose reach it limits. It links to the page that
+ * explains it.
+ */
+export interface SoftIntervention {
+  /**
+   * The label's kind. `Fosnr` marks a post X keeps up but shows to fewer people.
+   */
+  displayType?: string;
+
+  /**
+   * Whether X prompts readers before they engage with the post.
+   */
+  engagementNudge?: boolean;
+
+  text?: SoftIntervention.Text;
+
+  /**
+   * The page that explains the label.
+   */
+  url?: SoftIntervention.URL;
+}
+
+export namespace SoftIntervention {
+  export interface Text {
+    /**
+     * Links inside the label, by character range.
+     */
+    entities?: Array<Text.Entity>;
+
+    /**
+     * Whether the label reads right to left.
+     */
+    rtl?: boolean;
+
+    /**
+     * The label's text.
+     */
+    text?: string;
+  }
+
+  export namespace Text {
+    export type Entity = SearchTweet.Interstitial.Text.Entity;
+  }
+
+  /**
+   * The page that explains the label.
+   */
+  export interface URL {
+    url?: string;
+
+    urlType?: string;
   }
 }
 

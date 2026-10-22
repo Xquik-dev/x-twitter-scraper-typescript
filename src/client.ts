@@ -1137,6 +1137,7 @@ export declare namespace XTwitterScraper {
   export type PaginatedTweets = API.PaginatedTweets;
   export type PaginatedUsers = API.PaginatedUsers;
   export type SearchTweet = API.SearchTweet;
+  export type SoftIntervention = API.SoftIntervention;
   export type TweetMedia = API.TweetMedia;
   export type UserListPage = API.UserListPage;
   export type UserProfile = API.UserProfile;
