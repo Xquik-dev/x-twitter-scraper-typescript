@@ -6,6 +6,7 @@ export { Attachments, type AttachmentDownloadParams } from './attachments';
 export { Support } from './support';
 export {
   Tickets,
+  type SupportReceipt,
   type TicketCreateResponse,
   type TicketRetrieveResponse,
   type TicketUpdateResponse,

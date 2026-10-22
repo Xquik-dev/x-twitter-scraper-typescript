@@ -138,6 +138,7 @@ import {
 } from './resources/monitors/monitors';
 import { Support } from './resources/support/support';
 import {
+  TrendLocation,
   X,
   XAutocompleteSearchParams,
   XAutocompleteSearchResponse,
@@ -1076,6 +1077,7 @@ export declare namespace XTwitterScraper {
 
   export {
     X as X,
+    type TrendLocation as TrendLocation,
     type XAutocompleteSearchResponse as XAutocompleteSearchResponse,
     type XGetArticleResponse as XGetArticleResponse,
     type XGetHashflagsResponse as XGetHashflagsResponse,
@@ -1134,11 +1136,15 @@ export declare namespace XTwitterScraper {
   export type Error = API.Error;
   export type EventType = API.EventType;
   export type MonitorFollow = API.MonitorFollow;
+  export type PaginatedLists = API.PaginatedLists;
   export type PaginatedTweets = API.PaginatedTweets;
+  export type PaginatedUserIds = API.PaginatedUserIds;
   export type PaginatedUsers = API.PaginatedUsers;
   export type SearchTweet = API.SearchTweet;
   export type SoftIntervention = API.SoftIntervention;
   export type TweetMedia = API.TweetMedia;
   export type UserListPage = API.UserListPage;
   export type UserProfile = API.UserProfile;
+  export type XList = API.XList;
+  export type XListBanner = API.XListBanner;
 }

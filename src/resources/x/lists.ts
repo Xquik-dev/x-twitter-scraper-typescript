@@ -81,7 +81,7 @@ export class Lists extends APIResource {
   retrieveSearch(
     query: ListRetrieveSearchParams,
     options?: RequestOptions,
-  ): APIPromise<ListRetrieveSearchResponse> {
+  ): APIPromise<Shared.PaginatedLists> {
     return this._client.get('/x/lists/search', { query, ...options });
   }
 
@@ -110,266 +110,35 @@ export interface ListRetrieveResponse {
    * Public X List with its owner's public profile. Leaves out what X tells the
    * reading account, such as whether it follows the List.
    */
-  list: ListRetrieveResponse.List;
+  list: Shared.XList;
 }
 
 export namespace ListRetrieveResponse {
-  /**
-   * Public X List with its owner's public profile. Leaves out what X tells the
-   * reading account, such as whether it follows the List.
-   */
-  export interface List {
-    /**
-     * Numeric ID of the List.
-     */
-    id: string;
-
-    /**
-     * Name the owner gave the List.
-     */
-    name: string;
-
-    /**
-     * URL of the banner the owner uploaded. Absent when the owner uploaded none.
-     */
-    bannerUrl?: string;
-
-    /**
-     * When the owner made the List.
-     */
-    createdAt?: string;
-
-    /**
-     * Banner the owner uploaded.
-     */
-    customBanner?: List.CustomBanner;
-
-    /**
-     * Banner X shows when the owner uploaded none. X picks it per reading account, so
-     * 2 calls can return different ones.
-     */
-    defaultBanner?: List.DefaultBanner;
-
-    /**
-     * About text of the List. Empty when the owner wrote none.
-     */
-    description?: string;
-
-    /**
-     * Avatar URLs of a few List members, which X may pick per request.
-     */
-    facepileUrls?: Array<string>;
-
-    /**
-     * Accounts on the List.
-     */
-    memberCount?: number;
-
-    /**
-     * Member count as X words it, such as 35 members.
-     */
-    membersContext?: string;
-
-    /**
-     * Public profile of the account that owns the List.
-     */
-    owner?: Shared.UserProfile;
-
-    /**
-     * Accounts that follow the List, which X calls followers.
-     */
-    subscriberCount?: number;
-
-    /**
-     * List page on x.com.
-     */
-    url?: string;
-  }
+  export type List = Shared.XList;
 
   export namespace List {
-    /**
-     * Banner the owner uploaded.
-     */
-    export interface CustomBanner {
-      /**
-       * Banner image URL.
-       */
-      url: string;
-
-      /**
-       * Banner height in pixels.
-       */
-      height?: number;
-
-      /**
-       * Media ID of an uploaded banner.
-       */
-      mediaId?: string;
-
-      /**
-       * Stable media key of an uploaded banner.
-       */
-      mediaKey?: string;
-
-      /**
-       * Dominant colors of an uploaded banner and their shares.
-       */
-      palette?: Array<CustomBanner.Palette>;
-
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      salientRect?: CustomBanner.SalientRect;
-
-      /**
-       * Banner width in pixels.
-       */
-      width?: number;
-    }
+    export type CustomBanner = Shared.XListBanner;
 
     export namespace CustomBanner {
-      export interface Palette {
-        /**
-         * Share of the banner
-         */
-        percentage?: number;
-
-        /**
-         * The color's red, green and blue values.
-         */
-        rgb?: Palette.Rgb;
-      }
+      export type Palette = Shared.XListBanner.Palette;
 
       export namespace Palette {
-        /**
-         * The color's red, green and blue values.
-         */
-        export interface Rgb {
-          blue?: number;
-
-          green?: number;
-
-          red?: number;
-        }
+        export type Rgb = Shared.XListBanner.Palette.Rgb;
       }
 
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      export interface SalientRect {
-        /**
-         * Height of the marked area.
-         */
-        height?: number;
-
-        /**
-         * Pixels from the banner's left.
-         */
-        left?: number;
-
-        /**
-         * Pixels from the banner's top.
-         */
-        top?: number;
-
-        /**
-         * Width of the marked area.
-         */
-        width?: number;
-      }
+      export type SalientRect = Shared.XListBanner.SalientRect;
     }
 
-    /**
-     * Banner X shows when the owner uploaded none. X picks it per reading account, so
-     * 2 calls can return different ones.
-     */
-    export interface DefaultBanner {
-      /**
-       * Banner image URL.
-       */
-      url: string;
-
-      /**
-       * Banner height in pixels.
-       */
-      height?: number;
-
-      /**
-       * Media ID of an uploaded banner.
-       */
-      mediaId?: string;
-
-      /**
-       * Stable media key of an uploaded banner.
-       */
-      mediaKey?: string;
-
-      /**
-       * Dominant colors of an uploaded banner and their shares.
-       */
-      palette?: Array<DefaultBanner.Palette>;
-
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      salientRect?: DefaultBanner.SalientRect;
-
-      /**
-       * Banner width in pixels.
-       */
-      width?: number;
-    }
+    export type DefaultBanner = Shared.XListBanner;
 
     export namespace DefaultBanner {
-      export interface Palette {
-        /**
-         * Share of the banner
-         */
-        percentage?: number;
-
-        /**
-         * The color's red, green and blue values.
-         */
-        rgb?: Palette.Rgb;
-      }
+      export type Palette = Shared.XListBanner.Palette;
 
       export namespace Palette {
-        /**
-         * The color's red, green and blue values.
-         */
-        export interface Rgb {
-          blue?: number;
-
-          green?: number;
-
-          red?: number;
-        }
+        export type Rgb = Shared.XListBanner.Palette.Rgb;
       }
 
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      export interface SalientRect {
-        /**
-         * Height of the marked area.
-         */
-        height?: number;
-
-        /**
-         * Pixels from the banner's left.
-         */
-        left?: number;
-
-        /**
-         * Pixels from the banner's top.
-         */
-        top?: number;
-
-        /**
-         * Width of the marked area.
-         */
-        width?: number;
-      }
+      export type SalientRect = Shared.XListBanner.SalientRect;
     }
   }
 }
@@ -604,275 +373,34 @@ export namespace ListRetrieveMembersResponse {
   }
 }
 
-/**
- * One page of public X Lists. Follow next_cursor while the response reports more
- * pages. Each returned List costs 1 credit.
- */
-export interface ListRetrieveSearchResponse {
-  has_next_page: boolean;
-
-  lists: Array<ListRetrieveSearchResponse.List>;
-
-  next_cursor: string;
-}
+export type ListRetrieveSearchResponse = Shared.PaginatedLists;
 
 export namespace ListRetrieveSearchResponse {
-  /**
-   * Public X List with its owner's public profile. Leaves out what X tells the
-   * reading account, such as whether it follows the List.
-   */
-  export interface List {
-    /**
-     * Numeric ID of the List.
-     */
-    id: string;
-
-    /**
-     * Name the owner gave the List.
-     */
-    name: string;
-
-    /**
-     * URL of the banner the owner uploaded. Absent when the owner uploaded none.
-     */
-    bannerUrl?: string;
-
-    /**
-     * When the owner made the List.
-     */
-    createdAt?: string;
-
-    /**
-     * Banner the owner uploaded.
-     */
-    customBanner?: List.CustomBanner;
-
-    /**
-     * Banner X shows when the owner uploaded none. X picks it per reading account, so
-     * 2 calls can return different ones.
-     */
-    defaultBanner?: List.DefaultBanner;
-
-    /**
-     * About text of the List. Empty when the owner wrote none.
-     */
-    description?: string;
-
-    /**
-     * Avatar URLs of a few List members, which X may pick per request.
-     */
-    facepileUrls?: Array<string>;
-
-    /**
-     * Accounts on the List.
-     */
-    memberCount?: number;
-
-    /**
-     * Member count as X words it, such as 35 members.
-     */
-    membersContext?: string;
-
-    /**
-     * Public profile of the account that owns the List.
-     */
-    owner?: Shared.UserProfile;
-
-    /**
-     * Accounts that follow the List, which X calls followers.
-     */
-    subscriberCount?: number;
-
-    /**
-     * List page on x.com.
-     */
-    url?: string;
-  }
+  export type List = Shared.XList;
 
   export namespace List {
-    /**
-     * Banner the owner uploaded.
-     */
-    export interface CustomBanner {
-      /**
-       * Banner image URL.
-       */
-      url: string;
-
-      /**
-       * Banner height in pixels.
-       */
-      height?: number;
-
-      /**
-       * Media ID of an uploaded banner.
-       */
-      mediaId?: string;
-
-      /**
-       * Stable media key of an uploaded banner.
-       */
-      mediaKey?: string;
-
-      /**
-       * Dominant colors of an uploaded banner and their shares.
-       */
-      palette?: Array<CustomBanner.Palette>;
-
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      salientRect?: CustomBanner.SalientRect;
-
-      /**
-       * Banner width in pixels.
-       */
-      width?: number;
-    }
+    export type CustomBanner = Shared.XListBanner;
 
     export namespace CustomBanner {
-      export interface Palette {
-        /**
-         * Share of the banner
-         */
-        percentage?: number;
-
-        /**
-         * The color's red, green and blue values.
-         */
-        rgb?: Palette.Rgb;
-      }
+      export type Palette = Shared.XListBanner.Palette;
 
       export namespace Palette {
-        /**
-         * The color's red, green and blue values.
-         */
-        export interface Rgb {
-          blue?: number;
-
-          green?: number;
-
-          red?: number;
-        }
+        export type Rgb = Shared.XListBanner.Palette.Rgb;
       }
 
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      export interface SalientRect {
-        /**
-         * Height of the marked area.
-         */
-        height?: number;
-
-        /**
-         * Pixels from the banner's left.
-         */
-        left?: number;
-
-        /**
-         * Pixels from the banner's top.
-         */
-        top?: number;
-
-        /**
-         * Width of the marked area.
-         */
-        width?: number;
-      }
+      export type SalientRect = Shared.XListBanner.SalientRect;
     }
 
-    /**
-     * Banner X shows when the owner uploaded none. X picks it per reading account, so
-     * 2 calls can return different ones.
-     */
-    export interface DefaultBanner {
-      /**
-       * Banner image URL.
-       */
-      url: string;
-
-      /**
-       * Banner height in pixels.
-       */
-      height?: number;
-
-      /**
-       * Media ID of an uploaded banner.
-       */
-      mediaId?: string;
-
-      /**
-       * Stable media key of an uploaded banner.
-       */
-      mediaKey?: string;
-
-      /**
-       * Dominant colors of an uploaded banner and their shares.
-       */
-      palette?: Array<DefaultBanner.Palette>;
-
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      salientRect?: DefaultBanner.SalientRect;
-
-      /**
-       * Banner width in pixels.
-       */
-      width?: number;
-    }
+    export type DefaultBanner = Shared.XListBanner;
 
     export namespace DefaultBanner {
-      export interface Palette {
-        /**
-         * Share of the banner
-         */
-        percentage?: number;
-
-        /**
-         * The color's red, green and blue values.
-         */
-        rgb?: Palette.Rgb;
-      }
+      export type Palette = Shared.XListBanner.Palette;
 
       export namespace Palette {
-        /**
-         * The color's red, green and blue values.
-         */
-        export interface Rgb {
-          blue?: number;
-
-          green?: number;
-
-          red?: number;
-        }
+        export type Rgb = Shared.XListBanner.Palette.Rgb;
       }
 
-      /**
-       * Area X marks as the subject of the banner, in pixels.
-       */
-      export interface SalientRect {
-        /**
-         * Height of the marked area.
-         */
-        height?: number;
-
-        /**
-         * Pixels from the banner's left.
-         */
-        left?: number;
-
-        /**
-         * Pixels from the banner's top.
-         */
-        top?: number;
-
-        /**
-         * Width of the marked area.
-         */
-        width?: number;
-      }
+      export type SalientRect = Shared.XListBanner.SalientRect;
     }
   }
 }

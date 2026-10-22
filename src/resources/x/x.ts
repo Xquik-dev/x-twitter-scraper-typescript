@@ -1077,13 +1077,55 @@ export namespace XGetNotificationsResponse {
   }
 }
 
+/**
+ * A place X offers trends for.
+ */
+export interface TrendLocation {
+  /**
+   * Country name. Null for Worldwide.
+   */
+  country: string | null;
+
+  /**
+   * 2-letter country code. Null for Worldwide.
+   */
+  countryCode: string | null;
+
+  name: string;
+
+  /**
+   * WOEID of the country or region above it. Null for Worldwide.
+   */
+  parentWoeid: number | null;
+
+  /**
+   * X's kind of place. Town, Country, Supername for Worldwide, or Unknown.
+   */
+  placeType: string | null;
+
+  /**
+   * X's numeric code for the kind of place.
+   */
+  placeTypeCode: number | null;
+
+  /**
+   * X's legacy Yahoo GeoPlanet reference. It may not resolve.
+   */
+  url: string | null;
+
+  /**
+   * Location ID. Pass it as woeid to /x/trends.
+   */
+  woeid: number;
+}
+
 export interface XGetTrendLocationsResponse {
   /**
    * Locations returned & charged.
    */
   count: number;
 
-  locations: Array<XGetTrendLocationsResponse.Location>;
+  locations: Array<TrendLocation>;
 
   /**
    * Locations that match the filters, before limit.
@@ -1097,47 +1139,7 @@ export interface XGetTrendLocationsResponse {
 }
 
 export namespace XGetTrendLocationsResponse {
-  /**
-   * A place X offers trends for.
-   */
-  export interface Location {
-    /**
-     * Country name. Null for Worldwide.
-     */
-    country: string | null;
-
-    /**
-     * 2-letter country code. Null for Worldwide.
-     */
-    countryCode: string | null;
-
-    name: string;
-
-    /**
-     * WOEID of the country or region above it. Null for Worldwide.
-     */
-    parentWoeid: number | null;
-
-    /**
-     * X's kind of place. Town, Country, Supername for Worldwide, or Unknown.
-     */
-    placeType: string | null;
-
-    /**
-     * X's numeric code for the kind of place.
-     */
-    placeTypeCode: number | null;
-
-    /**
-     * X's legacy Yahoo GeoPlanet reference. It may not resolve.
-     */
-    url: string | null;
-
-    /**
-     * Location ID. Pass it as woeid to /x/trends.
-     */
-    woeid: number;
-  }
+  export type Location = TrendLocation;
 }
 
 export interface XGetTrendsResponse {
@@ -1157,7 +1159,7 @@ export interface XGetTrendsResponse {
    * The place country or location named. Absent when woeid picked the place or the
    * request named none.
    */
-  location?: XGetTrendsResponse.Location;
+  location?: TrendLocation;
 
   /**
    * The time at asked for, as Xquik read it. A span such as 24h shows here as the
@@ -1192,48 +1194,7 @@ export namespace XGetTrendsResponse {
     url?: string;
   }
 
-  /**
-   * The place country or location named. Absent when woeid picked the place or the
-   * request named none.
-   */
-  export interface Location {
-    /**
-     * Country name. Null for Worldwide.
-     */
-    country: string | null;
-
-    /**
-     * 2-letter country code. Null for Worldwide.
-     */
-    countryCode: string | null;
-
-    name: string;
-
-    /**
-     * WOEID of the country or region above it. Null for Worldwide.
-     */
-    parentWoeid: number | null;
-
-    /**
-     * X's kind of place. Town, Country, Supername for Worldwide, or Unknown.
-     */
-    placeType: string | null;
-
-    /**
-     * X's numeric code for the kind of place.
-     */
-    placeTypeCode: number | null;
-
-    /**
-     * X's legacy Yahoo GeoPlanet reference. It may not resolve.
-     */
-    url: string | null;
-
-    /**
-     * Location ID. Pass it as woeid to /x/trends.
-     */
-    woeid: number;
-  }
+  export type Location = TrendLocation;
 }
 
 export interface XGetTrendsHistoryResponse {
@@ -1275,7 +1236,7 @@ export interface XGetTrendsHistoryResponse {
    * The place the request named by country or location. Absent when it sent a woeid
    * or named no place.
    */
-  location?: XGetTrendsHistoryResponse.Location;
+  location?: TrendLocation;
 }
 
 export namespace XGetTrendsHistoryResponse {
@@ -1323,48 +1284,7 @@ export namespace XGetTrendsHistoryResponse {
     }
   }
 
-  /**
-   * The place the request named by country or location. Absent when it sent a woeid
-   * or named no place.
-   */
-  export interface Location {
-    /**
-     * Country name. Null for Worldwide.
-     */
-    country: string | null;
-
-    /**
-     * 2-letter country code. Null for Worldwide.
-     */
-    countryCode: string | null;
-
-    name: string;
-
-    /**
-     * WOEID of the country or region above it. Null for Worldwide.
-     */
-    parentWoeid: number | null;
-
-    /**
-     * X's kind of place. Town, Country, Supername for Worldwide, or Unknown.
-     */
-    placeType: string | null;
-
-    /**
-     * X's numeric code for the kind of place.
-     */
-    placeTypeCode: number | null;
-
-    /**
-     * X's legacy Yahoo GeoPlanet reference. It may not resolve.
-     */
-    url: string | null;
-
-    /**
-     * Location ID. Pass it as woeid to /x/trends.
-     */
-    woeid: number;
-  }
+  export type Location = TrendLocation;
 }
 
 export interface XSearchPlacesResponse {
@@ -1889,6 +1809,7 @@ X.Spaces = Spaces;
 
 export declare namespace X {
   export {
+    type TrendLocation as TrendLocation,
     type XAutocompleteSearchResponse as XAutocompleteSearchResponse,
     type XGetArticleResponse as XGetArticleResponse,
     type XGetHashflagsResponse as XGetHashflagsResponse,

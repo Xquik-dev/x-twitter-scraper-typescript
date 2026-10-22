@@ -1271,6 +1271,18 @@ export interface MonitorFollow {
 }
 
 /**
+ * 1 page of public X Lists. Follow next_cursor while the response reports more
+ * pages. Each returned List costs 1 credit.
+ */
+export interface PaginatedLists {
+  has_next_page: boolean;
+
+  lists: Array<XList>;
+
+  next_cursor: string;
+}
+
+/**
  * Follow next_cursor while the response reports more pages. A page can hold fewer
  * rows than its limit & still report more. That report decides, not the row count.
  * A page can be empty & still report more, filtered or not. Automatic search, user
@@ -1345,6 +1357,21 @@ export namespace PaginatedTweets {
       supportsOhlc?: boolean;
     }
   }
+}
+
+/**
+ * A page of user IDs without profiles. Follow next_cursor while the response
+ * reports more pages.
+ */
+export interface PaginatedUserIds {
+  has_next_page: boolean;
+
+  /**
+   * X user IDs, newest relationship first.
+   */
+  ids: Array<string>;
+
+  next_cursor: string;
 }
 
 /**
@@ -3667,5 +3694,169 @@ export namespace UserProfile {
 
       urlType?: string;
     }
+  }
+}
+
+/**
+ * Public X List with its owner's public profile. Leaves out what X tells the
+ * reading account, such as whether it follows the List.
+ */
+export interface XList {
+  /**
+   * Numeric ID of the List.
+   */
+  id: string;
+
+  /**
+   * Name the owner gave the List.
+   */
+  name: string;
+
+  /**
+   * URL of the banner the owner uploaded. Absent when the owner uploaded none.
+   */
+  bannerUrl?: string;
+
+  /**
+   * When the owner made the List.
+   */
+  createdAt?: string;
+
+  /**
+   * Banner the owner uploaded.
+   */
+  customBanner?: XListBanner;
+
+  /**
+   * Banner X shows when the owner uploaded none. X picks it per reading account, so
+   * 2 calls can return different ones.
+   */
+  defaultBanner?: XListBanner;
+
+  /**
+   * About text of the List. Empty when the owner wrote none.
+   */
+  description?: string;
+
+  /**
+   * Avatar URLs of a few List members, which X may pick per request.
+   */
+  facepileUrls?: Array<string>;
+
+  /**
+   * Accounts on the List.
+   */
+  memberCount?: number;
+
+  /**
+   * Member count as X words it, such as 35 members.
+   */
+  membersContext?: string;
+
+  /**
+   * Public profile of the account that owns the List.
+   */
+  owner?: UserProfile;
+
+  /**
+   * Accounts that follow the List, which X calls followers.
+   */
+  subscriberCount?: number;
+
+  /**
+   * List page on x.com.
+   */
+  url?: string;
+}
+
+/**
+ * Banner image of an X List.
+ */
+export interface XListBanner {
+  /**
+   * Banner image URL.
+   */
+  url: string;
+
+  /**
+   * Banner height in pixels.
+   */
+  height?: number;
+
+  /**
+   * Media ID of an uploaded banner.
+   */
+  mediaId?: string;
+
+  /**
+   * Stable media key of an uploaded banner.
+   */
+  mediaKey?: string;
+
+  /**
+   * Dominant colors of an uploaded banner and their shares.
+   */
+  palette?: Array<XListBanner.Palette>;
+
+  /**
+   * Area X marks as the subject of the banner, in pixels.
+   */
+  salientRect?: XListBanner.SalientRect;
+
+  /**
+   * Banner width in pixels.
+   */
+  width?: number;
+}
+
+export namespace XListBanner {
+  export interface Palette {
+    /**
+     * Share of the banner
+     */
+    percentage?: number;
+
+    /**
+     * The color's red, green and blue values.
+     */
+    rgb?: Palette.Rgb;
+  }
+
+  export namespace Palette {
+    /**
+     * The color's red, green and blue values.
+     */
+    export interface Rgb {
+      blue?: number;
+
+      green?: number;
+
+      red?: number;
+    }
+  }
+
+  /**
+   * Area X marks as the subject of the banner, in pixels.
+   */
+  export interface SalientRect {
+    /**
+     * Height of the marked area.
+     */
+    height?: number;
+
+    /**
+     * Pixels from the banner's left.
+     */
+    left?: number;
+
+    /**
+     * Pixels from the banner's top.
+     */
+    top?: number;
+
+    /**
+     * Width of the marked area.
+     */
+    width?: number;
   }
 }

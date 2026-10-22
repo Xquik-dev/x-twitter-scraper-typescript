@@ -123,6 +123,7 @@ export {
 } from './webhooks';
 export {
   X,
+  type TrendLocation,
   type XAutocompleteSearchResponse,
   type XGetArticleResponse,
   type XGetHashflagsResponse,

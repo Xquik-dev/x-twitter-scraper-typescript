@@ -238,7 +238,7 @@ export class Tweets extends APIResource {
     id: string,
     query: TweetGetRetweeterIDsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<TweetGetRetweeterIDsResponse> {
+  ): APIPromise<Shared.PaginatedUserIds> {
     return this._client.get(path`/x/tweets/${id}/retweeter-ids`, { query, ...options });
   }
 
@@ -2821,20 +2821,7 @@ export namespace TweetGetRepliesResponse {
   }
 }
 
-/**
- * A page of user IDs without profiles. Follow next_cursor while the response
- * reports more pages.
- */
-export interface TweetGetRetweeterIDsResponse {
-  has_next_page: boolean;
-
-  /**
-   * X user IDs, newest relationship first.
-   */
-  ids: Array<string>;
-
-  next_cursor: string;
-}
+export type TweetGetRetweeterIDsResponse = Shared.PaginatedUserIds;
 
 export interface TweetGetSubtitlesResponse {
   /**

@@ -8,6 +8,9 @@
 
 ### Features
 
+* Posts and embedded posts return `softIntervention`, the label X shows under a post whose reach it limits.
+* `Error` adds 7 codes from the API, such as `topup_in_progress`.
+* Keyword monitors, Lists, List banners, trend locations, support receipts and user ID pages share named models. Old response type names stay as aliases.
 * Communities add the analytics read through `x.communities.retrieveAnalytics()`.
 * Posts and embedded posts name the counts X did not send in `unknownCounts`.
 * Bulk retry can target specific accounts with `accountIds`.
