@@ -26,6 +26,8 @@ const canon = (node, defs = {}, stack = []) => {
       );
     case 'array':
       return { t: 'array', items: canon(node.items, defs, stack) };
+    case 'map':
+      return { t: 'map', values: canon(node.values, defs, stack) };
     case 'union':
       return mergeUnion(node.variants.map((variant) => canon(variant, defs, stack)));
     default:
@@ -63,6 +65,8 @@ const mergeUnion = (all) => {
     );
   const arrays = variants.filter((v) => v.t === 'array');
   if (arrays.length) return { t: 'array', items: mergeUnion(arrays.map((a) => a.items)) };
+  const maps = variants.filter((v) => v.t === 'map');
+  if (maps.length) return { t: 'map', values: mergeUnion(maps.map((m) => m.values)) };
   const leaves = variants.filter((v) => v.t === 'leaf');
   if (leaves.length) {
     return leaves.every((l) => l.enum !== null) ? leaf(leaves.flatMap((l) => l.enum)) : leaf();
@@ -80,6 +84,9 @@ const intersect = (all) => {
   }
   if (parts.length > 1 && parts.every((p) => p.t === 'array')) {
     return { t: 'array', items: intersect(parts.map((p) => p.items)) };
+  }
+  if (parts.length > 1 && parts.every((p) => p.t === 'map')) {
+    return { t: 'map', values: intersect(parts.map((p) => p.values)) };
   }
   const objects = parts.filter((p) => p.t === 'object');
   if (!objects.length) return parts[0];
@@ -131,6 +138,10 @@ const compareTree = (spec, sdk, path, side, out) => {
   }
   if (spec.t === 'array' && sdk.t === 'array') {
     compareTree(spec.items, sdk.items, `${path}[]`, side, out);
+    return;
+  }
+  if (spec.t === 'map' && sdk.t === 'map') {
+    compareTree(spec.values, sdk.values, `${path}{}`, side, out);
     return;
   }
   if (spec.t === 'leaf' && sdk.t === 'leaf') {

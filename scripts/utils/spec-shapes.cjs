@@ -92,6 +92,9 @@ class SpecShapes {
         nullable,
       ];
     }
+    const values = schema.additionalProperties;
+    if (isObject && values !== null && typeof values === 'object' && !schema.required?.length)
+      return [{ t: 'map', values: this.node(values, stack)[0] }, nullable];
     if (isObject)
       return [schema.required?.length ? { t: 'free', requires: schema.required } : { t: 'free' }, nullable];
     if (types?.includes('array')) {
