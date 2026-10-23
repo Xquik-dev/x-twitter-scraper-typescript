@@ -166,13 +166,21 @@ import {
   FootballTeamTotalsPenalties,
   FootballTeamTotalsThirdDowns,
   SportListGamesParams,
+  SportRetrieveAudienceParams,
   SportRetrieveBoxScoreParams,
   SportRetrievePlaysParams,
   SportRetrieveScoreboardParams,
   Sports,
+  SportsGameAudience,
+  SportsGameAudienceChat,
+  SportsGameAudienceChatOpensIn,
+  SportsGameAudienceTeamPick,
+  SportsGameAudienceTeamPicks,
+  SportsGameAudienceViewers,
   SportsTeam,
   SportsTeamColor,
   SportsTeamLogos,
+  SportsTeamRecord,
 } from './sports';
 import * as SpacesAPI from './spaces';
 import {
@@ -2179,5 +2187,13 @@ export declare namespace X {
     type SportRetrieveScoreboardParams as SportRetrieveScoreboardParams,
     type SportRetrieveBoxScoreParams as SportRetrieveBoxScoreParams,
     type SportRetrievePlaysParams as SportRetrievePlaysParams,
+    type SportsTeamRecord as SportsTeamRecord,
+    type SportsGameAudienceViewers as SportsGameAudienceViewers,
+    type SportsGameAudienceTeamPick as SportsGameAudienceTeamPick,
+    type SportsGameAudienceTeamPicks as SportsGameAudienceTeamPicks,
+    type SportsGameAudienceChatOpensIn as SportsGameAudienceChatOpensIn,
+    type SportsGameAudienceChat as SportsGameAudienceChat,
+    type SportsGameAudience as SportsGameAudience,
+    type SportRetrieveAudienceParams as SportRetrieveAudienceParams,
   };
 }
