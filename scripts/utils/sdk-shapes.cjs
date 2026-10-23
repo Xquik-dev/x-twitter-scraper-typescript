@@ -124,7 +124,11 @@ const sdkShapes = (root, basePath) => {
     if (type.flags & ts.TypeFlags.Object || type.isIntersection()) {
       if (type.getCallSignatures().length) return { t: 'unknown' };
       const symbols = checker.getPropertiesOfType(type);
-      if (!symbols.length) return { t: 'free' };
+      if (!symbols.length) {
+        const values = type.getStringIndexType();
+        const valueNode = values && node(values);
+        return valueNode && valueNode.t !== 'unknown' ? { t: 'map', items: valueNode } : { t: 'free' };
+      }
       if (fileTypes.has(type.getSymbol()?.getName())) return leaf();
       return object(propsOf(symbols));
     }
