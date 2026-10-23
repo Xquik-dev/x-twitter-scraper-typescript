@@ -8,7 +8,7 @@ import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 /**
- * NFL & college football games, scoreboards, box scores & play-by-play
+ * NFL & college football games, scoreboards, plays, box scores & audiences
  */
 export class Sports extends APIResource {
   /**
@@ -90,6 +90,26 @@ export class Sports extends APIResource {
   ): APIPromise<FootballPlays> {
     const { league, ...query } = params;
     return this._client.get(path`/x/sports/${league}/games/${id}/plays`, { query, ...options });
+  }
+
+  /**
+   * Returns who follows 1 game on X. It has live viewers, fan picks per team &
+   * the game chat's state. Each request costs 1 credit.
+   *
+   * @example
+   * ```ts
+   * const sportsGameAudience = await client.x.sports.retrieveAudience('2055084502741811200', {
+   *   league: 'nfl',
+   * });
+   * ```
+   */
+  retrieveAudience(
+    id: string,
+    params: SportRetrieveAudienceParams,
+    options?: RequestOptions,
+  ): APIPromise<SportsGameAudience> {
+    const { league, ...query } = params;
+    return this._client.get(path`/x/sports/${league}/games/${id}/audience`, { query, ...options });
   }
 }
 
@@ -261,6 +281,27 @@ export interface SportsTeamLogos {
 }
 
 /**
+ * The team's wins, losses & ties this season. X sends it only in college
+ * football games.
+ */
+export interface SportsTeamRecord {
+  /**
+   * Games the team won this season.
+   */
+  wins: number | null;
+
+  /**
+   * Games the team lost this season.
+   */
+  losses: number | null;
+
+  /**
+   * Games the team tied this season.
+   */
+  ties: number | null;
+}
+
+/**
  * A team, as X's sports pages show it.
  */
 export interface SportsTeam {
@@ -290,8 +331,8 @@ export interface SportsTeam {
   alternateId: string | null;
 
   /**
-   * The school or place a college team plays for. X sends it only in college
-   * football schedules.
+   * The school or place the team plays for. X sends it in college football
+   * schedules & in a game's audience.
    */
   location: string | null;
 
@@ -309,6 +350,12 @@ export interface SportsTeam {
    * The user ID of the team's X account.
    */
   xUserId: string | null;
+
+  /**
+   * The team's wins, losses & ties this season. X sends it only in college
+   * football games.
+   */
+  record: SportsTeamRecord | null;
 }
 
 /**
@@ -1512,6 +1559,129 @@ export interface FootballPlays {
   players: { [key: string]: FootballPlayer };
 }
 
+/**
+ * People watching the game on X at X's last count. Null before X counts any, as
+ * before kickoff.
+ */
+export interface SportsGameAudienceViewers {
+  /**
+   * How many people watched the game on X.
+   */
+  count: number;
+
+  /**
+   * When X counted them.
+   */
+  asOf: string;
+}
+
+/**
+ * 1 team's picks.
+ */
+export interface SportsGameAudienceTeamPick {
+  /**
+   * The team ID, a key in teams.
+   */
+  teamId: string;
+
+  /**
+   * How many people picked this team.
+   */
+  count: number | null;
+}
+
+/**
+ * How many people on X picked a team to root for.
+ */
+export interface SportsGameAudienceTeamPicks {
+  /**
+   * Picks for every team in the game.
+   */
+  total: number | null;
+
+  /**
+   * Picks per team.
+   */
+  teams: Array<SportsGameAudienceTeamPick>;
+}
+
+/**
+ * Time left until the chat opens. Null while it is open & after the game.
+ */
+export interface SportsGameAudienceChatOpensIn {
+  /**
+   * Whole days left.
+   */
+  days: number | null;
+
+  /**
+   * Hours left after the days.
+   */
+  hours: number | null;
+
+  /**
+   * Minutes left after the hours.
+   */
+  minutes: number | null;
+}
+
+/**
+ * The game's live chat on X.
+ */
+export interface SportsGameAudienceChat {
+  /**
+   * Whether the chat is open now.
+   */
+  available: boolean | null;
+
+  /**
+   * X's ID for the game's chat room.
+   */
+  broadcastId: string | null;
+
+  /**
+   * Time left until the chat opens. Null while it is open & after the game.
+   */
+  opensIn: SportsGameAudienceChatOpensIn | null;
+}
+
+/**
+ * Who watches & roots for 1 game on X.
+ */
+export interface SportsGameAudience {
+  /**
+   * The ID of the game, from your request.
+   */
+  id: string;
+
+  /**
+   * The game's league, from your request.
+   */
+  league: FootballLeague;
+
+  /**
+   * People watching the game on X at X's last count. Null before X counts any,
+   * as before kickoff.
+   */
+  viewers: SportsGameAudienceViewers | null;
+
+  /**
+   * How many people on X picked a team to root for.
+   */
+  teamPicks: SportsGameAudienceTeamPicks;
+
+  /**
+   * The game's live chat on X.
+   */
+  chat: SportsGameAudienceChat;
+
+  /**
+   * The game's teams, by team ID. X's team picker sends no short name,
+   * alternate ID, X account or record, so those are null.
+   */
+  teams: { [key: string]: SportsTeam };
+}
+
 export interface SportListGamesParams {
   /**
    * Fields to keep in each row, comma-separated. Use dots for nested fields,
@@ -1621,6 +1791,30 @@ export interface SportRetrievePlaysParams {
   omit?: string;
 }
 
+export interface SportRetrieveAudienceParams {
+  /**
+   * Path param: nfl for the NFL or ncaafb for college football, in any case.
+   * Another value gets a free 400 `invalid_league` before X is read.
+   */
+  league: FootballLeague;
+
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields,
+   * such as author.username. A list keeps the field in each item. Case &
+   * underscores do not matter. A row that lacks a field leaves it out. Cursors,
+   * counts & diagnostics always stay. An unknown name answers 400 unknown_field
+   * with the valid names, before any read. The price stays the same. SDK row
+   * types then hold only the named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+}
+
 export declare namespace Sports {
   export {
     type FootballLeague as FootballLeague,
@@ -1671,5 +1865,13 @@ export declare namespace Sports {
     type SportRetrieveScoreboardParams as SportRetrieveScoreboardParams,
     type SportRetrieveBoxScoreParams as SportRetrieveBoxScoreParams,
     type SportRetrievePlaysParams as SportRetrievePlaysParams,
+    type SportsTeamRecord as SportsTeamRecord,
+    type SportsGameAudienceViewers as SportsGameAudienceViewers,
+    type SportsGameAudienceTeamPick as SportsGameAudienceTeamPick,
+    type SportsGameAudienceTeamPicks as SportsGameAudienceTeamPicks,
+    type SportsGameAudienceChatOpensIn as SportsGameAudienceChatOpensIn,
+    type SportsGameAudienceChat as SportsGameAudienceChat,
+    type SportsGameAudience as SportsGameAudience,
+    type SportRetrieveAudienceParams as SportRetrieveAudienceParams,
   };
 }

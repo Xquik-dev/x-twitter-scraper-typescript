@@ -293,4 +293,12 @@ export {
   type SportRetrieveScoreboardParams,
   type SportRetrieveBoxScoreParams,
   type SportRetrievePlaysParams,
+  type SportsTeamRecord,
+  type SportsGameAudienceViewers,
+  type SportsGameAudienceTeamPick,
+  type SportsGameAudienceTeamPicks,
+  type SportsGameAudienceChatOpensIn,
+  type SportsGameAudienceChat,
+  type SportsGameAudience,
+  type SportRetrieveAudienceParams,
 } from './sports';

@@ -65,6 +65,11 @@ const schedule: XTwitterScraper.X.FootballSchedule = {
         dark: 'https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig',
       },
       xUserId: '43403778',
+      record: {
+        wins: 7,
+        losses: 1,
+        ties: 0,
+      },
     },
   },
 };
@@ -178,6 +183,7 @@ const scoreboard: XTwitterScraper.X.FootballScoreboard = {
         dark: 'https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig',
       },
       xUserId: '43403778',
+      record: null,
     },
   },
   players: {
@@ -493,6 +499,7 @@ const boxScore: XTwitterScraper.X.FootballBoxScore = {
         dark: 'https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig',
       },
       xUserId: '43403778',
+      record: null,
     },
   },
   players: {
@@ -624,6 +631,7 @@ const plays: XTwitterScraper.X.FootballPlays = {
         dark: 'https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig',
       },
       xUserId: '43403778',
+      record: null,
     },
   },
   players: {
@@ -649,6 +657,61 @@ const plays: XTwitterScraper.X.FootballPlays = {
         username: 'brockpurdy13',
         blueVerified: true,
       },
+    },
+  },
+};
+
+const audience: XTwitterScraper.X.SportsGameAudience = {
+  id: '2055084502741811200',
+  league: 'nfl',
+  viewers: {
+    count: 155,
+    asOf: '2026-10-20T06:19:50.000Z',
+  },
+  teamPicks: {
+    total: 7976,
+    teams: [
+      {
+        teamId: '689566294702555136',
+        count: 4998,
+      },
+      {
+        teamId: '689566304366292992',
+        count: 2978,
+      },
+    ],
+  },
+  chat: {
+    available: false,
+    broadcastId: 'nfl-2055084502741811200',
+    opensIn: {
+      days: 0,
+      hours: 12,
+      minutes: 2,
+    },
+  },
+  teams: {
+    '689566294702555136': {
+      id: '689566294702555136',
+      name: 'San Francisco 49ers',
+      shortName: null,
+      abbreviation: 'SF',
+      alternateId: null,
+      location: 'San Francisco',
+      colors: [
+        {
+          r: 170,
+          g: 0,
+          b: 0,
+        },
+      ],
+      logos: {
+        default: 'https://pbs.twimg.com/semantic_core_img/2094846255792873472/BUi2WqsC?format=png&name=orig',
+        light: null,
+        dark: null,
+      },
+      xUserId: null,
+      record: null,
     },
   },
 };
@@ -709,5 +772,22 @@ describe('resource sports', () => {
       'GET https://xquik.test/api/v1/x/sports/nfl/games/2055084502741811200/plays?omit=players',
     ]);
     expect(response.quarters[0]!.drives[0]!.plays[0]!.type).toBe('Pass');
+  });
+
+  test('retrieveAudience reads viewers, team picks & chat', async () => {
+    const { client, requests } = fixtureClient(audience);
+
+    const response = await client.x.sports.retrieveAudience('2055084502741811200', {
+      league: 'ncaafb',
+      fields: 'viewers,chat',
+    });
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/x/sports/ncaafb/games/2055084502741811200/audience?fields=viewers%2Cchat',
+    ]);
+    expect(response.viewers?.count).toBe(155);
+    expect(response.teamPicks.teams.map((pick) => pick.count)).toEqual([4998, 2978]);
+    expect(response.chat.opensIn).toEqual({ days: 0, hours: 12, minutes: 2 });
+    expect(response.teams['689566294702555136']!.record).toBeNull();
   });
 });

@@ -705,6 +705,13 @@ Types
 - <code><a href="./src/resources/x/sports.ts">FootballDrive</a></code>
 - <code><a href="./src/resources/x/sports.ts">FootballQuarter</a></code>
 - <code><a href="./src/resources/x/sports.ts">FootballPlays</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsTeamRecord</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsGameAudienceViewers</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsGameAudienceTeamPick</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsGameAudienceTeamPicks</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsGameAudienceChatOpensIn</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsGameAudienceChat</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsGameAudience</a></code>
 
 Methods
 
@@ -712,6 +719,7 @@ Methods
 - <code title="get /x/sports/{league}/games/{id}">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveScoreboard</a>(id, { ...params }) -> FootballScoreboard</code>
 - <code title="get /x/sports/{league}/games/{id}/box-score">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveBoxScore</a>(id, { ...params }) -> FootballBoxScore</code>
 - <code title="get /x/sports/{league}/games/{id}/plays">client.x.sports.<a href="./src/resources/x/sports.ts">retrievePlays</a>(id, { ...params }) -> FootballPlays</code>
+- <code title="get /x/sports/{league}/games/{id}/audience">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveAudience</a>(id, { ...params }) -> SportsGameAudience</code>
 
 # Trends
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.18.0 (2026-10-23)
+
+[Full changelog from v0.17.0 to v0.18.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.17.0...v0.18.0)
+
+This release adds a game's audience read and each team's season record.
+
+### Features
+
+* `client.x.sports.retrieveAudience` returns a game's live viewers, fan picks per team & the game chat's state.
+* `SportsTeam` adds `record`, the team's wins, losses & ties this season. X sends it only in college football games.
+
 ## 0.17.0 (2026-10-23)
 
 [Full changelog from v0.16.0 to v0.17.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.16.0...v0.17.0)
