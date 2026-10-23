@@ -127,7 +127,7 @@ const sdkShapes = (root, basePath) => {
       if (!symbols.length) {
         const values = type.getStringIndexType();
         const valueNode = values && node(values);
-        return valueNode && valueNode.t !== 'unknown' ? { t: 'map', values: valueNode } : { t: 'free' };
+        return valueNode && valueNode.t !== 'unknown' ? { t: 'map', items: valueNode } : { t: 'free' };
       }
       if (fileTypes.has(type.getSymbol()?.getName())) return leaf();
       return object(propsOf(symbols));

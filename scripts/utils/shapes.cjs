@@ -13,6 +13,10 @@ const object = (props, open = false) => (open ? { t: 'object', props, open: true
 
 const prop = (node, req = null, nullable = null) => ({ req, null: nullable, node });
 
+const containerSuffix = { array: '[]', map: '{}' };
+
+const isContainer = (node) => Object.hasOwn(containerSuffix, node.t);
+
 const canon = (node, defs = {}, stack = []) => {
   switch (node.t) {
     case 'ref':
@@ -25,9 +29,8 @@ const canon = (node, defs = {}, stack = []) => {
         node.open,
       );
     case 'array':
-      return { t: 'array', items: canon(node.items, defs, stack) };
     case 'map':
-      return { t: 'map', values: canon(node.values, defs, stack) };
+      return { t: node.t, items: canon(node.items, defs, stack) };
     case 'union':
       return mergeUnion(node.variants.map((variant) => canon(variant, defs, stack)));
     default:
@@ -63,10 +66,10 @@ const mergeUnion = (all) => {
       mergeProps(objects),
       objects.some((o) => o.open),
     );
-  const arrays = variants.filter((v) => v.t === 'array');
-  if (arrays.length) return { t: 'array', items: mergeUnion(arrays.map((a) => a.items)) };
-  const maps = variants.filter((v) => v.t === 'map');
-  if (maps.length) return { t: 'map', values: mergeUnion(maps.map((m) => m.values)) };
+  for (const t of Object.keys(containerSuffix)) {
+    const containers = variants.filter((v) => v.t === t);
+    if (containers.length) return { t, items: mergeUnion(containers.map((c) => c.items)) };
+  }
   const leaves = variants.filter((v) => v.t === 'leaf');
   if (leaves.length) {
     return leaves.every((l) => l.enum !== null) ? leaf(leaves.flatMap((l) => l.enum)) : leaf();
@@ -82,11 +85,9 @@ const intersect = (all) => {
     const rest = parts.filter((p) => p.t !== 'union');
     return { t: 'union', variants: unions[0].variants.map((v) => intersect([...rest, v])) };
   }
-  if (parts.length > 1 && parts.every((p) => p.t === 'array')) {
-    return { t: 'array', items: intersect(parts.map((p) => p.items)) };
-  }
-  if (parts.length > 1 && parts.every((p) => p.t === 'map')) {
-    return { t: 'map', values: intersect(parts.map((p) => p.values)) };
+  const [first] = parts;
+  if (parts.length > 1 && isContainer(first) && parts.every((p) => p.t === first.t)) {
+    return { t: first.t, items: intersect(parts.map((p) => p.items)) };
   }
   const objects = parts.filter((p) => p.t === 'object');
   if (!objects.length) return parts[0];
@@ -136,12 +137,8 @@ const compareTree = (spec, sdk, path, side, out) => {
     }
     return;
   }
-  if (spec.t === 'array' && sdk.t === 'array') {
-    compareTree(spec.items, sdk.items, `${path}[]`, side, out);
-    return;
-  }
-  if (spec.t === 'map' && sdk.t === 'map') {
-    compareTree(spec.values, sdk.values, `${path}{}`, side, out);
+  if (isContainer(spec) && sdk.t === spec.t) {
+    compareTree(spec.items, sdk.items, `${path}${containerSuffix[spec.t]}`, side, out);
     return;
   }
   if (spec.t === 'leaf' && sdk.t === 'leaf') {
