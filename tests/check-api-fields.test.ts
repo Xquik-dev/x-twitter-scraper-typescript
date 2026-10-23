@@ -206,16 +206,32 @@ const team = {
   },
 };
 
-const withTeams = (sdkTeam: string): string =>
+const color = { type: 'object', properties: { color: { type: 'string' } } };
+
+const teamsMap = (values: unknown) => ({ type: 'object', additionalProperties: values });
+
+const withTeams = (sdkTeam: string, sdkTeams = '{ [key: string]: Team }'): string =>
   tweets.replace(
     '  lang?: string;\n}',
-    `  lang?: string;\n  teams: { [key: string]: ${sdkTeam} };\n  replies: Array<${sdkTeam}>;\n}`,
+    `  lang?: string;\n  teams: ${sdkTeams};\n  replies: Array<Team>;\n}\n\nexport interface Team ${sdkTeam}`,
   );
 
+const runTeams = (specTeams: object, sdkTeam: string, sdkTeams?: string) =>
+  runCheck({
+    spec: makeSpec({
+      response: { ...responseProperties, teams: specTeams, replies: { type: 'array', items: team } },
+      required: ['id', 'text', 'author', 'teams', 'replies'],
+    }),
+    resource: withTeams(sdkTeam, sdkTeams),
+  });
+
+const matchingTeam = '{ id: string; record: { wins?: number } | null }';
+
 describe('scripts/utils/check-api-fields.cjs', () => {
-  it.each<[string, string, Array<string>]>([
+  it.each<[string, object, string, Array<string>]>([
     [
       'a field the SDK lacks inside map values & array items',
+      teamsMap(team),
       '{ id: string }',
       [
         'GET /api/v1/x/tweets/{tweetId} response missing teams{}.record',
@@ -224,41 +240,39 @@ describe('scripts/utils/check-api-fields.cjs', () => {
     ],
     [
       'an SDK field the spec lacks inside map values & array items',
+      teamsMap(team),
       '{ id: string; record: { wins?: number } | null; color: string }',
       [
         'GET /api/v1/x/tweets/{tweetId} response extra teams{}.color',
         'GET /api/v1/x/tweets/{tweetId} response extra replies[].color',
       ],
     ],
-  ])('fails on %s', (_name, sdkTeam, lines) => {
-    const result = runCheck({
-      spec: makeSpec({
-        response: {
-          ...responseProperties,
-          teams: { type: 'object', additionalProperties: team },
-          replies: { type: 'array', items: team },
-        },
-        required: ['id', 'text', 'author', 'teams', 'replies'],
-      }),
-      resource: withTeams(sdkTeam),
-    });
+    [
+      'a field from 1 variant of a union of maps',
+      { anyOf: [teamsMap(team), teamsMap({ allOf: [team, color] })] },
+      matchingTeam,
+      ['GET /api/v1/x/tweets/{tweetId} response missing teams{}.color'],
+    ],
+    [
+      'a field from 1 part of an allOf of maps',
+      { allOf: [teamsMap(team), teamsMap(color)] },
+      matchingTeam,
+      ['GET /api/v1/x/tweets/{tweetId} response missing teams{}.color'],
+    ],
+  ])('fails on %s', (_name, specTeams, sdkTeam, lines) => {
+    const result = runTeams(specTeams, sdkTeam);
 
     expect(result.stderr).toBe(`${lines.join('\n')}\n${next}`);
     expect(result.status).toBe(1);
   });
 
-  it('passes when map values & array items match the spec', () => {
-    const result = runCheck({
-      spec: makeSpec({
-        response: {
-          ...responseProperties,
-          teams: { type: 'object', additionalProperties: team },
-          replies: { type: 'array', items: team },
-        },
-        required: ['id', 'text', 'author', 'teams', 'replies'],
-      }),
-      resource: withTeams('{ id: string; record: { wins?: number } | null }'),
-    });
+  it.each<[string, object, string?]>([
+    ['map values & array items match the spec', teamsMap(team)],
+    ['the spec map allows any value', teamsMap(true)],
+    ['the spec map values are an empty schema', teamsMap({})],
+    ['the SDK map values are unknown', { ...team, additionalProperties: false }, '{ [key: string]: unknown }'],
+  ])('passes when %s', (_name, specTeams, sdkTeams) => {
+    const result = runTeams(specTeams, matchingTeam, sdkTeams);
 
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);
