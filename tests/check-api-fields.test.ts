@@ -197,7 +197,73 @@ const runCheck = ({ spec: source = makeSpec(), accepted = [], resource = tweets 
 const next =
   'Fix each field above in the SDK, or list it in accepted-field-differences.json with a reason.\n';
 
+const team = {
+  type: 'object',
+  required: ['id', 'record'],
+  properties: {
+    id: { type: 'string' },
+    record: { type: ['object', 'null'], properties: { wins: { type: 'integer' } } },
+  },
+};
+
+const withTeams = (sdkTeam: string): string =>
+  tweets.replace(
+    '  lang?: string;\n}',
+    `  lang?: string;\n  teams: { [key: string]: ${sdkTeam} };\n  replies: Array<${sdkTeam}>;\n}`,
+  );
+
 describe('scripts/utils/check-api-fields.cjs', () => {
+  it.each<[string, string, Array<string>]>([
+    [
+      'a field the SDK lacks inside map values & array items',
+      '{ id: string }',
+      [
+        'GET /api/v1/x/tweets/{tweetId} response missing teams{}.record',
+        'GET /api/v1/x/tweets/{tweetId} response missing replies[].record',
+      ],
+    ],
+    [
+      'an SDK field the spec lacks inside map values & array items',
+      '{ id: string; record: { wins?: number } | null; color: string }',
+      [
+        'GET /api/v1/x/tweets/{tweetId} response extra teams{}.color',
+        'GET /api/v1/x/tweets/{tweetId} response extra replies[].color',
+      ],
+    ],
+  ])('fails on %s', (_name, sdkTeam, lines) => {
+    const result = runCheck({
+      spec: makeSpec({
+        response: {
+          ...responseProperties,
+          teams: { type: 'object', additionalProperties: team },
+          replies: { type: 'array', items: team },
+        },
+        required: ['id', 'text', 'author', 'teams', 'replies'],
+      }),
+      resource: withTeams(sdkTeam),
+    });
+
+    expect(result.stderr).toBe(`${lines.join('\n')}\n${next}`);
+    expect(result.status).toBe(1);
+  });
+
+  it('passes when map values & array items match the spec', () => {
+    const result = runCheck({
+      spec: makeSpec({
+        response: {
+          ...responseProperties,
+          teams: { type: 'object', additionalProperties: team },
+          replies: { type: 'array', items: team },
+        },
+        required: ['id', 'text', 'author', 'teams', 'replies'],
+      }),
+      resource: withTeams('{ id: string; record: { wins?: number } | null }'),
+    });
+
+    expect(result.stderr).toBe('');
+    expect(result.status).toBe(0);
+  });
+
   it('passes when every field, flag and enum matches, whatever the path parameter is called', () => {
     const result = runCheck();
 
