@@ -270,7 +270,11 @@ describe('scripts/utils/check-api-fields.cjs', () => {
     ['map values & array items match the spec', teamsMap(team)],
     ['the spec map allows any value', teamsMap(true)],
     ['the spec map values are an empty schema', teamsMap({})],
-    ['the SDK map values are unknown', { ...team, additionalProperties: false }, '{ [key: string]: unknown }'],
+    [
+      'the SDK map values are unknown',
+      { ...team, additionalProperties: false },
+      '{ [key: string]: unknown }',
+    ],
   ])('passes when %s', (_name, specTeams, sdkTeams) => {
     const result = runTeams(specTeams, matchingTeam, sdkTeams);
 
