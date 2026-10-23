@@ -210,7 +210,9 @@ const color = { type: 'object', properties: { color: { type: 'string' } } };
 
 const teamsMap = (values: unknown) => ({ type: 'object', additionalProperties: values });
 
-const withTeams = (sdkTeam: string, sdkTeams = '{ [key: string]: Team }'): string =>
+const typedTeams = '{ [key: string]: Team }';
+
+const withTeams = (sdkTeam: string, sdkTeams = typedTeams): string =>
   tweets.replace(
     '  lang?: string;\n}',
     `  lang?: string;\n  teams: ${sdkTeams};\n  replies: Array<Team>;\n}\n\nexport interface Team ${sdkTeam}`,
@@ -266,10 +268,10 @@ describe('scripts/utils/check-api-fields.cjs', () => {
     expect(result.status).toBe(1);
   });
 
-  it.each<[string, object, string?]>([
-    ['map values & array items match the spec', teamsMap(team)],
-    ['the spec map allows any value', teamsMap(true)],
-    ['the spec map values are an empty schema', teamsMap({})],
+  it.each<[string, object, string]>([
+    ['map values & array items match the spec', teamsMap(team), typedTeams],
+    ['the spec map allows any value', teamsMap(true), typedTeams],
+    ['the spec map values are an empty schema', teamsMap({}), typedTeams],
     [
       'the SDK map values are unknown',
       { ...team, additionalProperties: false },
