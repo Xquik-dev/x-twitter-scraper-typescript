@@ -6,10 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const distDir =
-  process.env['DIST_PATH'] ?
-    path.resolve(process.env['DIST_PATH'])
-  : path.resolve(__dirname, '..', '..', 'dist');
+const distDir = path.resolve(__dirname, '..', '..', 'dist');
 
 async function* walk(dir) {
   for await (const d of await fs.promises.opendir(dir)) {

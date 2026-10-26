@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const pkgJson = require(process.env['PKG_JSON_PATH'] || '../../package.json');
+const pkgJson = require('../../package.json');
 
 function processExportMap(m) {
   for (const key in m) {
