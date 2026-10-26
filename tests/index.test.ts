@@ -7,6 +7,7 @@ import { APIPromise } from 'x-twitter-scraper/core/api-promise';
 import util from 'node:util';
 import XTwitterScraper from 'x-twitter-scraper';
 import { APIUserAbortError } from 'x-twitter-scraper';
+import { recordingLogger } from './recording-logger';
 const defaultFetch = fetch;
 
 describe('instantiate client', () => {
@@ -67,7 +68,7 @@ describe('instantiate client', () => {
 
     await client.request({ path: '/foo', method: 'get' });
 
-    const headers = capturedRequest!.headers as Headers;
+    const headers = new Headers(capturedRequest?.headers);
     expect(headers.get('x-xquik-sdk')).toEqual('js');
     expect(headers.get('x-stainless-lang')).toEqual('js');
   });
@@ -102,13 +103,7 @@ describe('instantiate client', () => {
     };
 
     test('debug logs when log level is debug', async () => {
-      const debugMock = jest.fn();
-      const logger = {
-        debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
-      };
+      const { logger, calls } = recordingLogger();
 
       const client = new XTwitterScraper({
         logger: logger,
@@ -118,7 +113,7 @@ describe('instantiate client', () => {
       });
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).toHaveBeenCalled();
+      expect(calls.debug).not.toHaveLength(0);
     });
 
     test('default logLevel is warn', async () => {
@@ -127,13 +122,7 @@ describe('instantiate client', () => {
     });
 
     test('debug logs are skipped when log level is info', async () => {
-      const debugMock = jest.fn();
-      const logger = {
-        debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
-      };
+      const { logger, calls } = recordingLogger();
 
       const client = new XTwitterScraper({
         logger: logger,
@@ -143,17 +132,11 @@ describe('instantiate client', () => {
       });
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).not.toHaveBeenCalled();
+      expect(calls.debug).toHaveLength(0);
     });
 
     test('debug logs happen with debug env var', async () => {
-      const debugMock = jest.fn();
-      const logger = {
-        debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
-      };
+      const { logger, calls } = recordingLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'debug';
       const client = new XTwitterScraper({
@@ -164,17 +147,11 @@ describe('instantiate client', () => {
       expect(client.logLevel).toBe('debug');
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).toHaveBeenCalled();
+      expect(calls.debug).not.toHaveLength(0);
     });
 
     test('warn when env var level is invalid', async () => {
-      const warnMock = jest.fn();
-      const logger = {
-        debug: jest.fn(),
-        info: jest.fn(),
-        warn: warnMock,
-        error: jest.fn(),
-      };
+      const { logger, calls } = recordingLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'not a log level';
       const client = new XTwitterScraper({
@@ -183,19 +160,13 @@ describe('instantiate client', () => {
         bearerToken: 'My Bearer Token',
       });
       expect(client.logLevel).toBe('warn');
-      expect(warnMock).toHaveBeenCalledWith(
+      expect(calls.warn).toContainEqual([
         'process.env[\'X_TWITTER_SCRAPER_LOG\'] was set to "not a log level", expected one of ["off","error","warn","info","debug"]',
-      );
+      ]);
     });
 
     test('client log level overrides env var', async () => {
-      const debugMock = jest.fn();
-      const logger = {
-        debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
-      };
+      const { logger, calls } = recordingLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'debug';
       const client = new XTwitterScraper({
@@ -206,17 +177,11 @@ describe('instantiate client', () => {
       });
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).not.toHaveBeenCalled();
+      expect(calls.debug).toHaveLength(0);
     });
 
     test('no warning logged for invalid env var level + valid client level', async () => {
-      const warnMock = jest.fn();
-      const logger = {
-        debug: jest.fn(),
-        info: jest.fn(),
-        warn: warnMock,
-        error: jest.fn(),
-      };
+      const { logger, calls } = recordingLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'not a log level';
       const client = new XTwitterScraper({
@@ -226,7 +191,7 @@ describe('instantiate client', () => {
         bearerToken: 'My Bearer Token',
       });
       expect(client.logLevel).toBe('debug');
-      expect(warnMock).not.toHaveBeenCalled();
+      expect(calls.warn).toHaveLength(0);
     });
   });
 
@@ -310,10 +275,15 @@ describe('instantiate client', () => {
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 200);
 
-    const spy = jest.spyOn(client, 'request');
+    let requests = 0;
+    const request = client.request.bind(client);
+    client.request = (...args) => {
+      requests += 1;
+      return request(...args);
+    };
 
     await expect(client.get('/foo', { signal: controller.signal })).rejects.toThrow(APIUserAbortError);
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(requests).toBe(1);
   });
 
   test('normalized method', async () => {
@@ -659,7 +629,7 @@ describe('retries', () => {
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
 
-    expect((capturedRequest!.headers as Headers).get('x-stainless-retry-count')).toEqual('2');
+    expect(new Headers(capturedRequest?.headers).get('x-stainless-retry-count')).toEqual('2');
     expect(count).toEqual(3);
   });
 
@@ -694,7 +664,7 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect((capturedRequest!.headers as Headers).has('x-stainless-retry-count')).toBe(false);
+    expect(new Headers(capturedRequest?.headers).has('x-stainless-retry-count')).toBe(false);
   });
 
   test('omit retry count header by default', async () => {
@@ -728,7 +698,7 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect(capturedRequest!.headers as Headers).not.toHaveProperty('x-stainless-retry-count');
+    expect(new Headers(capturedRequest?.headers).has('x-stainless-retry-count')).toBe(false);
   });
 
   test('overwrite retry count header', async () => {
@@ -762,7 +732,7 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect((capturedRequest!.headers as Headers).get('x-stainless-retry-count')).toEqual('42');
+    expect(new Headers(capturedRequest?.headers).get('x-stainless-retry-count')).toEqual('42');
   });
 
   test('retry on 429 with retry-after', async () => {
