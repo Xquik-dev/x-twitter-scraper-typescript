@@ -3,39 +3,34 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { VERSION } from '../version';
+import { runtime } from './runtime';
+import { objectTag } from './utils/values';
 
 export const isRunningInBrowser = () => {
   return (
-    // @ts-ignore
-    typeof window !== 'undefined' &&
-    // @ts-ignore
-    typeof window.document !== 'undefined' &&
-    // @ts-ignore
-    typeof navigator !== 'undefined'
+    typeof runtime.window !== 'undefined' &&
+    typeof runtime.window.document !== 'undefined' &&
+    typeof runtime.navigator !== 'undefined'
   );
 };
 
 type DetectedPlatform = 'deno' | 'node' | 'edge' | 'unknown';
 
 function getDetectedPlatform(): DetectedPlatform {
-  if (typeof Deno !== 'undefined' && Deno.build != null) {
+  if (typeof runtime.Deno !== 'undefined' && runtime.Deno.build != null) {
     return 'deno';
   }
-  if (typeof EdgeRuntime !== 'undefined') {
+  if (typeof runtime.EdgeRuntime !== 'undefined') {
     return 'edge';
   }
   if (
-    Object.prototype.toString.call(
-      typeof (globalThis as any).process !== 'undefined' ? (globalThis as any).process : 0,
-    ) === '[object process]'
+    objectTag(typeof runtime.process !== 'undefined' ? runtime.process : 0) === '[object process]'
   ) {
     return 'node';
   }
   return 'unknown';
 }
 
-declare const Deno: any;
-declare const EdgeRuntime: any;
 type Arch = 'x32' | 'x64' | 'arm' | 'arm64' | `other:${string}` | 'unknown';
 type PlatformName =
   'MacOS' | 'Linux' | 'Windows' | 'FreeBSD' | 'OpenBSD' | 'iOS' | 'Android' | `Other:${string}` | 'Unknown';
@@ -50,7 +45,8 @@ type PlatformProperties = {
 };
 const getPlatformProperties = (): PlatformProperties => {
   const detectedPlatform = getDetectedPlatform();
-  if (detectedPlatform === 'deno') {
+  const { Deno, EdgeRuntime, process } = runtime;
+  if (detectedPlatform === 'deno' && Deno?.build) {
     return {
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
@@ -66,19 +62,19 @@ const getPlatformProperties = (): PlatformProperties => {
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
       'X-Stainless-OS': 'Unknown',
-      'X-Stainless-Arch': `other:${EdgeRuntime}`,
+      'X-Stainless-Arch': `other:${String(EdgeRuntime)}`,
       'X-Stainless-Runtime': 'edge',
-      'X-Stainless-Runtime-Version': (globalThis as any).process.version,
+      'X-Stainless-Runtime-Version': String(process?.version),
     };
   }
   if (detectedPlatform === 'node') {
     return {
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
-      'X-Stainless-OS': normalizePlatform((globalThis as any).process.platform ?? 'unknown'),
-      'X-Stainless-Arch': normalizeArch((globalThis as any).process.arch ?? 'unknown'),
+      'X-Stainless-OS': normalizePlatform(process?.platform ?? 'unknown'),
+      'X-Stainless-Arch': normalizeArch(process?.arch ?? 'unknown'),
       'X-Stainless-Runtime': 'node',
-      'X-Stainless-Runtime-Version': (globalThis as any).process.version ?? 'unknown',
+      'X-Stainless-Runtime-Version': process?.version ?? 'unknown',
     };
   }
 
@@ -109,11 +105,10 @@ type BrowserInfo = {
   version: string;
 };
 
-declare const navigator: { userAgent: string } | undefined;
-
 // Note: modified from https://github.com/JS-DevTools/host-environment/blob/b1ab79ecde37db5d6e163c050e54fe7d287d7c92/src/isomorphic.browser.ts
 function getBrowserInfo(): BrowserInfo | null {
-  if (typeof navigator === 'undefined' || !navigator) {
+  const userAgent = runtime.navigator?.userAgent;
+  if (userAgent === undefined) {
     return null;
   }
 
@@ -127,7 +122,7 @@ function getBrowserInfo(): BrowserInfo | null {
   ];
 
   for (const { key, pattern } of browserPatterns) {
-    const match = pattern.exec(navigator.userAgent);
+    const match = pattern.exec(userAgent);
     if (match) {
       const major = match[1] || 0;
       const minor = match[2] || 0;

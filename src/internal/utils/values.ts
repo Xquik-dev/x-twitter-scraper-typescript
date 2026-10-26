@@ -7,12 +7,15 @@ import { XTwitterScraperError } from '../../core/error';
 // https://url.spec.whatwg.org/#url-scheme-string
 const startsWithSchemeRegexp = /^[a-z][a-z0-9+.-]*:/i;
 
+const { toString: objectToString } = {};
+export const objectTag = (value: unknown): string => objectToString.call(value);
+
 export const isAbsoluteURL = (url: string): boolean => {
   return startsWithSchemeRegexp.test(url);
 };
 
-export let isArray = (val: unknown): val is unknown[] => ((isArray = Array.isArray), isArray(val));
-export let isReadonlyArray = isArray as (val: unknown) => val is readonly unknown[];
+export const isArray = (val: unknown): val is unknown[] => Array.isArray(val);
+export const isReadonlyArray = (val: unknown): val is readonly unknown[] => Array.isArray(val);
 
 export function maybeObj(x: unknown): object {
   if (typeof x !== 'object') {
@@ -22,14 +25,14 @@ export function maybeObj(x: unknown): object {
   return x ?? {};
 }
 
-export function isEmptyObj(obj: Object | null | undefined): boolean {
+export function isEmptyObj(obj: object | null | undefined): boolean {
   if (!obj) return true;
   for (const _k in obj) return false;
   return true;
 }
 
 export function hasOwn<T extends object = object>(obj: T, key: PropertyKey): key is keyof T {
-  return Object.prototype.hasOwnProperty.call(obj, key);
+  return Object.hasOwn(obj, key);
 }
 
 export function isObj(obj: unknown): obj is Record<string, unknown> {
@@ -95,10 +98,23 @@ export const maybeCoerceBoolean = (value: unknown): boolean | undefined => {
   return coerceBoolean(value);
 };
 
-export const safeJSON = (text: string) => {
+export type JSONValue = string | number | boolean | null | readonly JSONValue[] | { readonly [key: string]: JSONValue };
+
+export function isJSONValue(value: unknown): value is JSONValue {
+  if (value === null || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return true;
+  }
+  if (isReadonlyArray(value)) return value.every(isJSONValue);
+  if (typeof value !== 'object') return false;
+  const entries: unknown[] = Object.values(value);
+  return entries.every(isJSONValue);
+}
+
+export const safeJSON = (text: string): JSONValue | undefined => {
   try {
-    return JSON.parse(text);
-  } catch (err) {
+    const parsed: unknown = JSON.parse(text);
+    return isJSONValue(parsed) ? parsed : undefined;
+  } catch {
     return undefined;
   }
 };

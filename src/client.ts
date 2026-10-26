@@ -5,7 +5,8 @@
 import type { RequestInit, RequestInfo, BodyInit } from './internal/builtin-types';
 import type { HTTPMethod, PromiseOrValue, MergedRequestInit, FinalizedRequestInit } from './internal/types';
 import { uuid4 } from './internal/utils/uuid';
-import { validatePositiveInteger, isAbsoluteURL, safeJSON } from './internal/utils/values';
+import { validatePositiveInteger, isAbsoluteURL, safeJSON, type JSONValue } from './internal/utils/values';
+import { isReadableStream, runtime } from './internal/runtime';
 import { sleep } from './internal/utils/sleep';
 export type { Logger, LogLevel } from './internal/utils/log';
 import { castToError, isAbortError } from './internal/errors';
@@ -175,6 +176,10 @@ import { isEmptyObj } from './internal/utils/values';
 
 const DEFAULT_BASE_URL = 'https://xquik.com/api/v1';
 
+function isClientConstructor(value: unknown): value is new (options: ClientOptions) => XTwitterScraper {
+  return typeof value === 'function' && (value === XTwitterScraper || XTwitterScraper.isPrototypeOf(value));
+}
+
 export interface ClientOptions {
   /**
    * Defaults to process.env['X_TWITTER_SCRAPER_API_KEY'].
@@ -300,7 +305,7 @@ export class XTwitterScraper {
       baseURL: baseURL || DEFAULT_BASE_URL,
     };
 
-    this.baseURL = options.baseURL!;
+    this.baseURL = baseURL || DEFAULT_BASE_URL;
     this.timeout = options.timeout ?? XTwitterScraper.DEFAULT_TIMEOUT;
     this.logger = options.logger ?? console;
     const defaultLogLevel = 'warn';
@@ -335,8 +340,10 @@ export class XTwitterScraper {
   /**
    * Create a new client instance re-using the same options given to the current client with optional overriding.
    */
-  withOptions(options: Partial<ClientOptions>): this {
-    const client = new (this.constructor as any as new (props: ClientOptions) => typeof this)({
+  withOptions(options: Partial<ClientOptions>): XTwitterScraper {
+    const Client: unknown = this.constructor;
+    const Constructor = isClientConstructor(Client) ? Client : XTwitterScraper;
+    const client = new Constructor({
       ...this._options,
       baseURL: this.baseURL,
       maxRetries: this.maxRetries,
@@ -418,7 +425,7 @@ export class XTwitterScraper {
 
   protected makeStatusError(
     status: number,
-    error: Object,
+    error: JSONValue | undefined,
     message: string | undefined,
     headers: Headers,
   ): Errors.APIError {
@@ -427,7 +434,7 @@ export class XTwitterScraper {
 
   buildURL(
     path: string,
-    query: Record<string, unknown> | null | undefined,
+    query: object | null | undefined,
     defaultBaseURL?: string | undefined,
   ): string {
     const baseURL = (!this.#baseURLOverridden() && defaultBaseURL) || this.baseURL;
@@ -611,8 +618,8 @@ export class XTwitterScraper {
 
       loggerFor(this).info(`${responseInfo} - ${retryMessage}`);
 
-      const errText = await response.text().catch((err: any) => castToError(err).message);
-      const errJSON = safeJSON(errText) as any;
+      const errText = await response.text().catch((err: unknown) => castToError(err).message);
+      const errJSON = safeJSON(errText);
       const errMessage = errJSON ? undefined : errText;
 
       loggerFor(this).debug(
@@ -659,11 +666,11 @@ export class XTwitterScraper {
     const timeout = setTimeout(abort, ms);
 
     const isReadableBody =
-      ((globalThis as any).ReadableStream && options.body instanceof (globalThis as any).ReadableStream) ||
+      isReadableStream(options.body) ||
       (typeof options.body === 'object' && options.body !== null && Symbol.asyncIterator in options.body);
 
     const fetchOptions: RequestInit = {
-      signal: controller.signal as any,
+      signal: controller.signal,
       ...(isReadableBody ? { duplex: 'half' } : {}),
       method: 'GET',
       ...options,
@@ -753,7 +760,7 @@ export class XTwitterScraper {
     const options = { ...inputOptions };
     const { method, path, query, defaultBaseURL } = options;
 
-    const url = this.buildURL(path!, query as Record<string, unknown>, defaultBaseURL);
+    const url = this.buildURL(path, query, defaultBaseURL);
     if ('timeout' in options) validatePositiveInteger('timeout', options.timeout);
     options.timeout = options.timeout ?? this.timeout;
     const { bodyHeaders, body } = this.buildBody({ options });
@@ -763,11 +770,10 @@ export class XTwitterScraper {
       method,
       headers: reqHeaders,
       ...(options.signal && { signal: options.signal }),
-      ...((globalThis as any).ReadableStream &&
-        body instanceof (globalThis as any).ReadableStream && { duplex: 'half' }),
+      ...(isReadableStream(body) && { duplex: 'half' }),
       ...(body && { body }),
-      ...((this.fetchOptions as any) ?? {}),
-      ...((options.fetchOptions as any) ?? {}),
+      ...this.fetchOptions,
+      ...options.fetchOptions,
     };
 
     return { req, url, timeout: options.timeout };
@@ -829,23 +835,22 @@ export class XTwitterScraper {
       return { bodyHeaders: undefined, body: undefined };
     }
     const headers = buildHeaders([rawHeaders]);
+    if (ArrayBuffer.isView(body)) {
+      return { bodyHeaders: undefined, body: new Uint8Array(body.buffer, body.byteOffset, body.byteLength) };
+    }
     if (
-      ArrayBuffer.isView(body) ||
       body instanceof ArrayBuffer ||
-      body instanceof DataView ||
       (typeof body === 'string' && headers.values.has('content-type')) ||
-      ((globalThis as any).Blob && body instanceof (globalThis as any).Blob) ||
+      (runtime.Blob !== undefined && body instanceof runtime.Blob) ||
       body instanceof FormData ||
-      body instanceof URLSearchParams ||
-      ((globalThis as any).ReadableStream && body instanceof (globalThis as any).ReadableStream)
+      body instanceof URLSearchParams
     ) {
-      return { bodyHeaders: undefined, body: body as BodyInit };
-    } else if (
-      typeof body === 'object' &&
-      (Symbol.asyncIterator in body ||
-        (Symbol.iterator in body && 'next' in body && typeof body.next === 'function'))
-    ) {
-      return { bodyHeaders: undefined, body: Shims.ReadableStreamFrom(body as AsyncIterable<Uint8Array>) };
+      return { bodyHeaders: undefined, body };
+    }
+    if (isReadableStream(body)) {
+      return { bodyHeaders: undefined, body: Shims.toByteStream(body) };
+    } else if (Shims.isAsyncIterable(body) || Shims.isIteratorObject(body)) {
+      return { bodyHeaders: undefined, body: Shims.ReadableStreamFrom(Shims.byteChunks(body)) };
     } else if (
       typeof body === 'object' &&
       headers.values.get('content-type') === 'application/x-www-form-urlencoded'

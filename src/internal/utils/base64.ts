@@ -4,28 +4,29 @@
 
 import { XTwitterScraperError } from '../../core/error';
 import { encodeUTF8 } from './bytes';
+import { runtime } from '../runtime';
 
 export const toBase64 = (data: string | Uint8Array | null | undefined): string => {
   if (!data) return '';
 
-  if (typeof (globalThis as any).Buffer !== 'undefined') {
-    return (globalThis as any).Buffer.from(data).toString('base64');
-  }
+  const bytes = typeof data === 'string' ? encodeUTF8(data) : data;
+  const { Buffer } = runtime;
 
-  if (typeof data === 'string') {
-    data = encodeUTF8(data);
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(bytes).toString('base64');
   }
 
   if (typeof btoa !== 'undefined') {
-    return btoa(String.fromCharCode.apply(null, data as any));
+    return btoa(String.fromCharCode(...bytes));
   }
 
   throw new XTwitterScraperError('Cannot generate base64 string; Expected `Buffer` or `btoa` to be defined');
 };
 
 export const fromBase64 = (str: string): Uint8Array => {
-  if (typeof (globalThis as any).Buffer !== 'undefined') {
-    const buf = (globalThis as any).Buffer.from(str, 'base64');
+  const { Buffer } = runtime;
+  if (typeof Buffer !== 'undefined') {
+    const buf = Buffer.from(str, 'base64');
     return new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
   }
 

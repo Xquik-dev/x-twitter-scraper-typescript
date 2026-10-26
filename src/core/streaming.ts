@@ -4,7 +4,8 @@
 
 import { XTwitterScraperError } from './error';
 import { type ReadableStream } from '../internal/shim-types';
-import { makeReadableStream } from '../internal/shims';
+import { makeReadableStream, toBytes } from '../internal/shims';
+import { runtime } from '../internal/runtime';
 import { findDoubleNewlineIndex, LineDecoder } from '../internal/decoders/line';
 import { ReadableStreamToAsyncIterable } from '../internal/shims';
 import { isAbortError } from '../internal/errors';
@@ -25,7 +26,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
   #client: XTwitterScraper | undefined;
 
   constructor(
-    private iterator: () => AsyncIterator<Item>,
+    private iterator: () => AsyncIterator<Item, undefined, undefined>,
     controller: AbortController,
     client?: XTwitterScraper,
   ) {
@@ -78,7 +79,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
    * where each item is a JSON value.
    */
   static fromReadableStream<Item>(
-    readableStream: ReadableStream,
+    readableStream: ReadableStream<Bytes>,
     controller: AbortController,
     client?: XTwitterScraper,
   ): Stream<Item> {
@@ -124,7 +125,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
     return new Stream(iterator, controller, client);
   }
 
-  [Symbol.asyncIterator](): AsyncIterator<Item> {
+  [Symbol.asyncIterator](): AsyncIterator<Item, undefined, undefined> {
     return this.iterator();
   }
 
@@ -133,19 +134,20 @@ export class Stream<Item> implements AsyncIterable<Item> {
    * independently read from at different speeds.
    */
   tee(): [Stream<Item>, Stream<Item>] {
-    const left: Array<Promise<IteratorResult<Item>>> = [];
-    const right: Array<Promise<IteratorResult<Item>>> = [];
+    const left: Array<Promise<IteratorResult<Item, undefined>>> = [];
+    const right: Array<Promise<IteratorResult<Item, undefined>>> = [];
     const iterator = this.iterator();
 
-    const teeIterator = (queue: Array<Promise<IteratorResult<Item>>>): AsyncIterator<Item> => {
+    const teeIterator = (
+      queue: Array<Promise<IteratorResult<Item, undefined>>>,
+    ): AsyncIterator<Item, undefined, undefined> => {
       return {
         next: () => {
-          if (queue.length === 0) {
-            const result = iterator.next();
-            left.push(result);
-            right.push(result);
-          }
-          return queue.shift()!;
+          const queued = queue.shift();
+          if (queued) return queued;
+          const result = iterator.next();
+          (queue === left ? right : left).push(result);
+          return result;
         },
       };
     };
@@ -161,15 +163,11 @@ export class Stream<Item> implements AsyncIterable<Item> {
    * JSON stringified values in the stream
    * which can be turned back into a Stream with `Stream.fromReadableStream()`.
    */
-  toReadableStream(): ReadableStream {
-    const self = this;
-    let iter: AsyncIterator<Item>;
+  toReadableStream(): ReadableStream<Uint8Array> {
+    const iter = this[Symbol.asyncIterator]();
 
-    return makeReadableStream({
-      async start() {
-        iter = self[Symbol.asyncIterator]();
-      },
-      async pull(ctrl: any) {
+    return makeReadableStream<Uint8Array>({
+      async pull(ctrl) {
         try {
           const { value, done } = await iter.next();
           if (done) return ctrl.close();
@@ -192,12 +190,10 @@ export async function* _iterSSEMessages(
   response: Response,
   controller: AbortController,
 ): AsyncGenerator<ServerSentEvent, void, unknown> {
-  if (!response.body) {
+  const { body }: { body: ReadableStream<unknown> | null } = response;
+  if (!body) {
     controller.abort();
-    if (
-      typeof (globalThis as any).navigator !== 'undefined' &&
-      (globalThis as any).navigator.product === 'ReactNative'
-    ) {
+    if (runtime.navigator?.product === 'ReactNative') {
       throw new XTwitterScraperError(
         `The default react-native fetch implementation does not support streaming. Please use expo/fetch: https://docs.expo.dev/versions/latest/sdk/expo/#expofetch-api`,
       );
@@ -208,7 +204,7 @@ export async function* _iterSSEMessages(
   const sseDecoder = new SSEDecoder();
   const lineDecoder = new LineDecoder();
 
-  const iter = ReadableStreamToAsyncIterable<Bytes>(response.body);
+  const iter = ReadableStreamToAsyncIterable<unknown>(body);
   for await (const sseChunk of iterSSEChunks(iter)) {
     for (const line of lineDecoder.decode(sseChunk)) {
       const sse = sseDecoder.decode(line);
@@ -222,7 +218,9 @@ export async function* _iterSSEMessages(
   }
 }
 
-async function* iterSSEChunks(iterator: AsyncIterableIterator<Bytes>): AsyncGenerator<Uint8Array> {
+async function* iterSSEChunks(
+  iterator: AsyncIterable<unknown, undefined, undefined>,
+): AsyncGenerator<Uint8Array, void, undefined> {
   let data = new Uint8Array();
 
   for await (const chunk of iterator) {
@@ -230,17 +228,14 @@ async function* iterSSEChunks(iterator: AsyncIterableIterator<Bytes>): AsyncGene
       continue;
     }
 
-    const binaryChunk =
-      chunk instanceof ArrayBuffer ? new Uint8Array(chunk)
-      : typeof chunk === 'string' ? encodeUTF8(chunk)
-      : chunk;
+    const binaryChunk = toBytes(chunk);
 
     let newData = new Uint8Array(data.length + binaryChunk.length);
     newData.set(data);
     newData.set(binaryChunk, data.length);
     data = newData;
 
-    let patternIndex;
+    let patternIndex: number;
     while ((patternIndex = findDoubleNewlineIndex(data)) !== -1) {
       yield data.slice(0, patternIndex);
       data = data.slice(patternIndex);
