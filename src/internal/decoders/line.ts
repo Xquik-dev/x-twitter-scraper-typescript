@@ -37,7 +37,7 @@ export class LineDecoder {
     this.#buffer = concatBytes([this.#buffer, binaryChunk]);
 
     const lines: string[] = [];
-    let patternIndex;
+    let patternIndex: ReturnType<typeof findNewlineIndex>;
     while ((patternIndex = findNewlineIndex(this.#buffer, this.#carriageReturnIndex)) != null) {
       if (patternIndex.carriage && this.#carriageReturnIndex == null) {
         this.#carriageReturnIndex = patternIndex.index;

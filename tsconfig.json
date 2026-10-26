@@ -3,7 +3,7 @@
   "exclude": [],
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["es2020"],
+    "lib": ["es2020", "es2022.error", "es2022.object"],
     "module": "commonjs",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
@@ -32,8 +32,6 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
-    "isolatedModules": false,
-
-    "skipLibCheck": true
+    "isolatedModules": false
   }
 }

@@ -15,13 +15,18 @@ interface BlobLike {
   slice(start?: number, end?: number): BlobLike;
 }
 
-const isBlobLike = (value: any): value is BlobLike & { arrayBuffer(): Promise<ArrayBuffer> } =>
-  value != null &&
+const isBlobLike = (value: unknown): value is BlobLike & { arrayBuffer(): Promise<ArrayBuffer> } =>
   typeof value === 'object' &&
+  value !== null &&
+  'size' in value &&
   typeof value.size === 'number' &&
+  'type' in value &&
   typeof value.type === 'string' &&
+  'text' in value &&
   typeof value.text === 'function' &&
+  'slice' in value &&
   typeof value.slice === 'function' &&
+  'arrayBuffer' in value &&
   typeof value.arrayBuffer === 'function';
 
 interface FileLike extends BlobLike {
@@ -29,10 +34,12 @@ interface FileLike extends BlobLike {
   readonly name?: string | undefined;
 }
 
-const isFileLike = (value: any): value is FileLike & { arrayBuffer(): Promise<ArrayBuffer> } =>
-  value != null &&
+const isFileLike = (value: unknown): value is FileLike & { arrayBuffer(): Promise<ArrayBuffer> } =>
   typeof value === 'object' &&
+  value !== null &&
+  'name' in value &&
   typeof value.name === 'string' &&
+  'lastModified' in value &&
   typeof value.lastModified === 'number' &&
   isBlobLike(value);
 
@@ -41,10 +48,12 @@ export interface ResponseLike {
   blob(): Promise<BlobLike>;
 }
 
-const isResponseLike = (value: any): value is ResponseLike =>
-  value != null &&
+const isResponseLike = (value: unknown): value is ResponseLike =>
   typeof value === 'object' &&
+  value !== null &&
+  'url' in value &&
   typeof value.url === 'string' &&
+  'blob' in value &&
   typeof value.blob === 'function';
 
 export type ToFileInput =
@@ -96,7 +105,7 @@ export async function toFile(
   return makeFile(parts, name, options);
 }
 
-async function getBytes(value: BlobLikePart | AsyncIterable<BlobLikePart>): Promise<Array<BlobPart>> {
+async function getBytes(value: unknown): Promise<Array<BlobPart>> {
   let parts: Array<BlobPart> = [];
   if (typeof value === 'string' || ArrayBuffer.isView(value) || value instanceof ArrayBuffer) {
     parts.push(value);
@@ -104,10 +113,10 @@ async function getBytes(value: BlobLikePart | AsyncIterable<BlobLikePart>): Prom
     parts.push(value instanceof Blob ? value : await value.arrayBuffer());
   } else if (isAsyncIterable(value)) {
     for await (const chunk of value) {
-      parts.push(...(await getBytes(chunk as BlobLikePart)));
+      parts.push(...(await getBytes(chunk)));
     }
   } else {
-    const constructor = value?.constructor?.name;
+    const constructor = typeof value === 'object' && value !== null ? value.constructor?.name : undefined;
     throw new Error(
       `Unexpected data type: ${typeof value}${
         constructor ? `; constructor: ${constructor}` : ''

@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { castToError } from '../internal/errors';
+import type { JSONValue } from '../internal/utils/values';
 
 export class XTwitterScraperError extends Error {}
 
 export class APIError<
   TStatus extends number | undefined = number | undefined,
   THeaders extends Headers | undefined = Headers | undefined,
-  TError extends Object | undefined = Object | undefined,
+  TError = JSONValue | undefined,
 > extends XTwitterScraperError {
   /** HTTP status for the response that caused the error */
   readonly status: TStatus;
@@ -25,12 +26,14 @@ export class APIError<
     this.error = error;
   }
 
-  private static makeMessage(status: number | undefined, error: any, message: string | undefined) {
+  private static makeMessage(status: number | undefined, error: unknown, message: string | undefined) {
+    const errorMessage =
+      typeof error === 'object' && error !== null && 'message' in error ? error.message : undefined;
     const msg =
-      error?.message ?
-        typeof error.message === 'string' ?
-          error.message
-        : JSON.stringify(error.message)
+      errorMessage ?
+        typeof errorMessage === 'string' ?
+          errorMessage
+        : JSON.stringify(errorMessage)
       : error ? JSON.stringify(error)
       : message;
 
@@ -48,7 +51,7 @@ export class APIError<
 
   static generate(
     status: number | undefined,
-    errorResponse: Object | undefined,
+    errorResponse: JSONValue | undefined,
     message: string | undefined,
     headers: Headers | undefined,
   ): APIError {
@@ -56,7 +59,7 @@ export class APIError<
       return new APIConnectionError({ message, cause: castToError(errorResponse) });
     }
 
-    const error = errorResponse as Record<string, any>;
+    const error = errorResponse;
 
     if (status === 400) {
       return new BadRequestError(status, error, message, headers);
@@ -103,7 +106,6 @@ export class APIUserAbortError extends APIError<undefined, undefined, undefined>
 export class APIConnectionError extends APIError<undefined, undefined, undefined> {
   constructor({ message, cause }: { message?: string | undefined; cause?: Error | undefined }) {
     super(undefined, undefined, message || 'Connection error.', undefined);
-    // @ts-ignore
     if (cause) this.cause = cause;
   }
 }

@@ -2,26 +2,29 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-export function isAbortError(err: unknown) {
+import { objectTag } from './utils/values';
+
+export function isAbortError(err: unknown): boolean {
   return (
     typeof err === 'object' &&
     err !== null &&
-    (('name' in err && (err as any).name === 'AbortError') ||
-      ('message' in err && String((err as any).message).includes('FetchRequestCanceledException')))
+    (('name' in err && err.name === 'AbortError') ||
+      ('message' in err && String(err.message).includes('FetchRequestCanceledException')))
   );
 }
 
-export const castToError = (err: any): Error => {
+export const castToError = (err: unknown): Error => {
   if (err instanceof Error) return err;
   if (typeof err === 'object' && err !== null) {
     try {
-      if (Object.prototype.toString.call(err) === '[object Error]') {
-        // @ts-ignore - not all envs have native support for cause yet
-        const error = new Error(err.message, err.cause ? { cause: err.cause } : {});
-        if (err.stack) error.stack = err.stack;
-        // @ts-ignore - not all envs have native support for cause yet
-        if (err.cause && !error.cause) error.cause = err.cause;
-        if (err.name) error.name = err.name;
+      if (objectTag(err) === '[object Error]') {
+        const cause = 'cause' in err ? err.cause : undefined;
+        const error = new Error(String('message' in err ? err.message : ''), cause ? { cause } : {});
+        const stack = 'stack' in err ? err.stack : undefined;
+        if (typeof stack === 'string' && stack) error.stack = stack;
+        if (cause && !error.cause) error.cause = cause;
+        const name = 'name' in err ? err.name : undefined;
+        if (typeof name === 'string' && name) error.name = name;
         return error;
       }
     } catch {}
@@ -29,5 +32,5 @@ export const castToError = (err: any): Error => {
       return new Error(JSON.stringify(err));
     } catch {}
   }
-  return new Error(err);
+  return new Error(String(err));
 };

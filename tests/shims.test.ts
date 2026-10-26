@@ -46,7 +46,7 @@ describe('runtime shims', () => {
     expect(stream).toBeInstanceOf(ReadableStream);
 
     Reflect.deleteProperty(globalThis, 'ReadableStream');
-    expect(() => makeReadableStream()).toThrow('`ReadableStream` is not defined as a global');
+    expect(() => makeReadableStream({})).toThrow('`ReadableStream` is not defined as a global');
   });
 
   test('converts synchronous and asynchronous iterables to streams', async () => {
@@ -89,12 +89,13 @@ describe('runtime shims', () => {
       }),
     });
 
-    expect(await iterable.next()).toEqual({ done: false, value: 'value' });
-    expect(await iterable.next()).toEqual({ done: true, value: undefined });
+    const iterator = iterable[Symbol.asyncIterator]();
+    expect(await iterator.next()).toEqual({ done: false, value: 'value' });
+    expect(await iterator.next()).toEqual({ done: true, value: undefined });
     expect(releases).toBe(1);
-    expect(iterable[Symbol.asyncIterator]()).toBe(iterable);
+    expect(iterable[Symbol.asyncIterator]()).toBe(iterator);
 
-    const returned = await iterable.return?.();
+    const returned = await iterator.return?.();
     expect(returned).toEqual({ done: true, value: undefined });
     expect(releases).toBe(2);
 
@@ -110,7 +111,7 @@ describe('runtime shims', () => {
         },
       }),
     });
-    await expect(failing.next()).rejects.toThrow('read failed');
+    await expect(failing[Symbol.asyncIterator]().next()).rejects.toThrow('read failed');
     expect(errorReleaseCount).toBe(1);
   });
 
