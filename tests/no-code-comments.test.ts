@@ -6,7 +6,10 @@ import { RuleTester } from '@typescript-eslint/rule-tester';
 import tseslint from 'typescript-eslint';
 import rule from '../scripts/utils/no-code-comments';
 
-const tester = new RuleTester({ languageOptions: { parser: tseslint.parser } });
+const tester = new RuleTester({
+  languageOptions: { parser: tseslint.parser },
+  linterOptions: { reportUnusedDisableDirectives: 'off' },
+});
 const comment = [{ messageId: 'comment' }] as const;
 const publicApiDocs = [{ publicApiDocs: true }] as const;
 
@@ -38,6 +41,11 @@ tester.run('no-code-comments', rule, {
     { code: '/** Internal helper. */\nfunction helper(): void {}', options: publicApiDocs, errors: comment },
     {
       code: 'export class Client {\n  /** Hidden. */\n  private secret(): void {}\n}',
+      options: publicApiDocs,
+      errors: comment,
+    },
+    {
+      code: 'export class Client {\n  /** Hidden. */\n  #secret(): void {}\n}',
       options: publicApiDocs,
       errors: comment,
     },
