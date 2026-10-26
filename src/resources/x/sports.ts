@@ -3,12 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../core/resource';
+import * as Shared from '../shared';
 import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 /**
- * NFL & college football games, scoreboards, plays, box scores & audiences
+ * NFL & college football games, scoreboards, plays, box scores, audiences,
+ * rosters, player props & posts
  */
 export class Sports extends APIResource {
   /**
@@ -110,6 +112,64 @@ export class Sports extends APIResource {
   ): APIPromise<SportsGameAudience> {
     const { league, ...query } = params;
     return this._client.get(path`/x/sports/${league}/games/${id}/audience`, { query, ...options });
+  }
+
+  /**
+   * Returns both teams' players for 1 NFL game. Each player has a jersey,
+   * position, headshot & X account. Each request costs 1 credit.
+   *
+   * @example
+   * ```ts
+   * const footballRoster = await client.x.sports.retrieveRoster('2055084502741811200', {
+   *   league: 'nfl',
+   * });
+   * ```
+   */
+  retrieveRoster(
+    id: string,
+    params: SportRetrieveRosterParams,
+    options?: RequestOptions,
+  ): APIPromise<FootballRoster> {
+    const { league, ...query } = params;
+    return this._client.get(path`/x/sports/${league}/games/${id}/roster`, { query, ...options });
+  }
+
+  /**
+   * Returns the player prop lines & American odds X shows for 1 NFL game. X lists
+   * props before & during a game. Other games return no categories. Each request
+   * costs 1 credit.
+   *
+   * @example
+   * ```ts
+   * const footballProps = await client.x.sports.retrievePlayerProps('2055084502741811200', {
+   *   league: 'nfl',
+   * });
+   * ```
+   */
+  retrievePlayerProps(
+    id: string,
+    params: SportRetrievePlayerPropsParams,
+    options?: RequestOptions,
+  ): APIPromise<FootballProps> {
+    const { league, ...query } = params;
+    return this._client.get(path`/x/sports/${league}/games/${id}/player-props`, { query, ...options });
+  }
+
+  /**
+   * Returns the posts X shows on a game's page, with the X search that finds them.
+   * Works before, during & after the game. Pages hold up to 20 posts, & each post
+   * costs 1 credit.
+   *
+   * @example
+   * ```ts
+   * const sportsGamePosts = await client.x.sports.listPosts('2055084502741811200', {
+   *   league: 'nfl',
+   * });
+   * ```
+   */
+  listPosts(id: string, params: SportListPostsParams, options?: RequestOptions): APIPromise<SportsGamePosts> {
+    const { league, ...query } = params;
+    return this._client.get(path`/x/sports/${league}/games/${id}/posts`, { query, ...options });
   }
 }
 
@@ -302,6 +362,45 @@ export interface SportsTeamRecord {
 }
 
 /**
+ * A recent game of a team, as X lists it with the team.
+ */
+export interface SportsTeamGame {
+  /**
+   * The game ID, which the game routes take.
+   */
+  id: string;
+
+  /**
+   * When this game kicked off, in UTC. Null when X shows no time.
+   */
+  startsAt: string | null;
+
+  /**
+   * The stadium. X has sent none in recent games so far.
+   */
+  venue: string | null;
+
+  /**
+   * This game's status as X names it, such as Closed.
+   */
+  status: string | null;
+
+  /**
+   * The game clock, as X writes it. X has sent none so far.
+   */
+  clock: string | null;
+
+  /**
+   * The current or last quarter. X has sent none so far.
+   */
+  quarter: number | null;
+
+  home: FootballTeamScore;
+
+  away: FootballTeamScore;
+}
+
+/**
  * A team, as X's sports pages show it.
  */
 export interface SportsTeam {
@@ -356,6 +455,13 @@ export interface SportsTeam {
    * football games.
    */
   record: SportsTeamRecord | null;
+
+  /**
+   * The team's recent games, newest first. Games without a kickoff time come
+   * last. X sends them only with the teams of a college football game. The list
+   * is empty elsewhere.
+   */
+  recentGames: Array<SportsTeamGame>;
 }
 
 /**
@@ -760,6 +866,22 @@ export interface FootballPlayerXUser {
    * Whether the account has a blue check.
    */
   blueVerified: boolean | null;
+
+  /**
+   * Whether the account protects its posts. Only rosters carry it.
+   */
+  protected: boolean | null;
+
+  /**
+   * Whether the account can offer subscriptions. Only rosters carry it.
+   */
+  superFollowEligible: boolean | null;
+
+  /**
+   * The label X highlights on the account, such as BusinessLabel. Only rosters
+   * carry it.
+   */
+  labelType: string | null;
 }
 
 /**
@@ -1682,6 +1804,158 @@ export interface SportsGameAudience {
   teams: { [key: string]: SportsTeam };
 }
 
+/**
+ * 1 team's roster.
+ */
+export interface FootballRosterTeam {
+  /**
+   * The team this roster belongs to, a key of teams.
+   */
+  teamId: string;
+
+  /**
+   * The team's players in X's order, keys of players.
+   */
+  playerIds: Array<string>;
+}
+
+/**
+ * Both teams' rosters for 1 NFL game.
+ */
+export interface FootballRoster {
+  /**
+   * The ID of the game these rosters cover.
+   */
+  id: string;
+
+  /**
+   * The league of the game these rosters cover.
+   */
+  league: 'nfl';
+
+  /**
+   * Each team's roster, in X's order.
+   */
+  rosters: Array<FootballRosterTeam>;
+
+  /**
+   * The 2 teams, by team ID.
+   */
+  teams: { [key: string]: SportsTeam };
+
+  /**
+   * Every rostered player, by player ID. Rosters carry no college or birth
+   * details & only a medium headshot, so the rest are null.
+   */
+  players: { [key: string]: FootballPlayer };
+}
+
+/**
+ * 1 player's line & odds in a prop category.
+ */
+export interface FootballPlayerProp {
+  /**
+   * The player the line is for, a key of players.
+   */
+  playerId: string | null;
+
+  /**
+   * The line's place in its category, from 1.
+   */
+  rank: number | null;
+
+  /**
+   * The line the odds price, such as 248.5 yards. Null when the prop has no
+   * line, such as the first touchdown scorer.
+   */
+  line: number | null;
+
+  /**
+   * The American odds X shows first, such as -115 or 240.
+   */
+  odds: number | null;
+
+  /**
+   * The American odds X shows second. Null for a prop with 1 price.
+   */
+  alternateOdds: number | null;
+
+  /**
+   * Whether the sportsbook takes bets on the line.
+   */
+  openForBetting: boolean | null;
+}
+
+/**
+ * 1 kind of player prop & its lines.
+ */
+export interface FootballPropCategory {
+  /**
+   * X's key for the prop, such as passing_yards.
+   */
+  key: string | null;
+
+  /**
+   * The name X shows for the prop.
+   */
+  name: string | null;
+
+  /**
+   * The category's place in X's order, from 1.
+   */
+  rank: number | null;
+
+  /**
+   * Each player's line, in X's order.
+   */
+  props: Array<FootballPlayerProp>;
+}
+
+/**
+ * The player props X shows for 1 NFL game.
+ */
+export interface FootballProps {
+  /**
+   * The ID of the game these props cover.
+   */
+  id: string;
+
+  /**
+   * The league of the game these props cover.
+   */
+  league: 'nfl';
+
+  /**
+   * The sportsbook page X links for these props.
+   */
+  sportsbookUrl: string | null;
+
+  /**
+   * Each kind of prop, such as passing yards, in X's order. A game without props
+   * has none.
+   */
+  categories: Array<FootballPropCategory>;
+
+  /**
+   * The players these props name, by player ID. X sends only each player's
+   * name, jersey & team, so other fields are null.
+   */
+  players: { [key: string]: FootballPlayer };
+}
+
+/**
+ * A page of 1 game's posts. Pass next_cursor as cursor for the next page.
+ */
+export interface SportsGamePosts extends Shared.PaginatedTweets {
+  /**
+   * The X search that finds this game's posts for the order asked. It names the
+   * teams, hashtags, accounts & star players, with the game's time window. Send
+   * it to client.x.tweets.search for more filters. Null when the game has no
+   * such search.
+   */
+  query: string | null;
+}
+
 export interface SportListGamesParams {
   /**
    * Fields to keep in each row, comma-separated. Use dots for nested fields,
@@ -1815,6 +2089,100 @@ export interface SportRetrieveAudienceParams {
   omit?: string;
 }
 
+export interface SportRetrieveRosterParams {
+  /**
+   * Path param: nfl, in any case. X has no college rosters or props, so ncaafb
+   * gets a free 400 `unsupported_league`. Another value gets a free 400
+   * `invalid_league`.
+   */
+  league: 'nfl';
+
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields,
+   * such as author.username. A list keeps the field in each item. Case &
+   * underscores do not matter. A row that lacks a field leaves it out. Cursors,
+   * counts & diagnostics always stay. An unknown name answers 400 unknown_field
+   * with the valid names, before any read. The price stays the same. SDK row
+   * types then hold only the named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+}
+
+export interface SportRetrievePlayerPropsParams {
+  /**
+   * Path param: nfl, in any case. X has no college rosters or props, so ncaafb
+   * gets a free 400 `unsupported_league`. Another value gets a free 400
+   * `invalid_league`.
+   */
+  league: 'nfl';
+
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields,
+   * such as author.username. A list keeps the field in each item. Case &
+   * underscores do not matter. A row that lacks a field leaves it out. Cursors,
+   * counts & diagnostics always stay. An unknown name answers 400 unknown_field
+   * with the valid names, before any read. The price stays the same. SDK row
+   * types then hold only the named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+}
+
+export interface SportListPostsParams {
+  /**
+   * Path param: nfl for the NFL or ncaafb for college football, in any case.
+   * Another value gets a free 400 `invalid_league` before X is read.
+   */
+  league: FootballLeague;
+
+  /**
+   * Pagination cursor for collection results. Also read as next_cursor,
+   * next_token, pagination_token or continuation_token.
+   */
+  cursor?: string;
+
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields,
+   * such as author.username. A list keeps the field in each item. Case &
+   * underscores do not matter. A row that lacks a field leaves it out. Cursors,
+   * counts & diagnostics always stay. An unknown name answers 400 unknown_field
+   * with the valid names, before any read. The price stays the same. SDK row
+   * types then hold only the named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+
+  /**
+   * Items per page (1-100, default 20). Filters or credits can return fewer.
+   * Follow next_cursor for more pages. Its aliases are limit, count, max_results,
+   * maxItems, max_items & per_page.
+   */
+  pageSize?: number;
+
+  /**
+   * Top for the posts X ranks highest, or Latest for the newest. Any case works,
+   * & so do Relevance & Recency. Alias order or sort. Send the same value with
+   * each cursor.
+   */
+  queryType?: 'Top' | 'Latest';
+}
+
 export declare namespace Sports {
   export {
     type FootballLeague as FootballLeague,
@@ -1866,6 +2234,7 @@ export declare namespace Sports {
     type SportRetrieveBoxScoreParams as SportRetrieveBoxScoreParams,
     type SportRetrievePlaysParams as SportRetrievePlaysParams,
     type SportsTeamRecord as SportsTeamRecord,
+    type SportsTeamGame as SportsTeamGame,
     type SportsGameAudienceViewers as SportsGameAudienceViewers,
     type SportsGameAudienceTeamPick as SportsGameAudienceTeamPick,
     type SportsGameAudienceTeamPicks as SportsGameAudienceTeamPicks,
@@ -1873,5 +2242,14 @@ export declare namespace Sports {
     type SportsGameAudienceChat as SportsGameAudienceChat,
     type SportsGameAudience as SportsGameAudience,
     type SportRetrieveAudienceParams as SportRetrieveAudienceParams,
+    type FootballRosterTeam as FootballRosterTeam,
+    type FootballRoster as FootballRoster,
+    type FootballPlayerProp as FootballPlayerProp,
+    type FootballPropCategory as FootballPropCategory,
+    type FootballProps as FootballProps,
+    type SportsGamePosts as SportsGamePosts,
+    type SportRetrieveRosterParams as SportRetrieveRosterParams,
+    type SportRetrievePlayerPropsParams as SportRetrievePlayerPropsParams,
+    type SportListPostsParams as SportListPostsParams,
   };
 }

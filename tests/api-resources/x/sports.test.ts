@@ -70,6 +70,7 @@ const schedule: XTwitterScraper.X.FootballSchedule = {
         losses: 1,
         ties: 0,
       },
+      recentGames: [],
     },
   },
 };
@@ -184,6 +185,7 @@ const scoreboard: XTwitterScraper.X.FootballScoreboard = {
       },
       xUserId: '43403778',
       record: null,
+      recentGames: [],
     },
   },
   players: {
@@ -208,6 +210,9 @@ const scoreboard: XTwitterScraper.X.FootballScoreboard = {
         id: '723177170382647296',
         username: 'brockpurdy13',
         blueVerified: true,
+        protected: null,
+        superFollowEligible: null,
+        labelType: null,
       },
     },
   },
@@ -500,6 +505,7 @@ const boxScore: XTwitterScraper.X.FootballBoxScore = {
       },
       xUserId: '43403778',
       record: null,
+      recentGames: [],
     },
   },
   players: {
@@ -524,6 +530,9 @@ const boxScore: XTwitterScraper.X.FootballBoxScore = {
         id: '723177170382647296',
         username: 'brockpurdy13',
         blueVerified: true,
+        protected: null,
+        superFollowEligible: null,
+        labelType: null,
       },
     },
   },
@@ -632,6 +641,7 @@ const plays: XTwitterScraper.X.FootballPlays = {
       },
       xUserId: '43403778',
       record: null,
+      recentGames: [],
     },
   },
   players: {
@@ -656,6 +666,9 @@ const plays: XTwitterScraper.X.FootballPlays = {
         id: '723177170382647296',
         username: 'brockpurdy13',
         blueVerified: true,
+        protected: null,
+        superFollowEligible: null,
+        labelType: null,
       },
     },
   },
@@ -712,8 +725,139 @@ const audience: XTwitterScraper.X.SportsGameAudience = {
       },
       xUserId: null,
       record: null,
+      recentGames: [],
     },
   },
+};
+
+const roster: XTwitterScraper.X.FootballRoster = {
+  id: '2055084502741811200',
+  league: 'nfl',
+  rosters: [
+    {
+      teamId: '689566294702555136',
+      playerIds: ['1520565710329499648'],
+    },
+  ],
+  teams: {
+    '689566294702555136': {
+      id: '689566294702555136',
+      name: 'San Francisco 49ers',
+      shortName: '49ers',
+      abbreviation: 'SF',
+      alternateId: null,
+      location: null,
+      colors: [],
+      logos: {
+        default: 'https://pbs.twimg.com/semantic_core_img/2094846255792873472/BUi2WqsC?format=png&name=orig',
+        light: null,
+        dark: null,
+      },
+      xUserId: '43403778',
+      record: null,
+      recentGames: [
+        {
+          id: '2055084502741811201',
+          startsAt: '2026-10-13T00:20:00.000Z',
+          venue: null,
+          status: 'Closed',
+          clock: null,
+          quarter: null,
+          home: { teamId: '689566294702555136', points: 30 },
+          away: { teamId: '689566304366292992', points: 17 },
+        },
+      ],
+    },
+  },
+  players: {
+    '1520565710329499648': {
+      id: '1520565710329499648',
+      teamId: '689566294702555136',
+      name: 'Brock Purdy',
+      shortName: 'B.Purdy',
+      jersey: '13',
+      position: 'QB',
+      college: null,
+      birthPlace: null,
+      birthDate: null,
+      headshots: {
+        original: null,
+        large: null,
+        medium: 'https://pbs.twimg.com/semantic_core_img/1960514226075602944/OZ6rz5aH?format=png&name=orig',
+        small: null,
+      },
+      xUser: {
+        id: '723177170382647296',
+        username: 'brockpurdy13',
+        blueVerified: true,
+        protected: false,
+        superFollowEligible: false,
+        labelType: null,
+      },
+    },
+  },
+};
+
+const playerProps: XTwitterScraper.X.FootballProps = {
+  id: '2055084502741929984',
+  league: 'nfl',
+  sportsbookUrl: null,
+  categories: [
+    {
+      key: 'passing_yards',
+      name: 'Passing Yards',
+      rank: 1,
+      props: [
+        {
+          playerId: '1783744053755990016',
+          rank: 1,
+          line: 248.5,
+          odds: -115,
+          alternateOdds: -105,
+          openForBetting: true,
+        },
+      ],
+    },
+  ],
+  players: {
+    '1783744053755990016': {
+      id: '1783744053755990016',
+      teamId: '689566294702555136',
+      name: 'Jayden Daniels',
+      shortName: null,
+      jersey: '5',
+      position: null,
+      college: null,
+      birthPlace: null,
+      birthDate: null,
+      headshots: {
+        original: null,
+        large: null,
+        medium: null,
+        small: null,
+      },
+      xUser: null,
+    },
+  },
+};
+
+const gamePosts: XTwitterScraper.X.SportsGamePosts = {
+  tweets: [
+    {
+      id: '2102761519985332442',
+      bookmarkCount: 599,
+      likeCount: 9775,
+      quoteCount: 85,
+      replyCount: 271,
+      retweetCount: 1364,
+      text: '',
+      viewCount: 962488,
+      unknownFields: ['text'],
+    },
+  ],
+  has_next_page: true,
+  next_cursor: 'DAACCgACHVOxUHMAJxAK',
+  query: '(#WASvsSF OR @49ers OR @Commanders) since_time:1792455300 until_time:1792541700',
 };
 
 describe('resource sports', () => {
@@ -789,5 +933,60 @@ describe('resource sports', () => {
     expect(response.teamPicks.teams.map((pick) => pick.count)).toEqual([4998, 2978]);
     expect(response.chat.opensIn).toEqual({ days: 0, hours: 12, minutes: 2 });
     expect(response.teams['689566294702555136']!.record).toBeNull();
+  });
+
+  test("retrieveRoster reads both teams' players", async () => {
+    const { client, requests } = fixtureClient(roster);
+
+    const response = await client.x.sports.retrieveRoster('2055084502741811200', {
+      league: 'nfl',
+      omit: 'teams',
+    });
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/x/sports/nfl/games/2055084502741811200/roster?omit=teams',
+    ]);
+    expect(response.rosters).toEqual([{ teamId: '689566294702555136', playerIds: ['1520565710329499648'] }]);
+    expect(response.players['1520565710329499648']?.xUser?.protected).toBe(false);
+    expect(response.teams['689566294702555136']?.recentGames.map((game) => game.home.points)).toEqual([30]);
+  });
+
+  test('retrievePlayerProps reads lines & odds', async () => {
+    const { client, requests } = fixtureClient(playerProps);
+
+    const response = await client.x.sports.retrievePlayerProps('2055084502741929984', {
+      league: 'nfl',
+      fields: 'categories',
+    });
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/x/sports/nfl/games/2055084502741929984/player-props?fields=categories',
+    ]);
+    const [category] = response.categories;
+    expect(category?.key).toBe('passing_yards');
+    expect(category?.props.map((prop) => [prop.line, prop.odds, prop.alternateOdds])).toEqual([
+      [248.5, -115, -105],
+    ]);
+    expect(response.players['1783744053755990016']?.name).toBe('Jayden Daniels');
+  });
+
+  test("listPosts sends the order & cursor and returns the game's search", async () => {
+    const { client, requests } = fixtureClient(gamePosts);
+
+    const response = await client.x.sports.listPosts('2055084502741811200', {
+      league: 'ncaafb',
+      queryType: 'Latest',
+      cursor: 'DAACCgACHVOxUHMAJxAK',
+      pageSize: 40,
+    });
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/x/sports/ncaafb/games/2055084502741811200/posts?queryType=Latest&cursor=DAACCgACHVOxUHMAJxAK&pageSize=40',
+    ]);
+    expect(response.query).toBe(
+      '(#WASvsSF OR @49ers OR @Commanders) since_time:1792455300 until_time:1792541700',
+    );
+    expect(response.tweets.map((tweet) => tweet.unknownFields)).toEqual([['text']]);
+    expect(response.has_next_page).toBe(true);
   });
 });

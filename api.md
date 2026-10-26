@@ -707,12 +707,19 @@ Types
 - <code><a href="./src/resources/x/sports.ts">FootballQuarter</a></code>
 - <code><a href="./src/resources/x/sports.ts">FootballPlays</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsTeamRecord</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsTeamGame</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsGameAudienceViewers</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsGameAudienceTeamPick</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsGameAudienceTeamPicks</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsGameAudienceChatOpensIn</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsGameAudienceChat</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsGameAudience</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballRosterTeam</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballRoster</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPlayerProp</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPropCategory</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballProps</a></code>
+- <code><a href="./src/resources/x/sports.ts">SportsGamePosts</a></code>
 
 Methods
 
@@ -721,6 +728,9 @@ Methods
 - <code title="get /x/sports/{league}/games/{id}/box-score">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveBoxScore</a>(id, { ...params }) -> FootballBoxScore</code>
 - <code title="get /x/sports/{league}/games/{id}/plays">client.x.sports.<a href="./src/resources/x/sports.ts">retrievePlays</a>(id, { ...params }) -> FootballPlays</code>
 - <code title="get /x/sports/{league}/games/{id}/audience">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveAudience</a>(id, { ...params }) -> SportsGameAudience</code>
+- <code title="get /x/sports/{league}/games/{id}/roster">client.x.sports.<a href="./src/resources/x/sports.ts">retrieveRoster</a>(id, { ...params }) -> FootballRoster</code>
+- <code title="get /x/sports/{league}/games/{id}/player-props">client.x.sports.<a href="./src/resources/x/sports.ts">retrievePlayerProps</a>(id, { ...params }) -> FootballProps</code>
+- <code title="get /x/sports/{league}/games/{id}/posts">client.x.sports.<a href="./src/resources/x/sports.ts">listPosts</a>(id, { ...params }) -> SportsGamePosts</code>
 
 # Trends
 
