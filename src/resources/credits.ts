@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
@@ -129,12 +130,34 @@ export interface CreditRetrieveTopupStatusResponse {
   amount_dollars?: number | null;
 
   /**
+   * Currency the checkout charged.
+   */
+  chargedCurrency?: Shared.Currency;
+
+  /**
+   * Amount the checkout charged before tax, in the currency's smallest unit.
+   * JPY and KRW have no decimals, so 1580 JPY is ¥1,580.
+   */
+  chargedMinorUnits?: number;
+
+  /**
    * Bigint string credit amount granted or pending.
    */
   credits?: string;
 }
 
 export interface CreditTopupBalanceResponse {
+  /**
+   * Currency the checkout charges.
+   */
+  chargedCurrency: Shared.Currency;
+
+  /**
+   * Amount the checkout charges before tax, in the currency's smallest unit.
+   * JPY and KRW have no decimals, so 1580 JPY is ¥1,580.
+   */
+  chargedMinorUnits: number;
+
   /**
    * Stable Xquik redirect URL for the active checkout.
    */
@@ -166,6 +189,12 @@ export interface CreditTopupBalanceParams {
    * Amount to top up in US dollars. Minimum 10.
    */
   dollars: number;
+
+  /**
+   * Currency to pay in, USD by default. Credits always match the dollar amount.
+   * Lowercase codes work too. chargedCurrency shows the currency charged.
+   */
+  currency?: Shared.Currency;
 
   /**
    * Optional site language for Stripe's return page. An unsupported 1 uses en, the

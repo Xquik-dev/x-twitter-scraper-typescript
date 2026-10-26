@@ -193,6 +193,21 @@ export interface PostMonitor {
   authorName: string;
 
   /**
+   * The author's profile picture. Omitted when X shows none.
+   */
+  authorAvatarUrl?: string;
+
+  /**
+   * The author's verified badge on X. Omitted when the author has none.
+   */
+  authorVerified?: 'blue' | 'business' | 'government';
+
+  /**
+   * Photos, videos & GIFs on the post, in X's order.
+   */
+  media: Array<PostMonitor.Media>;
+
+  /**
    * Text of the newest version Xquik read.
    */
   text: string;
@@ -213,6 +228,12 @@ export interface PostMonitor {
    * Next hourly credit charge time for this post monitor.
    */
   nextBillingAt: string;
+
+  /**
+   * The post's counts when tracking began. Each metric's gain counts from here.
+   * views is null when X showed no view count.
+   */
+  baseline: PostMonitor.Baseline;
 
   /**
    * The 6 metrics of a post.
@@ -236,6 +257,42 @@ export interface PostMonitor {
    * When Xquik paused this post monitor.
    */
   pausedAt?: string;
+}
+
+export namespace PostMonitor {
+  /**
+   * 1 photo, video or GIF on the post.
+   */
+  export interface Media {
+    kind: 'gif' | 'photo' | 'video';
+
+    /**
+     * The image URL. For a video or GIF, its preview image.
+     */
+    url: string;
+  }
+
+  /**
+   * The post's counts when tracking began.
+   */
+  export interface Baseline {
+    /**
+     * When tracking began.
+     */
+    at: string;
+
+    views: number | null;
+
+    likes: number;
+
+    retweets: number;
+
+    replies: number;
+
+    quotes: number;
+
+    bookmarks: number;
+  }
 }
 
 /**

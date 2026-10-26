@@ -664,6 +664,12 @@ export interface TweetDetail {
   >;
 
   /**
+   * The fields X did not send for this post. text reads empty, so treat it as
+   * unknown rather than empty. Left out when X sent the text.
+   */
+  unknownFields?: Array<'text'>;
+
+  /**
    * User IDs that left this conversation.
    */
   unmentionedUserIds?: Array<string>;
@@ -1603,6 +1609,13 @@ export namespace TweetDetail {
    * Public post & user this reaction references.
    */
   export interface ReactionContext {
+    /**
+     * The post this one reacts to, with the same fields. X often sends only its
+     * ID, author & edit history. Then unknownFields lists text, and the flags X
+     * did not send are left out.
+     */
+    reactedToPost?: { [key: string]: unknown };
+
     /**
      * Referenced post ID.
      */

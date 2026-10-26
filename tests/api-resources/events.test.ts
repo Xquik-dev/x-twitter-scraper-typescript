@@ -60,6 +60,18 @@ describe('resource events', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
+  test('stream sends lookBack & include as query & the last event ID as a header', async () => {
+    const { client: fixture, requests, sent } = fixtureClient({});
+
+    await fixture.events.stream({ 'Last-Event-ID': '42', lookBack: true, include: 'post_metrics' });
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/events/stream?lookBack=true&include=post_metrics',
+    ]);
+    const [request] = sent;
+    expect(request?.headers.get('Last-Event-ID')).toBe('42');
+  });
+
   test('stream: request options and params are passed correctly', async () => {
     await expect(
       client.events.stream({ 'Last-Event-ID': '42' }, { path: '/_stainless_unknown_path' }),

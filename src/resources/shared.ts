@@ -501,6 +501,11 @@ export namespace ContentDisclosure {
 }
 
 /**
+ * ISO 4217 code of 1 of the 10 currencies Xquik charges in.
+ */
+export type Currency = 'USD' | 'EUR' | 'GBP' | 'TRY' | 'JPY' | 'CNY' | 'KRW' | 'CAD' | 'AUD' | 'MXN';
+
+/**
  * A parent, quoted or retweeted tweet. It has the TweetPublicData fields and an
  * author. Nesting stops after 4 levels.
  */
@@ -778,6 +783,12 @@ export interface EmbeddedTweet {
   unknownCounts?: Array<
     'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
   >;
+
+  /**
+   * The fields X did not send for this post. text reads empty, so treat it as
+   * unknown rather than empty. Left out when X sent the text.
+   */
+  unknownFields?: Array<'text'>;
 
   /**
    * User IDs that left this conversation.
@@ -1517,6 +1528,12 @@ export interface SearchTweet {
   unknownCounts?: Array<
     'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
   >;
+
+  /**
+   * The fields X did not send for this post. text reads empty, so treat it as
+   * unknown rather than empty. Left out when X sent the text.
+   */
+  unknownFields?: Array<'text'>;
 
   /**
    * User IDs that left this conversation.
@@ -2459,6 +2476,13 @@ export namespace SearchTweet {
    */
   export interface ReactionContext {
     /**
+     * The post this one reacts to, with the same fields. X often sends only its
+     * ID, author & edit history. Then unknownFields lists text, and the flags X
+     * did not send are left out.
+     */
+    reactedToPost?: { [key: string]: unknown };
+
+    /**
      * Referenced post ID.
      */
     reactedToPostId?: string;
@@ -2792,6 +2816,12 @@ export interface TweetMedia {
    * Video duration in milliseconds.
    */
   durationMillis?: number;
+
+  /**
+   * True when the author edited this media in X's own editor before posting.
+   * Absent when X sends no editor info.
+   */
+  editedWithNativeEditor?: boolean;
 
   /**
    * Embeddable status.

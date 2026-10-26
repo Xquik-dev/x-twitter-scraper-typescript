@@ -11,6 +11,7 @@ Types
 - <code><a href="./src/resources/shared.ts">CommunityPage</a></code>
 - <code><a href="./src/resources/shared.ts">CommunityTopic</a></code>
 - <code><a href="./src/resources/shared.ts">ContentDisclosure</a></code>
+- <code><a href="./src/resources/shared.ts">Currency</a></code>
 - <code><a href="./src/resources/shared.ts">EmbeddedTweet</a></code>
 - <code><a href="./src/resources/shared.ts">Error</a></code>
 - <code><a href="./src/resources/shared.ts">EventType</a></code>
