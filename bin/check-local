@@ -79,7 +79,7 @@ run_check() {
 }
 
 run_audit() {
-  node scripts/utils/check-audit.cjs 2>&1 | tee "${work_directory}/audit.log"
+  node scripts/utils/check-audit.ts 2>&1 | tee "${work_directory}/audit.log"
 }
 
 run_tests() {
@@ -154,7 +154,7 @@ fi
 
 run_check "API coverage" \
   "Fix what the check reported above, then run bin/check-local again." \
-  node scripts/utils/check-api-coverage.cjs
+  node scripts/utils/check-api-coverage.ts
 passed+=("API coverage")
 
 run_check "Install dependencies" \
@@ -164,7 +164,7 @@ passed+=("install")
 
 run_check "API fields" \
   "Fix what the check reported above, then run bin/check-local again." \
-  node scripts/utils/check-api-fields.cjs
+  node scripts/utils/check-api-fields.ts
 passed+=("API fields")
 
 run_check "Check license notices" \

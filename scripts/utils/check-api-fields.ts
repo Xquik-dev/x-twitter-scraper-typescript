@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const path = require('path');
-const {
+import path from 'node:path';
+import {
   CheckError,
   comparable,
   httpMethods,
@@ -13,12 +13,12 @@ const {
   readGroups,
   runCheck,
   specOperations,
-} = require('./api-spec.cjs');
-const { compareOperation } = require('./shapes.cjs');
-const { SpecShapes } = require('./spec-shapes.cjs');
-const { sdkShapes } = require('./sdk-shapes.cjs');
+} from './api-spec.ts';
+import { compareOperation } from './shapes.ts';
+import { SpecShapes } from './spec-shapes.ts';
+import { sdkShapes } from './sdk-shapes.ts';
 
-const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
+const root = path.resolve(process.argv[2] ?? path.join(import.meta.dirname, '..', '..'));
 const acceptedFile = 'accepted-field-differences.json';
 const differencePattern = new RegExp(
   `^(${httpMethods.join('|').toUpperCase()}) /\\S* (request|response) (missing|extra|enum|required|nullable) \\S+$`,
@@ -49,11 +49,13 @@ const fields = async () => {
     );
   }
 
-  const found = operations.flatMap(({ id, key, pathItem, operation }) =>
-    compareOperation(shapes.operation(pathItem, operation), sdk.ops[key], sdk.defs).map(
+  const found = operations.flatMap(({ id, key, pathItem, operation }) => {
+    const sdkOperation = sdk.ops[key];
+    if (!sdkOperation) return [];
+    return compareOperation(shapes.operation(pathItem, operation), sdkOperation, sdk.defs).map(
       ({ side, kind, path: field }) => `${id} ${side} ${kind} ${field}`,
-    ),
-  );
+    );
+  });
   const acceptedKeys = new Set(accepted.map(comparable));
   const foundKeys = new Set(found.map(comparable));
   const differences = found.filter((difference) => !acceptedKeys.has(comparable(difference)));
@@ -68,8 +70,8 @@ const fields = async () => {
     throw new CheckError([...differences, ...stale, next].join('\n'));
   }
   const count = accepted.length;
-  const plural = (n, noun) => `${n} ${noun}${n === 1 ? '' : 's'}`;
+  const plural = (n: number, noun: string) => `${n} ${noun}${n === 1 ? '' : 's'}`;
   return `The SDK's fields match the API for ${plural(operations.length, 'operation')}, and ${acceptedFile} lists ${plural(count, 'accepted difference')}.`;
 };
 
-runCheck(fields);
+await runCheck(fields);

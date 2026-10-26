@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { delimiter, join, resolve } from 'node:path';
 
-const script = resolve(__dirname, '..', 'scripts', 'utils', 'check-audit.cjs');
+const script = resolve(__dirname, '..', 'scripts', 'utils', 'check-audit.ts');
 const dayInMs = 24 * 60 * 60 * 1000;
 const day = (offset: number): string => new Date(Date.now() + offset * dayInMs).toISOString().slice(0, 10);
 
@@ -112,7 +112,7 @@ const runAudit = ({ advisories = [], exceptions, registry = {} }: Case) => {
   }
 };
 
-describe('scripts/utils/check-audit.cjs', () => {
+describe('scripts/utils/check-audit.ts', () => {
   it('passes when pnpm audit reports nothing', () => {
     expect(runAudit({})).toEqual({ status: 0, output: 'Audit passed.\n' });
   });

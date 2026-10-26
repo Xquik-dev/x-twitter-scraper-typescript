@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
-const script = resolve(__dirname, '..', 'scripts', 'utils', 'check-api-fields.cjs');
+const script = resolve(__dirname, '..', 'scripts', 'utils', 'check-api-fields.ts');
 
 type Accepted = Array<Record<string, unknown>> | Record<string, unknown>;
 
@@ -229,7 +229,7 @@ const runTeams = (specTeams: object, sdkTeam: string, sdkTeams?: string) =>
 
 const matchingTeam = '{ id: string; record: { wins?: number } | null }';
 
-describe('scripts/utils/check-api-fields.cjs', () => {
+describe('scripts/utils/check-api-fields.ts', () => {
   it.each<[string, object, string, Array<string>]>([
     [
       'a field the SDK lacks inside map values & array items',

@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-check
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { parseJson, record, type JsonObject } from './json.ts';
 
-const distDir = path.resolve(__dirname, '..', '..', 'dist');
+const distDir = path.resolve(import.meta.dirname, '..', '..', 'dist');
 
-async function* walk(dir) {
+async function* walk(dir: string): AsyncGenerator<string> {
   for await (const d of await fs.promises.opendir(dir)) {
     const entry = path.join(dir, d.name);
     if (d.isDirectory()) yield* walk(entry);
@@ -33,7 +33,7 @@ async function postprocess() {
     }
   }
 
-  const newExports = {
+  const newExports: { [subpath: string]: JsonObject } = {
     '.': {
       require: {
         types: './index.d.ts',
@@ -62,12 +62,12 @@ async function postprocess() {
       const { name, ext } = path.parse(entry.name);
       const subpathWithoutExt = './' + name;
       const subpath = './' + entry.name;
-      newExports[subpathWithoutExt] ||= { import: undefined, require: undefined };
+      const conditions = (newExports[subpathWithoutExt] ||= { import: undefined, require: undefined });
       const isModule = ext[1] === 'm';
       if (isModule) {
-        newExports[subpathWithoutExt].import = subpath;
+        conditions['import'] = subpath;
       } else {
-        newExports[subpathWithoutExt].require = subpath;
+        conditions['require'] = subpath;
       }
       newExports[subpath] = {
         default: subpath,
@@ -77,17 +77,13 @@ async function postprocess() {
   await fs.promises.writeFile(
     'dist/package.json',
     JSON.stringify(
-      Object.assign(
-        /** @type {Record<String, unknown>} */ (
-          JSON.parse(await fs.promises.readFile('dist/package.json', 'utf-8'))
-        ),
-        {
-          exports: newExports,
-        },
-      ),
+      {
+        ...record(parseJson(await fs.promises.readFile('dist/package.json', 'utf-8'))),
+        exports: newExports,
+      },
       null,
       2,
     ),
   );
 }
-postprocess();
+await postprocess();

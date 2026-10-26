@@ -17,7 +17,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 const repository = resolve(__dirname, '..');
-const script = join(repository, 'scripts', 'utils', 'check-consumer-types.cjs');
+const script = join(repository, 'scripts', 'utils', 'check-consumer-types.ts');
 const dist = join(repository, 'dist');
 
 type PackageJson = { exports: { '.': { types: string; require: { types: string } } } };
@@ -57,7 +57,7 @@ const failed = (mode: string) => [
   `Consumer types failed for ${mode} under tsc6.`,
 ];
 
-describe('scripts/utils/check-consumer-types.cjs', () => {
+describe('scripts/utils/check-consumer-types.ts', () => {
   beforeAll(() => {
     if (!existsSync(join(dist, 'package.json'))) {
       throw new Error('dist is missing. Run pnpm build, then run the tests again.');

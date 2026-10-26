@@ -2,57 +2,65 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-check
+import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import { field, parseJson, record } from './json.ts';
 
-const { spawnSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+type Format = { readonly name: string; readonly module: string; readonly js: string; readonly dts: string };
+type Layout = { readonly outDir: string; readonly rootDir: string };
+type Edit = { readonly column: number; readonly length: number; readonly delta: number };
 
-const repository = path.resolve(__dirname, '..', '..');
+const repository = path.resolve(import.meta.dirname, '..', '..');
 const tsc = path.join(repository, 'node_modules', '@typescript', 'native', 'bin', 'tsc');
 
-const formats = [
+const formats: readonly Format[] = [
   { name: 'ES modules', module: 'esnext', js: '.mjs', dts: '.d.mts' },
   { name: 'CommonJS', module: 'commonjs', js: '.js', dts: '.d.ts' },
 ];
 
-const fail = (message, status = 1) => {
+function fail(message: string, status = 1): never {
   console.error(message);
   process.exit(status);
-};
+}
 
-const runTsc = (args) => {
+const runTsc = (args: readonly string[]) => {
   const result = spawnSync(process.execPath, [tsc, ...args], { encoding: 'utf8' });
   if (result.error) throw result.error;
   return result;
 };
 
-const readLayout = (config) => {
+const readLayout = (config: string): Layout => {
   const result = runTsc(['--project', config, '--showConfig']);
   if (result.status !== 0) {
     process.stderr.write(result.stdout + result.stderr);
     fail(`TypeScript could not read ${config}. Fix the errors above.`);
   }
-  const { outDir, rootDir } = JSON.parse(result.stdout).compilerOptions;
-  if (!outDir || !rootDir) fail(`${config} needs outDir and rootDir. Add both.`);
+  const compilerOptions = field(parseJson(result.stdout), 'compilerOptions');
+  const outDir = field(compilerOptions, 'outDir');
+  const rootDir = field(compilerOptions, 'rootDir');
+  if (typeof outDir !== 'string' || typeof rootDir !== 'string' || !outDir || !rootDir) {
+    fail(`${config} needs outDir and rootDir. Add both.`);
+  }
   return {
     outDir: path.resolve(path.dirname(config), outDir),
     rootDir: path.resolve(path.dirname(config), rootDir),
   };
 };
 
-const helpersFileOf = (outDir, format) => path.join(outDir, 'internal', `tslib${format.js}`);
+const helpersFileOf = (outDir: string, format: Format) => path.join(outDir, 'internal', `tslib${format.js}`);
 
-const isFile = (file) => fs.statSync(file, { throwIfNoEntry: false })?.isFile() ?? false;
+const isFile = (file: string) => fs.statSync(file, { throwIfNoEntry: false })?.isFile() ?? false;
 
-const isDirectory = (file) => fs.statSync(file, { throwIfNoEntry: false })?.isDirectory() ?? false;
+const isDirectory = (file: string) => fs.statSync(file, { throwIfNoEntry: false })?.isDirectory() ?? false;
 
-const linkSpecifier = (specifier, extension, sourceDirectory) => {
+const linkSpecifier = (specifier: string, extension: string, sourceDirectory: string) => {
   if (!specifier.startsWith('./') && !specifier.startsWith('../')) return undefined;
   const current = path.extname(specifier);
   if (current === '.mjs' || current === '.cjs' || current === '.json') return undefined;
   const base = current === '.js' ? specifier.slice(0, -current.length) : specifier;
-  const resolved = (/** @type {string} */ file) => path.resolve(sourceDirectory, file);
+  const resolved = (file: string) => path.resolve(sourceDirectory, file);
   if (
     !isFile(resolved(`${base}.ts`)) &&
     !isFile(resolved(`${base}.js`)) &&
@@ -63,7 +71,7 @@ const linkSpecifier = (specifier, extension, sourceDirectory) => {
   return `${base}${extension}`;
 };
 
-const relativeSpecifier = (from, to) => {
+const relativeSpecifier = (from: string, to: string) => {
   const relative = path.relative(from, to).split(path.sep).join('/');
   return relative.startsWith('.') ? relative : `./${relative}`;
 };
@@ -75,9 +83,8 @@ const specifierPatterns = [
   /(^\s*import )(['"])([^'"\n]+)\2(?=;)/g,
 ];
 
-const insideString = (line, column) => {
-  /** @type {string | undefined} */
-  let quote;
+const insideString = (line: string, column: number) => {
+  let quote: string | undefined;
   for (let index = 0; index < column; index++) {
     const char = line[index];
     if (quote === undefined) {
@@ -91,8 +98,8 @@ const insideString = (line, column) => {
   return quote !== undefined;
 };
 
-const rewriteSpecifiers = (text, rewrite) => {
-  const edits = new Map();
+const rewriteSpecifiers = (text: string, rewrite: (specifier: string) => string | undefined) => {
+  const edits = new Map<number, Edit[]>();
   const lines = text.split('\n').map((line, index) => {
     const matches = specifierPatterns
       .flatMap((pattern) => [...line.matchAll(pattern)])
@@ -102,7 +109,7 @@ const rewriteSpecifiers = (text, rewrite) => {
         specifier: match[3] ?? '',
       }))
       .sort((a, b) => a.column - b.column);
-    const lineEdits = [];
+    const lineEdits: Edit[] = [];
     let output = '';
     let cursor = 0;
     for (const { column, literal, specifier } of matches) {
@@ -121,9 +128,8 @@ const rewriteSpecifiers = (text, rewrite) => {
 
 const base64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-const decodeSegment = (segment) => {
-  /** @type {number[]} */
-  const values = [];
+const decodeSegment = (segment: string) => {
+  const values: number[] = [];
   let value = 0;
   let shift = 0;
   for (const char of segment) {
@@ -141,18 +147,18 @@ const decodeSegment = (segment) => {
   return values;
 };
 
-const encodeValue = (value) => {
+const encodeValue = (value: number) => {
   let rest = value < 0 ? (-value << 1) | 1 : value << 1;
   let output = '';
   do {
     const digit = rest & 31;
     rest >>>= 5;
-    output += base64[rest > 0 ? digit | 32 : digit];
+    output += base64.charAt(rest > 0 ? digit | 32 : digit);
   } while (rest > 0);
   return output;
 };
 
-const shiftMappings = (mappings, edits) => {
+const shiftMappings = (mappings: string, edits: ReadonlyMap<number, readonly Edit[]>) => {
   if (edits.size === 0) return mappings;
   const decoded = [0, 0, 0, 0, 0];
   const encoded = [0, 0, 0, 0, 0];
@@ -162,8 +168,7 @@ const shiftMappings = (mappings, edits) => {
       decoded[0] = 0;
       encoded[0] = 0;
       const lineEdits = edits.get(index) ?? [];
-      /** @type {string[]} */
-      const segments = [];
+      const segments: string[] = [];
       for (const text of line === '' ? [] : line.split(',')) {
         const values = decodeSegment(text).map(
           (value, field) => (decoded[field] = (decoded[field] ?? 0) + value),
@@ -189,11 +194,9 @@ const shiftMappings = (mappings, edits) => {
     .join(';');
 };
 
-const readHelperDeclarations = (text) => {
-  /** @type {Map<string, string[]>} */
-  const declarations = new Map();
-  /** @type {string[] | undefined} */
-  let current;
+const readHelperDeclarations = (text: string) => {
+  const declarations = new Map<string, string[]>();
+  let current: string[] | undefined;
   for (const line of text.split('\n')) {
     const start = /^(?:export )?(?:function|var) ([\w$]+)/.exec(line);
     if (start?.[1]) {
@@ -208,12 +211,11 @@ const readHelperDeclarations = (text) => {
   return new Map([...declarations].map(([name, lines]) => [name, lines.join('\n').trimEnd()]));
 };
 
-const buildHelpers = (names, format) => {
-  const tslibFile = require.resolve('tslib/tslib.es6.mjs', { paths: [repository] });
+const buildHelpers = (names: ReadonlySet<string>, format: Format) => {
+  const tslibFile = createRequire(import.meta.url).resolve('tslib/tslib.es6.mjs', { paths: [repository] });
   const declarations = readHelperDeclarations(fs.readFileSync(tslibFile, 'utf8'));
-  /** @type {Set<string>} */
-  const needed = new Set();
-  const add = (name) => {
+  const needed = new Set<string>();
+  const add = (name: string) => {
     if (needed.has(name)) return;
     const code = declarations.get(name);
     if (code === undefined) {
@@ -239,7 +241,7 @@ const buildHelpers = (names, format) => {
   return `${code}\n\nexport { ${exported.join(', ')} };\n`;
 };
 
-const helpersUsed = (text) => {
+const helpersUsed = (text: string) => {
   const names = [...text.matchAll(/^import \{([^}]*)\} from "tslib";$/gm)].flatMap((match) =>
     (match[1] ?? '').split(',').map((name) => name.trim()),
   );
@@ -252,7 +254,7 @@ const helpersUsed = (text) => {
   return names.filter(Boolean);
 };
 
-const relinkFile = (file, { outDir, rootDir }, format) => {
+const relinkFile = (file: string, { outDir, rootDir }: Layout, format: Format) => {
   const declaration = file.endsWith('.d.ts');
   const target = file.replace(declaration ? /\.d\.ts$/ : /\.js$/, declaration ? format.dts : format.js);
   const sourceDirectory = path.dirname(path.join(rootDir, path.relative(outDir, file)));
@@ -266,10 +268,13 @@ const relinkFile = (file, { outDir, rootDir }, format) => {
 
   const mapFile = `${file}.map`;
   if (isFile(mapFile)) {
-    const map = JSON.parse(fs.readFileSync(mapFile, 'utf8'));
-    map.file = path.basename(target);
-    map.mappings = shiftMappings(map.mappings, edits);
-    fs.writeFileSync(`${target}.map`, JSON.stringify(map));
+    const map = record(parseJson(fs.readFileSync(mapFile, 'utf8')));
+    const shifted = {
+      ...map,
+      file: path.basename(target),
+      mappings: shiftMappings(String(map['mappings']), edits),
+    };
+    fs.writeFileSync(`${target}.map`, JSON.stringify(shifted));
     if (target !== file) fs.rmSync(mapFile);
   }
   fs.writeFileSync(
@@ -280,7 +285,7 @@ const relinkFile = (file, { outDir, rootDir }, format) => {
   return declaration ? [] : helpersUsed(original);
 };
 
-const compileFormat = (config, layout, format) => {
+const compileFormat = (config: string, layout: Layout, format: Format) => {
   const result = runTsc([
     '--project',
     config,

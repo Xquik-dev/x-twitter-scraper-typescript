@@ -2,14 +2,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { RuleTester } from 'eslint';
+import { RuleTester } from '@typescript-eslint/rule-tester';
 import tseslint from 'typescript-eslint';
-
-const rule = require('../scripts/utils/no-code-comments.cjs');
+import rule from '../scripts/utils/no-code-comments';
 
 const tester = new RuleTester({ languageOptions: { parser: tseslint.parser } });
-const comment = [{ messageId: 'comment' }];
-const publicApiDocs = [{ publicApiDocs: true }];
+const comment = [{ messageId: 'comment' }] as const;
+const publicApiDocs = [{ publicApiDocs: true }] as const;
 
 tester.run('no-code-comments', rule, {
   valid: [

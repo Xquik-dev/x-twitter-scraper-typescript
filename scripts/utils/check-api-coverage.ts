@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const fs = require('fs');
-const path = require('path');
-const {
+import fs from 'node:fs';
+import path from 'node:path';
+import {
   CheckError,
   comparable,
   exclusionsFile,
@@ -13,18 +13,18 @@ const {
   readExclusions,
   runCheck,
   specOperations,
-} = require('./api-spec.cjs');
+} from './api-spec.ts';
 
-const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
+const root = path.resolve(process.argv[2] ?? path.join(import.meta.dirname, '..', '..'));
 const clientMember = /this\._client\s*(?:\?\.|\.|\[)/g;
 const requestCall =
   /this\._client\.(get|post|put|patch|delete)\(\s*(?:'([^'\\]*)'|path`((?:[^`$\\]|\$\{[^{}`]*\})*)`)\s*[,)]/y;
 const blockComment = /\/\*[\s\S]*?\*\//g;
 
-const withoutBlockComments = (source) =>
+const withoutBlockComments = (source: string) =>
   source.replace(blockComment, (comment) => comment.replace(/[^\n]/g, ''));
 
-const sourceFiles = (directory) =>
+const sourceFiles = (directory: string): string[] =>
   fs
     .readdirSync(directory, { withFileTypes: true })
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -41,14 +41,15 @@ const sdkOperations = () => {
     return [...source.matchAll(clientMember)].map(({ index }) => {
       requestCall.lastIndex = index;
       const call = requestCall.exec(source);
-      if (!call) {
+      const verb = call?.[1];
+      const requestPath = call?.[2] ?? call?.[3]?.replace(/\$\{[^{}`]*\}/g, '{}');
+      if (verb === undefined || requestPath === undefined) {
         const line = source.slice(0, index).split('\n').length;
         throw new CheckError(
           `Could not read the method or path of the request at ${path.relative(root, file)} line ${line}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).`,
         );
       }
-      const requestPath = call[2] ?? call[3].replace(/\$\{[^{}`]*\}/g, '{}');
-      return `${call[1].toUpperCase()} ${basePath}${requestPath}`;
+      return `${verb.toUpperCase()} ${basePath}${requestPath}`;
     });
   });
 };
@@ -87,4 +88,4 @@ const coverage = async () => {
   return `The SDK covers ${covered} of ${operations.length} API operations, and ${exclusionsFile} lists the other ${operations.length - covered}.`;
 };
 
-runCheck(coverage);
+await runCheck(coverage);

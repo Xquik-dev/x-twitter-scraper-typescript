@@ -9,7 +9,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Running eslint"
-./node_modules/.bin/eslint .
+./node_modules/.bin/eslint --flag unstable_native_nodejs_ts_config .
 
 echo "==> Building"
 ./scripts/build
@@ -19,7 +19,7 @@ echo "==> Checking types"
 
 echo "==> Running Are The Types Wrong?"
 ./node_modules/.bin/attw --pack dist -f json >.attw.json || true
-node scripts/utils/attw-report.cjs
+node scripts/utils/attw-report.ts
 
 echo "==> Running publint"
 ./node_modules/.bin/publint dist

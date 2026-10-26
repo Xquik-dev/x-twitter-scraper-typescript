@@ -2,22 +2,29 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-check
+import { spawn, type ChildProcess } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
-const { spawn } = require('child_process');
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+type Compiler = { readonly name: string; readonly bin: string };
+type Mode = {
+  readonly name: string;
+  readonly type: string;
+  readonly module: string;
+  readonly moduleResolution: string;
+};
+type Compiled = { readonly status: number | null; readonly output: string };
 
-const repository = path.resolve(__dirname, '..', '..');
+const repository = path.resolve(import.meta.dirname, '..', '..');
 const packageDirectory = path.resolve(process.argv[2] ?? path.join(repository, 'dist'));
 
-const compilers = [
+const compilers: readonly Compiler[] = [
   { name: 'tsc', bin: path.join(repository, 'node_modules', '@typescript', 'native', 'bin', 'tsc') },
   { name: 'tsc6', bin: path.join(repository, 'node_modules', 'typescript', 'bin', 'tsc6') },
 ];
 
-const modes = [
+const modes: readonly Mode[] = [
   { name: 'CommonJS with node16', type: 'commonjs', module: 'node16', moduleResolution: 'node16' },
   { name: 'ES modules with nodenext', type: 'module', module: 'nodenext', moduleResolution: 'nodenext' },
   { name: 'bundler', type: 'module', module: 'esnext', moduleResolution: 'bundler' },
@@ -43,10 +50,10 @@ export const params: AccountSetXUsernameParams = { username: 'xquik' };
 export const client = new XTwitterScraper({ apiKey: 'key' });
 `;
 
-const sentenceList = (names) =>
+const sentenceList = (names: readonly string[]) =>
   names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : (names[0] ?? '');
 
-const writeProject = (project, mode) => {
+const writeProject = (project: string, mode: Mode) => {
   fs.mkdirSync(path.join(project, 'node_modules', '@types'), { recursive: true });
   fs.symlinkSync(packageDirectory, path.join(project, 'node_modules', 'x-twitter-scraper'), 'junction');
   fs.symlinkSync(
@@ -70,18 +77,18 @@ const writeProject = (project, mode) => {
   fs.writeFileSync(path.join(project, 'index.ts'), program);
 };
 
-const running = new Set();
+const running = new Set<ChildProcess>();
 
-const compile = (compiler, project, workspace) =>
-  new Promise((resolve, reject) => {
+const compile = (compiler: Compiler, project: string, workspace: string) =>
+  new Promise<Compiled>((resolve, reject) => {
     const child = spawn(process.execPath, [compiler.bin, '--project', project, '--pretty', 'false'], {
       env: { ...process.env, TMPDIR: workspace },
     });
     running.add(child);
     let stdout = '';
     let stderr = '';
-    child.stdout.on('data', (chunk) => (stdout += chunk));
-    child.stderr.on('data', (chunk) => (stderr += chunk));
+    child.stdout.on('data', (chunk: unknown) => (stdout += String(chunk)));
+    child.stderr.on('data', (chunk: unknown) => (stderr += String(chunk)));
     child.on('error', reject);
     child.on('close', (status) => {
       running.delete(child);
@@ -94,11 +101,11 @@ const main = async () => {
     console.error(`${packageDirectory} has no package.json. Run pnpm build first.`);
     process.exit(1);
   }
-  let workspace;
+  let workspace: string | undefined;
   const removeWorkspace = () => {
     if (workspace) fs.rmSync(workspace, { recursive: true, force: true });
   };
-  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
+  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
     process.on(signal, () => {
       for (const child of running) child.kill(signal);
       removeWorkspace();
@@ -107,8 +114,7 @@ const main = async () => {
     });
   }
   workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
-  /** @type {string[]} */
-  const failures = [];
+  const failures: string[] = [];
   try {
     for (const mode of modes) {
       const project = path.join(workspace, mode.name.replace(/\W+/g, '-'));
@@ -135,4 +141,4 @@ const main = async () => {
   console.log(`Consumer types passed for ${modeNames} under ${compilerNames}.`);
 };
 
-main();
+await main();

@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
-const script = resolve(__dirname, '..', 'scripts', 'utils', 'check-api-coverage.cjs');
+const script = resolve(__dirname, '..', 'scripts', 'utils', 'check-api-coverage.ts');
 
 type Exclusions = Array<Record<string, unknown>> | Record<string, unknown>;
 
@@ -73,7 +73,7 @@ const runCheck = ({
   }
 };
 
-describe('scripts/utils/check-api-coverage.cjs', () => {
+describe('scripts/utils/check-api-coverage.ts', () => {
   it('passes when the SDK implements or excludes every operation', () => {
     const result = runCheck();
 

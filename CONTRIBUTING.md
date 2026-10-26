@@ -13,7 +13,7 @@ pnpm build
 ```
 
 The build and the type checks use TypeScript 7.
-`pnpm build` compiles once for CommonJS and once for ES modules with `scripts/utils/compile-formats.cjs`.
+`pnpm build` compiles once for CommonJS and once for ES modules with `scripts/utils/compile-formats.ts`.
 TypeScript 7 has no compiler API yet.
 ESLint and ts-node load the TypeScript 6.0 API from the `typescript` alias, as the TypeScript 7 release notes recommend.
 
@@ -127,7 +127,7 @@ An entry stops counting on its recheck date or once a fix is installable.
 
 ## API coverage
 
-`bin/check-local` starts with `node scripts/utils/check-api-coverage.cjs`.
+`bin/check-local` starts with `node scripts/utils/check-api-coverage.ts`.
 It compares every operation in the API spec with every request in `src/resources`.
 
 - An operation is its method and its full path, such as `GET /api/v1/x/trends/history`.
@@ -140,7 +140,7 @@ It compares every operation in the API spec with every request in `src/resources
   Set `XQUIK_OPENAPI_SPEC` to a local file or another URL of a JSON spec to check against it.
 
 ```sh
-XQUIK_OPENAPI_SPEC=../openapi.json node scripts/utils/check-api-coverage.cjs
+XQUIK_OPENAPI_SPEC=../openapi.json node scripts/utils/check-api-coverage.ts
 ```
 
 The check fails when the API has an operation that the SDK neither implements nor excludes.
@@ -164,7 +164,7 @@ An SDK request that the spec lacks passes, such as `GET /api/v1/credits/topup/re
 
 ## API fields
 
-`bin/check-local` runs `node scripts/utils/check-api-fields.cjs` after the coverage check and the install, because it needs the TypeScript compiler from the dependencies.
+`bin/check-local` runs `node scripts/utils/check-api-fields.ts` after the coverage check and the install, because it needs the TypeScript compiler from the dependencies.
 For each operation the SDK implements, it compares the fields of the request and the response with the API spec.
 It reads the spec the way the coverage check does, so `XQUIK_OPENAPI_SPEC` works the same.
 
