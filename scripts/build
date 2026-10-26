@@ -8,7 +8,7 @@ set -exuo pipefail
 
 cd "$(dirname "$0")/.."
 
-node scripts/utils/check-version.cjs
+node scripts/utils/check-version.ts
 
 rm -rf dist; mkdir dist
 cp -rp src README.md assets skills dist
@@ -18,13 +18,13 @@ for file in LICENSE CHANGELOG.md bin/cli bin/migration-config.json; do
     cp -p "$file" "dist/$file"
   fi
 done
-node scripts/utils/make-dist-package-json.cjs > dist/package.json
+node scripts/utils/make-dist-package-json.ts > dist/package.json
 
-node scripts/utils/compile-formats.cjs
-node scripts/utils/fix-index-exports.cjs
+node scripts/utils/compile-formats.ts
+node scripts/utils/fix-index-exports.ts
 cp tsconfig.dist-src.json dist/src/tsconfig.json
 
-node scripts/utils/postprocess-files.cjs
+node scripts/utils/postprocess-files.ts
 
 (cd dist && node -e 'require("x-twitter-scraper")')
 (cd dist && node -e 'import("x-twitter-scraper")' --input-type=module)

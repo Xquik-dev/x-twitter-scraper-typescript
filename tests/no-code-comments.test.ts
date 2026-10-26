@@ -2,14 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { RuleTester } from 'eslint';
+import { RuleTester } from '@typescript-eslint/rule-tester';
 import tseslint from 'typescript-eslint';
+import rule from '../scripts/utils/no-code-comments';
 
-const rule = require('../scripts/utils/no-code-comments.cjs');
-
-const tester = new RuleTester({ languageOptions: { parser: tseslint.parser } });
-const comment = [{ messageId: 'comment' }];
-const publicApiDocs = [{ publicApiDocs: true }];
+const tester = new RuleTester({
+  languageOptions: { parser: tseslint.parser },
+  linterOptions: { reportUnusedDisableDirectives: 'off' },
+});
+const comment = [{ messageId: 'comment' }] as const;
+const publicApiDocs = [{ publicApiDocs: true }] as const;
 
 tester.run('no-code-comments', rule, {
   valid: [
@@ -39,6 +41,11 @@ tester.run('no-code-comments', rule, {
     { code: '/** Internal helper. */\nfunction helper(): void {}', options: publicApiDocs, errors: comment },
     {
       code: 'export class Client {\n  /** Hidden. */\n  private secret(): void {}\n}',
+      options: publicApiDocs,
+      errors: comment,
+    },
+    {
+      code: 'export class Client {\n  /** Hidden. */\n  #secret(): void {}\n}',
       options: publicApiDocs,
       errors: comment,
     },

@@ -2,23 +2,31 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const { spawnSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { field, isList, isObject, list, parseJson, record } from './json.ts';
 
-const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
+type Exception = {
+  readonly advisory: string;
+  readonly path: string;
+  readonly reason: string;
+  readonly recheck: string;
+};
+
+const root = path.resolve(process.argv[2] ?? path.join(import.meta.dirname, '..', '..'));
 const exceptionsFile = 'audit-exceptions.json';
 const allowedReasons = new Set(['build-time only', 'test-time only', 'peer dependency provided by the host']);
 const maxRecheckDays = 30;
 const dayInMs = 24 * 60 * 60 * 1000;
 
-const run = (command, args) => {
+const run = (command: string, args: readonly string[]) => {
   const result = spawnSync(command, args, { cwd: root, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
   if (result.error) throw result.error;
   return result;
 };
 
-const readJson = (file) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+const readJson = (file: string) => parseJson(fs.readFileSync(path.join(root, file), 'utf8'));
 
 const minimumReleaseAgeMs = () => {
   const workspace = fs.readFileSync(path.join(root, 'pnpm-workspace.yaml'), 'utf8');
@@ -26,61 +34,74 @@ const minimumReleaseAgeMs = () => {
   return match ? Number(match[1]) * 60 * 1000 : 0;
 };
 
-const normalizePath = (auditPath) =>
+const normalizePath = (auditPath: string) =>
   auditPath
     .split('>')
     .map((part) => part.trim())
     .filter((part) => part !== '.' && part !== '')
     .join(' > ');
 
-const npmViewJson = (args) => {
+const npmViewJson = (args: readonly string[]) => {
   const result = run('npm', ['view', ...args, '--json']);
   const output = result.stdout.trim();
-  const parsed = output ? JSON.parse(output) : undefined;
+  const parsed = output ? parseJson(output) : undefined;
   if (result.status === 0) return parsed;
-  if (parsed?.error?.code === 'E404') return undefined;
+  if (field(field(parsed, 'error'), 'code') === 'E404') return undefined;
   throw new Error(`npm view ${args.join(' ')} failed. Check the network, then run the audit again.`);
 };
 
-const hasInstallableFix = (moduleName, patchedVersions, releaseAgeMs, now) => {
+const hasInstallableFix = (
+  moduleName: string,
+  patchedVersions: unknown,
+  releaseAgeMs: number,
+  now: number,
+) => {
   if (!patchedVersions || patchedVersions === '<0.0.0') return false;
   const matching = npmViewJson([`${moduleName}@${patchedVersions}`, 'version']);
   if (matching === undefined) return false;
-  const versions = Array.isArray(matching) ? matching : [matching];
+  const versions = isList(matching) ? matching : [matching];
   const published = npmViewJson([moduleName, 'time']) ?? {};
   return versions.some((version) => {
-    const time = Date.parse(published[version] ?? '');
+    const time = Date.parse(String(field(published, String(version)) ?? ''));
     return Number.isFinite(time) && now - time >= releaseAgeMs;
   });
 };
 
-const loadExceptions = (problems) => {
+const loadExceptions = (problems: string[]): Exception[] => {
   if (!fs.existsSync(path.join(root, exceptionsFile))) return [];
-  const file = readJson(exceptionsFile);
-  if (!Array.isArray(file.exceptions)) {
+  const entries = field(readJson(exceptionsFile), 'exceptions');
+  if (!isList(entries)) {
     problems.push(`${exceptionsFile} needs an "exceptions" array. Add one, even if it is empty.`);
     return [];
   }
-  return file.exceptions.filter((entry, index) => {
+  return entries.flatMap((entry, index) => {
     const label = `${exceptionsFile} entry ${index + 1}`;
-    if (!/^GHSA(-[0-9a-z]{4}){3}$/.test(entry.advisory ?? '')) {
+    const advisory = field(entry, 'advisory');
+    const entryPath = field(entry, 'path');
+    const reason = field(entry, 'reason');
+    const recheck = field(entry, 'recheck');
+    if (typeof advisory !== 'string' || !/^GHSA(-[0-9a-z]{4}){3}$/.test(advisory)) {
       problems.push(`${label} needs an "advisory" like GHSA-xxxx-xxxx-xxxx.`);
-    } else if (typeof entry.path !== 'string' || normalizePath(entry.path) !== entry.path) {
+    } else if (typeof entryPath !== 'string' || normalizePath(entryPath) !== entryPath) {
       problems.push(`${label} needs a "path" like "jest > micromatch > braces".`);
-    } else if (!allowedReasons.has(entry.reason)) {
+    } else if (typeof reason !== 'string' || !allowedReasons.has(reason)) {
       problems.push(`${label} needs a "reason" of ${[...allowedReasons].map((r) => `"${r}"`).join(' or ')}.`);
-    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.recheck ?? '') || Number.isNaN(Date.parse(entry.recheck))) {
+    } else if (
+      typeof recheck !== 'string' ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(recheck) ||
+      Number.isNaN(Date.parse(recheck))
+    ) {
       problems.push(`${label} needs a "recheck" date like 2026-11-12.`);
     } else {
-      return true;
+      return [{ advisory, path: entryPath, reason, recheck }];
     }
-    return false;
+    return [];
   });
 };
 
 const main = () => {
-  const problems = [];
-  const accepted = [];
+  const problems: string[] = [];
+  const accepted: string[] = [];
   const now = Date.now();
   const today = new Date(now).toISOString().slice(0, 10);
   const latestRecheck = new Date(now + maxRecheckDays * dayInMs).toISOString().slice(0, 10);
@@ -88,33 +109,40 @@ const main = () => {
 
   const pkg = readJson('package.json');
   const runtimeNames = new Set(
-    ['dependencies', 'optionalDependencies', 'peerDependencies'].flatMap((field) =>
-      Object.keys(pkg[field] ?? {}),
+    ['dependencies', 'optionalDependencies', 'peerDependencies'].flatMap((name) =>
+      Object.keys(record(field(pkg, name))),
     ),
   );
   const exceptions = loadExceptions(problems);
-  const matched = new Set();
+  const matched = new Set<Exception>();
 
   const audit = run('pnpm', ['audit', '--json']);
-  let report;
+  let report: unknown;
   try {
-    report = JSON.parse(audit.stdout);
+    report = parseJson(audit.stdout);
   } catch {
     report = undefined;
   }
-  if (!report || typeof report.advisories !== 'object' || report.advisories === null) {
+  const advisories = field(report, 'advisories');
+  if (!isObject(advisories)) {
     process.stderr.write(audit.stderr);
     console.error('pnpm audit returned no report. Run pnpm audit to see why.');
     process.exit(1);
   }
 
-  for (const advisory of Object.values(report.advisories)) {
-    const id = advisory.github_advisory_id;
-    const name = `${id} ${advisory.module_name} (${advisory.severity})`;
+  for (const advisory of Object.values(advisories)) {
+    const id = field(advisory, 'github_advisory_id');
+    const moduleName = String(field(advisory, 'module_name'));
+    const patchedVersions = field(advisory, 'patched_versions');
+    const name = `${id} ${moduleName} (${field(advisory, 'severity')})`;
     const paths = [
-      ...new Set((advisory.findings ?? []).flatMap((finding) => finding.paths ?? []).map(normalizePath)),
+      ...new Set(
+        list(field(advisory, 'findings'))
+          .flatMap((finding) => list(field(finding, 'paths')))
+          .flatMap((auditPath) => (typeof auditPath === 'string' ? [normalizePath(auditPath)] : [])),
+      ),
     ];
-    const runtimePaths = paths.filter((p) => runtimeNames.has(p.split(' > ')[0]));
+    const runtimePaths = paths.filter((p) => runtimeNames.has(p.split(' > ')[0] ?? ''));
     const developmentPaths = paths.filter((p) => !runtimePaths.includes(p));
 
     if (runtimePaths.length > 0) {
@@ -122,24 +150,24 @@ const main = () => {
     }
     if (developmentPaths.length === 0) continue;
 
-    let fixable;
+    let fixable: boolean;
     try {
-      fixable = hasInstallableFix(advisory.module_name, advisory.patched_versions, releaseAgeMs, now);
+      fixable = hasInstallableFix(moduleName, patchedVersions, releaseAgeMs, now);
     } catch (error) {
-      problems.push(`${name} could not be checked. ${error.message}`);
+      problems.push(
+        `${name} could not be checked. ${error instanceof Error ? error.message : String(error)}`,
+      );
       continue;
     }
     if (fixable) {
       const listed = exceptions.filter((e) => e.advisory === id);
       listed.forEach((entry) => matched.add(entry));
       const cleanup = listed.length > 0 ? `, then remove its ${exceptionsFile} entry` : '';
-      problems.push(
-        `${name} has an installable fix (${advisory.patched_versions}). Upgrade or override it${cleanup}.`,
-      );
+      problems.push(`${name} has an installable fix (${patchedVersions}). Upgrade or override it${cleanup}.`);
       continue;
     }
 
-    const unlisted = [];
+    const unlisted: string[] = [];
     for (const developmentPath of developmentPaths) {
       const entry = exceptions.find((e) => e.advisory === id && e.path === developmentPath);
       if (!entry) {

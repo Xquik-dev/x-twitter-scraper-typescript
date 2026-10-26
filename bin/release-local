@@ -87,7 +87,7 @@ step "Running the local checks"
 bin/check-local
 
 step "Auditing dependencies against audit-exceptions.json"
-node scripts/utils/check-audit.cjs || fail "The audit found a blocking finding. Fix it before you release."
+node scripts/utils/check-audit.ts || fail "The audit found a blocking finding. Fix it before you release."
 
 step "Building the package"
 bash ./bin/prepare-npm-release

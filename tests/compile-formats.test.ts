@@ -16,7 +16,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 
 const repository = resolve(__dirname, '..');
-const script = join(repository, 'scripts', 'utils', 'compile-formats.cjs');
+const script = join(repository, 'scripts', 'utils', 'compile-formats.ts');
 
 const sources: Record<string, string> = {
   'index.ts': [
@@ -125,7 +125,7 @@ const originalPosition = (map: { mappings: string }, line: number, column: numbe
   return { line: sourceLine, column: sourceColumn + column - generated };
 };
 
-describe('scripts/utils/compile-formats.cjs', () => {
+describe('scripts/utils/compile-formats.ts', () => {
   let built: ReturnType<typeof build>;
 
   beforeAll(() => {

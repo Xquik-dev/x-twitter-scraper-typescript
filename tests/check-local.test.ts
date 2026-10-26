@@ -92,9 +92,9 @@ const setUp = (
   write(join('project', 'scripts', 'lint'), lint);
   write(join('project', 'scripts', 'check-reproducible'), passes);
   write(join('project', 'scripts', 'test'), '#!/bin/sh\necho "Tests:       2 passed, 2 total"\n');
-  write(join('project', 'scripts', 'utils', 'check-audit.cjs'), 'console.log("Audit passed.");\n', 0o644);
-  write(join('project', 'scripts', 'utils', 'check-api-coverage.cjs'), apiCoverage, 0o644);
-  write(join('project', 'scripts', 'utils', 'check-api-fields.cjs'), apiFields, 0o644);
+  write(join('project', 'scripts', 'utils', 'check-audit.ts'), 'console.log("Audit passed.");\n', 0o644);
+  write(join('project', 'scripts', 'utils', 'check-api-coverage.ts'), apiCoverage, 0o644);
+  write(join('project', 'scripts', 'utils', 'check-api-fields.ts'), apiFields, 0o644);
   copyFileSync(
     resolve(__dirname, '..', 'scripts', 'temp-directory.sh'),
     join(root, 'project', 'scripts', 'temp-directory.sh'),
@@ -189,6 +189,25 @@ fi
         'Check failed because pnpm could not start the pnpm version that package.json pins. Upgrade pnpm to 11.28.4 or newer, then run bin/check-local again.\n',
     );
     expect(result.stdout).not.toContain('==> Install dependencies');
+  });
+
+  it('stops with the upgrade step when Node cannot run the TypeScript scripts', () => {
+    const { root, command, env } = setUp(sarif({}));
+    try {
+      const node = spawnSync('node', ['--version'], { encoding: 'utf8', env }).stdout.trim();
+      const result = spawnSync(command, ['--no-status'], {
+        encoding: 'utf8',
+        env: { ...env, NODE_OPTIONS: '--no-experimental-strip-types' },
+      });
+
+      expect(result.status).toBe(1);
+      expect(result.stderr).toBe(
+        `Check failed because Node ${node} cannot run the TypeScript scripts. Install Node 22.18 or newer, then run bin/check-local again.\n`,
+      );
+      expect(result.stdout).not.toContain('==> API coverage');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   it('fails and names each file that CodeQL could not parse', () => {

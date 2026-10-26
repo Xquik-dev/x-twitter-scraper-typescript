@@ -79,7 +79,7 @@ run_check() {
 }
 
 run_audit() {
-  node scripts/utils/check-audit.cjs 2>&1 | tee "${work_directory}/audit.log"
+  node scripts/utils/check-audit.ts 2>&1 | tee "${work_directory}/audit.log"
 }
 
 run_tests() {
@@ -145,6 +145,12 @@ for tool in pnpm node jq codeql uv; do
   fi
 done
 
+current_check="Check Node"
+if ! node -e 'process.exit(process.features.typescript ? 0 : 1)'; then
+  echo "Check failed because Node $(node --version) cannot run the TypeScript scripts. Install Node 22.18 or newer, then run bin/check-local again." >&2
+  exit 1
+fi
+
 current_check="Start pnpm"
 if ! pnpm_output="$(pnpm --version 2>&1)"; then
   printf '%s\n' "$pnpm_output" >&2
@@ -154,7 +160,7 @@ fi
 
 run_check "API coverage" \
   "Fix what the check reported above, then run bin/check-local again." \
-  node scripts/utils/check-api-coverage.cjs
+  node scripts/utils/check-api-coverage.ts
 passed+=("API coverage")
 
 run_check "Install dependencies" \
@@ -164,7 +170,7 @@ passed+=("install")
 
 run_check "API fields" \
   "Fix what the check reported above, then run bin/check-local again." \
-  node scripts/utils/check-api-fields.cjs
+  node scripts/utils/check-api-fields.ts
 passed+=("API fields")
 
 run_check "Check license notices" \
