@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import fs from 'node:fs';
-import { field, parseJson, record } from './json.ts';
+import { field, isObject, parseJson } from './json.ts';
 
 const ignored = (problem: unknown) => {
   const kind = field(problem, 'kind');
@@ -15,10 +15,18 @@ const ignored = (problem: unknown) => {
   );
 };
 
-const problems = Object.values(record(field(parseJson(fs.readFileSync('.attw.json', 'utf-8')), 'problems')))
+const report = parseJson(fs.readFileSync('.attw.json', 'utf-8'));
+fs.unlinkSync('.attw.json');
+const found = field(report, 'problems');
+if (!isObject(found)) {
+  process.stdout.write(
+    'The attw report has no problems list, so attw checked no types.\n' + JSON.stringify(report) + '\n',
+  );
+  process.exit(1);
+}
+const problems = Object.values(found)
   .flat()
   .filter((problem) => !ignored(problem));
-fs.unlinkSync('.attw.json');
 if (problems.length) {
   process.stdout.write('The types are wrong!\n' + JSON.stringify(problems, null, 2) + '\n');
   process.exitCode = 1;
