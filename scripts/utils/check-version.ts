@@ -13,7 +13,7 @@ const main = () => {
   const version = field(pkg, 'version');
   if (!version) throw 'The version property is not set in the package.json file';
   if (typeof version !== 'string') {
-    throw `Unexpected type for the package.json version field; got ${typeof version}, expected string`;
+    throw `The package.json version is a ${typeof version}. Make it a string.`;
   }
 
   const versionFile = path.join(repository, 'src', 'version.ts');
