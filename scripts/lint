@@ -16,6 +16,8 @@ echo "==> Building"
 
 echo "==> Checking types"
 ./node_modules/@typescript/native/bin/tsc
+./node_modules/@typescript/native/bin/tsc -p scripts/tsconfig.json
+./node_modules/.bin/type-coverage -p scripts/tsconfig.json --strict --at-least 100 --detail
 
 echo "==> Running Are The Types Wrong?"
 ./node_modules/.bin/attw --pack dist -f json >.attw.json || true
