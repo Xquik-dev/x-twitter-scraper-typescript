@@ -39,23 +39,25 @@ const fields = async () => {
   const shapes = new SpecShapes(spec);
 
   const operations = specOperations(spec).filter(({ key }) => !excluded.has(key));
-  const unread = operations.filter(({ key }) => !sdk.ops[key]);
-  if (unread.length) {
-    throw new CheckError(
-      [
-        ...unread.map(({ id }) => `${id} has no SDK method the field check can read.`),
-        'Write each operation above as a class method that calls this._client, or list it in excluded-operations.json.',
-      ].join('\n'),
-    );
-  }
-
+  const unread: string[] = [];
   const found = operations.flatMap(({ id, key, pathItem, operation }) => {
     const sdkOperation = sdk.ops[key];
-    if (!sdkOperation) return [];
+    if (!sdkOperation) {
+      unread.push(`${id} has no SDK method the field check can read.`);
+      return [];
+    }
     return compareOperation(shapes.operation(pathItem, operation), sdkOperation, sdk.defs).map(
       ({ side, kind, path: field }) => `${id} ${side} ${kind} ${field}`,
     );
   });
+  if (unread.length) {
+    throw new CheckError(
+      [
+        ...unread,
+        'Write each operation above as a class method that calls this._client, or list it in excluded-operations.json.',
+      ].join('\n'),
+    );
+  }
   const acceptedKeys = new Set(accepted.map(comparable));
   const foundKeys = new Set(found.map(comparable));
   const differences = found.filter((difference) => !acceptedKeys.has(comparable(difference)));
