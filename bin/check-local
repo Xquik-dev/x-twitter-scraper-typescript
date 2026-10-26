@@ -145,6 +145,12 @@ for tool in pnpm node jq codeql uv; do
   fi
 done
 
+current_check="Check Node"
+if ! node -e 'process.exit(process.features.typescript ? 0 : 1)'; then
+  echo "Check failed because Node $(node --version) cannot run the TypeScript scripts. Install Node 22.18 or newer, then run bin/check-local again." >&2
+  exit 1
+fi
+
 current_check="Start pnpm"
 if ! pnpm_output="$(pnpm --version 2>&1)"; then
   printf '%s\n' "$pnpm_output" >&2
