@@ -3389,6 +3389,12 @@ export namespace UserProfile {
    * Organization affiliation label shown on an X profile.
    */
   export interface AffiliatesHighlightedLabel {
+    /**
+     * More labels X shows beside the affiliation, such as an automated account's
+     * owner.
+     */
+    auxiliaryLabels?: Array<AffiliatesHighlightedLabel.AuxiliaryLabel>;
+
     badgeUrl?: string;
 
     description?: string;
@@ -3405,6 +3411,23 @@ export namespace UserProfile {
     userLabelDisplayType?: string;
 
     userLabelType?: string;
+  }
+
+  export namespace AffiliatesHighlightedLabel {
+    /**
+     * A label X shows on an X profile beside its affiliation label.
+     */
+    export interface AuxiliaryLabel {
+      badgeUrl?: string;
+
+      description?: string;
+
+      url?: string;
+
+      userLabelDisplayType?: string;
+
+      userLabelType?: string;
+    }
   }
 
   /**
