@@ -83,7 +83,7 @@ run_audit() {
 }
 
 run_tests() {
-  bash ./scripts/test 2>&1 | tee "${work_directory}/test.log"
+  NO_COLOR=1 bash ./scripts/test 2>&1 | tee "${work_directory}/test.log"
 }
 
 run_codeql() {
@@ -195,7 +195,7 @@ passed+=("reproducible build")
 run_check "Run tests" \
   "Fix the failing tests or coverage gaps above." \
   run_tests
-passed_tests="$(sed -nE 's/^Tests:.* ([0-9]+) passed.*/\1/p' "${work_directory}/test.log" | tail -n 1)"
+passed_tests="$(sed -nE 's/^ *Tests +([0-9]+) passed.*/\1/p' "${work_directory}/test.log" | tail -n 1)"
 passed+=("${passed_tests:+${passed_tests} }tests")
 
 run_check "Run CodeQL" \

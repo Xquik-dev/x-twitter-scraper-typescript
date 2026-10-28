@@ -7,7 +7,7 @@
     "module": "commonjs",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "types": ["jest", "node"],
+    "types": ["vitest/globals", "node"],
     "rootDir": ".",
     "paths": {
       "x-twitter-scraper/*": ["./src/*"],

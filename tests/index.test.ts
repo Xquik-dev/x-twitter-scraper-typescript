@@ -13,7 +13,7 @@ describe('instantiate client', () => {
   const env = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = { ...env };
   });
 
@@ -102,12 +102,12 @@ describe('instantiate client', () => {
     };
 
     test('debug logs when log level is debug', async () => {
-      const debugMock = jest.fn();
+      const debugMock = vi.fn();
       const logger = {
         debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
       };
 
       const client = new XTwitterScraper({
@@ -127,12 +127,12 @@ describe('instantiate client', () => {
     });
 
     test('debug logs are skipped when log level is info', async () => {
-      const debugMock = jest.fn();
+      const debugMock = vi.fn();
       const logger = {
         debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
       };
 
       const client = new XTwitterScraper({
@@ -147,12 +147,12 @@ describe('instantiate client', () => {
     });
 
     test('debug logs happen with debug env var', async () => {
-      const debugMock = jest.fn();
+      const debugMock = vi.fn();
       const logger = {
         debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
       };
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'debug';
@@ -168,12 +168,12 @@ describe('instantiate client', () => {
     });
 
     test('warn when env var level is invalid', async () => {
-      const warnMock = jest.fn();
+      const warnMock = vi.fn();
       const logger = {
-        debug: jest.fn(),
-        info: jest.fn(),
+        debug: vi.fn(),
+        info: vi.fn(),
         warn: warnMock,
-        error: jest.fn(),
+        error: vi.fn(),
       };
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'not a log level';
@@ -189,12 +189,12 @@ describe('instantiate client', () => {
     });
 
     test('client log level overrides env var', async () => {
-      const debugMock = jest.fn();
+      const debugMock = vi.fn();
       const logger = {
         debug: debugMock,
-        info: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
       };
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'debug';
@@ -210,12 +210,12 @@ describe('instantiate client', () => {
     });
 
     test('no warning logged for invalid env var level + valid client level', async () => {
-      const warnMock = jest.fn();
+      const warnMock = vi.fn();
       const logger = {
-        debug: jest.fn(),
-        info: jest.fn(),
+        debug: vi.fn(),
+        info: vi.fn(),
         warn: warnMock,
-        error: jest.fn(),
+        error: vi.fn(),
       };
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'not a log level';
@@ -310,7 +310,7 @@ describe('instantiate client', () => {
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 200);
 
-    const spy = jest.spyOn(client, 'request');
+    const spy = vi.spyOn(client, 'request');
 
     await expect(client.get('/foo', { signal: controller.signal })).rejects.toThrow(APIUserAbortError);
     expect(spy).toHaveBeenCalledTimes(1);

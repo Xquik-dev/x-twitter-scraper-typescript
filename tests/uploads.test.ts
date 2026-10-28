@@ -23,21 +23,21 @@ describe('toFile', () => {
       // @ts-expect-error intentionally mismatched type
       toFile({ foo: 'string' }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Unexpected data type: object; constructor: Object; props: ["foo"]"`,
+      `[Error: Unexpected data type: object; constructor: Object; props: ["foo"]]`,
     );
 
     await expect(
       // @ts-expect-error intentionally mismatched type
       toFile(new MyClass()),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Unexpected data type: object; constructor: MyClass; props: ["name"]"`,
+      `[Error: Unexpected data type: object; constructor: MyClass; props: ["name"]]`,
     );
   });
 
   it('disallows string at the type-level', async () => {
     // @ts-expect-error we intentionally do not type support for `string`
     const file = await toFile('contents');
-    expect(file.text()).resolves.toEqual('contents');
+    await expect(file.text()).resolves.toEqual('contents');
   });
 
   it('extracts a file name from a Response', async () => {
@@ -79,7 +79,7 @@ describe('missing File error message', () => {
   let prevGlobalFile: unknown;
   let prevNodeFile: unknown;
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     const buffer = require('node:buffer');
     // @ts-ignore
     prevGlobalFile = globalThis.File;
@@ -92,7 +92,7 @@ describe('missing File error message', () => {
     // @ts-ignore
     globalThis.File = prevGlobalFile;
     require('node:buffer').File = prevNodeFile;
-    jest.resetModules();
+    vi.resetModules();
   });
 
   test('is thrown', async () => {
