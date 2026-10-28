@@ -22,7 +22,6 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       include: ['src/**/*.ts'],
-      exclude: ['src/**/*.d.ts'],
       reporter: ['text', 'text-summary'],
       thresholds: {
         branches: 80,

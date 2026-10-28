@@ -22,16 +22,12 @@ describe('toFile', () => {
     await expect(
       // @ts-expect-error intentionally mismatched type
       toFile({ foo: 'string' }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: Unexpected data type: object; constructor: Object; props: ["foo"]]`,
-    );
+    ).rejects.toThrow('Unexpected data type: object; constructor: Object; props: ["foo"]');
 
     await expect(
       // @ts-expect-error intentionally mismatched type
       toFile(new MyClass()),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: Unexpected data type: object; constructor: MyClass; props: ["name"]]`,
-    );
+    ).rejects.toThrow('Unexpected data type: object; constructor: MyClass; props: ["name"]');
   });
 
   it('disallows string at the type-level', async () => {
@@ -99,8 +95,6 @@ describe('missing File error message', () => {
     const uploads = await import('x-twitter-scraper/core/uploads');
     await expect(
       uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' })),
-    ).rejects.toMatchInlineSnapshot(
-      `[Error: \`File\` is not defined as a global, which is required for file uploads.]`,
-    );
+    ).rejects.toThrow('`File` is not defined as a global, which is required for file uploads.');
   });
 });

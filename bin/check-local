@@ -169,7 +169,7 @@ run_check "Check license notices" \
 passed+=("REUSE")
 
 run_check "Audit dependencies" \
-  "Upgrade or replace the package that pulls in each advisory above." \
+  "Upgrade, override or replace each vulnerable package above." \
   pnpm audit
 passed+=("audit")
 

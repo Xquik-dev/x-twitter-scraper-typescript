@@ -120,7 +120,7 @@ Pass `--no-status` to skip the status.
 
 `pnpm audit` fails the run on any advisory, in a shipped or a development dependency.
 Severity never excuses a finding.
-Fix a finding by upgrading the package, or by replacing the package that pulls it in.
+Fix a finding by upgrading, overriding or replacing the vulnerable package.
 
 ## API coverage
 
