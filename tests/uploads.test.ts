@@ -22,22 +22,18 @@ describe('toFile', () => {
     await expect(
       // @ts-expect-error intentionally mismatched type
       toFile({ foo: 'string' }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Unexpected data type: object; constructor: Object; props: ["foo"]"`,
-    );
+    ).rejects.toThrow('Unexpected data type: object; constructor: Object; props: ["foo"]');
 
     await expect(
       // @ts-expect-error intentionally mismatched type
       toFile(new MyClass()),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"Unexpected data type: object; constructor: MyClass; props: ["name"]"`,
-    );
+    ).rejects.toThrow('Unexpected data type: object; constructor: MyClass; props: ["name"]');
   });
 
   it('disallows string at the type-level', async () => {
     // @ts-expect-error we intentionally do not type support for `string`
     const file = await toFile('contents');
-    expect(file.text()).resolves.toEqual('contents');
+    await expect(file.text()).resolves.toEqual('contents');
   });
 
   it('extracts a file name from a Response', async () => {
@@ -79,7 +75,7 @@ describe('missing File error message', () => {
   let prevGlobalFile: unknown;
   let prevNodeFile: unknown;
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     const buffer = require('node:buffer');
     // @ts-ignore
     prevGlobalFile = globalThis.File;
@@ -92,15 +88,13 @@ describe('missing File error message', () => {
     // @ts-ignore
     globalThis.File = prevGlobalFile;
     require('node:buffer').File = prevNodeFile;
-    jest.resetModules();
+    vi.resetModules();
   });
 
   test('is thrown', async () => {
     const uploads = await import('x-twitter-scraper/core/uploads');
-    await expect(
-      uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' })),
-    ).rejects.toMatchInlineSnapshot(
-      `[Error: \`File\` is not defined as a global, which is required for file uploads.]`,
+    await expect(uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' }))).rejects.toThrow(
+      '`File` is not defined as a global, which is required for file uploads.',
     );
   });
 });

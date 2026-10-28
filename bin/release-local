@@ -86,9 +86,6 @@ grep -q '[^[:space:]]' "$notes_file" || fail "CHANGELOG.md has no notes for ${ve
 step "Running the local checks"
 bin/check-local
 
-step "Auditing dependencies against audit-exceptions.json"
-node scripts/utils/check-audit.cjs || fail "The audit found a blocking finding. Fix it before you release."
-
 step "Building the package"
 bash ./bin/prepare-npm-release
 [[ -z "$(git status --porcelain)" ]] || fail "The build changed tracked files. Commit the changes, then run bin/release-local again."

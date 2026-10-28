@@ -118,12 +118,9 @@ It stops at the first failure and says what to fix.
 When the tree is clean and `HEAD` is pushed, it posts the `xquik-local-checks` commit status.
 Pass `--no-status` to skip the status.
 
-The audit fails on any finding in a shipped dependency.
-It also fails on any development finding that has an installable fix.
+`pnpm audit` fails the run on any advisory, in a shipped or a development dependency.
 Severity never excuses a finding.
-An unfixable development finding passes only when `audit-exceptions.json` lists it.
-Each entry names the advisory, the package path, the reason, and a recheck date within 30 days.
-An entry stops counting on its recheck date or once a fix is installable.
+Fix a finding by upgrading, overriding or replacing the vulnerable package.
 
 ## API coverage
 

@@ -78,12 +78,8 @@ run_check() {
   fi
 }
 
-run_audit() {
-  node scripts/utils/check-audit.cjs 2>&1 | tee "${work_directory}/audit.log"
-}
-
 run_tests() {
-  bash ./scripts/test 2>&1 | tee "${work_directory}/test.log"
+  NO_COLOR=1 bash ./scripts/test 2>&1 | tee "${work_directory}/test.log"
 }
 
 run_codeql() {
@@ -173,14 +169,9 @@ run_check "Check license notices" \
 passed+=("REUSE")
 
 run_check "Audit dependencies" \
-  "Fix each blocking finding above, or review an unfixable development finding into audit-exceptions.json." \
-  run_audit
-exceptions="$(sed -nE 's/^Audit passed with ([0-9]+) reviewed exceptions?\.$/\1/p' "${work_directory}/audit.log")"
-case "$exceptions" in
-  "") passed+=("audit") ;;
-  1) passed+=("audit (1 reviewed exception)") ;;
-  *) passed+=("audit (${exceptions} reviewed exceptions)") ;;
-esac
+  "Upgrade, override or replace each vulnerable package above." \
+  pnpm audit
+passed+=("audit")
 
 run_check "Lint, build & check types" \
   "Run pnpm fix, then fix the remaining errors above." \
@@ -195,7 +186,7 @@ passed+=("reproducible build")
 run_check "Run tests" \
   "Fix the failing tests or coverage gaps above." \
   run_tests
-passed_tests="$(sed -nE 's/^Tests:.* ([0-9]+) passed.*/\1/p' "${work_directory}/test.log" | tail -n 1)"
+passed_tests="$(sed -nE 's/^ *Tests +([0-9]+) passed.*/\1/p' "${work_directory}/test.log" | tail -n 1)"
 passed+=("${passed_tests:+${passed_tests} }tests")
 
 run_check "Run CodeQL" \

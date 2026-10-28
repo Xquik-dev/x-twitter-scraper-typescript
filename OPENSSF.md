@@ -15,12 +15,11 @@ The shared Xquik documentation site supports this released project.
 ## Technical evidence
 
 - `bin/check-local` runs linting, type checks, builds, tests, and dependency audits.
-- Jest enforces 90% statement and 80% branch coverage.
+- Vitest enforces 90% statement and 80% branch coverage.
 - The current suite passes both enforced coverage thresholds.
 - REUSE maps every tracked file to Apache-2.0 or MIT.
 - `bin/check-local` runs CodeQL `security-extended` queries and fails on any result or any file CodeQL cannot parse.
-- `bin/check-local` and `bin/release-local` refuse blocking npm audit findings.
-- `audit-exceptions.json` lists reviewed, unfixable development findings with 30-day rechecks.
+- `bin/check-local` and `bin/release-local` refuse any `pnpm audit` advisory.
 - Package archives build reproducibly through `pnpm run check:reproducible`.
 - `bin/release-local` releases only a clean `main` that matches `origin/main`.
 - `bin/release-local` refuses a version whose release tag already exists.

@@ -104,7 +104,7 @@ describe('UUID generation', () => {
     Math.random = originalRandom;
   });
 
-  test('uses native randomUUID when available', () => {
+  test('uses native randomUUID when available', async () => {
     expect.assertions(2);
 
     Object.defineProperty(globalThis, 'crypto', {
@@ -112,16 +112,13 @@ describe('UUID generation', () => {
       value: { randomUUID: () => '00000000-0000-4000-8000-000000000001' },
     });
 
-    jest.isolateModules(() => {
-      const { uuid4 } = require('x-twitter-scraper/internal/utils/uuid') as {
-        uuid4: () => string;
-      };
-      expect(uuid4()).toBe('00000000-0000-4000-8000-000000000001');
-      expect(uuid4()).toBe('00000000-0000-4000-8000-000000000001');
-    });
+    vi.resetModules();
+    const { uuid4 } = await import('x-twitter-scraper/internal/utils/uuid');
+    expect(uuid4()).toBe('00000000-0000-4000-8000-000000000001');
+    expect(uuid4()).toBe('00000000-0000-4000-8000-000000000001');
   });
 
-  test('uses cryptographic random bytes without randomUUID', () => {
+  test('uses cryptographic random bytes without randomUUID', async () => {
     expect.assertions(1);
 
     Object.defineProperty(globalThis, 'crypto', {
@@ -134,25 +131,19 @@ describe('UUID generation', () => {
       },
     });
 
-    jest.isolateModules(() => {
-      const { uuid4 } = require('x-twitter-scraper/internal/utils/uuid') as {
-        uuid4: () => string;
-      };
-      expect(uuid4()).toBe('10000000-1000-4000-8000-100000000000');
-    });
+    vi.resetModules();
+    const { uuid4 } = await import('x-twitter-scraper/internal/utils/uuid');
+    expect(uuid4()).toBe('10000000-1000-4000-8000-100000000000');
   });
 
-  test('falls back to Math.random without Web Crypto', () => {
+  test('falls back to Math.random without Web Crypto', async () => {
     expect.assertions(1);
 
     Object.defineProperty(globalThis, 'crypto', { configurable: true, value: undefined });
     Math.random = () => 0;
 
-    jest.isolateModules(() => {
-      const { uuid4 } = require('x-twitter-scraper/internal/utils/uuid') as {
-        uuid4: () => string;
-      };
-      expect(uuid4()).toBe('10000000-1000-4000-8000-100000000000');
-    });
+    vi.resetModules();
+    const { uuid4 } = await import('x-twitter-scraper/internal/utils/uuid');
+    expect(uuid4()).toBe('10000000-1000-4000-8000-100000000000');
   });
 });
