@@ -93,8 +93,8 @@ describe('missing File error message', () => {
 
   test('is thrown', async () => {
     const uploads = await import('x-twitter-scraper/core/uploads');
-    await expect(
-      uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' })),
-    ).rejects.toThrow('`File` is not defined as a global, which is required for file uploads.');
+    await expect(uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' }))).rejects.toThrow(
+      '`File` is not defined as a global, which is required for file uploads.',
+    );
   });
 });
