@@ -32,9 +32,9 @@ The response has this shape.
 ```json
 {
   "id": "42",
-  "tweetId": "1893456789012345678",
-  "tweetUrl": "https://x.com/user/status/1893456789012345678",
-  "tweetText": "Like & RT to enter! Picking 3 winners tomorrow.",
+  "tweetId": "2102882545427714266",
+  "tweetUrl": "https://x.com/NASA/status/2102882545427714266",
+  "tweetText": "Today, Croatia became the 74th nation that has committed to a peaceful and prosperous exploration of space.",
   "tweetAuthorUsername": "NASA",
   "tweetLikeCount": 4200,
   "tweetRetweetCount": 1800,
