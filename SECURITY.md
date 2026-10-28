@@ -65,7 +65,6 @@ These mitigations are required.
 - Confirm account, payload, and audience before write actions.
 - Pin production dependencies and development tools.
 - Run coverage, CodeQL, audits, and reproducibility checks.
-- Review each audit exception and recheck it within 30 days.
 - Publish only through `bin/release-local` after every local check passes.
 
 ## Response process

@@ -92,7 +92,6 @@ const setUp = (
   write(join('project', 'scripts', 'lint'), lint);
   write(join('project', 'scripts', 'check-reproducible'), passes);
   write(join('project', 'scripts', 'test'), '#!/bin/sh\necho "      Tests  2 passed (2)"\n');
-  write(join('project', 'scripts', 'utils', 'check-audit.cjs'), 'console.log("Audit passed.");\n', 0o644);
   write(join('project', 'scripts', 'utils', 'check-api-coverage.cjs'), apiCoverage, 0o644);
   write(join('project', 'scripts', 'utils', 'check-api-fields.cjs'), apiFields, 0o644);
   copyFileSync(

@@ -65,7 +65,7 @@
     "test": "./scripts/test",
     "build": "./scripts/build",
     "check:reproducible": "./scripts/check-reproducible",
-    "check:all": "node scripts/utils/check-api-coverage.cjs && node scripts/utils/check-api-fields.cjs && pnpm lint && pnpm test --no-file-parallelism && pnpm run check:reproducible && node scripts/utils/check-audit.cjs",
+    "check:all": "node scripts/utils/check-api-coverage.cjs && node scripts/utils/check-api-fields.cjs && pnpm lint && pnpm test --no-file-parallelism && pnpm run check:reproducible && pnpm audit",
     "prepublishOnly": "echo 'Direct publish blocked. Build first, then publish from dist.' && exit 1",
     "format": "./scripts/format",
     "prepare": "./scripts/build",

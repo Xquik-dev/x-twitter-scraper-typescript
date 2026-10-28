@@ -86,8 +86,8 @@ grep -q '[^[:space:]]' "$notes_file" || fail "CHANGELOG.md has no notes for ${ve
 step "Running the local checks"
 bin/check-local
 
-step "Auditing dependencies against audit-exceptions.json"
-node scripts/utils/check-audit.cjs || fail "The audit found a blocking finding. Fix it before you release."
+step "Auditing dependencies"
+pnpm audit || fail "The audit found an advisory. Fix it before you release."
 
 step "Building the package"
 bash ./bin/prepare-npm-release
