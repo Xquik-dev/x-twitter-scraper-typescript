@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../core/resource';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 
@@ -35,9 +36,21 @@ export interface SubscribeCreateResponse {
   status: 'checkout_created' | 'already_subscribed' | 'payment_issue';
 
   url: string;
+
+  /**
+   * Currency the checkout charges. Only a checkout_created answer has it.
+   */
+  chargedCurrency?: Shared.Currency;
 }
 
 export interface SubscribeCreateParams {
+  /**
+   * Currency to pay in, USD by default. Lowercase codes work too. Each renewal
+   * charges the same amount before tax. chargedCurrency shows the currency
+   * charged.
+   */
+  currency?: Shared.Currency;
+
   /**
    * Subscription tier to pre-select.
    */

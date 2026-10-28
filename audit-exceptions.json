@@ -1,3 +1,22 @@
 {
-  "exceptions": []
+  "exceptions": [
+    {
+      "advisory": "GHSA-gcqx-w48m-w2h4",
+      "path": "jest > @jest/core > jest-config > deepmerge",
+      "reason": "test-time only",
+      "recheck": "2026-11-25"
+    },
+    {
+      "advisory": "GHSA-gcqx-w48m-w2h4",
+      "path": "jest > jest-cli > @jest/core > jest-config > deepmerge",
+      "reason": "test-time only",
+      "recheck": "2026-11-25"
+    },
+    {
+      "advisory": "GHSA-gcqx-w48m-w2h4",
+      "path": "jest > jest-cli > jest-config > deepmerge",
+      "reason": "test-time only",
+      "recheck": "2026-11-25"
+    }
+  ]
 }

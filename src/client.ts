@@ -1132,6 +1132,7 @@ export declare namespace XTwitterScraper {
   export type CommunityPage = API.CommunityPage;
   export type CommunityTopic = API.CommunityTopic;
   export type ContentDisclosure = API.ContentDisclosure;
+  export type Currency = API.Currency;
   export type EmbeddedTweet = API.EmbeddedTweet;
   export type Error = API.Error;
   export type EventType = API.EventType;

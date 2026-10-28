@@ -53,8 +53,9 @@ export class Events extends APIResource {
     params: EventStreamParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<Stream<Event>> {
-    const { 'Last-Event-ID': lastEventID } = params ?? {};
+    const { 'Last-Event-ID': lastEventID, ...query } = params ?? {};
     return this._client.get('/events/stream', {
+      query,
       ...options,
       headers: buildHeaders([
         {
@@ -437,6 +438,12 @@ export namespace Event {
     unknownCounts?: Array<
       'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
     >;
+
+    /**
+     * The fields X did not send for this post. text reads empty, so treat it as
+     * unknown rather than empty. Left out when X sent the text.
+     */
+    unknownFields?: Array<'text'>;
 
     /**
      * User IDs that left this conversation.
@@ -1441,6 +1448,13 @@ export namespace Event {
     }
 
     export interface ReactionContext {
+      /**
+       * The post this one reacts to, with the same fields. X often sends only its
+       * ID, author & edit history. Then unknownFields lists text, and the flags X
+       * did not send are left out.
+       */
+      reactedToPost?: QuotedTweet;
+
       reactedToPostId?: string;
 
       /**
@@ -2081,6 +2095,12 @@ export namespace EventDetail {
     >;
 
     /**
+     * The fields X did not send for this post. text reads empty, so treat it as
+     * unknown rather than empty. Left out when X sent the text.
+     */
+    unknownFields?: Array<'text'>;
+
+    /**
      * User IDs that left this conversation.
      */
     unmentionedUserIds?: Array<string>;
@@ -3083,6 +3103,13 @@ export namespace EventDetail {
     }
 
     export interface ReactionContext {
+      /**
+       * The post this one reacts to, with the same fields. X often sends only its
+       * ID, author & edit history. Then unknownFields lists text, and the flags X
+       * did not send are left out.
+       */
+      reactedToPost?: QuotedTweet;
+
       reactedToPostId?: string;
 
       /**
@@ -3417,6 +3444,19 @@ export interface EventStreamParams {
    * The last event ID the client got. The stream first sends every event after it.
    */
   'Last-Event-ID'?: string;
+
+  /**
+   * Set to post_metrics to also get each post monitor's saved numbers. Any other
+   * value is refused.
+   */
+  include?: 'post_metrics';
+
+  /**
+   * Set to true to resume 30 seconds before Last-Event-ID, so late events still
+   * arrive. Events you have can arrive again, so skip IDs you've seen. An ID the
+   * stream can't find starts 5 minutes back, not 30 days.
+   */
+  lookBack?: boolean;
 }
 
 export declare namespace Events {
