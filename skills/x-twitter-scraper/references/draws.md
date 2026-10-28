@@ -28,7 +28,7 @@ Send `POST /draws` with a `tweetUrl` (required) and these optional filters.
 const draw = await xquikFetch('/draws', {
   method: 'POST',
   body: JSON.stringify({
-    tweetUrl: 'https://x.com/burakbayir/status/1893456789012345678',
+    tweetUrl: 'https://x.com/NASA/status/2102882545427714266',
     winnerCount: 3,
     backupCount: 2,
     uniqueAuthorsOnly: true,
