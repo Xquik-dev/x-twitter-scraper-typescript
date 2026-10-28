@@ -33,7 +33,7 @@ const draw = await xquikFetch('/draws', {
     backupCount: 2,
     uniqueAuthorsOnly: true,
     mustRetweet: true,
-    mustFollowUsername: 'burakbayir',
+    mustFollowUsername: 'NASA',
     filterMinFollowers: 50,
     filterAccountAgeDays: 30,
     filterLanguage: 'en',
