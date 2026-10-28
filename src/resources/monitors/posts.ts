@@ -20,7 +20,7 @@ export class Posts extends APIResource {
    * @example
    * ```ts
    * const postMonitor = await client.monitors.posts.create({
-   *   post: 'https://x.com/xquik/status/2104984505677430978',
+   *   post: 'https://x.com/NASA/status/2102882545427714266',
    * });
    * ```
    */

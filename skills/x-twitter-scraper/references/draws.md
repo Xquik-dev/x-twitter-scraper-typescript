@@ -19,7 +19,7 @@ Send `POST /draws` with a `tweetUrl` (required) and these optional filters.
 | `filterLanguage`       | string   | Language code (e.g., `"en"`)                                 |
 | `requiredKeywords`     | string[] | Words that must appear in the reply                          |
 | `requiredHashtags`     | string[] | Hashtags that must appear (e.g., `["#giveaway"]`)            |
-| `requiredMentions`     | string[] | Usernames that must be mentioned (e.g., `["@xquik"]`)        |
+| `requiredMentions`     | string[] | Usernames that must be mentioned (e.g., `["@NASA"]`)         |
 
 ## Complete workflow
 

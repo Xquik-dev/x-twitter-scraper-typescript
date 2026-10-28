@@ -22,7 +22,7 @@ The request body has this shape.
   "filterLanguage": "en",
   "requiredKeywords": ["giveaway"],
   "requiredHashtags": ["#contest"],
-  "requiredMentions": ["@xquik"]
+  "requiredMentions": ["@NASA"]
 }
 ```
 
@@ -35,7 +35,7 @@ The response has this shape.
   "tweetId": "1893456789012345678",
   "tweetUrl": "https://x.com/user/status/1893456789012345678",
   "tweetText": "Like & RT to enter! Picking 3 winners tomorrow.",
-  "tweetAuthorUsername": "xquik",
+  "tweetAuthorUsername": "NASA",
   "tweetLikeCount": 4200,
   "tweetRetweetCount": 1800,
   "tweetReplyCount": 1500,
