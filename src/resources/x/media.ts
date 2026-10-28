@@ -57,11 +57,61 @@ export interface MediaDownloadResponse {
 
   galleryUrl?: string;
 
+  /**
+   * The post's files saved to your gallery. Single downloads only.
+   */
+  items?: Array<MediaDownloadResponse.Item>;
+
   totalMedia?: number;
 
   totalTweets?: number;
 
   tweetId?: string;
+}
+
+export namespace MediaDownloadResponse {
+  /**
+   * 1 file saved to your gallery.
+   */
+  export interface Item {
+    /**
+     * Gallery file ID.
+     */
+    id: string;
+
+    tweetId: string;
+
+    mediaType: 'photo' | 'video' | 'animated_gif';
+
+    /**
+     * Saved copy of the file.
+     */
+    mediaUrl: string;
+
+    /**
+     * File size in bytes, as a string.
+     */
+    fileSize: string | null;
+
+    /**
+     * When the file joined your gallery.
+     */
+    createdAt: string;
+
+    authorUsername: string;
+
+    authorDisplayName: string;
+
+    authorAvatar: string | null;
+
+    tweetText: string;
+
+    likes: number | null;
+
+    retweets: number | null;
+
+    views: number | null;
+  }
 }
 
 /**
