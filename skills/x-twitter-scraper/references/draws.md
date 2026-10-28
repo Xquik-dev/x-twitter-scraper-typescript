@@ -19,7 +19,7 @@ Send `POST /draws` with a `tweetUrl` (required) and these optional filters.
 | `filterLanguage`       | string   | Language code (e.g., `"en"`)                                 |
 | `requiredKeywords`     | string[] | Words that must appear in the reply                          |
 | `requiredHashtags`     | string[] | Hashtags that must appear (e.g., `["#giveaway"]`)            |
-| `requiredMentions`     | string[] | Usernames that must be mentioned (e.g., `["@xquik"]`)        |
+| `requiredMentions`     | string[] | Usernames that must be mentioned (e.g., `["@NASA"]`)         |
 
 ## Complete workflow
 
@@ -28,12 +28,12 @@ Send `POST /draws` with a `tweetUrl` (required) and these optional filters.
 const draw = await xquikFetch('/draws', {
   method: 'POST',
   body: JSON.stringify({
-    tweetUrl: 'https://x.com/burakbayir/status/1893456789012345678',
+    tweetUrl: 'https://x.com/NASA/status/2102882545427714266',
     winnerCount: 3,
     backupCount: 2,
     uniqueAuthorsOnly: true,
     mustRetweet: true,
-    mustFollowUsername: 'burakbayir',
+    mustFollowUsername: 'NASA',
     filterMinFollowers: 50,
     filterAccountAgeDays: 30,
     filterLanguage: 'en',

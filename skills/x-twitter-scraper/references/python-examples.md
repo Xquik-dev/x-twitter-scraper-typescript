@@ -104,12 +104,12 @@ print(f"Extracted {len(results)} results")
 ```python
 # Create draw with all filters
 draw = xquik_fetch("/draws", method="POST", json_body={
-    "tweetUrl": "https://x.com/burakbayir/status/1893456789012345678",
+    "tweetUrl": "https://x.com/NASA/status/2102882545427714266",
     "winnerCount": 3,
     "backupCount": 2,
     "uniqueAuthorsOnly": True,
     "mustRetweet": True,
-    "mustFollowUsername": "burakbayir",
+    "mustFollowUsername": "NASA",
     "filterMinFollowers": 50,
     "filterAccountAgeDays": 30,
     "requiredKeywords": ["giveaway"],

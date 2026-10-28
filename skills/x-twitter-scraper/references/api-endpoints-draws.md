@@ -11,18 +11,18 @@ Run a giveaway draw from a tweet. Picks random winners from replies.
 The request body has this shape.
 ```json
 {
-  "tweetUrl": "https://x.com/user/status/1893456789012345678",
+  "tweetUrl": "https://x.com/NASA/status/2102882545427714266",
   "winnerCount": 3,
   "backupCount": 2,
   "uniqueAuthorsOnly": true,
   "mustRetweet": true,
-  "mustFollowUsername": "burakbayir",
+  "mustFollowUsername": "NASA",
   "filterMinFollowers": 100,
   "filterAccountAgeDays": 30,
   "filterLanguage": "en",
   "requiredKeywords": ["giveaway"],
   "requiredHashtags": ["#contest"],
-  "requiredMentions": ["@xquik"]
+  "requiredMentions": ["@NASA"]
 }
 ```
 
@@ -32,19 +32,19 @@ The response has this shape.
 ```json
 {
   "id": "42",
-  "tweetId": "1893456789012345678",
-  "tweetUrl": "https://x.com/user/status/1893456789012345678",
-  "tweetText": "Like & RT to enter! Picking 3 winners tomorrow.",
-  "tweetAuthorUsername": "xquik",
-  "tweetLikeCount": 4200,
+  "tweetId": "2102882545427714266",
+  "tweetUrl": "https://x.com/NASA/status/2102882545427714266",
+  "tweetText": "Welcome to the Artemis Accords, Croatia 🇭🇷\n \nToday, Croatia became the 74th nation that has committed to a peaceful and prosperous exploration of space. https://t.co/Xe1nm2pkSX https://t.co/QQGjcE6KKq",
+  "tweetAuthorUsername": "NASA",
+  "tweetLikeCount": 9000,
   "tweetRetweetCount": 1800,
-  "tweetReplyCount": 1500,
+  "tweetReplyCount": 207,
   "tweetQuoteCount": 120,
   "status": "completed",
-  "totalEntries": 1500,
-  "validEntries": 890,
-  "createdAt": "2026-02-24T10:00:00.000Z",
-  "drawnAt": "2026-02-24T10:01:00.000Z"
+  "totalEntries": 200,
+  "validEntries": 150,
+  "createdAt": "2026-09-25T10:00:00.000Z",
+  "drawnAt": "2026-09-25T10:01:00.000Z"
 }
 ```
 
