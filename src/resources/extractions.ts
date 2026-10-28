@@ -323,6 +323,15 @@ export namespace ExtractionRetrieveResponse {
     tweetUrl?: string;
 
     /**
+     * Badge type X shows on the account, with outputPreset=flat. Business is the gold
+     * badge of a verified organization. Government is the grey badge of a government
+     * or multilateral account. Blue is the badge of X Premium. Default nested output
+     * uses enrichmentData.user.verifiedType. Absent when the account has none of these
+     * badges.
+     */
+    verifiedType?: string;
+
+    /**
      * Whole number from 0.
      */
     viewCount?: number;
