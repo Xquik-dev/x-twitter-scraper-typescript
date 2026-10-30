@@ -4,7 +4,7 @@
 
 [Full changelog from v0.18.0 to v0.19.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.18.0...v0.19.0)
 
-This release adds the activity log reads, 3 game reads for the roster, player props and posts, and the API's new request and response fields. 4 response types gain required fields.
+This release adds the activity log reads and 3 game reads, for the roster, player props and posts. It also adds the API's new request and response fields. 4 response types gain required fields.
 
 ### BREAKING CHANGES
 
@@ -12,12 +12,12 @@ This release adds the activity log reads, 3 game reads for the roster, player pr
 
 ### Features
 
-* `client.activity` adds `list`, which returns the account's activity rows, `retrieve`, which returns 1 full activity record, and `export`, which downloads the rows as a file.
+* `client.activity` adds 3 reads. `list` returns the account's activity rows. `retrieve` returns the full record of 1 write action, extraction or monitor change. `export` downloads the rows as a file.
 * `client.x.sports` adds `retrieveRoster`, `retrievePlayerProps` and `listPosts`. Teams add `recentGames`, and a player's X account adds `protected`, `superFollowEligible` and `labelType`.
 * Posts add `unknownFields`, `reactionContext.reactedToPost` and `media[].editedWithNativeEditor`. Post monitors add the author's avatar & badge, the post's media and the baseline counts. Affiliation labels add `auxiliaryLabels`.
-* Top-ups and subscriptions take a `currency` and return `chargedCurrency`. Top-ups also return `chargedMinorUnits`. `client.events.stream` sends `lookBack` and `include`. Downloads return the saved gallery `items`.
+* Top-ups and subscriptions take a `currency`, 1 of the 32 codes in the new `Currency` type, and return `chargedCurrency`. Top-ups also return `chargedMinorUnits`. `client.events.stream` sends `lookBack` and `include`. Downloads return the saved gallery `items`.
 * With `outputPreset=flat`, each extraction result adds `verifiedType`, the account's Business, Government or Blue badge.
-* `Currency` gains 22 codes, `account.updateLocale` takes `ja`, `ko` and `zh`, error codes gain `api_key_budget_reached`, and posts gain `liveEventContext`.
+* `account.updateLocale` takes `ja`, `ko` and `zh`. Error codes gain `api_key_budget_reached`. Posts gain `liveEventContext`.
 
 ### Chores
 
