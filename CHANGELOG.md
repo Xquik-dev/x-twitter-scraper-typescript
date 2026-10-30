@@ -4,18 +4,23 @@
 
 [Full changelog from v0.18.0 to v0.19.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.18.0...v0.19.0)
 
-This release adds a game's roster, player props & posts reads and the API's new response fields. Code that builds these response types by hand must set their new required fields.
+This release adds 3 game reads, for the roster, player props and posts, and the API's new request and response fields. 4 response types gain required fields.
+
+### BREAKING CHANGES
+
+* Code that builds these response types by hand must set their new required fields. `SportsTeam` adds `recentGames`. `FootballPlayerXUser` adds `protected`, `superFollowEligible` and `labelType`. `PostMonitor` adds `media` and `baseline`. `CreditTopupBalanceResponse` adds `chargedCurrency` and `chargedMinorUnits`.
 
 ### Features
 
 * `client.x.sports` adds `retrieveRoster`, `retrievePlayerProps` and `listPosts`. Teams add `recentGames`, and a player's X account adds `protected`, `superFollowEligible` and `labelType`.
 * Posts add `unknownFields`, `reactionContext.reactedToPost` and `media[].editedWithNativeEditor`. Post monitors add the author's avatar & badge, the post's media and the baseline counts. Affiliation labels add `auxiliaryLabels`.
-* Top-ups and subscriptions take a `currency` and return `chargedCurrency` and `chargedMinorUnits`. `client.events.stream` sends `lookBack` and `include`. Downloads return the saved gallery `items`.
-* Each extraction result adds `verifiedType`, the account's Business, Government or Blue badge.
+* Top-ups and subscriptions take a `currency` and return `chargedCurrency`. Top-ups also return `chargedMinorUnits`. `client.events.stream` sends `lookBack` and `include`. Downloads return the saved gallery `items`.
+* With `outputPreset=flat`, each extraction result adds `verifiedType`, the account's Business, Government or Blue badge.
 
-### Package
+### Chores
 
-* The npm description now opens with Twitter API & X API.
+* The tests run on Vitest, and `bin/check-local` runs `pnpm audit` with no exceptions. `bin/release-local` drops its second audit, since `bin/check-local` runs one just before it.
+* The npm description opens with Twitter API & X API and names Xquik.
 
 ## 0.18.0 (2026-10-23)
 
