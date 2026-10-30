@@ -182,9 +182,6 @@ export namespace ActivityRecord {
   }
 
   export namespace Caller {
-    /**
-     * Name and prefix of the API key used. Never its value.
-     */
     export interface APIKey {
       name: string;
 
@@ -198,9 +195,6 @@ export namespace ActivityRecord {
     }
   }
 
-  /**
-   * Credits charged for this activity.
-   */
   export interface Charge {
     at: string;
 
@@ -221,10 +215,6 @@ export namespace ActivityRecord {
     url: string;
   }
 
-  /**
-   * The API request behind this activity. Null for activity from before Oct 30,
-   * 2026.
-   */
   export interface Request {
     at: string;
 
@@ -264,6 +254,11 @@ export interface ActivityListParams {
   category?: string;
 
   /**
+   * Leave it out or pass json to get the rows. Use export for a file.
+   */
+  format?: 'json';
+
+  /**
    * Most rows to return, from 1 to 100,000. 100 by default. PDF stops at 10,000
    * rows.
    */
@@ -290,7 +285,7 @@ export interface ActivityListParams {
   until?: string;
 }
 
-export interface ActivityExportParams extends ActivityListParams {
+export interface ActivityExportParams extends Omit<ActivityListParams, 'format'> {
   /**
    * File format.
    */
