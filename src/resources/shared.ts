@@ -501,9 +501,41 @@ export namespace ContentDisclosure {
 }
 
 /**
- * ISO 4217 code of 1 of the 10 currencies Xquik charges in.
+ * ISO 4217 code of a currency Xquik charges in.
  */
-export type Currency = 'USD' | 'EUR' | 'GBP' | 'TRY' | 'JPY' | 'CNY' | 'KRW' | 'CAD' | 'AUD' | 'MXN';
+export type Currency =
+  | 'USD'
+  | 'EUR'
+  | 'GBP'
+  | 'TRY'
+  | 'JPY'
+  | 'CNY'
+  | 'KRW'
+  | 'CAD'
+  | 'AUD'
+  | 'MXN'
+  | 'AED'
+  | 'BRL'
+  | 'CHF'
+  | 'CZK'
+  | 'DKK'
+  | 'HKD'
+  | 'HUF'
+  | 'IDR'
+  | 'ILS'
+  | 'INR'
+  | 'MYR'
+  | 'NOK'
+  | 'NZD'
+  | 'PHP'
+  | 'PLN'
+  | 'QAR'
+  | 'RON'
+  | 'SAR'
+  | 'SEK'
+  | 'SGD'
+  | 'THB'
+  | 'ZAR';
 
 /**
  * A parent, quoted or retweeted tweet. It has the TweetPublicData fields and an
@@ -665,6 +697,11 @@ export interface EmbeddedTweet {
    * Public restrictions & prompts.
    */
   limitedActions?: Array<SearchTweet.LimitedAction>;
+
+  /**
+   * The live event the post belongs to, such as an election.
+   */
+  liveEventContext?: SearchTweet.LiveEventContext;
 
   /**
    * Media, omitted when unavailable.
@@ -853,6 +890,7 @@ export namespace Error {
     | 'account_not_found'
     | 'account_required'
     | 'account_restricted'
+    | 'api_key_budget_reached'
     | 'api_key_limit_reached'
     | 'article_not_found'
     | 'closed'
@@ -1407,6 +1445,11 @@ export interface SearchTweet {
    * Public restrictions & prompts.
    */
   limitedActions?: Array<SearchTweet.LimitedAction>;
+
+  /**
+   * The live event the post belongs to, such as an election.
+   */
+  liveEventContext?: SearchTweet.LiveEventContext;
 
   /**
    * Media, omitted when unavailable.
@@ -2089,6 +2132,23 @@ export namespace SearchTweet {
 
       subtext?: string;
     }
+  }
+
+  export interface LiveEventContext {
+    /**
+     * The event's image.
+     */
+    imageUrl?: string;
+
+    /**
+     * Event name.
+     */
+    title?: string;
+
+    /**
+     * The event's page on X.
+     */
+    url?: string;
   }
 
   /**

@@ -42,6 +42,20 @@ Methods
 - <code title="put /account/x-identity">client.account.<a href="./src/resources/account.ts">setXUsername</a>({ ...params }) -> AccountSetXUsernameResponse</code>
 - <code title="patch /account">client.account.<a href="./src/resources/account.ts">updateLocale</a>({ ...params }) -> AccountUpdateLocaleResponse</code>
 
+# Activity
+
+Types
+
+- <code><a href="./src/resources/activity.ts">ActivityLogRow</a></code>
+- <code><a href="./src/resources/activity.ts">ActivityRecord</a></code>
+- <code><a href="./src/resources/activity.ts">ActivityListResponse</a></code>
+
+Methods
+
+- <code title="get /activity">client.activity.<a href="./src/resources/activity.ts">list</a>({ ...params }) -> ActivityListResponse</code>
+- <code title="get /activity/{id}">client.activity.<a href="./src/resources/activity.ts">retrieve</a>(id) -> ActivityRecord</code>
+- <code title="get /activity">client.activity.<a href="./src/resources/activity.ts">export</a>({ ...params }) -> Response</code>
+
 # Subscribe
 
 Types

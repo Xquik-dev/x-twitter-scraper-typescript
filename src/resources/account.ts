@@ -199,7 +199,7 @@ export interface AccountSetXUsernameParams {
 }
 
 export interface AccountUpdateLocaleParams {
-  locale: 'en' | 'tr' | 'es';
+  locale: 'en' | 'es' | 'tr' | 'ja' | 'ko' | 'zh';
 }
 
 export declare namespace Account {
