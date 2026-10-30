@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.19.0 (2026-10-30)
+
+[Full changelog from v0.18.0 to v0.19.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.18.0...v0.19.0)
+
+This release adds a game's roster, player props & posts reads and the API's new response fields. Code that builds these response types by hand must set their new required fields.
+
+### Features
+
+* `client.x.sports` adds `retrieveRoster`, `retrievePlayerProps` and `listPosts`. Teams add `recentGames`, and a player's X account adds `protected`, `superFollowEligible` and `labelType`.
+* Posts add `unknownFields`, `reactionContext.reactedToPost` and `media[].editedWithNativeEditor`. Post monitors add the author's avatar & badge, the post's media and the baseline counts. Affiliation labels add `auxiliaryLabels`.
+* Top-ups and subscriptions take a `currency` and return `chargedCurrency` and `chargedMinorUnits`. `client.events.stream` sends `lookBack` and `include`. Downloads return the saved gallery `items`.
+* Each extraction result adds `verifiedType`, the account's Business, Government or Blue badge.
+
+### Package
+
+* The npm description now opens with Twitter API & X API.
+
 ## 0.18.0 (2026-10-23)
 
 [Full changelog from v0.17.0 to v0.18.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.17.0...v0.18.0)

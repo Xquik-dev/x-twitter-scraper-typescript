@@ -1,7 +1,7 @@
 {
   "name": "x-twitter-scraper",
-  "version": "0.18.0",
-  "description": "X API & Twitter API SDK for TypeScript. Scrape Twitter search, profiles & followers as a Twitter scraper & tweet scraper. Not affiliated with X Corp.",
+  "version": "0.19.0",
+  "description": "Twitter API & X API SDK for TypeScript. Twitter scraper for tweets, profiles & followers. Not affiliated with X Corp.",
   "author": "Xquik <support@xquik.com>",
   "types": "dist/index.d.ts",
   "typesVersions": {
