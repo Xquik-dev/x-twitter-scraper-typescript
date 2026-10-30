@@ -501,9 +501,41 @@ export namespace ContentDisclosure {
 }
 
 /**
- * ISO 4217 code of 1 of the 10 currencies Xquik charges in.
+ * ISO 4217 code of a currency Xquik charges in.
  */
-export type Currency = 'USD' | 'EUR' | 'GBP' | 'TRY' | 'JPY' | 'CNY' | 'KRW' | 'CAD' | 'AUD' | 'MXN';
+export type Currency =
+  | 'USD'
+  | 'EUR'
+  | 'GBP'
+  | 'TRY'
+  | 'JPY'
+  | 'CNY'
+  | 'KRW'
+  | 'CAD'
+  | 'AUD'
+  | 'MXN'
+  | 'AED'
+  | 'BRL'
+  | 'CHF'
+  | 'CZK'
+  | 'DKK'
+  | 'HKD'
+  | 'HUF'
+  | 'IDR'
+  | 'ILS'
+  | 'INR'
+  | 'MYR'
+  | 'NOK'
+  | 'NZD'
+  | 'PHP'
+  | 'PLN'
+  | 'QAR'
+  | 'RON'
+  | 'SAR'
+  | 'SEK'
+  | 'SGD'
+  | 'THB'
+  | 'ZAR';
 
 /**
  * A parent, quoted or retweeted tweet. It has the TweetPublicData fields and an
@@ -853,6 +885,7 @@ export namespace Error {
     | 'account_not_found'
     | 'account_required'
     | 'account_restricted'
+    | 'api_key_budget_reached'
     | 'api_key_limit_reached'
     | 'article_not_found'
     | 'closed'
