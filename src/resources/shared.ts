@@ -699,6 +699,11 @@ export interface EmbeddedTweet {
   limitedActions?: Array<SearchTweet.LimitedAction>;
 
   /**
+   * The live event the post belongs to, such as an election.
+   */
+  liveEventContext?: SearchTweet.LiveEventContext;
+
+  /**
    * Media, omitted when unavailable.
    */
   media?: Array<TweetMedia>;
@@ -1442,6 +1447,11 @@ export interface SearchTweet {
   limitedActions?: Array<SearchTweet.LimitedAction>;
 
   /**
+   * The live event the post belongs to, such as an election.
+   */
+  liveEventContext?: SearchTweet.LiveEventContext;
+
+  /**
    * Media, omitted when unavailable.
    */
   media?: Array<TweetMedia>;
@@ -2122,6 +2132,23 @@ export namespace SearchTweet {
 
       subtext?: string;
     }
+  }
+
+  export interface LiveEventContext {
+    /**
+     * The event's image.
+     */
+    imageUrl?: string;
+
+    /**
+     * Event name.
+     */
+    title?: string;
+
+    /**
+     * The event's page on X.
+     */
+    url?: string;
   }
 
   /**

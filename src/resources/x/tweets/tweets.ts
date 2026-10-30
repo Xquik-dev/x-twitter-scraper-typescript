@@ -543,6 +543,11 @@ export interface TweetDetail {
   limitedActions?: Array<TweetDetail.LimitedAction>;
 
   /**
+   * The live event the post belongs to, such as an election.
+   */
+  liveEventContext?: TweetDetail.LiveEventContext;
+
+  /**
    * Media, omitted when unavailable.
    */
   media?: Array<Shared.TweetMedia>;
@@ -1223,6 +1228,23 @@ export namespace TweetDetail {
 
       subtext?: string;
     }
+  }
+
+  export interface LiveEventContext {
+    /**
+     * The event's image.
+     */
+    imageUrl?: string;
+
+    /**
+     * Event name.
+     */
+    title?: string;
+
+    /**
+     * The event's page on X.
+     */
+    url?: string;
   }
 
   /**
