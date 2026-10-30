@@ -11,6 +11,14 @@ export {
   type AccountSetXUsernameParams,
   type AccountUpdateLocaleParams,
 } from './account';
+export {
+  Activity,
+  type ActivityLogRow,
+  type ActivityRecord,
+  type ActivityListResponse,
+  type ActivityListParams,
+  type ActivityExportParams,
+} from './activity';
 export { Compose, type ComposeCreateResponse, type ComposeCreateParams } from './compose';
 export {
   Credits,

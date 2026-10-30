@@ -8,6 +8,7 @@
     "operations": [
       "GET /api/v1/api-keys",
       "POST /api/v1/api-keys",
+      "PATCH /api/v1/api-keys",
       "POST /api/v1/api-keys/bulk-revoke",
       "PATCH /api/v1/api-keys/{id}",
       "DELETE /api/v1/api-keys/{id}",

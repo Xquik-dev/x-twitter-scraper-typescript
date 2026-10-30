@@ -27,6 +27,14 @@ import {
   AccountUpdateLocaleParams,
   AccountUpdateLocaleResponse,
 } from './resources/account';
+import {
+  Activity,
+  ActivityExportParams,
+  ActivityListParams,
+  ActivityListResponse,
+  ActivityLogRow,
+  ActivityRecord,
+} from './resources/activity';
 import { Compose, ComposeCreateParams, ComposeCreateResponse } from './resources/compose';
 import {
   CreditRedirectTopupCheckoutParams,
@@ -883,6 +891,10 @@ export class XTwitterScraper {
    */
   account: API.Account = new API.Account(this);
   /**
+   * Account activity log
+   */
+  activity: API.Activity = new API.Activity(this);
+  /**
    * Subscription, billing, and credits
    */
   subscribe: API.Subscribe = new API.Subscribe(this);
@@ -939,6 +951,7 @@ export class XTwitterScraper {
 }
 
 XTwitterScraper.Account = Account;
+XTwitterScraper.Activity = Activity;
 XTwitterScraper.Subscribe = Subscribe;
 XTwitterScraper.Compose = Compose;
 XTwitterScraper.Drafts = Drafts;
@@ -965,6 +978,15 @@ export declare namespace XTwitterScraper {
     type AccountUpdateLocaleResponse as AccountUpdateLocaleResponse,
     type AccountSetXUsernameParams as AccountSetXUsernameParams,
     type AccountUpdateLocaleParams as AccountUpdateLocaleParams,
+  };
+
+  export {
+    Activity as Activity,
+    type ActivityLogRow as ActivityLogRow,
+    type ActivityRecord as ActivityRecord,
+    type ActivityListResponse as ActivityListResponse,
+    type ActivityListParams as ActivityListParams,
+    type ActivityExportParams as ActivityExportParams,
   };
 
   export {
