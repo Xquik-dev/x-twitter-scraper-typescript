@@ -259,8 +259,7 @@ export interface ActivityListParams {
   format?: 'json';
 
   /**
-   * Most rows to return, from 1 to 100,000. 100 by default. PDF stops at 10,000
-   * rows.
+   * Most rows to return, from 1 to 100,000. 100 by default.
    */
   limit?: number;
 
@@ -287,7 +286,7 @@ export interface ActivityListParams {
 
 export interface ActivityExportParams extends Omit<ActivityListParams, 'format'> {
   /**
-   * File format.
+   * File format. PDF stops at 10,000 rows.
    */
   format: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
 }

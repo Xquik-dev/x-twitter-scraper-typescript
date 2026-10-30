@@ -69,6 +69,10 @@ describe('resource activity', () => {
     expect(rows).toEqual([row]);
   });
 
+  test('list: takes no file format', () => {
+    expectTypeOf<XTwitterScraper.ActivityExportParams>().not.toExtend<XTwitterScraper.ActivityListParams>();
+  });
+
   test('retrieve: returns the activity record', async () => {
     const { client, requests } = fixtureClient(record);
 
