@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { fixtureClient } from '../fixture-client';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -65,5 +66,13 @@ describe('resource credits', () => {
 
   test('topupBalance: required and optional params', async () => {
     const response = await client.credits.topupBalance({ dollars: 10, locale: 'en' });
+  });
+
+  test('topupBalance: sends the tool page to return to after Checkout', async () => {
+    const { client: fixture, sent } = fixtureClient({});
+
+    await fixture.credits.topupBalance({ dollars: 10, returnPath: '/en/x-article-reader' });
+
+    expect(await sent[0]?.json()).toEqual({ dollars: 10, returnPath: '/en/x-article-reader' });
   });
 });
