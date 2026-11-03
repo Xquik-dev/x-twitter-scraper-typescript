@@ -16,6 +16,7 @@ This release adds the shadowban check and the activity, top-up and reply fields 
 ### Chores
 
 * `excluded-operations.json` lists the 4 OAuth 2.1 and 2 agent sign-up routes, since they live outside the SDK base URL.
+* The dev tools resolve minimatch 11.0.4, which fixes GHSA-g3hv-75wg-m249, so `pnpm audit` passes again.
 
 ## 0.19.0 (2026-10-30)
 
