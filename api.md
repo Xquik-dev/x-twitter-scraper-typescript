@@ -399,6 +399,8 @@ Types
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveListMembershipsResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveListsResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveLiveResponse</a></code>
+- <code><a href="./src/resources/x/users/users.ts">ShadowbanReport</a></code>
+- <code><a href="./src/resources/x/users/users.ts">ShadowbanVerdict</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveVerifiedFollowersResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserTranslateBioResponse</a></code>
 
@@ -425,6 +427,7 @@ Methods
 - <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveMentions</a>(id, { ...params }) -> PaginatedTweets</code>
 - <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveReplies</a>(id, { ...params }) -> PaginatedTweets</code>
 - <code title="get /x/users/search">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSearch</a>({ ...params }) -> PaginatedUsers</code>
+- <code title="get /x/users/{id}/shadowban">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveShadowban</a>(id, { ...params }) -> ShadowbanReport</code>
 - <code title="get /x/users/{id}/similar">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSimilar</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/users/{id}/subscriptions">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSubscriptions</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveTweets</a>(id, { ...params }) -> PaginatedTweets</code>

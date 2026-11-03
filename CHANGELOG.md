@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.20.0 (2026-11-03)
+
+[Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)
+
+This release adds the shadowban check and the activity, top-up and reply fields the API added. `ActivityRecord.kind` gains 10 values, so a `switch` that handles every kind needs a case for each new one.
+
+### Features
+
+* `client.x.users.retrieveShadowban` checks 1 account for a search ban, a search suggestion ban and reply deboosting. It returns a `ShadowbanReport` with the verdict, reason and evidence of each check.
+* `client.activity.retrieve` returns every activity kind, such as `billing`, `webhook_delivery` and `x_account_connection`, with their timestamps, such as `deliveredAt`, `nextRetryAt` and `pausedAt`.
+* `client.credits.topupBalance` takes `returnPath`, the Xquik tool page to return to after Checkout.
+* `client.x.tweets.getReplies` returns `unreachedReplies`, the count of replies the read hasn't reached yet.
+
+### Chores
+
+* `excluded-operations.json` lists the 4 OAuth 2.1 and 2 agent sign-up routes, since they live outside the SDK base URL.
+
 ## 0.19.0 (2026-10-30)
 
 [Full changelog from v0.18.0 to v0.19.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.18.0...v0.19.0)

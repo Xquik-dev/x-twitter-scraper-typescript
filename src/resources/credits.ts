@@ -201,6 +201,12 @@ export interface CreditTopupBalanceParams {
    * default.
    */
   locale?: string;
+
+  /**
+   * Optional Xquik tool page to return to after Checkout, such as
+   * /en/x-article-reader.
+   */
+  returnPath?: string;
 }
 
 export declare namespace Credits {

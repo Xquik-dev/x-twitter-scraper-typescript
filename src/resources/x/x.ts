@@ -269,6 +269,8 @@ import {
 } from './tweets/tweets';
 import * as UsersAPI from './users/users';
 import {
+  ShadowbanReport,
+  ShadowbanVerdict,
   UserRemoveFollowerParams,
   UserRemoveFollowerResponse,
   UserRetrieveAffiliatesParams,
@@ -301,6 +303,7 @@ import {
   UserRetrieveParams,
   UserRetrieveRepliesParams,
   UserRetrieveSearchParams,
+  UserRetrieveShadowbanParams,
   UserRetrieveSimilarParams,
   UserRetrieveSubscriptionsParams,
   UserRetrieveTweetsParams,
@@ -1972,6 +1975,8 @@ export declare namespace X {
     type UserRetrieveListMembershipsResponse as UserRetrieveListMembershipsResponse,
     type UserRetrieveListsResponse as UserRetrieveListsResponse,
     type UserRetrieveLiveResponse as UserRetrieveLiveResponse,
+    type ShadowbanReport as ShadowbanReport,
+    type ShadowbanVerdict as ShadowbanVerdict,
     type UserRetrieveVerifiedFollowersResponse as UserRetrieveVerifiedFollowersResponse,
     type UserTranslateBioResponse as UserTranslateBioResponse,
     type UserRetrieveParams as UserRetrieveParams,
@@ -1995,6 +2000,7 @@ export declare namespace X {
     type UserRetrieveMentionsParams as UserRetrieveMentionsParams,
     type UserRetrieveRepliesParams as UserRetrieveRepliesParams,
     type UserRetrieveSearchParams as UserRetrieveSearchParams,
+    type UserRetrieveShadowbanParams as UserRetrieveShadowbanParams,
     type UserRetrieveSimilarParams as UserRetrieveSimilarParams,
     type UserRetrieveSubscriptionsParams as UserRetrieveSubscriptionsParams,
     type UserRetrieveTweetsParams as UserRetrieveTweetsParams,

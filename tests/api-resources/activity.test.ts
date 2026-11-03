@@ -82,6 +82,26 @@ describe('resource activity', () => {
     expect(response).toEqual(record);
   });
 
+  test('retrieve: returns a webhook delivery with its delivery times', async () => {
+    const delivery: XTwitterScraper.ActivityRecord = {
+      ...record,
+      kind: 'webhook_delivery',
+      type: 'tweet.new',
+      timestamps: {
+        createdAt: '2026-10-28T20:22:13.481Z',
+        firstAttemptedAt: '2026-10-28T20:22:13.610Z',
+        deliveredAt: '2026-10-28T20:22:13.702Z',
+        nextRetryAt: '2026-10-28T20:23:13.610Z',
+      },
+    };
+    const { client } = fixtureClient(delivery);
+
+    const response = await client.activity.retrieve('naF3xqHLWDTs');
+
+    expect(response.kind).toBe('webhook_delivery');
+    expect(response.timestamps.deliveredAt).toBe('2026-10-28T20:22:13.702Z');
+  });
+
   test('export: sends the format and returns the raw file', async () => {
     const { client, requests, sent } = fixtureClient([row]);
 
