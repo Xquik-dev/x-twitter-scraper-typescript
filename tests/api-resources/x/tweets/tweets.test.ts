@@ -736,6 +736,20 @@ describe('resource tweets', () => {
     expect(response).toEqual(example);
   });
 
+  test('getReplies: returns how many replies the read has not reached', async () => {
+    const example: XTwitterScraper.X.TweetGetRepliesResponse = {
+      tweets: [],
+      has_next_page: true,
+      next_cursor: 'DAACCgACHVOxUHMAJxAK',
+      unreachedReplies: 120,
+    };
+    const { client: fixture } = fixtureClient(example);
+
+    const response = await fixture.x.tweets.getReplies('1');
+
+    expect(response.unreachedReplies).toBe(120);
+  });
+
   test('getReplies: returns every embedded retweeted post field', async () => {
     const example: XTwitterScraper.X.TweetGetRepliesResponse = {
       tweets: [

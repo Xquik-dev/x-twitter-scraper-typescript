@@ -405,6 +405,26 @@ export class Users extends APIResource {
   }
 
   /**
+   * Checks 1 X account for a search ban, a search suggestion ban & reply
+   * deboosting. It also says if the account is active, protected or suspended. Each
+   * profile, post, suggestion & reply in the answer costs 1 credit.
+   *
+   * @example
+   * ```ts
+   * const shadowbanReport = await client.x.users.retrieveShadowban(
+   *   'id',
+   * );
+   * ```
+   */
+  retrieveShadowban(
+    id: string,
+    query: UserRetrieveShadowbanParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<ShadowbanReport> {
+    return this._client.get(path`/x/users/${id}/shadowban`, { query, ...options });
+  }
+
+  /**
    * Returns the public accounts X lists as similar to the selected user, in X's
    * order. X can list slightly different accounts on each call. Each account costs 1
    * credit.
@@ -1288,6 +1308,249 @@ export namespace UserRetrieveListsResponse {
     }
   }
 }
+
+/**
+ * Says whether X limits 1 account in search, search suggestions or reply threads.
+ * Each check holds a verdict, its reason & the evidence it read. Evidence is null
+ * for a check that couldn't read the account.
+ */
+export interface ShadowbanReport {
+  /**
+   * Whether the account is active, protected or suspended.
+   */
+  account: 'active' | 'protected' | 'suspended';
+
+  /**
+   * The 4 checks, each with a verdict, a reason & evidence.
+   */
+  checks: ShadowbanReport.Checks;
+
+  /**
+   * ID of the account. Null for a suspended account asked for by username.
+   */
+  userId: string | null;
+
+  /**
+   * Username of the account. Null for a suspended account asked for by ID.
+   */
+  username: string | null;
+}
+
+export namespace ShadowbanReport {
+  /**
+   * The 4 checks, each with a verdict, a reason & evidence.
+   */
+  export interface Checks {
+    /**
+     * Passes an active or protected account & fails a suspended one.
+     */
+    account: Checks.Account;
+
+    /**
+     * Opens the threads of up to 3 recent replies to other accounts. `in_thread`
+     * passes. X ranks replies for each viewer, so `more_replies` can't tell.
+     */
+    replies: Checks.Replies;
+
+    /**
+     * Looks for the account's recent posts in X search, sorted by Latest. `listed`
+     * passes & `missing` fails.
+     */
+    search: Checks.Search;
+
+    /**
+     * Looks for the account among the accounts X suggests for its username.
+     * `suggested` passes & `not_suggested` fails.
+     */
+    suggestion: Checks.Suggestion;
+  }
+
+  export namespace Checks {
+    /**
+     * Passes an active or protected account & fails a suspended one.
+     */
+    export interface Account {
+      /**
+       * Where to see the account on X.
+       */
+      evidence: Account.Evidence;
+
+      /**
+       * State of the account on X.
+       */
+      reason: 'active' | 'protected' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace Account {
+      /**
+       * Where to see the account on X.
+       */
+      export interface Evidence {
+        /**
+         * Profile of the account on X.
+         */
+        profileUrl: string;
+      }
+    }
+
+    /**
+     * Opens the threads of up to 3 recent replies to other accounts. `in_thread`
+     * passes. X ranks replies for each viewer, so `more_replies` can't tell.
+     */
+    export interface Replies {
+      /**
+       * Each reply it opened & where it showed.
+       */
+      evidence: Replies.Evidence | null;
+
+      /**
+       * `more_replies` means X put a reply behind its hidden replies prompt.
+       * `not_found` means no reply showed on the pages the check read.
+       */
+      reason:
+        | 'in_thread'
+        | 'more_replies'
+        | 'no_recent_replies'
+        | 'not_found'
+        | 'unavailable'
+        | 'protected'
+        | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace Replies {
+      /**
+       * Each reply it opened & where it showed.
+       */
+      export interface Evidence {
+        /**
+         * Up to 3 replies, newest first.
+         */
+        replies: Array<Evidence.Reply>;
+      }
+
+      export namespace Evidence {
+        export interface Reply {
+          /**
+           * ID of the post it replies to.
+           */
+          parentId: string;
+
+          /**
+           * The thread of that post on X.
+           */
+          parentUrl: string;
+
+          /**
+           * `thread` means the reply shows in the thread. `more_replies` means it shows
+           * only behind X's hidden replies prompt.
+           */
+          placement: 'thread' | 'more_replies' | 'not_found';
+
+          /**
+           * ID of the reply.
+           */
+          replyId: string;
+
+          /**
+           * The reply on X.
+           */
+          replyUrl: string;
+        }
+      }
+    }
+
+    /**
+     * Looks for the account's recent posts in X search, sorted by Latest. `listed`
+     * passes & `missing` fails.
+     */
+    export interface Search {
+      /**
+       * The search & the posts it looked for.
+       */
+      evidence: Search.Evidence | null;
+
+      /**
+       * `listed` means search shows its posts & `missing` means it shows none.
+       * `no_recent_posts` means the account has no recent post to look for.
+       */
+      reason: 'listed' | 'missing' | 'no_recent_posts' | 'unavailable' | 'protected' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace Search {
+      /**
+       * The search & the posts it looked for.
+       */
+      export interface Evidence {
+        /**
+         * Up to 5 posts of the account that search showed.
+         */
+        foundPostIds: Array<string>;
+
+        /**
+         * The search it ran.
+         */
+        query: string;
+
+        /**
+         * Up to 5 recent posts of the account.
+         */
+        recentPostIds: Array<string>;
+
+        /**
+         * The same search on X, sorted by Latest.
+         */
+        searchUrl: string;
+      }
+    }
+
+    /**
+     * Looks for the account among the accounts X suggests for its username.
+     * `suggested` passes & `not_suggested` fails.
+     */
+    export interface Suggestion {
+      /**
+       * The username searched & the accounts X suggested.
+       */
+      evidence: Suggestion.Evidence | null;
+
+      /**
+       * `suggested` means X suggests the account for its username.
+       */
+      reason: 'suggested' | 'not_suggested' | 'unavailable' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace Suggestion {
+      /**
+       * The username searched & the accounts X suggested.
+       */
+      export interface Evidence {
+        /**
+         * The username it typed.
+         */
+        query: string;
+
+        /**
+         * Up to 10 accounts X suggested, in its order.
+         */
+        suggestedUsernames: Array<string>;
+      }
+    }
+  }
+}
+
+/**
+ * Pass means X shows the account there, and fail means it doesn't. Unknown means
+ * the check had nothing to test or X didn't answer.
+ */
+export type ShadowbanVerdict = 'pass' | 'fail' | 'unknown';
 
 /**
  * Says whether a user broadcasts live video on X now. `broadcast` is their latest
@@ -4287,6 +4550,24 @@ export interface UserRetrieveSearchParams {
   verifiedType?: string;
 }
 
+export interface UserRetrieveShadowbanParams {
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+   * author.username. A list keeps the field in each item. Case & underscores do not
+   * matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+   * always stay. An unknown name answers 400 unknown_field with the valid names,
+   * before any read. The price stays the same. SDK row types then hold only the
+   * named fields.
+   */
+  fields?: string;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
+}
+
 export interface UserRetrieveSimilarParams {
   /**
    * Match any comma-separated or line-separated bio term, ignoring case.
@@ -5056,6 +5337,8 @@ export declare namespace Users {
     type UserRetrieveListMembershipsResponse as UserRetrieveListMembershipsResponse,
     type UserRetrieveListsResponse as UserRetrieveListsResponse,
     type UserRetrieveLiveResponse as UserRetrieveLiveResponse,
+    type ShadowbanReport as ShadowbanReport,
+    type ShadowbanVerdict as ShadowbanVerdict,
     type UserRetrieveVerifiedFollowersResponse as UserRetrieveVerifiedFollowersResponse,
     type UserTranslateBioResponse as UserTranslateBioResponse,
     type UserRetrieveParams as UserRetrieveParams,
@@ -5079,6 +5362,7 @@ export declare namespace Users {
     type UserRetrieveMentionsParams as UserRetrieveMentionsParams,
     type UserRetrieveRepliesParams as UserRetrieveRepliesParams,
     type UserRetrieveSearchParams as UserRetrieveSearchParams,
+    type UserRetrieveShadowbanParams as UserRetrieveShadowbanParams,
     type UserRetrieveSimilarParams as UserRetrieveSimilarParams,
     type UserRetrieveSubscriptionsParams as UserRetrieveSubscriptionsParams,
     type UserRetrieveTweetsParams as UserRetrieveTweetsParams,

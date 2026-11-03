@@ -2606,6 +2606,14 @@ export interface TweetGetRepliesResponse extends Omit<Shared.PaginatedTweets, 't
    * the same replies.
    */
   partialBefore?: string;
+
+  /**
+   * Present on automatic pages without filters while X counts replies the read
+   * hasn't reached. If a reply that belongs in your rows is missing, it's among
+   * them. The count drops as you read more pages. On the last page, it counts the
+   * replies the read can't reach.
+   */
+  unreachedReplies?: number;
 }
 
 export namespace TweetGetRepliesResponse {

@@ -134,7 +134,24 @@ export interface ActivityRecord {
    */
   details: { [key: string]: string | number | boolean | null };
 
-  kind: 'write_action' | 'extraction' | 'monitor_change';
+  /**
+   * Kind of the activity. Only a signed-in dashboard session sees an `api_key`
+   * record.
+   */
+  kind:
+    | 'write_action'
+    | 'extraction'
+    | 'monitor_change'
+    | 'api_key'
+    | 'billing'
+    | 'giveaway_draw'
+    | 'monitor_event'
+    | 'media_download'
+    | 'media_share'
+    | 'support_ticket'
+    | 'webhook_delivery'
+    | 'webhook_endpoint'
+    | 'x_account_connection';
 
   object: 'activity';
 
@@ -159,7 +176,9 @@ export interface ActivityRecord {
   timestamps: ActivityRecord.Timestamps;
 
   /**
-   * Write action type, extraction tool type or monitor change.
+   * Type of the activity within its kind, the same as the type of its Activity log
+   * row. Examples are a write action type, an extraction tool type, a monitor
+   * change, a monitor event type or a ledger entry type.
    */
   type: string;
 
@@ -238,7 +257,27 @@ export namespace ActivityRecord {
 
     confirmedAt?: string;
 
+    deliveredAt?: string;
+
+    discoveredAt?: string;
+
+    drawnAt?: string;
+
+    exhaustedAt?: string;
+
     expiresAt?: string;
+
+    firstAttemptedAt?: string;
+
+    lastUsedAt?: string;
+
+    nextRetryAt?: string;
+
+    occurredAt?: string;
+
+    pausedAt?: string;
+
+    postedAt?: string;
 
     updatedAt?: string;
   }

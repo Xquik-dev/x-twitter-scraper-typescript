@@ -1,8 +1,11 @@
 minimumReleaseAge: 10080
 minimumReleaseAgeExclude:
+  - '@isaacs/nonrecursive-glob-match'
   - brace-expansion
+  - minimatch
   - x-twitter-scraper
 overrides:
   'brace-expansion': 5.0.12
   'flat-cache>flatted': 3.4.2
+  'minimatch': 11.0.4
   'ts-node>diff': 4.0.4
