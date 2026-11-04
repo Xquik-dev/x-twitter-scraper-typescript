@@ -70,7 +70,7 @@ const writes: ReadonlyArray<
   ],
   [
     'DELETE /x/communities/1',
-    (client, headers) => client.x.communities.delete('1', { account: '@a', ...headers }),
+    (client, headers) => client.x.communities.delete('1', { account: '@a', community_name: 'A', ...headers }),
   ],
   [
     'POST /x/communities/1/join',

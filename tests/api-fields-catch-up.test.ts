@@ -50,7 +50,7 @@ describe('API fields added on 2026-11-04', () => {
     });
 
     expect(new URL(sent[0]!.url).searchParams.get('textOnlyTerms')).toBe('rocket');
-    expect((await sent[1]!.json()).textOnlyTerms).toBe('rocket');
-    expect((await sent[2]!.json()).textOnlyTerms).toBe('rocket');
+    expect(await sent[1]!.json()).toMatchObject({ textOnlyTerms: 'rocket' });
+    expect(await sent[2]!.json()).toMatchObject({ textOnlyTerms: 'rocket' });
   });
 });
