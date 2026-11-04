@@ -29,11 +29,11 @@ export class Profile extends APIResource {
    * ```
    */
   update(params: ProfileUpdateParams, options?: RequestOptions): APIPromise<ProfileUpdateResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.patch('/x/profile', {
       body,
       ...options,
-      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
     });
   }
 
@@ -53,14 +53,14 @@ export class Profile extends APIResource {
     params: ProfileUpdateAvatarParams,
     options?: RequestOptions,
   ): APIPromise<ProfileUpdateAvatarResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.patch(
       '/x/profile/avatar',
       maybeMultipartFormRequestOptions(
         {
           body,
           ...options,
-          headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+          headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
         },
         this._client,
       ),
@@ -83,14 +83,14 @@ export class Profile extends APIResource {
     params: ProfileUpdateBannerParams,
     options?: RequestOptions,
   ): APIPromise<ProfileUpdateBannerResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.patch(
       '/x/profile/banner',
       maybeMultipartFormRequestOptions(
         {
           body,
           ...options,
-          headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+          headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
         },
         this._client,
       ),
@@ -868,6 +868,14 @@ export interface ProfileUpdateParams {
   'Idempotency-Key': string;
 
   /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
+
+  /**
    * Body param: Bio, up to 160 characters. An emoji counts as 2.
    */
   description?: string;
@@ -913,6 +921,14 @@ export interface ProfileUpdateAvatarParams {
    * days.
    */
   'Idempotency-Key': string;
+
+  /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
 }
 
 export interface ProfileUpdateBannerParams {
@@ -940,6 +956,14 @@ export interface ProfileUpdateBannerParams {
    * days.
    */
   'Idempotency-Key': string;
+
+  /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
 }
 
 export declare namespace Profile {

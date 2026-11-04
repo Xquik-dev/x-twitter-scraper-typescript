@@ -24,11 +24,11 @@ export class Like extends APIResource {
    * ```
    */
   create(id: string, params: LikeCreateParams, options?: RequestOptions): APIPromise<LikeCreateResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.post(path`/x/tweets/${id}/like`, {
       body,
       ...options,
-      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
     });
   }
 
@@ -44,11 +44,11 @@ export class Like extends APIResource {
    * ```
    */
   delete(id: string, params: LikeDeleteParams, options?: RequestOptions): APIPromise<LikeDeleteResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.delete(path`/x/tweets/${id}/like`, {
       body,
       ...options,
-      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
     });
   }
 }
@@ -570,6 +570,14 @@ export interface LikeCreateParams {
    * days.
    */
   'Idempotency-Key': string;
+
+  /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
 }
 
 export interface LikeDeleteParams {
@@ -587,6 +595,14 @@ export interface LikeDeleteParams {
    * days.
    */
   'Idempotency-Key': string;
+
+  /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
 }
 
 export declare namespace Like {

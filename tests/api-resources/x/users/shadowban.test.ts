@@ -9,6 +9,8 @@ const report: XTwitterScraper.X.ShadowbanReport = {
   username: 'NASA',
   userId: '11348282',
   account: 'active',
+  checkedAt: '2026-11-03T02:15:00.000Z',
+  overall: 'clear',
   checks: {
     account: {
       verdict: 'pass',
@@ -45,6 +47,19 @@ const report: XTwitterScraper.X.ShadowbanReport = {
         ],
       },
     },
+    replyLock: {
+      verdict: 'unknown',
+      reason: 'no_recent_replies',
+      evidence: { checkedReplies: 0, shownReplies: 0 },
+    },
+    timeline: { verdict: 'pass', reason: 'visible', evidence: { postCount: 74486, timelinePosts: 20 } },
+    engagement: {
+      verdict: 'pass',
+      reason: 'typical',
+      evidence: { newestMedian: 4268, newestPosts: 5, earlierMedian: 2773, earlierPosts: 7 },
+    },
+    sensitive: { verdict: 'pass', reason: 'not_flagged', evidence: null },
+    withheld: { verdict: 'pass', reason: 'none', evidence: { countries: [] } },
   },
 };
 
@@ -52,11 +67,18 @@ const suspended: XTwitterScraper.X.ShadowbanReport = {
   username: 'gone',
   userId: null,
   account: 'suspended',
+  checkedAt: '2026-11-03T02:15:00.000Z',
+  overall: 'suspended',
   checks: {
     account: { verdict: 'fail', reason: 'suspended', evidence: { profileUrl: 'https://x.com/gone' } },
     search: { verdict: 'unknown', reason: 'suspended', evidence: null },
     suggestion: { verdict: 'unknown', reason: 'suspended', evidence: null },
     replies: { verdict: 'unknown', reason: 'suspended', evidence: null },
+    replyLock: { verdict: 'unknown', reason: 'suspended', evidence: null },
+    timeline: { verdict: 'unknown', reason: 'suspended', evidence: null },
+    engagement: { verdict: 'unknown', reason: 'suspended', evidence: null },
+    sensitive: { verdict: 'unknown', reason: 'suspended', evidence: null },
+    withheld: { verdict: 'unknown', reason: 'suspended', evidence: null },
   },
 };
 
@@ -70,6 +92,9 @@ describe('shadowban checks', () => {
       'GET https://xquik.test/api/v1/x/users/NASA/shadowban?fields=checks&omit=username',
     ]);
     expect(response.account).toBe('active');
+    expect(response.overall).toBe('clear');
+    expect(response.checks.engagement.evidence?.newestMedian).toBe(4268);
+    expect(response.checks.withheld.evidence?.countries).toEqual([]);
     expect(response.checks.search.evidence?.foundPostIds).toEqual(['2103610284464316469']);
     expect(response.checks.suggestion.verdict).toBe('fail');
     expect(response.checks.replies.evidence?.replies.map((reply) => reply.placement)).toEqual([
@@ -84,6 +109,7 @@ describe('shadowban checks', () => {
 
     expect(requests).toEqual(['GET https://xquik.test/api/v1/x/users/gone/shadowban']);
     expect(response.userId).toBeNull();
+    expect(response.overall).toBe('suspended');
     expect(response.checks.account.evidence.profileUrl).toBe('https://x.com/gone');
     expect([response.checks.search, response.checks.suggestion, response.checks.replies]).toEqual([
       { verdict: 'unknown', reason: 'suspended', evidence: null },

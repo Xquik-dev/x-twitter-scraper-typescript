@@ -1072,6 +1072,12 @@ export interface ExtractionEstimateCostParams {
   targetUsernames?: Array<string>;
 
   /**
+   * Collects a post only when 1 of these words or quoted phrases is in its text, a
+   * link, its card or a quoted post. The author's name and username don't count.
+   */
+  textOnlyTerms?: string;
+
+  /**
    * Replies to this username (tweet_search_extractor).
    */
   toUser?: string;
@@ -1155,6 +1161,20 @@ export namespace ExtractionEstimateCostParams {
 
 export interface ExtractionExportResultsParams {
   /**
+   * With compare, `added` keeps this run's new rows and `removed` keeps the earlier
+   * run's rows that this run lacks. The default is `added`. A run of another
+   * account ignores it.
+   */
+  change?: 'added' | 'removed';
+
+  /**
+   * ID of another run of this tool. For an earlier whole run of the same account,
+   * the export holds only the rows that differ. For a run of another account, it
+   * holds only this run's rows that the other run also lists.
+   */
+  compare?: string;
+
+  /**
    * Export file format
    */
   format: 'csv' | 'json' | 'md' | 'md-document' | 'pdf' | 'txt' | 'xlsx';
@@ -1191,9 +1211,41 @@ export interface ExtractionExportResultsParams {
   hasMedia?: boolean;
 
   /**
+   * Require a website on the profile.
+   */
+  hasWebsite?: boolean;
+
+  /**
+   * Drop accounts with at least 3 of these signs. No posts, a default picture, an
+   * empty bio, or following at least 100 accounts and 10 times their followers.
+   */
+  hideFake?: boolean;
+
+  /**
+   * Drop accounts with under 1 post a month since joining that are at least 180
+   * days old.
+   */
+  hideInactive?: boolean;
+
+  /**
+   * Keep accounts that joined X on this UTC day or later.
+   */
+  joinedSince?: string;
+
+  /**
+   * Keep accounts that joined X before this UTC day.
+   */
+  joinedUntil?: string;
+
+  /**
    * Filter by language code.
    */
   lang?: string;
+
+  /**
+   * Keep accounts whose location contains this text.
+   */
+  location?: string;
 
   /**
    * Maximum follower count.
@@ -1779,6 +1831,12 @@ export interface ExtractionRunParams {
    * protected profile & end with partial_failure.
    */
   targetUsernames?: Array<string>;
+
+  /**
+   * Collects a post only when 1 of these words or quoted phrases is in its text, a
+   * link, its card or a quoted post. The author's name and username don't count.
+   */
+  textOnlyTerms?: string;
 
   /**
    * Body param: Replies to this username (tweet_search_extractor).
