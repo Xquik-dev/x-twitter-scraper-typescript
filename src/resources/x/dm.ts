@@ -31,11 +31,11 @@ export class Dm extends APIResource {
     params: DmDeleteMessageParams,
     options?: RequestOptions,
   ): APIPromise<DmDeleteMessageResponse> {
-    const { userId, account, 'Idempotency-Key': idempotencyKey } = params;
+    const { userId, account, 'Idempotency-Key': idempotencyKey, Prefer: prefer } = params;
     return this._client.delete(path`/x/dm/${userId}/messages/${messageID}`, {
       query: { account },
       ...options,
-      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
     });
   }
 
@@ -74,11 +74,11 @@ export class Dm extends APIResource {
    * ```
    */
   send(userID: string, params: DmSendParams, options?: RequestOptions): APIPromise<DmSendResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.post(path`/x/dm/${userID}`, {
       body,
       ...options,
-      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
     });
   }
 }
@@ -638,6 +638,14 @@ export interface DmDeleteMessageParams {
    * days.
    */
   'Idempotency-Key': string;
+
+  /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
 }
 
 export interface DmRetrieveHistoryParams {
@@ -679,6 +687,14 @@ export interface DmSendParams {
    * days.
    */
   'Idempotency-Key': string;
+
+  /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
 
   /**
    * Body param: Optional array containing exactly 1 uploaded media ID.

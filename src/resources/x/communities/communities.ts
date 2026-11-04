@@ -29,6 +29,9 @@ export class Communities extends APIResource {
   /**
    * Creates an X Community through a connected account.
    *
+   * @deprecated X isn't accepting new Communities. This call answers
+   * `x_community_creation_closed` & charges nothing.
+   *
    * @example
    * ```ts
    * const community = await client.x.communities.create({
@@ -40,11 +43,11 @@ export class Communities extends APIResource {
    * ```
    */
   create(params: CommunityCreateParams, options?: RequestOptions): APIPromise<CommunityCreateResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.post('/x/communities', {
       body,
       ...options,
-      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
     });
   }
 
@@ -68,11 +71,11 @@ export class Communities extends APIResource {
     params: CommunityDeleteParams,
     options?: RequestOptions,
   ): APIPromise<CommunityDeleteResponse> {
-    const { 'Idempotency-Key': idempotencyKey, ...body } = params;
+    const { 'Idempotency-Key': idempotencyKey, Prefer: prefer, ...body } = params;
     return this._client.delete(path`/x/communities/${id}`, {
       body,
       ...options,
-      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey }, options?.headers]),
+      headers: buildHeaders([{ 'Idempotency-Key': idempotencyKey, Prefer: prefer }, options?.headers]),
     });
   }
 
@@ -895,6 +898,14 @@ export interface CommunityCreateParams {
   'Idempotency-Key': string;
 
   /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
+
+  /**
    * Body param: Community description
    */
   description?: string;
@@ -920,6 +931,14 @@ export interface CommunityDeleteParams {
    * days.
    */
   'Idempotency-Key': string;
+
+  /**
+   * Header param: A long write answers 202 with a status link, then lands on X.
+   * `wait=<seconds>` asks for the answer within that many seconds, up to 85. If
+   * the write is still running then, the API answers 202 with Location. Poll
+   * Location until `terminal` is true, and don't send the write again.
+   */
+  Prefer?: string;
 }
 
 export interface CommunityFindParams {

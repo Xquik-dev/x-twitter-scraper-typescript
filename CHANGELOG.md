@@ -1,10 +1,10 @@
 # Changelog
 
-## 0.20.0 (2026-11-03)
+## 0.20.0 (2026-11-04)
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)
 
-This release adds the shadowban check and the activity, top-up and reply fields the API added. `ActivityRecord.kind` gains 10 values, so a `switch` that handles every kind needs a case for each new one.
+This release adds the shadowban check and the activity, top-up and reply fields the API added. Each write can also ask for its answer within a set time. `ActivityRecord.kind` gains 10 values, so a `switch` that handles every kind needs a case for each new one.
 
 ### Features
 
@@ -12,6 +12,8 @@ This release adds the shadowban check and the activity, top-up and reply fields 
 * `client.activity.retrieve` returns every activity kind, such as `billing`, `webhook_delivery` and `x_account_connection`, with their timestamps, such as `deliveredAt`, `nextRetryAt` and `pausedAt`.
 * `client.credits.topupBalance` takes `returnPath`, the Xquik tool page to return to after Checkout.
 * `client.x.tweets.getReplies` returns `unreachedReplies`, the count of replies the read hasn't reached yet.
+* The 19 write methods, such as `client.x.tweets.create`, take a `Prefer` header. `wait=<seconds>` asks for the answer within that many seconds, up to 85. A write still running then answers 202 with its status link.
+* Error codes gain the 10 codes the API added, such as `price_changed` and `x_community_creation_closed`. X takes no new Communities, so `client.x.communities.create` is deprecated. It answers `x_community_creation_closed` and charges nothing.
 
 ### Chores
 
