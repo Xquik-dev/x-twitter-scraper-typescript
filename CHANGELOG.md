@@ -4,16 +4,20 @@
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)
 
-This release adds the shadowban check and the activity, top-up and reply fields the API added. Each write can also ask for its answer within a set time. `ActivityRecord.kind` gains 10 values, so a `switch` that handles every kind needs a case for each new one.
+This release adds the shadowban check and the activity, top-up and reply fields the API added. Each write can also ask for its answer within a set time. `ActivityRecord.kind` gains 10 values, so a `switch` that handles every kind needs a case for each new one. `ShadowbanReport` and the insights response gain required fields. Code that builds them by hand must set them.
 
 ### Features
 
-* `client.x.users.retrieveShadowban` checks 1 account for a search ban, a search suggestion ban and reply deboosting. It returns a `ShadowbanReport` with the verdict, reason and evidence of each check.
+* `client.x.users.retrieveShadowban` runs 9 checks on 1 account. They cover search, suggestions, replies, reply locks and the timeline. They also cover engagement, the sensitive flag & withheld countries. The `ShadowbanReport` holds an `overall` verdict, `checkedAt` and each check's verdict, reason & evidence.
 * `client.activity.retrieve` returns every activity kind, such as `billing`, `webhook_delivery` and `x_account_connection`, with their timestamps, such as `deliveredAt`, `nextRetryAt` and `pausedAt`.
 * `client.credits.topupBalance` takes `returnPath`, the Xquik tool page to return to after Checkout.
 * `client.x.tweets.getReplies` returns `unreachedReplies`, the count of replies the read hasn't reached yet.
 * The 19 write methods, such as `client.x.tweets.create`, take a `Prefer` header. `wait=<seconds>` asks for the answer within that many seconds, up to 85. A write still running then answers 202 with its status link.
 * Error codes gain the 10 codes the API added, such as `price_changed` and `x_community_creation_closed`. X takes no new Communities, so `client.x.communities.create` is deprecated. It answers `x_community_creation_closed` and charges nothing.
+* `client.extractions.exportResults` takes `compare` & `change` to keep only the rows that differ from another run.
+* Exports also filter accounts by `hasWebsite`, `location`, `joinedSince` & `joinedUntil`. `hideInactive` & `hideFake` drop inactive & fake-looking accounts.
+* `client.x.tweets.search`, `client.extractions.run` & `client.extractions.estimateCost` take `textOnlyTerms`. It keeps posts whose text, link, card or quote holds 1 of the terms.
+* `client.x.users.retrieveInsights` returns `medianViews`. Radar items return `metadata.sentiment` & `metadata.windows`.
 
 ### Chores
 

@@ -5388,6 +5388,13 @@ export interface TweetSearchParams {
   source?: string;
 
   /**
+   * Keeps a post only when at least 1 of these words or quoted phrases appears
+   * outside the author's name and username, such as in its text, a link, its card
+   * or a quoted post.
+   */
+  textOnlyTerms?: string;
+
+  /**
    * Filter replies sent to a username.
    */
   toUser?: string;

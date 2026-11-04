@@ -137,6 +137,11 @@ export namespace RadarItem {
     selftext?: string;
 
     /**
+     * Tone of an English post title, from the VADER word list.
+     */
+    sentiment?: 'positive' | 'neutral' | 'negative';
+
+    /**
      * Current items use html. json and rss are retained for legacy rows.
      */
     sourceFormat?: 'html' | 'json' | 'rss';
@@ -145,6 +150,11 @@ export namespace RadarItem {
 
     upvoteRatio?: number;
 
+    /**
+     * Reddit lists the post ranks in. now is the popular feed, and the rest are top
+     * lists of that window.
+     */
+    windows?: Array<'now' | 'hour' | 'day' | 'week' | 'month' | 'year'>;
     [k: string]: unknown;
   }
 }

@@ -1146,6 +1146,12 @@ export namespace UserRetrieveInsightsResponse {
     following: number;
 
     /**
+     * Middle view count of the sample, so 1 viral post moves it less than the
+     * average. Null without posts.
+     */
+    medianViews: number | null;
+
+    /**
      * Posts the user has made.
      */
     posts: number;
@@ -1310,9 +1316,9 @@ export namespace UserRetrieveListsResponse {
 }
 
 /**
- * Says whether X limits 1 account in search, search suggestions or reply threads.
- * Each check holds a verdict, its reason & the evidence it read. Evidence is null
- * for a check that couldn't read the account.
+ * Says whether X limits 1 account in search, search suggestions, reply threads or
+ * its timeline. Each check holds a verdict, its reason & the evidence it read.
+ * Evidence is null for a check that couldn't read the account.
  */
 export interface ShadowbanReport {
   /**
@@ -1321,9 +1327,21 @@ export interface ShadowbanReport {
   account: 'active' | 'protected' | 'suspended';
 
   /**
-   * The 4 checks, each with a verdict, a reason & evidence.
+   * When the check ran.
+   */
+  checkedAt: string;
+
+  /**
+   * The 9 checks, each with a verdict, a reason & evidence.
    */
   checks: ShadowbanReport.Checks;
+
+  /**
+   * `suspended` means X suspended the account. `limited` means at least 1 check
+   * failed. `clear` means search & suggestions passed with no fail. `unclear` means
+   * neither of those.
+   */
+  overall: 'clear' | 'limited' | 'unclear' | 'suspended';
 
   /**
    * ID of the account. Null for a suspended account asked for by username.
@@ -1338,7 +1356,7 @@ export interface ShadowbanReport {
 
 export namespace ShadowbanReport {
   /**
-   * The 4 checks, each with a verdict, a reason & evidence.
+   * The 9 checks, each with a verdict, a reason & evidence.
    */
   export interface Checks {
     /**
@@ -1347,10 +1365,24 @@ export namespace ShadowbanReport {
     account: Checks.Account;
 
     /**
+     * Compares the newest 5 of the account's own posts older than 24 hours with its
+     * earlier posts, by the median of likes, replies, reposts & quotes. `typical`
+     * passes at 25% or more. A drop alone proves nothing, so `low` can't tell.
+     */
+    engagement: Checks.Engagement;
+
+    /**
      * Opens the threads of up to 3 recent replies to other accounts. `in_thread`
      * passes. X ranks replies for each viewer, so `more_replies` can't tell.
      */
     replies: Checks.Replies;
+
+    /**
+     * Reads the same reply threads as `replies`. `replies_show` passes when any
+     * checked reply shows. X ranks replies for each viewer, so `replies_missing`
+     * can't tell.
+     */
+    replyLock: Checks.ReplyLock;
 
     /**
      * Looks for the account's recent posts in X search, sorted by Latest. `listed`
@@ -1359,10 +1391,28 @@ export namespace ShadowbanReport {
     search: Checks.Search;
 
     /**
+     * Reads X's sensitive flag on the profile. `not_flagged` passes & `flagged`
+     * fails.
+     */
+    sensitive: Checks.Sensitive;
+
+    /**
      * Looks for the account among the accounts X suggests for its username.
      * `suggested` passes & `not_suggested` fails.
      */
     suggestion: Checks.Suggestion;
+
+    /**
+     * Looks for the account's posts on its profile timeline. `visible` passes &
+     * `hidden` fails.
+     */
+    timeline: Checks.Timeline;
+
+    /**
+     * Reads the countries where X withholds the account. `none` passes & `countries`
+     * fails.
+     */
+    withheld: Checks.Withheld;
   }
 
   export namespace Checks {
@@ -1392,6 +1442,53 @@ export namespace ShadowbanReport {
          * Profile of the account on X.
          */
         profileUrl: string;
+      }
+    }
+
+    /**
+     * Compares the newest 5 of the account's own posts older than 24 hours with its
+     * earlier posts, by the median of likes, replies, reposts & quotes. `typical`
+     * passes at 25% or more. A drop alone proves nothing, so `low` can't tell.
+     */
+    export interface Engagement {
+      /**
+       * The 2 medians & how many posts each one covers.
+       */
+      evidence: Engagement.Evidence | null;
+
+      /**
+       * `too_few_posts` means fewer than 8 posts to compare, or earlier posts with no
+       * engagement.
+       */
+      reason: 'typical' | 'low' | 'too_few_posts' | 'unavailable' | 'protected' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace Engagement {
+      /**
+       * The 2 medians & how many posts each one covers.
+       */
+      export interface Evidence {
+        /**
+         * Median engagement of the earlier posts.
+         */
+        earlierMedian: number;
+
+        /**
+         * Posts in the earlier group.
+         */
+        earlierPosts: number;
+
+        /**
+         * Median engagement of the newest posts.
+         */
+        newestMedian: number;
+
+        /**
+         * Posts in the newest group, up to 5.
+         */
+        newestPosts: number;
       }
     }
 
@@ -1464,6 +1561,44 @@ export namespace ShadowbanReport {
     }
 
     /**
+     * Reads the same reply threads as `replies`. `replies_show` passes when any
+     * checked reply shows. X ranks replies for each viewer, so `replies_missing`
+     * can't tell.
+     */
+    export interface ReplyLock {
+      /**
+       * How many replies it opened & how many showed.
+       */
+      evidence: ReplyLock.Evidence | null;
+
+      /**
+       * `replies_show` means X showed at least 1 checked reply. `replies_missing` means
+       * it showed none on the pages read.
+       */
+      reason:
+        'replies_show' | 'replies_missing' | 'no_recent_replies' | 'unavailable' | 'protected' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace ReplyLock {
+      /**
+       * How many replies it opened & how many showed.
+       */
+      export interface Evidence {
+        /**
+         * Replies it looked for, up to 3.
+         */
+        checkedReplies: number;
+
+        /**
+         * Replies that showed in their thread.
+         */
+        shownReplies: number;
+      }
+    }
+
+    /**
      * Looks for the account's recent posts in X search, sorted by Latest. `listed`
      * passes & `missing` fails.
      */
@@ -1510,6 +1645,24 @@ export namespace ShadowbanReport {
     }
 
     /**
+     * Reads X's sensitive flag on the profile. `not_flagged` passes & `flagged`
+     * fails.
+     */
+    export interface Sensitive {
+      /**
+       * Always null, since the reason holds the answer.
+       */
+      evidence: null;
+
+      /**
+       * `unknown` means X left the flag out of the profile.
+       */
+      reason: 'not_flagged' | 'flagged' | 'unknown' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    /**
      * Looks for the account among the accounts X suggests for its username.
      * `suggested` passes & `not_suggested` fails.
      */
@@ -1541,6 +1694,72 @@ export namespace ShadowbanReport {
          * Up to 10 accounts X suggested, in its order.
          */
         suggestedUsernames: Array<string>;
+      }
+    }
+
+    /**
+     * Looks for the account's posts on its profile timeline. `visible` passes &
+     * `hidden` fails.
+     */
+    export interface Timeline {
+      /**
+       * The post count on the profile & the posts read.
+       */
+      evidence: Timeline.Evidence | null;
+
+      /**
+       * `visible` means the timeline shows posts. `hidden` means X counts posts but
+       * shows none. `no_posts` means the account has none to show.
+       */
+      reason: 'visible' | 'hidden' | 'no_posts' | 'unavailable' | 'protected' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace Timeline {
+      /**
+       * The post count on the profile & the posts read.
+       */
+      export interface Evidence {
+        /**
+         * Posts X counts on the profile.
+         */
+        postCount: number | null;
+
+        /**
+         * Posts the timeline read returned, up to 20.
+         */
+        timelinePosts: number;
+      }
+    }
+
+    /**
+     * Reads the countries where X withholds the account. `none` passes & `countries`
+     * fails.
+     */
+    export interface Withheld {
+      /**
+       * The countries X lists.
+       */
+      evidence: Withheld.Evidence | null;
+
+      /**
+       * `countries` means X lists at least 1 country.
+       */
+      reason: 'none' | 'countries' | 'suspended';
+
+      verdict: ShadowbanVerdict;
+    }
+
+    export namespace Withheld {
+      /**
+       * The countries X lists.
+       */
+      export interface Evidence {
+        /**
+         * Country codes as X gives them.
+         */
+        countries: Array<string>;
       }
     }
   }
