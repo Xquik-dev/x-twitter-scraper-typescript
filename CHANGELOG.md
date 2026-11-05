@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `false` keeps it to the text.
+- `ContextAvailability.media` returns `'images'` when the AI read the post's images. A `switch` that handles every value needs a case for it.
+- `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.
+
 ## 0.20.0 (2026-11-04)
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)
