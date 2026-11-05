@@ -2,6 +2,10 @@ cff-version: 1.2.0
 message: If you use this SDK, cite it using this metadata.
 title: Xquik TypeScript SDK for Twitter search & X automation
 type: software
+abstract: >-
+  Twitter API TypeScript & JavaScript SDK for Xquik. Search tweets, read
+  profiles, export followers, manage media, webhooks & monitors from Node.js
+  with typed results & bundled agent Skills.
 authors:
   - name: Xquik
 version: 0.20.0
@@ -12,6 +16,9 @@ license: Apache-2.0
 keywords:
   - Xquik
   - TypeScript SDK
+  - Twitter API TypeScript
+  - Twitter API JavaScript
+  - Twitter scraper
   - Twitter search
   - Twitter API
   - X automation
