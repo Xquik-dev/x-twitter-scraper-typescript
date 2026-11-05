@@ -67,6 +67,13 @@ describe('API fields added on 2026-11-05', () => {
     await client.x.analysis.classify({ tweetIds: ['1'], analysis: { images: true } });
 
     const bodies = await Promise.all(sent.map((request) => request.json()));
-    expect(bodies.map((body) => body.analysis.images)).toEqual([false, false, false, false, false, true]);
+    expect(bodies).toMatchObject([
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: true } },
+    ]);
   });
 });
