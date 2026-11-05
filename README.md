@@ -5,7 +5,7 @@
 [![NPM version](<https://img.shields.io/npm/v/x-twitter-scraper.svg?label=npm%20(stable)>)](https://npmjs.org/package/x-twitter-scraper) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/x-twitter-scraper)
 [![Convex Component](https://www.convex.dev/components/badge/convex-xquik)](https://www.convex.dev/components/convex-xquik)
 
-Use this X API & Twitter API SDK to work with X from TypeScript.
+Use the Xquik X API & Twitter API SDK to work with X from TypeScript.
 It works as a Twitter scraper & tweet scraper for search, profiles & followers.
 Scrape Twitter timelines, lists, communities, Spaces & trends into typed results.
 Manage media, webhooks, monitors & X automation with bundled agent Skills.
@@ -16,6 +16,40 @@ Xquik charges only for delivered, unique, filter-matching results and never pads
 
 > Xquik is an independent third-party service. Not affiliated with X Corp.
 > "Twitter" and "X" are trademarks of X Corp.
+
+## Install the Twitter API TypeScript SDK
+
+The SDK requires TypeScript 4.9 or later.
+
+```sh
+npm install x-twitter-scraper
+```
+
+## Use the X & Twitter API from JavaScript
+
+See [api.md](api.md) for the complete API.
+
+<!-- prettier-ignore -->
+```js
+import XTwitterScraper from 'x-twitter-scraper';
+
+const client = new XTwitterScraper({
+  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional. The client reads this variable.
+});
+
+const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
+```
+
+## Fastest JavaScript Twitter scraper library
+
+Xquik runs each search on its own infrastructure. Your Node.js code makes 1
+HTTPS call per page, with no browser & no X login. See the p99 server read
+time under [Trust & usage](#trust--usage).
+
+```ts
+const page = await client.x.tweets.search({ q: 'from:NASA', limit: 25 });
+for (const tweet of page.tweets) console.log(tweet.id, tweet.text);
+```
 
 [TypeScript SDK guide](https://docs.xquik.com/sdks/typescript) | [API map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP guide](https://docs.xquik.com/mcp/overview)
 
@@ -99,29 +133,6 @@ Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authenti
 - [Citation metadata in CITATION.cff](CITATION.cff)
 - [Security boundary and reporting in SECURITY.md](SECURITY.md)
 - [OpenSSF evidence and current limitations in OPENSSF.md](OPENSSF.md)
-
-## Installation
-
-The SDK requires TypeScript 4.9 or later.
-
-```sh
-npm install x-twitter-scraper
-```
-
-## Usage
-
-See [api.md](api.md) for the complete API.
-
-<!-- prettier-ignore -->
-```js
-import XTwitterScraper from 'x-twitter-scraper';
-
-const client = new XTwitterScraper({
-  apiKey: process.env['X_TWITTER_SCRAPER_API_KEY'], // Optional. The client reads this variable.
-});
-
-const response = await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 });
-```
 
 ### Request & response types
 
@@ -497,12 +508,25 @@ The SDK does not support React Native.
 
 Request another runtime in a GitHub issue.
 
+## Questions
+
+### Do I need an X developer account?
+
+No. Public reads need only an Xquik API key. Private reads & X account actions
+need a connected X account.
+
+### Is this the official X API?
+
+No. Xquik is an independent third-party service with its own REST API. This SDK
+calls that API, not the official X API.
+
 ## More Xquik tools
 
 - [X (Twitter) scraper API & Twitter MCP server](https://github.com/Xquik-dev/x-twitter-scraper) with REST, MCP & Skill setup.
 - Twitter API SDKs for [Python](https://github.com/Xquik-dev/x-twitter-scraper-python), [Go](https://github.com/Xquik-dev/x-twitter-scraper-go), [Ruby](https://github.com/Xquik-dev/x-twitter-scraper-ruby), [Java](https://github.com/Xquik-dev/x-twitter-scraper-java), [Kotlin](https://github.com/Xquik-dev/x-twitter-scraper-kotlin), [C#](https://github.com/Xquik-dev/x-twitter-scraper-csharp) & [PHP](https://github.com/Xquik-dev/x-twitter-scraper-php).
 - [Twitter CLI & X CLI](https://github.com/Xquik-dev/x-twitter-scraper-cli) for terminal workflows.
 - [Twitter advanced search operators](https://github.com/Xquik-dev/x-twitter-advanced-search) with tested examples.
+- Twitter agent plugins for [OpenClaw](https://github.com/Xquik-dev/tweetclaw) & [Hermes Agent](https://github.com/Xquik-dev/hermes-tweet), and the [Twitter API documentation source](https://github.com/Xquik-dev/xquik-docs).
 - [Xquik X API & Twitter scraper](https://xquik.com) and the [Twitter API documentation](https://docs.xquik.com/api-reference/overview).
 
 ## Contributing
