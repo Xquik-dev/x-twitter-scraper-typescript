@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.20.1 (2026-11-05)
+
+[Full changelog from v0.20.0 to v0.20.1](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.20.0...v0.20.1)
+
+### Documentation
+
+* The npm badge in the README links `www.npmjs.com` instead of the old `npmjs.org` domain.
+
 ## 0.20.0 (2026-11-04)
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)
