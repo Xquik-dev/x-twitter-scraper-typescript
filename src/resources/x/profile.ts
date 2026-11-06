@@ -279,7 +279,7 @@ export interface ProfileUpdateResponse {
   updatedAt?: string;
 }
 
-export namespace ProfileUpdateResponse {
+export declare namespace ProfileUpdateResponse {
   /**
    * Connected account selected for the write.
    */
@@ -536,7 +536,7 @@ export interface ProfileUpdateAvatarResponse {
   updatedAt?: string;
 }
 
-export namespace ProfileUpdateAvatarResponse {
+export declare namespace ProfileUpdateAvatarResponse {
   /**
    * Connected account selected for the write.
    */
@@ -793,7 +793,7 @@ export interface ProfileUpdateBannerResponse {
   updatedAt?: string;
 }
 
-export namespace ProfileUpdateBannerResponse {
+export declare namespace ProfileUpdateBannerResponse {
   /**
    * Connected account selected for the write.
    */

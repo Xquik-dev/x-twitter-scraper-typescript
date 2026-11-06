@@ -241,7 +241,7 @@ export interface FollowCreateResponse {
   updatedAt?: string;
 }
 
-export namespace FollowCreateResponse {
+export declare namespace FollowCreateResponse {
   /**
    * Connected account selected for the write.
    */
@@ -498,7 +498,7 @@ export interface FollowDeleteAllResponse {
   updatedAt?: string;
 }
 
-export namespace FollowDeleteAllResponse {
+export declare namespace FollowDeleteAllResponse {
   /**
    * Connected account selected for the write.
    */

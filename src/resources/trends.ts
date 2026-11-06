@@ -30,7 +30,7 @@ export interface TrendListResponse {
   woeid: number;
 }
 
-export namespace TrendListResponse {
+export declare namespace TrendListResponse {
   export interface Trend {
     name: string;
 

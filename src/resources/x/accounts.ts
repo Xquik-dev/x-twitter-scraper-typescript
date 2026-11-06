@@ -167,7 +167,7 @@ export type AccountCreateResponse =
   | AccountCreateResponse.XAccountConnectionAttemptPending
   | AccountCreateResponse.XAccountConnectionChallenge;
 
-export namespace AccountCreateResponse {
+export declare namespace AccountCreateResponse {
   /**
    * Sanitized X account summary returned by connect and reauth.
    */

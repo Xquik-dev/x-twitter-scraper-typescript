@@ -152,7 +152,7 @@ export interface KeywordListResponse {
   nextCursor?: string;
 }
 
-export namespace KeywordListResponse {
+export declare namespace KeywordListResponse {
   export type Monitor = KeywordMonitor;
 }
 
