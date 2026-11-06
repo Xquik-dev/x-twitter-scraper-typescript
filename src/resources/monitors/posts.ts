@@ -203,6 +203,12 @@ export interface PostMonitor {
   authorVerified?: 'blue' | 'business' | 'government';
 
   /**
+   * The organization badge X shows beside the author's name. Omitted when X shows
+   * none.
+   */
+  authorAffiliate?: PostMonitor.AuthorAffiliate;
+
+  /**
    * Photos, videos & GIFs on the post, in X's order.
    */
   media: Array<PostMonitor.Media>;
@@ -260,6 +266,26 @@ export interface PostMonitor {
 }
 
 export namespace PostMonitor {
+  /**
+   * The organization badge X shows beside the author's name.
+   */
+  export interface AuthorAffiliate {
+    /**
+     * The organization's badge image.
+     */
+    badgeUrl: string;
+
+    /**
+     * The organization's name, as X shows it.
+     */
+    description: string;
+
+    /**
+     * The organization's X profile, when X links one.
+     */
+    url?: string;
+  }
+
   /**
    * 1 photo, video or GIF on the post.
    */
@@ -454,6 +480,12 @@ export interface PostCreateParams {
    * quotes, like & retweet changes, edits & deletion.
    */
   eventTypes?: Array<PostEventType>;
+
+  /**
+   * Send false to create the monitor paused. A paused monitor reads nothing & costs
+   * nothing until a PATCH sets isActive to true.
+   */
+  isActive?: boolean;
 
   /**
    * Your own label for the post monitor. Its events carry it as monitorName.

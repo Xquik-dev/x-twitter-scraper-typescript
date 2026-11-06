@@ -306,6 +306,12 @@ export namespace ExtractionRetrieveResponse {
     media?: Array<Shared.TweetMedia>;
 
     /**
+     * X's sensitive flag on the post with outputPreset=flat. Default nested output
+     * uses enrichmentData.tweet.possiblySensitive.
+     */
+    possiblySensitive?: boolean;
+
+    /**
      * Whole number from 0.
      */
     quoteCount?: number;
@@ -315,6 +321,18 @@ export namespace ExtractionRetrieveResponse {
      * enrichmentData.tweet.quotedMedia.
      */
     quotedMedia?: Array<Shared.TweetMedia>;
+
+    /**
+     * X's sensitive flag on the quoted post with outputPreset=flat. Default nested
+     * output uses enrichmentData.tweet.quotedPossiblySensitive.
+     */
+    quotedPossiblySensitive?: boolean;
+
+    /**
+     * The quoted post's ID, text, date & author with outputPreset=flat. Default nested
+     * output uses enrichmentData.tweet.quotedPost.
+     */
+    quotedPost?: Result.QuotedPost;
 
     /**
      * Whole number from 0.
@@ -363,6 +381,31 @@ export namespace ExtractionRetrieveResponse {
     xVerified?: boolean;
 
     [k: string]: unknown;
+  }
+
+  export namespace Result {
+    /**
+     * The quoted post's ID, text, date & author with outputPreset=flat.
+     */
+    export interface QuotedPost {
+      id?: string;
+
+      author?: QuotedPost.Author;
+
+      createdAt?: string;
+
+      text?: string;
+    }
+
+    export namespace QuotedPost {
+      export interface Author {
+        name?: string;
+
+        profilePicture?: string;
+
+        userName?: string;
+      }
+    }
   }
 }
 

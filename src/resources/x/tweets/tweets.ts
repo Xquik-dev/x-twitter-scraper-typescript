@@ -5106,16 +5106,17 @@ export interface TweetResolveLinksParams {
 
 export interface TweetSearchParams {
   /**
-   * Query, Tweet ID, or URL. Alias query. Hyphens negate terms. Use exactPhrase for
-   * literals. Valid bounds apply per page. `since:` & `until:` dates are UTC days,
-   * written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also work, since each has 1 reading.
-   * 04/01/2026 has 2 & answers 424 with the form to write. `since_time:` &
-   * `until_time:` take Unix seconds or an ISO 8601 time. `list:` takes a public
-   * List's ID. A private List answers 404 list_not_found. X searches up to 512
-   * characters. A longer query answers 424 before any read, unless a term of its
-   * first OR group fits alone.
+   * Query, Tweet ID, or URL. Alias query. Optional when fromUser, keywords or another
+   * field forms the search. Without either, it answers 400 missing_query. Hyphens
+   * negate terms. Use exactPhrase for literals. Valid bounds apply per page. `since:`
+   * & `until:` dates are UTC days, written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also
+   * work, since each has 1 reading. 04/01/2026 has 2 & answers 424 with the form to
+   * write. `since_time:` & `until_time:` take Unix seconds or an ISO 8601 time.
+   * `list:` takes a public List's ID. A private List answers 404 list_not_found. X
+   * searches up to 512 characters. A longer query answers 424 before any read, unless
+   * a term of its first OR group fits alone.
    */
-  q: string;
+  q?: string;
 
   /**
    * Raw advanced search query appended as-is.

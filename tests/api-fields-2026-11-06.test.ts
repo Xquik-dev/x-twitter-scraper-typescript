@@ -45,4 +45,30 @@ describe('API fields added on 2026-11-06', () => {
       Array<XTwitterScraper.TweetMedia> | undefined
     >();
   });
+
+  test('flat extraction results carry the sensitive flags and the quoted post', () => {
+    type Result = XTwitterScraper.ExtractionRetrieveResponse.Result;
+
+    expectTypeOf<Result['possiblySensitive']>().toEqualTypeOf<boolean | undefined>();
+    expectTypeOf<Result['quotedPossiblySensitive']>().toEqualTypeOf<boolean | undefined>();
+    expectTypeOf<NonNullable<Result['quotedPost']>['text']>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<NonNullable<NonNullable<Result['quotedPost']>['author']>['userName']>().toEqualTypeOf<
+      string | undefined
+    >();
+  });
+
+  test('a post monitor returns the author affiliate and starts paused on request', () => {
+    type Affiliate = NonNullable<XTwitterScraper.Monitors.PostMonitor['authorAffiliate']>;
+
+    expectTypeOf<Affiliate['badgeUrl']>().toEqualTypeOf<string>();
+    expectTypeOf<Affiliate['description']>().toEqualTypeOf<string>();
+    expectTypeOf<Affiliate['url']>().toEqualTypeOf<string | undefined>();
+    expectTypeOf<XTwitterScraper.Monitors.PostCreateParams['isActive']>().toEqualTypeOf<
+      boolean | undefined
+    >();
+  });
+
+  test('a tweet search can run without q', () => {
+    expectTypeOf<{ fromUser: string }>().toExtend<XTwitterScraper.X.TweetSearchParams>();
+  });
 });

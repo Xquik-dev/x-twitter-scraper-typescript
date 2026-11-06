@@ -11,7 +11,10 @@
 - Write records' `action` gains `bookmark`, `unbookmark`, `block`, `unblock`, `mute` & `unmute`. A `switch` that handles every action needs a case for each.
 - `MonitorFollow.followKind` says why a removed account is back, as `refollow` or `return`.
 - Media download items return `posterUrl`, a video's cover image, & `qualities`, its MP4 sizes. Code that builds an item by hand must set both.
-- Extraction results return `quotedMedia`, the quoted post's media, with `outputPreset=flat`.
+- Extraction results return `quotedMedia`, `quotedPost`, `quotedPossiblySensitive` & `possiblySensitive` with `outputPreset=flat`.
+- `PostMonitor.authorAffiliate` returns the organization badge X shows beside the author's name.
+- `monitors.posts.create` takes `isActive`. Send `false` to create the monitor paused.
+- `q` is optional on `client.x.tweets.search` when `fromUser`, `keywords` or another field forms the search.
 
 ## 0.20.0 (2026-11-04)
 
