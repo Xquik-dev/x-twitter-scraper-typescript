@@ -39,7 +39,7 @@ describe('resource media', () => {
   });
 
   test('upload: required and optional params', async () => {
-    const response = await client.x.media.upload({
+    await client.x.media.upload({
       account: '@elonmusk',
       url: 'https://example.com/image.png',
       'Idempotency-Key': 'Idempotency-Key',

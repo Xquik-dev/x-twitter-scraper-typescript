@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../core/resource';
-import { APIPromise } from '../../core/api-promise';
-import { RequestOptions } from '../../internal/request-options';
+import type { APIPromise } from '../../core/api-promise';
+import type { RequestOptions } from '../../internal/request-options';
 
 /**
  * Look up, search, and explore user profiles and relationships

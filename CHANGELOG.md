@@ -26,6 +26,10 @@
 - `client.x.users.retrieveFollowerAudit` reads an account's newest followers and returns a `FollowerAudit`. Each follower gets 1 `FollowerClass` with its score & signals, and the report adds coverage, a quality grade, arrival bands, join cohorts, languages, places, top followers & the account's insights. Each follower read costs 1 credit, and the insights add 1.
 - `Error.requiredScope` names the scope an API key needs when the API answers `insufficient_scope`, as `write`, `monitors`, `exports`, `billing` or `full`.
 
+### Chores
+
+* The `tsconfig.json` shipped in `src/` now matches the strict settings the SDK builds with. Editors that open the SDK source through declaration maps no longer flag the old `moduleResolution: node` setting, which TypeScript 6 deprecated.
+
 ## 0.20.0 (2026-11-04)
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)

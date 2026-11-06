@@ -26,7 +26,7 @@ describe('resource block', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.users.block.create('id', {
+    await client.x.users.block.create('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       Prefer: 'wait=50',
@@ -48,7 +48,7 @@ describe('resource block', () => {
   });
 
   test('delete: required and optional params', async () => {
-    const response = await client.x.users.block.delete('id', {
+    await client.x.users.block.delete('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       Prefer: 'wait=50',

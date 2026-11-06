@@ -44,7 +44,7 @@ describe('resource jobs', () => {
   });
 
   test('listLocations: required and optional params', async () => {
-    const response = await client.x.jobs.listLocations({
+    await client.x.jobs.listLocations({
       q: 'new york',
       fields: 'id,text,author.username',
       limit: 5,
@@ -64,7 +64,7 @@ describe('resource jobs', () => {
   });
 
   test('search: required and optional params', async () => {
-    const response = await client.x.jobs.search({
+    await client.x.jobs.search({
       q: 'engineer',
       company: 'SpaceX',
       cursor: 'cursor',

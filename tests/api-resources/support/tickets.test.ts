@@ -27,7 +27,7 @@ describe('resource tickets', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.support.tickets.create({
+    await client.support.tickets.create({
       body: 'I am unable to connect my X account. Please help.',
       subject: 'Cannot connect X account',
       'Idempotency-Key': 'Idempotency-Key',
@@ -59,7 +59,7 @@ describe('resource tickets', () => {
   });
 
   test('update: required and optional params', async () => {
-    const response = await client.support.tickets.update('tkt_a1b2c3d4e5f6a1b2c3d4e5f6', {
+    await client.support.tickets.update('tkt_a1b2c3d4e5f6a1b2c3d4e5f6', {
       status: 'resolved',
     });
   });
@@ -95,7 +95,7 @@ describe('resource tickets', () => {
   });
 
   test('reply: required and optional params', async () => {
-    const response = await client.support.tickets.reply('tkt_a1b2c3d4e5f6a1b2c3d4e5f6', {
+    await client.support.tickets.reply('tkt_a1b2c3d4e5f6a1b2c3d4e5f6', {
       body: 'Thank you for the update.',
       'Idempotency-Key': 'Idempotency-Key',
     });

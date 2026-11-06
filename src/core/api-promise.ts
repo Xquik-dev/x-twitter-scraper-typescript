@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { type XTwitterScraper } from '../client';
+import type { XTwitterScraper } from '../client';
 
-import { type PromiseOrValue } from '../internal/types';
-import { APIResponseProps, defaultParseResponse } from '../internal/parse';
+import type { PromiseOrValue } from '../internal/types';
+import { type APIResponseProps, defaultParseResponse } from '../internal/parse';
 
 /**
  * A subclass of `Promise` providing additional helper methods

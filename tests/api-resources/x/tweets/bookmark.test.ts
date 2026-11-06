@@ -26,7 +26,7 @@ describe('resource bookmark', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.tweets.bookmark.create('id', {
+    await client.x.tweets.bookmark.create('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       Prefer: 'wait=50',
@@ -48,7 +48,7 @@ describe('resource bookmark', () => {
   });
 
   test('delete: required and optional params', async () => {
-    const response = await client.x.tweets.bookmark.delete('id', {
+    await client.x.tweets.bookmark.delete('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       Prefer: 'wait=50',

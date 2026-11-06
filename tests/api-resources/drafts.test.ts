@@ -24,7 +24,7 @@ describe('resource drafts', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.drafts.create({
+    await client.drafts.create({
       text: 'AI is the future of productivity',
       goal: 'engagement',
       topic: 'AI trends',

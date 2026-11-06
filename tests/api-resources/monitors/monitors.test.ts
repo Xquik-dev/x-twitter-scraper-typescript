@@ -27,7 +27,7 @@ describe('resource monitors', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.monitors.create({
+    await client.monitors.create({
       eventTypes: ['tweet.new', 'tweet.reply'],
       username: 'elonmusk',
       name: 'Launch watch',

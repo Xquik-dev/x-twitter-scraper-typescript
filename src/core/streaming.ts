@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { XTwitterScraperError } from './error';
-import { type ReadableStream } from '../internal/shim-types';
+import type { ReadableStream } from '../internal/shim-types';
 import { makeReadableStream } from '../internal/shims';
 import { findDoubleNewlineIndex, LineDecoder } from '../internal/decoders/line';
 import { ReadableStreamToAsyncIterable } from '../internal/shims';

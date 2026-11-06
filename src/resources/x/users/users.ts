@@ -3,28 +3,34 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../../core/resource';
-import * as Shared from '../../shared';
+import type * as Shared from '../../shared';
 import * as BlockAPI from './block';
 import {
   Block,
-  BlockCreateParams,
-  BlockCreateResponse,
-  BlockDeleteParams,
-  BlockDeleteResponse,
+  type BlockCreateParams,
+  type BlockCreateResponse,
+  type BlockDeleteParams,
+  type BlockDeleteResponse,
 } from './block';
 import * as FollowAPI from './follow';
 import {
   Follow,
-  FollowCreateParams,
-  FollowCreateResponse,
-  FollowDeleteAllParams,
-  FollowDeleteAllResponse,
+  type FollowCreateParams,
+  type FollowCreateResponse,
+  type FollowDeleteAllParams,
+  type FollowDeleteAllResponse,
 } from './follow';
 import * as MuteAPI from './mute';
-import { Mute, MuteCreateParams, MuteCreateResponse, MuteDeleteParams, MuteDeleteResponse } from './mute';
-import { APIPromise } from '../../../core/api-promise';
+import {
+  Mute,
+  type MuteCreateParams,
+  type MuteCreateResponse,
+  type MuteDeleteParams,
+  type MuteDeleteResponse,
+} from './mute';
+import type { APIPromise } from '../../../core/api-promise';
 import { buildHeaders } from '../../../internal/headers';
-import { RequestOptions } from '../../../internal/request-options';
+import type { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 export class Users extends APIResource {

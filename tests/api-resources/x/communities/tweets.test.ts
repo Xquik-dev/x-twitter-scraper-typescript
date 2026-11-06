@@ -23,7 +23,7 @@ describe('resource tweets', () => {
   });
 
   test('list: required and optional params', async () => {
-    const response = await client.x.communities.tweets.list({
+    await client.x.communities.tweets.list({
       q: 'q',
       anyWords: 'anyWords',
       blueVerifiedOnly: true,

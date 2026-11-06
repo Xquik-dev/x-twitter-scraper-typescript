@@ -27,7 +27,7 @@ describe('resource tweets', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.tweets.create({
+    await client.x.tweets.create({
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       community_id: '1500000000000000000',
@@ -71,7 +71,7 @@ describe('resource tweets', () => {
   });
 
   test('list: required and optional params', async () => {
-    const response = await client.x.tweets.list({
+    await client.x.tweets.list({
       ids: 'ids',
       fields: 'id,text,author.username',
       omit: 'entities,media',
@@ -93,7 +93,7 @@ describe('resource tweets', () => {
   });
 
   test('delete: required and optional params', async () => {
-    const response = await client.x.tweets.delete('id', {
+    await client.x.tweets.delete('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
     });
@@ -111,7 +111,7 @@ describe('resource tweets', () => {
   });
 
   test('checkRepost: required and optional params', async () => {
-    const response = await client.x.tweets.checkRepost('id', {
+    await client.x.tweets.checkRepost('id', {
       user: 'nasa',
       fields: 'id,text,author.username',
       omit: 'entities,media',
@@ -620,7 +620,7 @@ describe('resource tweets', () => {
   });
 
   test('resolveLinks: required and optional params', async () => {
-    const response = await client.x.tweets.resolveLinks({
+    await client.x.tweets.resolveLinks({
       urls: 'https://t.co/Xe1nm2pkSX',
       fields: 'id,text,author.username',
       omit: 'entities,media',
@@ -639,7 +639,7 @@ describe('resource tweets', () => {
   });
 
   test('search: required and optional params', async () => {
-    const response = await client.x.tweets.search({
+    await client.x.tweets.search({
       q: 'q',
       advancedQuery: 'advancedQuery',
       anyWords: 'anyWords',
@@ -715,7 +715,7 @@ describe('resource tweets', () => {
   });
 
   test('translate: required and optional params', async () => {
-    const response = await client.x.tweets.translate('id', {
+    await client.x.tweets.translate('id', {
       language: 'tr',
       fields: 'id,text,author.username',
       omit: 'entities,media',

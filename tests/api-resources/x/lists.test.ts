@@ -139,7 +139,7 @@ describe('resource lists', () => {
   });
 
   test('retrieveSearch: required and optional params', async () => {
-    const response = await client.x.lists.retrieveSearch({
+    await client.x.lists.retrieveSearch({
       q: 'q',
       cursor: 'cursor',
       fields: 'id,text,author.username',

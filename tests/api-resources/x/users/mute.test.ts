@@ -26,7 +26,7 @@ describe('resource mute', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.users.mute.create('id', {
+    await client.x.users.mute.create('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       Prefer: 'wait=50',
@@ -48,7 +48,7 @@ describe('resource mute', () => {
   });
 
   test('delete: required and optional params', async () => {
-    const response = await client.x.users.mute.delete('id', {
+    await client.x.users.mute.delete('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       Prefer: 'wait=50',

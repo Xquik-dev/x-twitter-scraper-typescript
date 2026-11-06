@@ -23,7 +23,7 @@ describe('resource followers', () => {
   });
 
   test('check: required and optional params', async () => {
-    const response = await client.x.followers.check({
+    await client.x.followers.check({
       source: 'source',
       target: 'target',
       fields: 'id,text,author.username',
