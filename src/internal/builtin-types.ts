@@ -6,27 +6,11 @@ export type Fetch = (input: string | URL | Request, init?: RequestInit) => Promi
 
 type _RequestInit = RequestInit;
 
-type _Response = Response;
-
 type _RequestInfo = Request | URL | string;
-
-type _HeadersInit = RequestInit['headers'];
 
 type _BodyInit = RequestInit['body'];
 
-type _Array<T> = Array<T>;
-
-type _Record<K extends keyof any, T> = Record<K, T>;
-
-export type {
-  _Array as Array,
-  _BodyInit as BodyInit,
-  _HeadersInit as HeadersInit,
-  _Record as Record,
-  _RequestInfo as RequestInfo,
-  _RequestInit as RequestInit,
-  _Response as Response,
-};
+export type { _BodyInit as BodyInit, _RequestInfo as RequestInfo, _RequestInit as RequestInit };
 
 type EndingType = 'native' | 'transparent';
 
@@ -37,7 +21,7 @@ type EndingType = 'native' | 'transparent';
  * https://github.com/microsoft/TypeScript/blob/49ad1a3917a0ea57f5ff248159256e12bb1cb705/src/lib/dom.generated.d.ts#L154
  * https://developer.mozilla.org/en-US/docs/Web/API/Blob/Blob#options
  */
-export interface BlobPropertyBag {
+interface BlobPropertyBag {
   endings?: EndingType;
   type?: string;
 }
