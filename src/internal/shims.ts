@@ -4,10 +4,11 @@
 
 import type { Fetch } from './builtin-types';
 import type { ReadableStream } from './shim-types';
+import { readProperty } from './utils/globals';
 
 export function getDefaultFetch(): Fetch {
   if (typeof fetch !== 'undefined') {
-    return fetch as any;
+    return fetch;
   }
 
   throw new Error(
@@ -15,26 +16,50 @@ export function getDefaultFetch(): Fetch {
   );
 }
 
-type ReadableStreamArgs = ConstructorParameters<typeof ReadableStream>;
+type ReadableStreamSource<R> = {
+  start?: (controller: ReadableStreamDefaultController<R>) => void | PromiseLike<void>;
+  pull?: (controller: ReadableStreamDefaultController<R>) => void | PromiseLike<void>;
+  cancel?: (reason?: unknown) => void | PromiseLike<void>;
+};
 
-export function makeReadableStream(...args: ReadableStreamArgs): ReadableStream {
-  const ReadableStream = (globalThis as any).ReadableStream;
-  if (typeof ReadableStream === 'undefined') {
+export function makeReadableStream<R>(source: ReadableStreamSource<R> = {}): ReadableStream<R> {
+  if (typeof globalThis.ReadableStream === 'undefined') {
     throw new Error(
       '`ReadableStream` is not defined as a global; You will need to polyfill it, `globalThis.ReadableStream = ReadableStream`',
     );
   }
 
-  return new ReadableStream(...args);
+  return new globalThis.ReadableStream<R>(source);
+}
+
+export const isAsyncIterable = (value: unknown): value is AsyncIterable<unknown> =>
+  typeof value === 'object' &&
+  value !== null &&
+  typeof readProperty(value, Symbol.asyncIterator) === 'function';
+
+export const isIterable = (value: object): value is Iterable<unknown> =>
+  typeof readProperty(value, Symbol.iterator) === 'function';
+
+export async function* uint8ArrayChunks(
+  iterable: Iterable<unknown> | AsyncIterable<unknown>,
+): AsyncGenerator<Uint8Array, void, undefined> {
+  for await (const chunk of iterable) {
+    if (!(chunk instanceof Uint8Array)) {
+      throw new TypeError(
+        `Expected every chunk of a streamed body to be a Uint8Array but got ${typeof chunk}`,
+      );
+    }
+    yield chunk;
+  }
 }
 
 export function ReadableStreamFrom<T>(iterable: Iterable<T> | AsyncIterable<T>): ReadableStream<T> {
   let iter: AsyncIterator<T> | Iterator<T> =
     Symbol.asyncIterator in iterable ? iterable[Symbol.asyncIterator]() : iterable[Symbol.iterator]();
 
-  return makeReadableStream({
+  return makeReadableStream<T>({
     start() {},
-    async pull(controller: any) {
+    async pull(controller) {
       const { done, value } = await iter.next();
       if (done) {
         controller.close();
@@ -48,18 +73,38 @@ export function ReadableStreamFrom<T>(iterable: Iterable<T> | AsyncIterable<T>):
   });
 }
 
+type StreamReader<T> = {
+  read(): Promise<{ done: false; value: T } | { done: true; value?: T | undefined }>;
+  cancel(): Promise<unknown>;
+  releaseLock(): void;
+};
+
+type ReaderSource<T> = { getReader(): StreamReader<T> };
+
+const isReaderSource = (value: object): value is ReaderSource<unknown> =>
+  typeof readProperty(value, 'getReader') === 'function';
+
 /**
  * This polyfill was pulled from https://github.com/MattiasBuelens/web-streams-polyfill/pull/122#issuecomment-1627354490
  */
-export function ReadableStreamToAsyncIterable<T>(stream: any): AsyncIterableIterator<T> {
-  if (stream[Symbol.asyncIterator]) return stream;
+export function ReadableStreamToAsyncIterable<T>(stream: AsyncIterable<T>): AsyncIterable<T>;
+export function ReadableStreamToAsyncIterable<T>(
+  stream: ReaderSource<T>,
+): AsyncIterableIterator<T, undefined, undefined>;
+export function ReadableStreamToAsyncIterable<T>(
+  stream: AsyncIterable<T> | ReaderSource<T>,
+): AsyncIterable<T> {
+  if (Symbol.asyncIterator in stream) return stream;
 
   const reader = stream.getReader();
-  return {
+  const iterator: AsyncIterableIterator<T, undefined, undefined> = {
     async next() {
       try {
         const result = await reader.read();
-        if (result?.done) reader.releaseLock();
+        if (result.done) {
+          reader.releaseLock();
+          return { done: true, value: undefined };
+        }
         return result;
       } catch (e) {
         reader.releaseLock();
@@ -73,23 +118,27 @@ export function ReadableStreamToAsyncIterable<T>(stream: any): AsyncIterableIter
       return { done: true, value: undefined };
     },
     [Symbol.asyncIterator]() {
-      return this;
+      return iterator;
     },
   };
+  return iterator;
 }
 
 /**
  * Cancels a ReadableStream we don't need to consume.
  * See https://undici.nodejs.org/#/?id=garbage-collection
  */
-export async function CancelReadableStream(stream: any): Promise<void> {
+export async function CancelReadableStream(stream: unknown): Promise<void> {
   if (stream === null || typeof stream !== 'object') return;
 
-  if (stream[Symbol.asyncIterator]) {
+  if (isAsyncIterable(stream)) {
     await stream[Symbol.asyncIterator]().return?.();
     return;
   }
 
+  if (!isReaderSource(stream)) {
+    throw new TypeError('stream.getReader is not a function');
+  }
   const reader = stream.getReader();
   const cancelPromise = reader.cancel();
   reader.releaseLock();

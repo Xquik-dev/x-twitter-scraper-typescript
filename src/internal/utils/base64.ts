@@ -4,12 +4,21 @@
 
 import { XTwitterScraperError } from '../../core/error';
 import { encodeUTF8 } from './bytes';
+import { readGlobal, readProperty } from './globals';
+
+type NodeBuffer = {
+  from(data: string | Uint8Array, encoding?: 'base64'): Uint8Array & { toString(encoding: 'base64'): string };
+};
+
+const isNodeBuffer = (value: unknown): value is NodeBuffer =>
+  typeof value === 'function' && typeof readProperty(value, 'from') === 'function';
 
 export const toBase64 = (data: string | Uint8Array | null | undefined): string => {
   if (!data) return '';
 
-  if (typeof (globalThis as any).Buffer !== 'undefined') {
-    return (globalThis as any).Buffer.from(data).toString('base64');
+  const buffer = readGlobal('Buffer');
+  if (isNodeBuffer(buffer)) {
+    return buffer.from(data).toString('base64');
   }
 
   if (typeof data === 'string') {
@@ -17,15 +26,16 @@ export const toBase64 = (data: string | Uint8Array | null | undefined): string =
   }
 
   if (typeof btoa !== 'undefined') {
-    return btoa(String.fromCharCode.apply(null, data as any));
+    return btoa(String.fromCharCode(...data));
   }
 
   throw new XTwitterScraperError('Cannot generate base64 string; Expected `Buffer` or `btoa` to be defined');
 };
 
 export const fromBase64 = (str: string): Uint8Array => {
-  if (typeof (globalThis as any).Buffer !== 'undefined') {
-    const buf = (globalThis as any).Buffer.from(str, 'base64');
+  const buffer = readGlobal('Buffer');
+  if (isNodeBuffer(buffer)) {
+    const buf = buffer.from(str, 'base64');
     return new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
   }
 

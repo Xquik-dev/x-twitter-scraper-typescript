@@ -59,6 +59,15 @@ describe('toFile', () => {
     expect(file.name).toEqual('uploads.test.ts');
   });
 
+  it('keeps the bytes of a view over shared memory', async () => {
+    const shared = new Uint8Array(new SharedArrayBuffer(2));
+    shared.set([5, 6]);
+
+    const file = await toFile(shared, 'shared.bin');
+
+    expect([...new Uint8Array(await file.arrayBuffer())]).toEqual([5, 6]);
+  });
+
   it('does not copy File objects', async () => {
     const input = new File(['foo'], 'input.jsonl', { type: 'jsonl' });
     const file = await toFile(input);
