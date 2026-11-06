@@ -82,7 +82,7 @@ export type RequestOptions = {
   __binaryResponse?: boolean | undefined;
 };
 
-export type EncodedContent = { bodyHeaders: HeadersLike; body: BodyInit };
+type EncodedContent = { bodyHeaders: HeadersLike; body: BodyInit };
 export type RequestEncoder = (request: { headers: NullableHeaders; body: unknown }) => EncodedContent;
 
 export const FallbackEncoder: RequestEncoder = ({ body }) => {
