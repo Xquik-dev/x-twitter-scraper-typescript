@@ -1,5 +1,13 @@
 {
-  "include": ["src", "tests", "examples"],
+  "include": [
+    "src",
+    "tests",
+    "examples",
+    "eslint.config.mjs",
+    "vitest.config.mjs",
+    "scripts/utils/*.cjs",
+    "scripts/utils/*.d.ts"
+  ],
   "exclude": [],
   "compilerOptions": {
     "target": "es2020",
@@ -16,6 +24,8 @@
     "noEmit": true,
 
     "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": true,
 
     "forceConsistentCasingInFileNames": true,
 
