@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { spawn } from 'node:child_process';
-import { existsSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export const leftoverStep = '#!/bin/sh\nmktemp >/dev/null\nmktemp -d >/dev/null\n';
@@ -43,3 +43,22 @@ export const runUntilStarted = async (
   writeFileSync(release, '');
   return exited;
 };
+
+type Sandbox = { root: string; temp: string; command: string; env: NodeJS.ProcessEnv };
+
+export const itStopsCleanly = (setUp: () => Sandbox, args: Array<string> = []) =>
+  it.each([
+    ['SIGTERM', 143],
+    ['SIGINT', null],
+    ['SIGHUP', 129],
+  ] as const)('removes its temp directory when %s stops it mid-run', async (signal, code) => {
+    const { root, temp, command, env } = setUp();
+    try {
+      const result = await runUntilStarted(command, args, { env, root, signal });
+
+      expect(result).toEqual({ code, signal: signal === 'SIGINT' ? signal : null });
+      expect(readdirSync(temp)).toEqual([]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
