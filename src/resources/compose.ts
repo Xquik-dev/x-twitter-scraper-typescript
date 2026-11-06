@@ -37,7 +37,7 @@ export type ComposeCreateResponse =
   | ComposeCreateResponse.ComposeRefineResult
   | ComposeCreateResponse.ComposeScoreResult;
 
-export namespace ComposeCreateResponse {
+export declare namespace ComposeCreateResponse {
   /**
    * Rules, questions, and research guidance for drafting a post.
    */

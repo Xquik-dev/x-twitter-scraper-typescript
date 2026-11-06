@@ -220,7 +220,7 @@ export interface Space {
   updatedAt?: string;
 }
 
-export namespace Space {
+export declare namespace Space {
   /**
    * A post shared in a Space, & the account that shared it.
    */
@@ -316,7 +316,7 @@ export interface SpaceParticipant {
   verifiedType?: string;
 }
 
-export namespace SpaceParticipant {
+export declare namespace SpaceParticipant {
   /**
    * Organization affiliation label shown on an X profile.
    */
@@ -330,7 +330,7 @@ export interface SpaceRetrieveResponse {
   space: Space;
 }
 
-export namespace SpaceRetrieveResponse {
+export declare namespace SpaceRetrieveResponse {
   export type Space = SpacesAPI.Space;
 
   export namespace Space {
@@ -363,7 +363,7 @@ export interface SpaceRetrieveReplayResponse {
   replay: SpaceRetrieveReplayResponse.Replay;
 }
 
-export namespace SpaceRetrieveReplayResponse {
+export declare namespace SpaceRetrieveReplayResponse {
   /**
    * Recording of an ended Space
    */
@@ -396,7 +396,7 @@ export interface SpaceSearchResponse {
   spaces: Array<Space>;
 }
 
-export namespace SpaceSearchResponse {
+export declare namespace SpaceSearchResponse {
   export type Space = SpacesAPI.Space;
 
   export namespace Space {

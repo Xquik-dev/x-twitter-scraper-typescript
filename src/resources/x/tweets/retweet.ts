@@ -236,7 +236,7 @@ export interface RetweetCreateResponse {
   updatedAt?: string;
 }
 
-export namespace RetweetCreateResponse {
+export declare namespace RetweetCreateResponse {
   /**
    * Connected account selected for the write.
    */
@@ -487,7 +487,7 @@ export interface RetweetDeleteResponse {
   updatedAt?: string;
 }
 
-export namespace RetweetDeleteResponse {
+export declare namespace RetweetDeleteResponse {
   /**
    * Connected account selected for the write.
    */

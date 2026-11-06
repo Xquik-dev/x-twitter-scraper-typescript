@@ -38,7 +38,7 @@ export interface BroadcastRetrieveResponse {
   broadcast: Shared.Broadcast;
 }
 
-export namespace BroadcastRetrieveResponse {
+export declare namespace BroadcastRetrieveResponse {
   export type Broadcast = Shared.Broadcast;
 
   export namespace Broadcast {

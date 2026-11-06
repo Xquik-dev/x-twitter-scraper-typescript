@@ -120,7 +120,7 @@ export interface StyleProfile extends StyleProfileSummary {
   tweets: Array<StyleProfile.Tweet>;
 }
 
-export namespace StyleProfile {
+export declare namespace StyleProfile {
   export interface Tweet {
     id: string;
 
@@ -173,7 +173,7 @@ export interface StyleGetPerformanceResponse {
   xUsername: string;
 }
 
-export namespace StyleGetPerformanceResponse {
+export declare namespace StyleGetPerformanceResponse {
   export interface Tweet {
     id: string;
 
@@ -207,7 +207,7 @@ export interface StyleUpdateParams {
   label?: string;
 }
 
-export namespace StyleUpdateParams {
+export declare namespace StyleUpdateParams {
   export interface Tweet {
     text: string;
   }

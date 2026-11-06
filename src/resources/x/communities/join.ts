@@ -238,7 +238,7 @@ export interface JoinCreateResponse {
   updatedAt?: string;
 }
 
-export namespace JoinCreateResponse {
+export declare namespace JoinCreateResponse {
   /**
    * Connected account selected for the write.
    */
@@ -489,7 +489,7 @@ export interface JoinDeleteAllResponse {
   updatedAt?: string;
 }
 
-export namespace JoinDeleteAllResponse {
+export declare namespace JoinDeleteAllResponse {
   /**
    * Connected account selected for the write.
    */

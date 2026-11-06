@@ -186,7 +186,7 @@ export interface Job {
   title?: string;
 }
 
-export namespace Job {
+export declare namespace Job {
   /**
    * The X account that posted a job. A job has none when X imported it from a job
    * board or no longer shows the account.
@@ -268,7 +268,7 @@ export interface JobRetrieveResponse {
   job: Job;
 }
 
-export namespace JobRetrieveResponse {
+export declare namespace JobRetrieveResponse {
   export type Job = JobsAPI.Job;
 
   export namespace Job {
@@ -293,7 +293,7 @@ export interface JobListLocationsResponse {
   locations: Array<JobListLocationsResponse.Location>;
 }
 
-export namespace JobListLocationsResponse {
+export declare namespace JobListLocationsResponse {
   /**
    * A place a job search can name by its ID.
    */
@@ -322,7 +322,7 @@ export interface JobSearchResponse {
   next_cursor: string;
 }
 
-export namespace JobSearchResponse {
+export declare namespace JobSearchResponse {
   export type Job = JobsAPI.Job;
 
   export namespace Job {

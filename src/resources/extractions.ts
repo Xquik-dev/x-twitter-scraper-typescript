@@ -260,7 +260,7 @@ export interface ExtractionRetrieveResponse {
   nextCursor?: string;
 }
 
-export namespace ExtractionRetrieveResponse {
+export declare namespace ExtractionRetrieveResponse {
   /**
    * Represents a public row across supported extraction modes.
    */
@@ -411,7 +411,7 @@ export interface ExtractionEstimateCostResponse {
  */
 export type ExtractionRunResponse = ExtractionRunResponse.ExtractionEstimate | ExtractionRunResponse.Accepted;
 
-export namespace ExtractionRunResponse {
+export declare namespace ExtractionRunResponse {
   /**
    * Free conservative cost estimate. Post estimates use the supported cap & refuse a
    * protected profile. It never creates a job or charges.
@@ -1124,7 +1124,7 @@ export interface ExtractionEstimateCostParams {
   withinTime?: string;
 }
 
-export namespace ExtractionEstimateCostParams {
+export declare namespace ExtractionEstimateCostParams {
   /**
    * One target and relation in a mixed profile collection.
    */
@@ -1892,7 +1892,7 @@ export interface ExtractionRunParams {
   'Idempotency-Key'?: string;
 }
 
-export namespace ExtractionRunParams {
+export declare namespace ExtractionRunParams {
   /**
    * One target and relation in a mixed profile collection.
    */

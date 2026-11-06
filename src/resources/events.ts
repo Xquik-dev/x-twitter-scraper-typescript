@@ -165,7 +165,7 @@ export interface Event {
   xUserId?: string;
 }
 
-export namespace Event {
+export declare namespace Event {
   /**
    * Monitored post with public fields and retained legacy fields.
    */
@@ -1842,7 +1842,7 @@ export interface EventDetail {
   xUserId?: string;
 }
 
-export namespace EventDetail {
+export declare namespace EventDetail {
   /**
    * Monitored post with public fields and retained legacy fields.
    */

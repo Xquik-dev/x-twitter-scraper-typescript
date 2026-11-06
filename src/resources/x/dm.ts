@@ -258,7 +258,7 @@ export interface DmDeleteMessageResponse {
   updatedAt?: string;
 }
 
-export namespace DmDeleteMessageResponse {
+export declare namespace DmDeleteMessageResponse {
   /**
    * Connected account selected for the write.
    */
@@ -342,7 +342,7 @@ export interface DmRetrieveHistoryResponse {
   next_cursor: string;
 }
 
-export namespace DmRetrieveHistoryResponse {
+export declare namespace DmRetrieveHistoryResponse {
   export interface Message {
     id: string;
 
@@ -540,7 +540,7 @@ export interface DmSendResponse {
   updatedAt?: string;
 }
 
-export namespace DmSendResponse {
+export declare namespace DmSendResponse {
   /**
    * Connected account selected for the write.
    */

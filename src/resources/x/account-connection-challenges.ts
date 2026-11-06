@@ -39,7 +39,7 @@ export type AccountConnectionChallengeSubmitResponse =
   | AccountConnectionChallengeSubmitResponse.SanitizedXAccount
   | AccountConnectionChallengeSubmitResponse.XAccountConnectionChallenge;
 
-export namespace AccountConnectionChallengeSubmitResponse {
+export declare namespace AccountConnectionChallengeSubmitResponse {
   /**
    * Sanitized X account summary returned by connect and reauth.
    */
