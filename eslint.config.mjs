@@ -13,6 +13,10 @@ export default tseslint.config(
     ignores: ['dist/**'],
   },
   {
+    linterOptions: {
+      noInlineConfig: true,
+      reportUnusedDisableDirectives: 'error',
+    },
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: { sourceType: 'module' },
@@ -26,6 +30,10 @@ export default tseslint.config(
     },
     rules: {
       'no-unused-vars': 'off',
+      '@typescript-eslint/ban-ts-comment': [
+        'error',
+        { 'ts-check': false, 'ts-expect-error': true, 'ts-ignore': true, 'ts-nocheck': true },
+      ],
       'prettier/prettier': 'error',
       'xquik/no-code-comments': 'error',
       'unused-imports/no-unused-imports': 'error',
