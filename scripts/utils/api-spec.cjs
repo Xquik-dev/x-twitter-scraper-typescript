@@ -5,12 +5,22 @@
 const fs = require('fs');
 const path = require('path');
 const asObject = require('./json.cjs').asObject;
+const parseJson = require('./json.cjs').parseJson;
 
 const publicSpec = 'https://xquik.com/openapi.json';
 const httpMethods = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
 const baseUrlConstant = /^const DEFAULT_BASE_URL = '([^']+)';$/m;
 
 class CheckError extends Error {}
+
+/**
+ * @template T
+ * @param {T} value
+ * @returns {value is NonNullable<T>}
+ */
+function isPresent(value) {
+  return value !== null && value !== undefined;
+}
 
 /** @type {(url: string) => string} */
 const urlPath = (url) => new URL(url, 'http://localhost').pathname.replace(/\/$/, '');
@@ -24,15 +34,13 @@ const readSpec = async (source) => {
     const text =
       /^https?:\/\//i.test(source) ?
         await fetch(source, { signal: AbortSignal.timeout(30_000) }).then((response) => {
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          if (!response.ok) throw new Error(`HTTP ${String(response.status)}`);
           return response.text();
         })
       : fs.readFileSync(source, 'utf8');
-    /** @type {import('./types').JsonValue} */
-    const parsed = JSON.parse(text);
-    const spec = asObject(parsed);
+    const spec = asObject(parseJson(text));
     const paths = spec?.['paths'];
-    if (!spec || typeof paths !== 'object' || paths === null) throw new Error('no paths');
+    if (spec === undefined || typeof paths !== 'object' || paths === null) throw new Error('no paths');
     return { ...spec, paths };
   } catch {
     throw new CheckError(
@@ -41,19 +49,22 @@ const readSpec = async (source) => {
   }
 };
 
-const readConfiguredSpec = () => readSpec(process.env['XQUIK_OPENAPI_SPEC'] || publicSpec);
+const readConfiguredSpec = () => {
+  const configured = process.env['XQUIK_OPENAPI_SPEC'];
+  return readSpec(configured !== undefined && configured !== '' ? configured : publicSpec);
+};
 
 /** @type {(spec: import('./types').SpecDocument) => import('./types').SpecEntry[]} */
 const specOperations = (spec) =>
   Object.entries(spec.paths).flatMap(([pathKey, value]) => {
     const pathItem = asObject(value);
-    if (!pathItem) return [];
+    if (pathItem === undefined) return [];
     return httpMethods.flatMap((method) => {
       const operation = asObject(pathItem[method]);
-      if (!operation) return [];
+      if (operation === undefined) return [];
       const servers = operation['servers'] ?? pathItem['servers'] ?? spec['servers'] ?? [];
       const url = Array.isArray(servers) ? asObject(servers[0])?.['url'] : undefined;
-      const serverPath = typeof url === 'string' && url ? urlPath(url) : '';
+      const serverPath = typeof url === 'string' && url !== '' ? urlPath(url) : '';
       const id = `${method.toUpperCase()} ${serverPath}${pathKey}`;
       return [{ id, key: comparable(id), operationId: operation['operationId'], pathItem, operation }];
     });
@@ -63,7 +74,7 @@ const specOperations = (spec) =>
 const readBasePath = (root) => {
   const client = fs.readFileSync(path.join(root, 'src', 'client.ts'), 'utf8');
   const baseUrl = client.match(baseUrlConstant)?.[1];
-  if (!baseUrl) {
+  if (baseUrl === undefined || baseUrl === '') {
     throw new CheckError(
       "Could not read the default base URL from src/client.ts. Define const DEFAULT_BASE_URL = '<url>' in src/client.ts.",
     );
@@ -79,15 +90,15 @@ const groupEntries = (groups, { field, noun, entryPattern, entryHint, key }) => 
   /** @type {string[]} */
   const entries = [];
   for (const [index, group] of groups.entries()) {
-    const label = `Group ${index + 1}`;
+    const label = `Group ${String(index + 1)}`;
     const object = asObject(group);
-    if (!object) return { problem: `${label} is not an object` };
+    if (object === undefined) return { problem: `${label} is not an object` };
     const extra = Object.keys(object).filter((property) => property !== 'reason' && property !== field);
-    if (extra.length) return { problem: `${label} has the unknown field ${extra[0]}` };
+    if (extra.length > 0) return { problem: `${label} has the unknown field ${String(extra[0])}` };
     const reason = object['reason'];
-    if (typeof reason !== 'string' || !reason.trim()) return { problem: `${label} needs a reason` };
+    if (typeof reason !== 'string' || reason.trim() === '') return { problem: `${label} needs a reason` };
     const listed = object[field];
-    if (!Array.isArray(listed) || !listed.length) {
+    if (!Array.isArray(listed) || listed.length === 0) {
       return { problem: `${label} needs at least 1 ${noun}` };
     }
     for (const entry of listed) {
@@ -111,15 +122,17 @@ const readGroups = (root, file, rules) => {
     text = fs.readFileSync(path.join(root, file), 'utf8');
   } catch (error) {
     const code = error instanceof Error && 'code' in error ? error.code : undefined;
-    throw invalid(code === 'ENOENT' ? 'The repository root has no such file' : `It cannot be read (${code})`);
+    throw invalid(
+      code === 'ENOENT' ? 'The repository root has no such file' : `It cannot be read (${String(code)})`,
+    );
   }
   /** @type {import('./types').JsonValue} */
   let groups;
   try {
-    groups = JSON.parse(text);
+    groups = parseJson(text);
   } catch (error) {
     const position = error instanceof Error ? error.message.match(/at position (\d+)/)?.[1] : undefined;
-    throw invalid(`It is not JSON${position ? ` near position ${position}` : ''}`);
+    throw invalid(`It is not JSON${position !== undefined ? ` near position ${position}` : ''}`);
   }
   const result = groupEntries(groups, rules);
   if ('problem' in result) throw invalid(result.problem);
@@ -138,15 +151,19 @@ const readExclusions = (root) =>
     key: comparable,
   });
 
-/** @type {(check: () => Promise<string>) => Promise<void>} */
-const runCheck = async (check) => {
-  try {
-    process.stdout.write(`${await check()}\n`);
-  } catch (error) {
-    if (!(error instanceof CheckError)) throw error;
-    process.stderr.write(`${error.message}\n`);
-    process.exitCode = 1;
-  }
+/** @type {(check: () => Promise<string>) => void} */
+const runCheck = (check) => {
+  check().then(
+    (message) => {
+      process.stdout.write(`${message}\n`);
+    },
+    /** @param {unknown} error */
+    (error) => {
+      if (!(error instanceof CheckError)) throw error;
+      process.stderr.write(`${error.message}\n`);
+      process.exitCode = 1;
+    },
+  );
 };
 
 module.exports = {
@@ -154,6 +171,7 @@ module.exports = {
   comparable,
   exclusionsFile,
   httpMethods,
+  isPresent,
   readBasePath,
   readConfiguredSpec,
   readExclusions,

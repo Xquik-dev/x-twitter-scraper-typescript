@@ -6,6 +6,7 @@ const spawnSync = require('child_process').spawnSync;
 const fs = require('fs');
 const path = require('path');
 const asObject = require('./json.cjs').asObject;
+const parseJson = require('./json.cjs').parseJson;
 
 const repository = path.resolve(__dirname, '..', '..');
 const tsc = path.join(repository, 'node_modules', '@typescript', 'native', 'bin', 'tsc');
@@ -24,7 +25,7 @@ const fail = (message, status = 1) => {
 /** @type {(args: string[]) => import('child_process').SpawnSyncReturns<string>} */
 const runTsc = (args) => {
   const result = spawnSync(process.execPath, [tsc, ...args], { encoding: 'utf8' });
-  if (result.error) throw result.error;
+  if (result.error !== undefined) throw result.error;
   return result;
 };
 
@@ -35,12 +36,10 @@ const readLayout = (config) => {
     process.stderr.write(result.stdout + result.stderr);
     fail(`TypeScript could not read ${config}. Fix the errors above.`);
   }
-  /** @type {import('./types').JsonValue} */
-  const shown = JSON.parse(result.stdout);
-  const options = asObject(asObject(shown)?.['compilerOptions']);
+  const options = asObject(asObject(parseJson(result.stdout))?.['compilerOptions']);
   const outDir = options?.['outDir'];
   const rootDir = options?.['rootDir'];
-  if (!outDir || !rootDir || typeof outDir !== 'string' || typeof rootDir !== 'string') {
+  if (typeof outDir !== 'string' || outDir === '' || typeof rootDir !== 'string' || rootDir === '') {
     fail(`${config} needs outDir and rootDir. Add both.`);
   }
   return {
@@ -113,7 +112,7 @@ const rewriteSpecifiers = (text, rewrite) => {
     const matches = specifierPatterns
       .flatMap((pattern) => [...line.matchAll(pattern)])
       .map((match) => ({
-        column: (match.index ?? 0) + (match[1] ?? '').length,
+        column: match.index + (match[1] ?? '').length,
         literal: match[0].slice((match[1] ?? '').length),
         specifier: match[3] ?? '',
       }))
@@ -148,10 +147,10 @@ const decodeSegment = (segment) => {
     const digit = base64.indexOf(char);
     if (digit < 0) throw new Error(`A source map holds the invalid segment ${segment}.`);
     value += (digit & 31) << shift;
-    if (digit & 32) {
+    if ((digit & 32) !== 0) {
       shift += 5;
     } else {
-      values.push(value & 1 ? -(value >>> 1) : value >>> 1);
+      values.push((value & 1) !== 0 ? -(value >>> 1) : value >>> 1);
       value = 0;
       shift = 0;
     }
@@ -166,7 +165,7 @@ const encodeValue = (value) => {
   do {
     const digit = rest & 31;
     rest >>>= 5;
-    output += base64[rest > 0 ? digit | 32 : digit];
+    output += base64.charAt(rest > 0 ? digit | 32 : digit);
   } while (rest > 0);
   return output;
 };
@@ -217,9 +216,10 @@ const readHelperDeclarations = (text) => {
   let current;
   for (const line of text.split('\n')) {
     const start = /^(?:export )?(?:function|var) ([\w$]+)/.exec(line);
-    if (start?.[1]) {
+    const name = start?.[1];
+    if (name !== undefined && name !== '') {
       current = [line.replace(/^export /, '')];
-      declarations.set(start[1], current);
+      declarations.set(name, current);
     } else if (line === '' || /^[\s}]/.test(line)) {
       current?.push(line);
     } else {
@@ -271,7 +271,7 @@ const helpersUsed = (text) => {
     [...text.matchAll(/\b(?:const|var) ([\w$]+) = require\("tslib"\);/g)].map((match) => match[1]),
   );
   for (const [, binding, name] of text.matchAll(/(?<![\w$.])([\w$]+)\.(__[\w$]+)/g)) {
-    if (bindings.has(binding) && name) names.push(name);
+    if (bindings.has(binding) && name !== undefined && name !== '') names.push(name);
   }
   return names.filter(Boolean);
 };
@@ -291,11 +291,10 @@ const relinkFile = (file, { outDir, rootDir }, format) => {
 
   const mapFile = `${file}.map`;
   if (isFile(mapFile)) {
-    /** @type {import('./types').JsonValue} */
-    const parsed = JSON.parse(fs.readFileSync(mapFile, 'utf8'));
-    const map = asObject(parsed);
+    const map = asObject(parseJson(fs.readFileSync(mapFile, 'utf8')));
     const mappings = map?.['mappings'];
-    if (!map || typeof mappings !== 'string') fail(`${mapFile} has no mappings. Check the TypeScript build.`);
+    if (map === undefined || typeof mappings !== 'string')
+      fail(`${mapFile} has no mappings. Check the TypeScript build.`);
     map['file'] = path.basename(target);
     map['mappings'] = shiftMappings(mappings, edits);
     fs.writeFileSync(`${target}.map`, JSON.stringify(map));
