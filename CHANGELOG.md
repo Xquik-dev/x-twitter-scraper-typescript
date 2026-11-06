@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- `client.x.tweets.bookmark.create` & `delete` add & remove a bookmark through a connected X account. Only that account sees its bookmarks.
+- `client.x.users.block.create` & `delete` block & unblock a user. A block removes follows both ways, and an unblock doesn't restore them.
+- `client.x.users.mute.create` & `delete` mute & unmute a user. X doesn't tell the muted user.
+- Write records' `action` gains `bookmark`, `unbookmark`, `block`, `unblock`, `mute` & `unmute`. A `switch` that handles every action needs a case for each.
+- `MonitorFollow.followKind` says why a removed account is back, as `refollow` or `return`.
+- Media download items return `posterUrl`, a video's cover image, & `qualities`, its MP4 sizes. Code that builds an item by hand must set both.
+- Extraction results return `quotedMedia`, the quoted post's media, with `outputPreset=flat`.
+
 ## 0.20.0 (2026-11-04)
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)

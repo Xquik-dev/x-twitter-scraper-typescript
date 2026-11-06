@@ -3,12 +3,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export {
+  Block,
+  type BlockCreateResponse,
+  type BlockDeleteResponse,
+  type BlockCreateParams,
+  type BlockDeleteParams,
+} from './block';
+export {
   Follow,
   type FollowCreateResponse,
   type FollowDeleteAllResponse,
   type FollowCreateParams,
   type FollowDeleteAllParams,
 } from './follow';
+export {
+  Mute,
+  type MuteCreateResponse,
+  type MuteDeleteResponse,
+  type MuteCreateParams,
+  type MuteDeleteParams,
+} from './mute';
 export {
   Users,
   type UserRemoveFollowerResponse,

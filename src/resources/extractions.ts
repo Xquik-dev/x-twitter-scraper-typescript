@@ -305,6 +305,12 @@ export namespace ExtractionRetrieveResponse {
     quoteCount?: number;
 
     /**
+     * Media of the quoted post with outputPreset=flat. Default nested output uses
+     * enrichmentData.tweet.quotedMedia.
+     */
+    quotedMedia?: Array<Shared.TweetMedia>;
+
+    /**
      * Whole number from 0.
      */
     replyCount?: number;

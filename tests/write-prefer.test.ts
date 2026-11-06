@@ -29,12 +29,36 @@ const writes: ReadonlyArray<
     (client, headers) => client.x.tweets.retweet.delete('1', { account: '@a', ...headers }),
   ],
   [
+    'POST /x/tweets/1/bookmark',
+    (client, headers) => client.x.tweets.bookmark.create('1', { account: '@a', ...headers }),
+  ],
+  [
+    'DELETE /x/tweets/1/bookmark',
+    (client, headers) => client.x.tweets.bookmark.delete('1', { account: '@a', ...headers }),
+  ],
+  [
     'POST /x/users/1/follow',
     (client, headers) => client.x.users.follow.create('1', { account: '@a', ...headers }),
   ],
   [
     'DELETE /x/users/1/follow',
     (client, headers) => client.x.users.follow.deleteAll('1', { account: '@a', ...headers }),
+  ],
+  [
+    'POST /x/users/1/block',
+    (client, headers) => client.x.users.block.create('1', { account: '@a', ...headers }),
+  ],
+  [
+    'DELETE /x/users/1/block',
+    (client, headers) => client.x.users.block.delete('1', { account: '@a', ...headers }),
+  ],
+  [
+    'POST /x/users/1/mute',
+    (client, headers) => client.x.users.mute.create('1', { account: '@a', ...headers }),
+  ],
+  [
+    'DELETE /x/users/1/mute',
+    (client, headers) => client.x.users.mute.delete('1', { account: '@a', ...headers }),
   ],
   [
     'POST /x/users/1/remove-follower',
