@@ -7,6 +7,7 @@ import type { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import type { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
+import { isPresent } from '../internal/utils/values';
 
 /**
  * Giveaway draws from tweet replies
@@ -92,7 +93,7 @@ export class Draws extends APIResource {
       body,
       ...options,
       headers: buildHeaders([
-        { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+        { ...(isPresent(idempotencyKey) ? { 'Idempotency-Key': idempotencyKey } : undefined) },
         options?.headers,
       ]),
     });

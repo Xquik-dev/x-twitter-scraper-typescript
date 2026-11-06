@@ -26,8 +26,13 @@ describe('runtime value utilities', () => {
   test('classifies values and object ownership', () => {
     expect.assertions(16);
 
-    const value = { answer: 42 };
-    const inherited: object = Object.create({ answer: 42 });
+    const value: object = { answer: 42 };
+    class Inherited {
+      get answer() {
+        return 42;
+      }
+    }
+    const inherited: object = new Inherited();
 
     expect(isAbsoluteURL('https://xquik.com/api/v1')).toBe(true);
     expect(isAbsoluteURL('/api/v1')).toBe(false);
@@ -52,7 +57,9 @@ describe('runtime value utilities', () => {
 
     expect(ensurePresent('value')).toBe('value');
     expect(() => ensurePresent(null)).toThrow('Expected a value to be given');
-    expect(() => ensurePresent(undefined)).toThrow('Expected a value to be given');
+    expect(() => {
+      ensurePresent(undefined);
+    }).toThrow('Expected a value to be given');
     expect(validatePositiveInteger('count', 2)).toBe(2);
     expect(() => validatePositiveInteger('count', 1.5)).toThrow('count must be an integer');
     expect(() => validatePositiveInteger('count', '2')).toThrow('count must be an integer');
@@ -96,7 +103,7 @@ describe('UUID generation', () => {
   const originalRandom = Math.random;
 
   afterEach(() => {
-    if (originalCrypto) {
+    if (originalCrypto !== undefined) {
       Object.defineProperty(globalThis, 'crypto', originalCrypto);
     } else {
       Reflect.deleteProperty(globalThis, 'crypto');
@@ -125,7 +132,7 @@ describe('UUID generation', () => {
       configurable: true,
       value: {
         getRandomValues: (bytes: Uint8Array) => {
-          bytes[0] = 0;
+          bytes.set([0]);
           return bytes;
         },
       },

@@ -5,6 +5,7 @@
 import { createPathTagFunction, encodeURIPath } from 'x-twitter-scraper/internal/utils/path';
 import { inspect } from 'node:util';
 import { runInNewContext } from 'node:vm';
+import { valueAt } from './value-at';
 
 describe('path template tag function', () => {
   test('validates input', () => {
@@ -41,9 +42,11 @@ describe('path template tag function', () => {
 
     const emptyObject = {};
     const mathObject = Math;
-    const numberObject = new Number();
-    const stringObject = new String();
-    const basicClass = new (class {})();
+    const numberObject: unknown = Object(0);
+    const stringObject: unknown = Object('');
+    const basicClass = new (class {
+      readonly label = 'basic';
+    })();
     const classWithToString = new (class {
       toString() {
         return 'ok';
@@ -100,19 +103,27 @@ describe('path template tag function', () => {
     expect(rawPath`${stringObject}/`).toBe('/');
     expect(rawPath`/${classWithToString}`).toBe('/ok');
 
-    const newRealm = runInNewContext('globalThis');
-    expect(newRealm.Object).not.toBe(Object);
+    const newRealm: unknown = runInNewContext(`({
+      Object,
+      object: Object(),
+      math: Math,
+      number: Object(0),
+      string: Object(''),
+      classInstance: new (class extends Object {})(),
+      classWithToString: new (class extends Object {
+        toString() {
+          return 'ok';
+        }
+      })(),
+    })`);
+    expect(valueAt(newRealm, ['Object'])).not.toBe(Object);
 
-    const crossRealmObject = newRealm.Object();
-    const crossRealmMathObject = newRealm.Math;
-    const crossRealmNumber = new newRealm.Number();
-    const crossRealmString = new newRealm.String();
-    const crossRealmClass = new (class extends newRealm.Object {})();
-    const crossRealmClassWithToString = new (class extends newRealm.Object {
-      toString() {
-        return 'ok';
-      }
-    })();
+    const crossRealmObject = valueAt(newRealm, ['object']);
+    const crossRealmMathObject = valueAt(newRealm, ['math']);
+    const crossRealmNumber = valueAt(newRealm, ['number']);
+    const crossRealmString = valueAt(newRealm, ['string']);
+    const crossRealmClass = valueAt(newRealm, ['classInstance']);
+    const crossRealmClassWithToString = valueAt(newRealm, ['classWithToString']);
 
     expect(() => rawPath`/a/${crossRealmObject}/b`).toThrow(
       'Path parameters result in path with invalid segments:\n' +

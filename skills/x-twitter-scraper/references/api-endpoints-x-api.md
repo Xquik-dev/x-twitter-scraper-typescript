@@ -19,6 +19,7 @@ GET /x/articles/{tweetId}
 Retrieve the full content of an X Article (long-form post) by numeric tweet ID. If the user gives an article URL, use the final status ID as `tweetId`. Returns title, body text with block-level formatting, cover image, inline images, and engagement metrics. Metered.
 
 The response has this shape.
+
 ```json
 {
   "title": "Why AI Will Transform Everything",

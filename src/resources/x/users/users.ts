@@ -722,7 +722,7 @@ export interface UserRemoveFollowerResponse {
   updatedAt?: string;
 }
 
-export namespace UserRemoveFollowerResponse {
+export declare namespace UserRemoveFollowerResponse {
   /**
    * Connected account selected for the write.
    */
@@ -892,7 +892,7 @@ export type UserRetrieveFollowerIDsResponse = Shared.PaginatedUserIds;
 export type UserRetrieveFollowersResponse =
   Shared.UserListPage | UserRetrieveFollowersResponse.UserListCoverageResponse;
 
-export namespace UserRetrieveFollowersResponse {
+export declare namespace UserRetrieveFollowersResponse {
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -1007,7 +1007,7 @@ export namespace UserRetrieveFollowersResponse {
 export type UserRetrieveFollowingResponse =
   Shared.UserListPage | UserRetrieveFollowingResponse.UserListCoverageResponse;
 
-export namespace UserRetrieveFollowingResponse {
+export declare namespace UserRetrieveFollowingResponse {
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -1132,7 +1132,7 @@ export interface UserRetrieveInsightsResponse {
   message?: string;
 }
 
-export namespace UserRetrieveInsightsResponse {
+export declare namespace UserRetrieveInsightsResponse {
   /**
    * Engagement insights of one profile. Engagements are likes, replies, reposts and
    * quotes. A rate is null when nothing divides it, such as a profile without posts
@@ -1277,7 +1277,7 @@ export namespace UserRetrieveInsightsResponse {
 
 export type UserRetrieveListMembershipsResponse = Shared.PaginatedLists;
 
-export namespace UserRetrieveListMembershipsResponse {
+export declare namespace UserRetrieveListMembershipsResponse {
   export type List = Shared.XList;
 
   export namespace List {
@@ -1309,7 +1309,7 @@ export namespace UserRetrieveListMembershipsResponse {
 
 export type UserRetrieveListsResponse = Shared.PaginatedLists;
 
-export namespace UserRetrieveListsResponse {
+export declare namespace UserRetrieveListsResponse {
   export type List = Shared.XList;
 
   export namespace List {
@@ -1378,7 +1378,7 @@ export interface ShadowbanReport {
   username: string | null;
 }
 
-export namespace ShadowbanReport {
+export declare namespace ShadowbanReport {
   /**
    * The 9 checks, each with a verdict, a reason & evidence.
    */
@@ -1821,7 +1821,7 @@ export interface UserRetrieveLiveResponse {
   userName: string;
 }
 
-export namespace UserRetrieveLiveResponse {
+export declare namespace UserRetrieveLiveResponse {
   export type Broadcast = Shared.Broadcast;
 
   export namespace Broadcast {
@@ -1835,7 +1835,7 @@ export namespace UserRetrieveLiveResponse {
 export type UserRetrieveVerifiedFollowersResponse =
   Shared.UserListPage | UserRetrieveVerifiedFollowersResponse.UserListCoverageResponse;
 
-export namespace UserRetrieveVerifiedFollowersResponse {
+export declare namespace UserRetrieveVerifiedFollowersResponse {
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -1956,7 +1956,7 @@ export interface UserTranslateBioResponse {
   message?: string;
 }
 
-export namespace UserTranslateBioResponse {
+export declare namespace UserTranslateBioResponse {
   /**
    * Holds X's translation of one profile's bio into the requested language.
    * `entities` holds the links, mentions, and tags with their offsets in the

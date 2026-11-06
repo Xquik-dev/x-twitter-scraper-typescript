@@ -16,35 +16,22 @@ import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import ts from 'typescript';
-
-type PackageManifest = {
-  scripts: { prepare: string };
-  bugs: {
-    url: string;
-  };
-  keywords: string[];
-  pi: {
-    image: string;
-    skills: string[];
-  };
-};
-
-type SkillMetadata = {
-  version: string;
-};
+import { stringAt, valueAt } from './value-at';
 
 const packageRoot = resolve(__dirname, '..');
 
-const manifest: PackageManifest = JSON.parse(readFileSync(resolve(packageRoot, 'package.json'), 'utf8'));
+const manifest: unknown = JSON.parse(readFileSync(resolve(packageRoot, 'package.json'), 'utf8'));
 const skillRoot = resolve(packageRoot, 'skills/x-twitter-scraper');
 const skill = readFileSync(resolve(skillRoot, 'SKILL.md'), 'utf8');
 const researchSkill = readFileSync(resolve(packageRoot, 'skills/xquik-social-research/SKILL.md'), 'utf8');
 const accountSkill = readFileSync(resolve(packageRoot, 'skills/xquik-account-automation/SKILL.md'), 'utf8');
-const skillMetadata: SkillMetadata = JSON.parse(readFileSync(resolve(skillRoot, 'metadata.json'), 'utf8'));
+const skillMetadata: unknown = JSON.parse(readFileSync(resolve(skillRoot, 'metadata.json'), 'utf8'));
 const mcpSetup = readFileSync(resolve(skillRoot, 'references/mcp-setup.md'), 'utf8');
 const mcpTools = readFileSync(resolve(skillRoot, 'references/mcp-tools.md'), 'utf8');
 const skillSpectorReport = readFileSync(resolve(skillRoot, 'skillspector-report.md'), 'utf8');
 const xApiTypes = readFileSync(resolve(skillRoot, 'references/types-x-api.md'), 'utf8');
+const legacyResolution = ts.convertCompilerOptionsFromJson({ moduleResolution: 'node10' }, packageRoot);
+if (legacyResolution.errors.length > 0) throw new Error('TypeScript no longer reads moduleResolution node10');
 
 describe('package metadata', () => {
   test.each(['tmp', '.tmp', 'node_modules'])('prepare preserves checkouts inside %s', (parent) => {
@@ -62,7 +49,10 @@ describe('package metadata', () => {
         resolve(checkout, 'scripts/build'),
         '#!/bin/sh\nmkdir dist\necho built > dist/index.js\n',
       );
-      execFileSync('bash', ['-c', manifest.scripts.prepare], { cwd: checkout, timeout: 5000 });
+      execFileSync('bash', ['-c', stringAt(manifest, ['scripts', 'prepare'])], {
+        cwd: checkout,
+        timeout: 5000,
+      });
       expect(readFileSync(resolve(checkout, 'dist/index.js'), 'utf8')).toBe('built\n');
       expect(files.map((file) => readFileSync(resolve(checkout, file), 'utf8'))).toEqual(files);
       mkdirSync(resolve(checkout, 'node_modules'));
@@ -71,11 +61,11 @@ describe('package metadata', () => {
         const { resolvedModule } = ts.resolveModuleName(
           `x-twitter-scraper${path}`,
           resolve(checkout, 'index.ts'),
-          { moduleResolution: ts.ModuleResolutionKind.Node10 },
+          legacyResolution.options,
           ts.sys,
         );
         expect(resolvedModule?.resolvedFileName).toBe(
-          resolve(packageRoot, 'dist', path ? 'core/error.d.ts' : 'index.d.ts'),
+          resolve(packageRoot, 'dist', path === '' ? 'index.d.ts' : 'core/error.d.ts'),
         );
       }
     } finally {
@@ -85,15 +75,17 @@ describe('package metadata', () => {
 
   test('preserves support and removed resource contracts', () => {
     expect.assertions(2);
-    expect(manifest.bugs.url).toBe('https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues');
+    expect(valueAt(manifest, ['bugs', 'url'])).toBe(
+      'https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues',
+    );
     expect(existsSync(resolve(packageRoot, 'src/resources/integrations'))).toBe(false);
   });
 
   test('declares the packaged Skills', () => {
     expect.assertions(9);
-    expect(manifest.keywords).toContain('pi-package');
-    expect(manifest.pi.skills).toEqual(['./skills']);
-    expect(manifest.pi.image).toBe(
+    expect(valueAt(manifest, ['keywords'])).toContain('pi-package');
+    expect(valueAt(manifest, ['pi', 'skills'])).toEqual(['./skills']);
+    expect(valueAt(manifest, ['pi', 'image'])).toBe(
       'https://raw.githubusercontent.com/Xquik-dev/x-twitter-scraper-typescript/main/assets/pi-package.png',
     );
     expect(existsSync(resolve(packageRoot, 'skills/x-twitter-scraper/SKILL.md'))).toBe(true);
@@ -106,8 +98,8 @@ describe('package metadata', () => {
 
   test('bundles the current MCP Skill contract', () => {
     expect.assertions(14);
-    expect(skillMetadata.version).toBe('2.7.0');
-    expect(skill).toMatch(/^  version: ['"]2\.7\.0['"]$/mu);
+    expect(valueAt(skillMetadata, ['version'])).toBe('2.7.0');
+    expect(skill).toMatch(/^ {2}version: ['"]2\.7\.0['"]$/mu);
     expect(skill).not.toContain('2.6.1');
     expect(mcpSetup).toContain('Let the client negotiate the current protocol.');
     expect(mcpSetup).toContain('Use live discovery');

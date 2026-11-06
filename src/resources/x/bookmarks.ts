@@ -58,7 +58,7 @@ export interface BookmarkRetrieveFoldersResponse {
   next_cursor: string;
 }
 
-export namespace BookmarkRetrieveFoldersResponse {
+export declare namespace BookmarkRetrieveFoldersResponse {
   /**
    * Bookmark folder and its optional public cover image.
    */

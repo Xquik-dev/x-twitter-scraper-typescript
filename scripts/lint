@@ -8,8 +8,11 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+echo "==> Checking formatting"
+./node_modules/.bin/prettier --check .
+
 echo "==> Running eslint"
-./node_modules/.bin/eslint .
+./node_modules/.bin/eslint --max-warnings 0 .
 
 echo "==> Building"
 ./scripts/build

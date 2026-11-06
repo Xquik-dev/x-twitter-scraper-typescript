@@ -164,10 +164,10 @@ describe('resource events', () => {
     expect(response).toEqual(example);
     expect(createdAt).toBe('2025-01-15T12:00:00Z');
     expect(data.retweeted_tweet?.entities?.hashtags?.[0]?.text).toBe('Artemis');
-    expect(data.retweeted_tweet?.author?.userName).toBe('NASA');
+    expect(data.retweeted_tweet?.author).toMatchObject({ userName: 'NASA' });
     expect(data.retweeted_tweet?.parentTweet?.['custom']).toBe('preserved');
     expect(data.quoted_tweet?.entities?.hashtags?.[0]?.text).toBe('Artemis');
-    expect(data.quoted_tweet?.author?.rawVerified).toBe(true);
+    expect(data.quoted_tweet?.author).toMatchObject({ rawVerified: true });
   });
 
   test('list: filters by a follow event type and returns removals & count changes', async () => {

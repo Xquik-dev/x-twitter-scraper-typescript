@@ -8,6 +8,7 @@ import type { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import type { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
+import { isPresent } from '../internal/utils/values';
 
 /**
  * Saved or bulk data extraction (23 tool types)
@@ -162,7 +163,7 @@ export class Extractions extends APIResource {
       body,
       ...options,
       headers: buildHeaders([
-        { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+        { ...(isPresent(idempotencyKey) ? { 'Idempotency-Key': idempotencyKey } : undefined) },
         options?.headers,
       ]),
     });
@@ -266,7 +267,7 @@ export interface ExtractionRetrieveResponse {
   nextCursor?: string;
 }
 
-export namespace ExtractionRetrieveResponse {
+export declare namespace ExtractionRetrieveResponse {
   /**
    * Represents a public row across supported extraction modes.
    */
@@ -423,7 +424,7 @@ export interface ExtractionEstimateCostResponse {
  */
 export type ExtractionRunResponse = ExtractionRunResponse.ExtractionEstimate | ExtractionRunResponse.Accepted;
 
-export namespace ExtractionRunResponse {
+export declare namespace ExtractionRunResponse {
   /**
    * Free conservative cost estimate. Post estimates use the supported cap & refuse a
    * protected profile. It never creates a job or charges.
@@ -1143,7 +1144,7 @@ export interface ExtractionEstimateCostParams {
   withinTime?: string;
 }
 
-export namespace ExtractionEstimateCostParams {
+export declare namespace ExtractionEstimateCostParams {
   /**
    * One target and relation in a mixed profile collection.
    */
@@ -1911,7 +1912,7 @@ export interface ExtractionRunParams {
   'Idempotency-Key'?: string;
 }
 
-export namespace ExtractionRunParams {
+export declare namespace ExtractionRunParams {
   /**
    * One target and relation in a mixed profile collection.
    */

@@ -41,7 +41,5 @@ type OverloadedParameters<T> =
 
 type FetchRequestInit = NonNullable<OverloadedParameters<typeof fetch>[1]>;
 
-type RequestInits = NotAny<RequestInit> | NotAny<FetchRequestInit>;
-
-export type MergedRequestInit = RequestInits &
+export type MergedRequestInit = NotAny<FetchRequestInit> &
   Partial<Record<'body' | 'headers' | 'method' | 'signal', never>>;

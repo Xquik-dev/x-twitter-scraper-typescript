@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper from 'x-twitter-scraper';
+import { communityCreate } from '../../../community-create';
 import { fixtureClient } from '../../../fixture-client';
 
 const client = new XTwitterScraper({
@@ -13,7 +14,7 @@ const client = new XTwitterScraper({
 
 describe('resource communities', () => {
   test('create: only required params', async () => {
-    const responsePromise = client.x.communities.create({
+    const responsePromise = communityCreate(client).create({
       account: '@elonmusk',
       name: 'Example Name',
       'Idempotency-Key': 'Idempotency-Key',
@@ -28,7 +29,7 @@ describe('resource communities', () => {
   });
 
   test('create: required and optional params', async () => {
-    await client.x.communities.create({
+    await communityCreate(client).create({
       account: '@elonmusk',
       name: 'Example Name',
       'Idempotency-Key': 'Idempotency-Key',

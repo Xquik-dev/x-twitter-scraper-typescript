@@ -88,7 +88,7 @@ describe('_iterSSEMessages', () => {
         new AbortController(),
       ),
     );
-    expect(events.map((e) => JSON.parse(e.data))).toEqual([
+    expect(events.map((e): unknown => JSON.parse(e.data))).toEqual([
       { content: 'culpa ' },
       { content: ' ' },
       { content: 'foo' },
@@ -103,7 +103,7 @@ describe('_iterSSEMessages', () => {
         new AbortController(),
       ),
     );
-    expect(events.map((e) => JSON.parse(e.data))).toEqual([{ content: 'известни' }]);
+    expect(events.map((e): unknown => JSON.parse(e.data))).toEqual([{ content: 'известни' }]);
   });
 
   test('an unterminated final event is dropped', async () => {
@@ -127,7 +127,7 @@ describe('_iterSSEMessages', () => {
         'expo/fetch',
       );
     } finally {
-      if (original) Object.defineProperty(globalThis, 'navigator', original);
+      if (original !== undefined) Object.defineProperty(globalThis, 'navigator', original);
       else Reflect.deleteProperty(globalThis, 'navigator');
     }
   });
@@ -263,9 +263,9 @@ describe('events.stream', () => {
     return new XTwitterScraper({
       apiKey: 'My API Key',
       baseURL: 'https://example.com/api/v1',
-      fetch: async (input, init) => {
+      fetch: (input, init) => {
         requests.push(new Request(input, init));
-        return sseResponse(chunks);
+        return Promise.resolve(sseResponse(chunks));
       },
     });
   }

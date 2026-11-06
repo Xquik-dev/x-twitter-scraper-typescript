@@ -54,17 +54,17 @@ export async function* uint8ArrayChunks(
 }
 
 export function ReadableStreamFrom<T>(iterable: Iterable<T> | AsyncIterable<T>): ReadableStream<T> {
-  let iter: AsyncIterator<T> | Iterator<T> =
+  const iter: AsyncIterator<T> | Iterator<T> =
     Symbol.asyncIterator in iterable ? iterable[Symbol.asyncIterator]() : iterable[Symbol.iterator]();
 
   return makeReadableStream<T>({
     start() {},
     async pull(controller) {
-      const { done, value } = await iter.next();
-      if (done) {
+      const result = await iter.next();
+      if (result.done === true) {
         controller.close();
       } else {
-        controller.enqueue(value);
+        controller.enqueue(result.value);
       }
     },
     async cancel() {

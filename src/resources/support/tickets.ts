@@ -9,6 +9,7 @@ import { buildHeaders } from '../../internal/headers';
 import type { RequestOptions } from '../../internal/request-options';
 import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
 import { path } from '../../internal/utils/path';
+import { isPresent } from '../../internal/utils/values';
 
 /**
  * Support ticket management
@@ -34,7 +35,7 @@ export class Tickets extends APIResource {
           body,
           ...options,
           headers: buildHeaders([
-            { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+            { ...(isPresent(idempotencyKey) ? { 'Idempotency-Key': idempotencyKey } : undefined) },
             options?.headers,
           ]),
         },
@@ -107,7 +108,7 @@ export class Tickets extends APIResource {
           body,
           ...options,
           headers: buildHeaders([
-            { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+            { ...(isPresent(idempotencyKey) ? { 'Idempotency-Key': idempotencyKey } : undefined) },
             options?.headers,
           ]),
         },
@@ -126,7 +127,7 @@ export interface SupportReceipt {
   publicId: string;
 }
 
-export namespace SupportReceipt {
+export declare namespace SupportReceipt {
   /**
    * Attachment identifier and initial processing state.
    */
@@ -139,7 +140,7 @@ export namespace SupportReceipt {
 
 export type TicketCreateResponse = SupportReceipt;
 
-export namespace TicketCreateResponse {
+export declare namespace TicketCreateResponse {
   export type Attachment = SupportReceipt.Attachment;
 }
 
@@ -157,7 +158,7 @@ export interface TicketRetrieveResponse {
   updatedAt: string;
 }
 
-export namespace TicketRetrieveResponse {
+export declare namespace TicketRetrieveResponse {
   export interface Message {
     attachments: Array<Message.Attachment>;
 
@@ -220,7 +221,7 @@ export interface TicketListResponse {
   nextCursor?: string;
 }
 
-export namespace TicketListResponse {
+export declare namespace TicketListResponse {
   export interface Ticket {
     createdAt: string;
 
@@ -238,7 +239,7 @@ export namespace TicketListResponse {
 
 export type TicketReplyResponse = SupportReceipt;
 
-export namespace TicketReplyResponse {
+export declare namespace TicketReplyResponse {
   export type Attachment = SupportReceipt.Attachment;
 }
 

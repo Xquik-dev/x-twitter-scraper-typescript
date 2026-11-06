@@ -148,7 +148,7 @@ export interface GuestWalletCreateResponse {
   wallet_id: string;
 }
 
-export namespace GuestWalletCreateResponse {
+export declare namespace GuestWalletCreateResponse {
   export interface Authorization {
     header: 'Authorization';
 
@@ -193,7 +193,7 @@ export interface GuestWalletRetrieveStatusResponse {
   wallet_id: string;
 }
 
-export namespace GuestWalletRetrieveStatusResponse {
+export declare namespace GuestWalletRetrieveStatusResponse {
   /**
    * Latest guest wallet purchase fulfillment state.
    */
@@ -284,7 +284,7 @@ export interface GuestWalletTopupResponse {
   credential_notice?: 'Store api_key and the Idempotency-Key securely before sharing checkout_url. No email recovery is available.';
 }
 
-export namespace GuestWalletTopupResponse {
+export declare namespace GuestWalletTopupResponse {
   export interface Authorization {
     header: 'Authorization';
 

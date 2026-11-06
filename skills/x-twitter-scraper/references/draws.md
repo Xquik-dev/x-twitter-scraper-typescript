@@ -6,20 +6,20 @@ Run transparent, auditable giveaway draws from tweet replies with configurable f
 
 Send `POST /draws` with a `tweetUrl` (required) and these optional filters.
 
-| Field                  | Type     | Description                                                  |
-| ---------------------- | -------- | ------------------------------------------------------------ |
+| Field                  | Type     | Description                                                     |
+| ---------------------- | -------- | --------------------------------------------------------------- |
 | `tweetUrl`             | string   | **Required.** Full tweet URL, as `https://x.com/user/status/ID` |
-| `winnerCount`          | number   | Winners to select (default 1)                                |
-| `backupCount`          | number   | Backup winners to select                                     |
-| `uniqueAuthorsOnly`    | boolean  | Count only one entry per author                              |
-| `mustRetweet`          | boolean  | Require participants to have retweeted                       |
-| `mustFollowUsername`   | string   | Username participants must follow                            |
-| `filterMinFollowers`   | number   | Minimum follower count                                       |
-| `filterAccountAgeDays` | number   | Minimum account age in days                                  |
-| `filterLanguage`       | string   | Language code (e.g., `"en"`)                                 |
-| `requiredKeywords`     | string[] | Words that must appear in the reply                          |
-| `requiredHashtags`     | string[] | Hashtags that must appear (e.g., `["#giveaway"]`)            |
-| `requiredMentions`     | string[] | Usernames that must be mentioned (e.g., `["@NASA"]`)         |
+| `winnerCount`          | number   | Winners to select (default 1)                                   |
+| `backupCount`          | number   | Backup winners to select                                        |
+| `uniqueAuthorsOnly`    | boolean  | Count only one entry per author                                 |
+| `mustRetweet`          | boolean  | Require participants to have retweeted                          |
+| `mustFollowUsername`   | string   | Username participants must follow                               |
+| `filterMinFollowers`   | number   | Minimum follower count                                          |
+| `filterAccountAgeDays` | number   | Minimum account age in days                                     |
+| `filterLanguage`       | string   | Language code (e.g., `"en"`)                                    |
+| `requiredKeywords`     | string[] | Words that must appear in the reply                             |
+| `requiredHashtags`     | string[] | Hashtags that must appear (e.g., `["#giveaway"]`)               |
+| `requiredMentions`     | string[] | Usernames that must be mentioned (e.g., `["@NASA"]`)            |
 
 ## Complete workflow
 

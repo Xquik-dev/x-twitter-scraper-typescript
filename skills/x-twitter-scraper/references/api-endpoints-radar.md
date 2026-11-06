@@ -10,15 +10,16 @@ Get trending topics and news from supported trend and news sources.
 
 It takes these query parameters.
 
-| Param | Type | Description |
-|-------|------|-------------|
-| `source` | string | Filter by public source, one of `google_trends`, `hacker_news`, `polymarket`, `wikipedia`, `github`, `reddit`. Omit to include all supported sources |
-| `category` | string | Filter by category, one of `general`, `tech`, `dev`, `science`, `culture`, `politics`, `business`, `entertainment` |
-| `limit` | number | Items per page (1-100, default 50) |
-| `hours` | number | Look-back window in hours (1-72, default 6) |
-| `region` | string | Region code, one of `US`, `GB`, `TR`, `ES`, `DE`, `FR`, `JP`, `IN`, `BR`, `CA`, `MX`, `global` (default) |
+| Param      | Type   | Description                                                                                                                                          |
+| ---------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`   | string | Filter by public source, one of `google_trends`, `hacker_news`, `polymarket`, `wikipedia`, `github`, `reddit`. Omit to include all supported sources |
+| `category` | string | Filter by category, one of `general`, `tech`, `dev`, `science`, `culture`, `politics`, `business`, `entertainment`                                   |
+| `limit`    | number | Items per page (1-100, default 50)                                                                                                                   |
+| `hours`    | number | Look-back window in hours (1-72, default 6)                                                                                                          |
+| `region`   | string | Region code, one of `US`, `GB`, `TR`, `ES`, `DE`, `FR`, `JP`, `IN`, `BR`, `CA`, `MX`, `global` (default)                                             |
 
 The response has this shape.
+
 ```json
 {
   "items": [

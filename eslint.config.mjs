@@ -2,73 +2,85 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-check
+import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
-import unusedImports from 'eslint-plugin-unused-imports';
-import prettier from 'eslint-plugin-prettier';
-import noCodeComments from './scripts/utils/no-code-comments.cjs';
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: ['dist/**'],
   },
   {
+    files: ['**/*.ts', '**/*.mts', '**/*.cts', '**/*.js', '**/*.mjs', '**/*.cjs'],
+    extends: [js.configs.recommended, tseslint.configs.strictTypeChecked],
     linterOptions: {
       noInlineConfig: true,
       reportUnusedDisableDirectives: 'error',
     },
     languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: { sourceType: 'module' },
-    },
-    files: ['**/*.ts', '**/*.mts', '**/*.cts', '**/*.js', '**/*.mjs', '**/*.cjs'],
-    plugins: {
-      '@typescript-eslint': tseslint.plugin,
-      'unused-imports': unusedImports,
-      prettier,
-      xquik: { rules: { 'no-code-comments': noCodeComments } },
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
-      'no-unused-vars': 'off',
+      ...tseslint.configs.eslintRecommended.rules,
       '@typescript-eslint/ban-ts-comment': [
         'error',
         { 'ts-check': false, 'ts-expect-error': true, 'ts-ignore': true, 'ts-nocheck': true },
       ],
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
-      'prettier/prettier': 'error',
-      'xquik/no-code-comments': 'error',
-      'unused-imports/no-unused-imports': 'error',
-      'no-restricted-imports': [
+      '@typescript-eslint/consistent-type-exports': 'error',
+      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-import-type-side-effects': 'error',
+      '@typescript-eslint/no-floating-promises': ['error', { checkThenables: true, ignoreVoid: false }],
+      '@typescript-eslint/no-namespace': ['error', { allowDeclarations: true }],
+      '@typescript-eslint/no-unnecessary-condition': ['error', { checkTypePredicates: true }],
+      '@typescript-eslint/prefer-nullish-coalescing': ['error', { ignoreConditionalTests: false }],
+      '@typescript-eslint/prefer-optional-chain': 'error',
+      '@typescript-eslint/prefer-readonly': 'error',
+      '@typescript-eslint/return-await': ['error', 'always'],
+      '@typescript-eslint/strict-boolean-expressions': [
         'error',
         {
-          patterns: [
-            {
-              regex: '^x-twitter-scraper(/.*)?',
-              message: 'Use a relative import, not a package import.',
-            },
-          ],
+          allowAny: false,
+          allowNullableBoolean: false,
+          allowNullableEnum: false,
+          allowNullableNumber: false,
+          allowNullableObject: false,
+          allowNullableString: false,
+          allowNumber: false,
+          allowString: false,
         },
       ],
+      '@typescript-eslint/switch-exhaustiveness-check': [
+        'error',
+        {
+          allowDefaultCaseForExhaustiveSwitch: false,
+          considerDefaultExhaustiveForUnions: false,
+          requireDefaultForNonUnion: true,
+        },
+      ],
+      'array-callback-return': ['error', { checkForEach: true }],
+      'default-case-last': 'error',
+      eqeqeq: ['error', 'always'],
+      'no-constant-condition': ['error', { checkLoops: 'all' }],
+      'no-extra-boolean-cast': 'off',
+      'no-fallthrough': 'error',
+      'no-implicit-coercion': ['error', { disallowTemplateShorthand: true }],
+      'no-loss-of-precision': 'error',
+      'no-new-wrappers': 'error',
+      'no-param-reassign': ['error', { props: true }],
+      'no-promise-executor-return': 'error',
+      'no-self-compare': 'error',
+      'no-unsafe-finally': 'error',
+      radix: 'error',
     },
   },
   {
-    files: [
-      'src/**',
-      'src/internal/request-options.ts',
-      'src/internal/to-file.ts',
-      'src/internal/uploads.ts',
-    ],
-    ignores: ['src/internal/!(request-options|to-file|uploads).ts', 'src/internal/*/**'],
+    files: ['**/*.cjs'],
     rules: {
-      'xquik/no-code-comments': ['error', { publicApiDocs: true }],
-    },
-  },
-  {
-    files: ['tests/**', 'examples/**'],
-    rules: {
-      'no-restricted-imports': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 );

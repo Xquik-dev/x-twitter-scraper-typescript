@@ -8,6 +8,7 @@ import type { FilePropertyBag } from './builtin-types';
 import { checkFileSupport } from './uploads';
 import { readProperty, readString } from './utils/globals';
 import { arrayBufferBytes } from './utils/bytes';
+import { isNonEmptyString, isPresent } from './utils/values';
 
 type BlobLikePart = string | ArrayBuffer | ArrayBufferView | BlobLike | DataView;
 
@@ -73,43 +74,34 @@ export type ToFileInput =
  */
 export async function toFile(
   value: ToFileInput | PromiseLike<ToFileInput>,
-  name?: string | null | undefined,
-  options?: FilePropertyBag | undefined,
+  name?: string | null,
+  options?: FilePropertyBag,
 ): Promise<File> {
   checkFileSupport();
 
-  value = await value;
+  const input = await value;
 
-  if (isFileLike(value)) {
-    if (value instanceof File) {
-      return value;
+  if (isFileLike(input)) {
+    if (input instanceof File) {
+      return input;
     }
-    return makeFile([await value.arrayBuffer()], value.name);
+    return makeFile([await input.arrayBuffer()], input.name);
   }
 
-  if (isResponseLike(value)) {
-    const blob = await value.blob();
-    name ||= new URL(value.url).pathname.split(/[\\/]/).pop();
+  if (isResponseLike(input)) {
+    const blob = await input.blob();
+    const fileName = isNonEmptyString(name) ? name : new URL(input.url).pathname.split(/[\\/]/).pop();
 
-    return makeFile(await getBytes(blob), name, options);
+    return makeFile(await getBytes(blob), fileName, options);
   }
 
-  const parts = await getBytes(value);
+  const parts = await getBytes(input);
 
-  name ||= getName(value);
-
-  if (!options?.type) {
-    const type = parts.find((part) => typeof part === 'object' && 'type' in part && part.type);
-    if (typeof type === 'string') {
-      options = { ...options, type };
-    }
-  }
-
-  return makeFile(parts, name, options);
+  return makeFile(parts, isNonEmptyString(name) ? name : getName(input), options);
 }
 
 async function getBytes(value: unknown): Promise<Array<BlobPart>> {
-  let parts: Array<BlobPart> = [];
+  const parts: Array<BlobPart> = [];
   if (typeof value === 'string' || value instanceof ArrayBuffer) {
     parts.push(value);
   } else if (ArrayBuffer.isView(value)) {
@@ -122,10 +114,10 @@ async function getBytes(value: unknown): Promise<Array<BlobPart>> {
     }
   } else {
     const constructor =
-      value == null ? undefined : readString(readProperty(Object(value), 'constructor'), 'name');
+      !isPresent(value) ? undefined : readString(readProperty(Object(value), 'constructor'), 'name');
     throw new Error(
       `Unexpected data type: ${typeof value}${
-        constructor ? `; constructor: ${constructor}` : ''
+        isNonEmptyString(constructor) ? `; constructor: ${constructor}` : ''
       }${propsForError(value)}`,
     );
   }

@@ -9,16 +9,17 @@ import {
   ReadableStreamFrom,
   ReadableStreamToAsyncIterable,
 } from 'x-twitter-scraper/internal/shims';
+import { asyncValues } from './async-values';
 
 describe('runtime shims', () => {
   const originalFetch = Object.getOwnPropertyDescriptor(globalThis, 'fetch');
   const originalReadableStream = Object.getOwnPropertyDescriptor(globalThis, 'ReadableStream');
 
   afterEach(() => {
-    if (originalFetch) {
+    if (originalFetch !== undefined) {
       Object.defineProperty(globalThis, 'fetch', originalFetch);
     }
-    if (originalReadableStream) {
+    if (originalReadableStream !== undefined) {
       Object.defineProperty(globalThis, 'ReadableStream', originalReadableStream);
     }
   });
@@ -57,12 +58,7 @@ describe('runtime shims', () => {
     expect(await syncReader.read()).toEqual({ done: false, value: 'b' });
     expect(await syncReader.read()).toEqual({ done: true, value: undefined });
 
-    async function* values(): AsyncGenerator<string> {
-      yield 'c';
-      yield 'd';
-    }
-
-    const asyncReader = ReadableStreamFrom(values()).getReader();
+    const asyncReader = ReadableStreamFrom(asyncValues(['c', 'd'])).getReader();
     expect(await asyncReader.read()).toEqual({ done: false, value: 'c' });
     expect(await asyncReader.read()).toEqual({ done: false, value: 'd' });
     expect(await asyncReader.read()).toEqual({ done: true, value: undefined });
@@ -78,13 +74,15 @@ describe('runtime shims', () => {
     let releases = 0;
     const iterable = ReadableStreamToAsyncIterable<string>({
       getReader: () => ({
-        read: async () => {
+        read: () => {
           reads += 1;
-          return reads === 1 ?
+          return Promise.resolve(
+            reads === 1 ?
               ({ done: false, value: 'value' } as const)
-            : ({ done: true, value: undefined } as const);
+            : ({ done: true, value: undefined } as const),
+          );
         },
-        cancel: async () => undefined,
+        cancel: () => Promise.resolve(undefined),
         releaseLock: () => {
           releases += 1;
         },
@@ -103,10 +101,8 @@ describe('runtime shims', () => {
     let errorReleaseCount = 0;
     const failing = ReadableStreamToAsyncIterable({
       getReader: () => ({
-        read: async () => {
-          throw new Error('read failed');
-        },
-        cancel: async () => undefined,
+        read: () => Promise.reject(new Error('read failed')),
+        cancel: () => Promise.resolve(undefined),
         releaseLock: () => {
           errorReleaseCount += 1;
         },
@@ -126,10 +122,10 @@ describe('runtime shims', () => {
     await expect(
       CancelReadableStream({
         [Symbol.asyncIterator]: () => ({
-          next: async () => ({ done: true, value: undefined }),
-          return: async () => {
+          next: () => Promise.resolve({ done: true, value: undefined }),
+          return: () => {
             iteratorReturns += 1;
-            return { done: true, value: undefined };
+            return Promise.resolve({ done: true, value: undefined });
           },
         }),
       }),
@@ -141,8 +137,9 @@ describe('runtime shims', () => {
     await expect(
       CancelReadableStream({
         getReader: () => ({
-          cancel: async () => {
+          cancel: () => {
             cancels += 1;
+            return Promise.resolve();
           },
           releaseLock: () => {
             releases += 1;

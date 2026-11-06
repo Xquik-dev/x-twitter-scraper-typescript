@@ -4,6 +4,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const api = require('./api-spec.cjs');
+
 const {
   CheckError,
   comparable,
@@ -13,7 +15,7 @@ const {
   readExclusions,
   runCheck,
   specOperations,
-} = require('./api-spec.cjs');
+} = api;
 
 const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
 const clientMember = /this\._client\s*(?:\?\.|\.|\[)/g;
@@ -21,9 +23,11 @@ const requestCall =
   /this\._client\.(get|post|put|patch|delete)\(\s*(?:'([^'\\]*)'|path`((?:[^`$\\]|\$\{[^{}`]*\})*)`)\s*[,)]/y;
 const blockComment = /\/\*[\s\S]*?\*\//g;
 
+/** @type {(source: string) => string} */
 const withoutBlockComments = (source) =>
   source.replace(blockComment, (comment) => comment.replace(/[^\n]/g, ''));
 
+/** @type {(directory: string) => string[]} */
 const sourceFiles = (directory) =>
   fs
     .readdirSync(directory, { withFileTypes: true })
@@ -34,6 +38,7 @@ const sourceFiles = (directory) =>
       return entry.name.endsWith('.ts') ? [file] : [];
     });
 
+/** @type {() => string[]} */
 const sdkOperations = () => {
   const basePath = readBasePath(root);
   return sourceFiles(path.join(root, 'src', 'resources')).flatMap((file) => {
@@ -41,18 +46,20 @@ const sdkOperations = () => {
     return [...source.matchAll(clientMember)].map(({ index }) => {
       requestCall.lastIndex = index;
       const call = requestCall.exec(source);
-      if (!call) {
+      if (call === null) {
         const line = source.slice(0, index).split('\n').length;
         throw new CheckError(
-          `Could not read the method or path of the request at ${path.relative(root, file)} line ${line}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).`,
+          `Could not read the method or path of the request at ${path.relative(root, file)} line ${String(line)}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).`,
         );
       }
-      const requestPath = call[2] ?? call[3].replace(/\$\{[^{}`]*\}/g, '{}');
-      return `${call[1].toUpperCase()} ${basePath}${requestPath}`;
+      const [, method = '', quoted, template = ''] = call;
+      const requestPath = quoted ?? template.replace(/\$\{[^{}`]*\}/g, '{}');
+      return `${method.toUpperCase()} ${basePath}${requestPath}`;
     });
   });
 };
 
+/** @type {() => Promise<string>} */
 const coverage = async () => {
   const exclusions = readExclusions(root);
   const sdk = new Set(sdkOperations().map(comparable));
@@ -64,7 +71,7 @@ const coverage = async () => {
     .filter(({ key }) => !sdk.has(key) && !excluded.has(key))
     .map(
       ({ id, operationId }) =>
-        `${id}${operationId ? ` (${operationId})` : ''} is in the API but not in the SDK.`,
+        `${id}${typeof operationId === 'string' && operationId !== '' ? ` (${operationId})` : ''} is in the API but not in the SDK.`,
     );
   const stale = exclusions.flatMap((operation) => {
     if (!inSpec.has(comparable(operation))) {
@@ -76,15 +83,15 @@ const coverage = async () => {
     return [];
   });
 
-  if (missing.length || stale.length) {
+  if (missing.length > 0 || stale.length > 0) {
     const next =
-      missing.length ?
+      missing.length > 0 ?
         `Add each operation above to the SDK, or list it in ${exclusionsFile} with a reason.`
       : `Remove each operation above from ${exclusionsFile}.`;
     throw new CheckError([...missing, ...stale, next].join('\n'));
   }
   const covered = operations.filter(({ key }) => sdk.has(key)).length;
-  return `The SDK covers ${covered} of ${operations.length} API operations, and ${exclusionsFile} lists the other ${operations.length - covered}.`;
+  return `The SDK covers ${String(covered)} of ${String(operations.length)} API operations, and ${exclusionsFile} lists the other ${String(operations.length - covered)}.`;
 };
 
 runCheck(coverage);

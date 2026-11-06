@@ -23,10 +23,10 @@ export type ServerSentEvent = {
 
 export class Stream<Item> implements AsyncIterable<Item> {
   controller: AbortController;
-  #client: XTwitterScraper | undefined;
+  readonly #client: XTwitterScraper | undefined;
 
   constructor(
-    private iterator: () => AsyncIterator<Item>,
+    private readonly iterator: () => AsyncIterator<Item>,
     controller: AbortController,
     client?: XTwitterScraper,
   ) {
@@ -40,7 +40,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
     client?: XTwitterScraper,
   ): Stream<Item> {
     let consumed = false;
-    const logger = client ? loggerFor(client) : console;
+    const logger = client !== undefined ? loggerFor(client) : console;
 
     async function* iterator(): AsyncIterator<Item, void, undefined> {
       if (consumed) {
@@ -52,7 +52,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
       let done = false;
       try {
         for await (const sse of _iterSSEMessages(response, controller)) {
-          if (!sse.data) continue;
+          if (sse.data === '') continue;
 
           try {
             yield JSON.parse(sse.data);
@@ -110,8 +110,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
       let done = false;
       try {
         for await (const line of iterLines()) {
-          if (done) continue;
-          if (line) yield JSON.parse(line);
+          if (line !== '') yield JSON.parse(line);
         }
         done = true;
       } catch (e) {
@@ -145,7 +144,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
       return {
         next: () => {
           const queued = queue.shift();
-          if (queued) return queued;
+          if (queued !== undefined) return queued;
           const result = iterator.next();
           other.push(result);
           return result;
@@ -170,10 +169,13 @@ export class Stream<Item> implements AsyncIterable<Item> {
     return makeReadableStream<Uint8Array>({
       async pull(ctrl) {
         try {
-          const { value, done } = await iter.next();
-          if (done) return ctrl.close();
+          const result = await iter.next();
+          if (result.done === true) {
+            ctrl.close();
+            return;
+          }
 
-          const bytes = encodeUTF8(JSON.stringify(value) + '\n');
+          const bytes = encodeUTF8(JSON.stringify(result.value) + '\n');
 
           ctrl.enqueue(bytes);
         } catch (err) {
@@ -191,7 +193,7 @@ export async function* _iterSSEMessages(
   response: Response,
   controller: AbortController,
 ): AsyncGenerator<ServerSentEvent, void, unknown> {
-  if (!response.body) {
+  if (response.body === null) {
     controller.abort();
     if (readProperty(readGlobal('navigator'), 'product') === 'ReactNative') {
       throw new XTwitterScraperError(
@@ -208,13 +210,13 @@ export async function* _iterSSEMessages(
   for await (const sseChunk of iterSSEChunks(iter)) {
     for (const line of lineDecoder.decode(sseChunk)) {
       const sse = sseDecoder.decode(line);
-      if (sse) yield sse;
+      if (sse !== null) yield sse;
     }
   }
 
   for (const line of lineDecoder.flush()) {
     const sse = sseDecoder.decode(line);
-    if (sse) yield sse;
+    if (sse !== null) yield sse;
   }
 }
 
@@ -222,7 +224,7 @@ async function* iterSSEChunks(iterator: AsyncIterable<Bytes>): AsyncGenerator<Ui
   let data = new Uint8Array();
 
   for await (const chunk of iterator) {
-    if (chunk == null) {
+    if (chunk === null || chunk === undefined) {
       continue;
     }
 
@@ -231,7 +233,7 @@ async function* iterSSEChunks(iterator: AsyncIterable<Bytes>): AsyncGenerator<Ui
       : typeof chunk === 'string' ? encodeUTF8(chunk)
       : chunk;
 
-    let newData = new Uint8Array(data.length + binaryChunk.length);
+    const newData = new Uint8Array(data.length + binaryChunk.length);
     newData.set(data);
     newData.set(binaryChunk, data.length);
     data = newData;
@@ -259,13 +261,11 @@ class SSEDecoder {
     this.chunks = [];
   }
 
-  decode(line: string) {
-    if (line.endsWith('\r')) {
-      line = line.substring(0, line.length - 1);
-    }
+  decode(rawLine: string) {
+    const line = rawLine.endsWith('\r') ? rawLine.substring(0, rawLine.length - 1) : rawLine;
 
-    if (!line) {
-      if (!this.event && !this.data.length) return null;
+    if (line === '') {
+      if ((this.event === null || this.event === '') && this.data.length === 0) return null;
 
       const sse: ServerSentEvent = {
         event: this.event,
@@ -286,11 +286,8 @@ class SSEDecoder {
       return null;
     }
 
-    let [fieldname, _, value] = partition(line, ':');
-
-    if (value.startsWith(' ')) {
-      value = value.substring(1);
-    }
+    const [fieldname, , rawValue] = partition(line, ':');
+    const value = rawValue.startsWith(' ') ? rawValue.substring(1) : rawValue;
 
     if (fieldname === 'event') {
       this.event = value;

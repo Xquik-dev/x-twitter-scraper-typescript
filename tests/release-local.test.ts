@@ -11,10 +11,10 @@ import { leftoverStep, runUntilStarted, waitingStep } from './signal-run';
 const script = resolve(__dirname, '..', 'bin', 'release-local');
 
 const release = (variables: Record<string, string>) => {
-  const env = { ...process.env, ...variables };
-  for (const name of ['NPM_KEYCHAIN_SERVICE', 'NPM_KEYCHAIN_ACCOUNT']) {
-    if (!(name in variables)) delete env[name];
-  }
+  const unset = ['NPM_KEYCHAIN_SERVICE', 'NPM_KEYCHAIN_ACCOUNT'].filter((name) => !(name in variables));
+  const env = Object.fromEntries(
+    Object.entries({ ...process.env, ...variables }).filter(([name]) => !unset.includes(name)),
+  );
   const result = spawnSync(script, [], { encoding: 'utf8', env });
   return { status: result.status, stdout: result.stdout, stderr: result.stderr };
 };

@@ -2,9 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-check
-
-const { spawn } = require('child_process');
+const spawn = require('child_process').spawn;
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -43,9 +41,13 @@ export const params: AccountSetXUsernameParams = { username: 'xquik' };
 export const client = new XTwitterScraper({ apiKey: 'key' });
 `;
 
+/** @type {(names: string[]) => string} */
 const sentenceList = (names) =>
-  names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : (names[0] ?? '');
+  names.length > 1 ?
+    `${names.slice(0, -1).join(', ')} and ${names[names.length - 1] ?? ''}`
+  : (names[0] ?? '');
 
+/** @type {(project: string, mode: (typeof modes)[number]) => void} */
 const writeProject = (project, mode) => {
   fs.mkdirSync(path.join(project, 'node_modules', '@types'), { recursive: true });
   fs.symlinkSync(packageDirectory, path.join(project, 'node_modules', 'x-twitter-scraper'), 'junction');
@@ -70,8 +72,10 @@ const writeProject = (project, mode) => {
   fs.writeFileSync(path.join(project, 'index.ts'), program);
 };
 
+/** @type {Set<import('child_process').ChildProcess>} */
 const running = new Set();
 
+/** @type {(compiler: (typeof compilers)[number], project: string, workspace: string) => Promise<{ status: number | null; output: string }>} */
 const compile = (compiler, project, workspace) =>
   new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [compiler.bin, '--project', project, '--pretty', 'false'], {
@@ -80,8 +84,12 @@ const compile = (compiler, project, workspace) =>
     running.add(child);
     let stdout = '';
     let stderr = '';
-    child.stdout.on('data', (chunk) => (stdout += chunk));
-    child.stderr.on('data', (chunk) => (stderr += chunk));
+    child.stdout.on('data', (/** @type {Buffer} */ chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr.on('data', (/** @type {Buffer} */ chunk) => {
+      stderr += chunk.toString();
+    });
     child.on('error', reject);
     child.on('close', (status) => {
       running.delete(child);
@@ -94,11 +102,13 @@ const main = async () => {
     console.error(`${packageDirectory} has no package.json. Run pnpm build first.`);
     process.exit(1);
   }
-  let workspace;
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
   const removeWorkspace = () => {
-    if (workspace) fs.rmSync(workspace, { recursive: true, force: true });
+    fs.rmSync(workspace, { recursive: true, force: true });
   };
-  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
+  /** @type {NodeJS.Signals[]} */
+  const signals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
+  for (const signal of signals) {
     process.on(signal, () => {
       for (const child of running) child.kill(signal);
       removeWorkspace();
@@ -106,7 +116,6 @@ const main = async () => {
       process.kill(process.pid, signal);
     });
   }
-  workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
   /** @type {string[]} */
   const failures = [];
   try {
@@ -135,4 +144,7 @@ const main = async () => {
   console.log(`Consumer types passed for ${modeNames} under ${compilerNames}.`);
 };
 
-main();
+main().catch((/** @type {unknown} */ error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

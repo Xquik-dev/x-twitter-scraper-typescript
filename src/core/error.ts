@@ -10,7 +10,8 @@ export class XTwitterScraperError extends Error {}
 export class APIError<
   TStatus extends number | undefined = number | undefined,
   THeaders extends Headers | undefined = Headers | undefined,
-  TError extends Object | undefined = Object | undefined,
+  TError extends string | number | boolean | object | undefined =
+    string | number | boolean | object | undefined,
 > extends XTwitterScraperError {
   /** HTTP status for the response that caused the error */
   readonly status: TStatus;
@@ -20,7 +21,7 @@ export class APIError<
   readonly error: TError;
 
   constructor(status: TStatus, error: TError, message: string | undefined, headers: THeaders) {
-    super(`${APIError.makeMessage(status, error, message)}`);
+    super(APIError.makeMessage(status, error, message));
     this.status = status;
     this.headers = headers;
     this.error = error;
@@ -29,20 +30,22 @@ export class APIError<
   private static makeMessage(status: number | undefined, error: unknown, message: string | undefined) {
     const errorMessage = readProperty(error, 'message');
     const msg =
-      errorMessage ?
+      Boolean(errorMessage) ?
         typeof errorMessage === 'string' ?
           errorMessage
         : JSON.stringify(errorMessage)
-      : error ? JSON.stringify(error)
+      : Boolean(error) ? JSON.stringify(error)
       : message;
+    const hasMessage = msg !== undefined && msg !== '';
+    const hasStatus = status !== undefined && status !== 0 && !Number.isNaN(status);
 
-    if (status && msg) {
-      return `${status} ${msg}`;
+    if (hasStatus && hasMessage) {
+      return `${String(status)} ${msg}`;
     }
-    if (status) {
-      return `${status} status code (no body)`;
+    if (hasStatus) {
+      return `${String(status)} status code (no body)`;
     }
-    if (msg) {
+    if (hasMessage) {
       return msg;
     }
     return '(no status code or body)';
@@ -50,11 +53,11 @@ export class APIError<
 
   static generate(
     status: number | undefined,
-    error: Object | undefined,
+    error: APIError['error'],
     message: string | undefined,
     headers: Headers | undefined,
   ): APIError {
-    if (!status || !headers) {
+    if (status === undefined || status === 0 || Number.isNaN(status) || headers === undefined) {
       return new APIConnectionError({ message, cause: castToError(error) });
     }
 
@@ -96,14 +99,24 @@ export class APIError<
 
 export class APIUserAbortError extends APIError<undefined, undefined, undefined> {
   constructor({ message }: { message?: string } = {}) {
-    super(undefined, undefined, message || 'Request was aborted.', undefined);
+    super(
+      undefined,
+      undefined,
+      message === undefined || message === '' ? 'Request was aborted.' : message,
+      undefined,
+    );
   }
 }
 
 export class APIConnectionError extends APIError<undefined, undefined, undefined> {
   constructor({ message, cause }: { message?: string | undefined; cause?: Error | undefined }) {
-    super(undefined, undefined, message || 'Connection error.', undefined);
-    if (cause) this.cause = cause;
+    super(
+      undefined,
+      undefined,
+      message === undefined || message === '' ? 'Connection error.' : message,
+      undefined,
+    );
+    if (cause !== undefined) this.cause = cause;
   }
 }
 

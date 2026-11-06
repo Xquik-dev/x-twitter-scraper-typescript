@@ -28,18 +28,22 @@ export const runUntilStarted = async (
     if (processGroup && child.pid !== undefined) process.kill(-child.pid, stopSignal);
     else child.kill(stopSignal);
   };
-  const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve) =>
-    child.on('exit', (code, stopSignal) => resolve({ code, signal: stopSignal })),
-  );
+  const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve) => {
+    child.on('exit', (code, stopSignal) => {
+      resolve({ code, signal: stopSignal });
+    });
+  });
   const deadline = Date.now() + 15_000;
   while (!existsSync(started)) {
     if (Date.now() > deadline) {
       stop('SIGKILL');
       throw new Error(`${command} never reached the waiting step.`);
     }
-    await new Promise((resolve) => setTimeout(resolve, 25));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 25);
+    });
   }
   stop(signal);
   writeFileSync(release, '');
-  return exited;
+  return await exited;
 };

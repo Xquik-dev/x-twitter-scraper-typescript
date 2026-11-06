@@ -699,7 +699,7 @@ export interface TweetDetail {
   viewState?: string;
 }
 
-export namespace TweetDetail {
+export declare namespace TweetDetail {
   /**
    * Describes an X Article preview and its lifecycle metadata.
    */
@@ -2021,7 +2021,7 @@ export interface TweetCreateResponse {
   updatedAt?: string;
 }
 
-export namespace TweetCreateResponse {
+export declare namespace TweetCreateResponse {
   /**
    * Connected account selected for the write.
    */
@@ -2119,7 +2119,7 @@ export interface TweetListResponse extends Shared.PaginatedTweets {
   skipped?: Array<TweetListResponse.Skipped>;
 }
 
-export namespace TweetListResponse {
+export declare namespace TweetListResponse {
   export interface Skipped {
     /**
      * The entry as sent.
@@ -2314,7 +2314,7 @@ export interface TweetDeleteResponse {
   updatedAt?: string;
 }
 
-export namespace TweetDeleteResponse {
+export declare namespace TweetDeleteResponse {
   /**
    * Connected account selected for the write.
    */
@@ -2428,7 +2428,7 @@ export interface TweetEmbedResponse {
   embed: TweetEmbedResponse.Embed;
 }
 
-export namespace TweetEmbedResponse {
+export declare namespace TweetEmbedResponse {
   /**
    * Holds the HTML that embeds one tweet on a website.
    */
@@ -2479,7 +2479,7 @@ export interface TweetGetInsightsResponse {
   insights: TweetGetInsightsResponse.Insights;
 }
 
-export namespace TweetGetInsightsResponse {
+export declare namespace TweetGetInsightsResponse {
   /**
    * Engagement insights of one tweet. Engagements are likes, replies, reposts and
    * quotes. A rate is null when nothing divides it, such as a tweet without views.
@@ -2643,7 +2643,7 @@ export interface TweetGetRepliesResponse extends Omit<Shared.PaginatedTweets, 't
   unreachedReplies?: number;
 }
 
-export namespace TweetGetRepliesResponse {
+export declare namespace TweetGetRepliesResponse {
   /**
    * Direct-reply coverage & collection evidence.
    */
@@ -2900,7 +2900,7 @@ export interface TweetGetSubtitlesResponse {
   subtitles: TweetGetSubtitlesResponse.Subtitles;
 }
 
-export namespace TweetGetSubtitlesResponse {
+export declare namespace TweetGetSubtitlesResponse {
   /**
    * Holds the caption tracks of one tweet's videos.
    */
@@ -2994,7 +2994,7 @@ export interface TweetResolveLinksResponse {
   unprocessedUrls: Array<string>;
 }
 
-export namespace TweetResolveLinksResponse {
+export declare namespace TweetResolveLinksResponse {
   /**
    * Pairs one t.co link with the URL it leads to.
    */
@@ -3021,7 +3021,7 @@ export namespace TweetResolveLinksResponse {
  */
 export type TweetSearchResponse = Shared.PaginatedTweets | TweetSearchResponse.TweetSearchCoverageResponse;
 
-export namespace TweetSearchResponse {
+export declare namespace TweetSearchResponse {
   /**
    * Terminal Tweet search coverage response with diagnostics.
    */
@@ -3162,7 +3162,7 @@ export interface TweetTranslateResponse {
   translation: TweetTranslateResponse.Translation;
 }
 
-export namespace TweetTranslateResponse {
+export declare namespace TweetTranslateResponse {
   /**
    * Holds X's translation of one tweet into the requested language. `entities` holds
    * the links, mentions, and tags with their offsets in the translated text, and is

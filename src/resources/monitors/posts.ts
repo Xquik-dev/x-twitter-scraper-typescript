@@ -259,7 +259,7 @@ export interface PostMonitor {
   pausedAt?: string;
 }
 
-export namespace PostMonitor {
+export declare namespace PostMonitor {
   /**
    * 1 photo, video or GIF on the post.
    */

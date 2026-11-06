@@ -16,7 +16,7 @@ async function resourceMockFetch(
   const request = new Request(input, init);
   const url = new URL(request.url);
   if (url.origin !== mockOrigin) {
-    return nativeFetch(input, init);
+    return await nativeFetch(input, init);
   }
   if (request.signal.aborted) {
     throw abortedRequestError();

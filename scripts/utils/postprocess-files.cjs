@@ -2,15 +2,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-check
 const fs = require('fs');
 const path = require('path');
+const asObject = require('./json.cjs').asObject;
+const parseJson = require('./json.cjs').parseJson;
 
+const distPath = process.env['DIST_PATH'];
 const distDir =
-  process.env['DIST_PATH'] ?
-    path.resolve(process.env['DIST_PATH'])
+  distPath !== undefined && distPath !== '' ?
+    path.resolve(distPath)
   : path.resolve(__dirname, '..', '..', 'dist');
 
+/** @type {(dir: string) => AsyncGenerator<string>} */
 async function* walk(dir) {
   for await (const d of await fs.promises.opendir(dir)) {
     const entry = path.join(dir, d.name);
@@ -36,6 +39,7 @@ async function postprocess() {
     }
   }
 
+  /** @type {Record<string, import('./types').ExportConditions | undefined>} */
   const newExports = {
     '.': {
       require: {
@@ -65,32 +69,32 @@ async function postprocess() {
       const { name, ext } = path.parse(entry.name);
       const subpathWithoutExt = './' + name;
       const subpath = './' + entry.name;
-      newExports[subpathWithoutExt] ||= { import: undefined, require: undefined };
+      const conditions = (newExports[subpathWithoutExt] ??= { import: undefined, require: undefined });
       const isModule = ext[1] === 'm';
       if (isModule) {
-        newExports[subpathWithoutExt].import = subpath;
+        conditions.import = subpath;
       } else {
-        newExports[subpathWithoutExt].require = subpath;
+        conditions.require = subpath;
       }
       newExports[subpath] = {
         default: subpath,
       };
     }
   }
+  const distPackage = parseJson(await fs.promises.readFile('dist/package.json', 'utf-8'));
   await fs.promises.writeFile(
     'dist/package.json',
     JSON.stringify(
-      Object.assign(
-        /** @type {Record<String, unknown>} */ (
-          JSON.parse(await fs.promises.readFile('dist/package.json', 'utf-8'))
-        ),
-        {
-          exports: newExports,
-        },
-      ),
+      {
+        ...asObject(distPackage),
+        exports: newExports,
+      },
       null,
       2,
     ),
   );
 }
-postprocess();
+postprocess().catch((/** @type {unknown} */ error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

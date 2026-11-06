@@ -12,7 +12,12 @@ export const isAbsoluteURL = (url: string): boolean => {
 };
 
 export let isArray = (val: unknown): val is unknown[] => ((isArray = Array.isArray), isArray(val));
-export let isReadonlyArray: (val: unknown) => val is readonly unknown[] = isArray;
+export const isReadonlyArray: (val: unknown) => val is readonly unknown[] = isArray;
+
+export const isPresent = <T>(value: T): value is NonNullable<T> => value !== null && value !== undefined;
+
+export const isNonEmptyString = (value: string | null | undefined): value is string =>
+  isPresent(value) && value !== '';
 
 export function maybeObj(x: unknown): object {
   if (typeof x !== 'object') {
@@ -22,8 +27,8 @@ export function maybeObj(x: unknown): object {
   return x ?? {};
 }
 
-export function isEmptyObj(obj: Object | null | undefined): boolean {
-  if (!obj) return true;
+export function isEmptyObj(obj: object | null | undefined): boolean {
+  if (!isPresent(obj)) return true;
   for (const _k in obj) return false;
   return true;
 }
@@ -33,12 +38,12 @@ export function hasOwn<T extends object = object>(obj: T, key: PropertyKey): key
 }
 
 export function isObj(obj: unknown): obj is Record<string, unknown> {
-  return obj != null && typeof obj === 'object' && !Array.isArray(obj);
+  return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 }
 
 export const ensurePresent = <T>(value: T | null | undefined): T => {
-  if (value == null) {
-    throw new XTwitterScraperError(`Expected a value to be given but received ${value} instead.`);
+  if (!isPresent(value)) {
+    throw new XTwitterScraperError(`Expected a value to be given but received ${String(value)} instead.`);
   }
 
   return value;
@@ -58,14 +63,14 @@ export const coerceInteger = (value: unknown): number => {
   if (typeof value === 'number') return Math.round(value);
   if (typeof value === 'string') return parseInt(value, 10);
 
-  throw new XTwitterScraperError(`Could not coerce ${value} (type: ${typeof value}) into a number`);
+  throw new XTwitterScraperError(`Could not coerce ${String(value)} (type: ${typeof value}) into a number`);
 };
 
 export const coerceFloat = (value: unknown): number => {
   if (typeof value === 'number') return value;
   if (typeof value === 'string') return parseFloat(value);
 
-  throw new XTwitterScraperError(`Could not coerce ${value} (type: ${typeof value}) into a number`);
+  throw new XTwitterScraperError(`Could not coerce ${String(value)} (type: ${typeof value}) into a number`);
 };
 
 export const coerceBoolean = (value: unknown): boolean => {
@@ -75,21 +80,21 @@ export const coerceBoolean = (value: unknown): boolean => {
 };
 
 export const maybeCoerceInteger = (value: unknown): number | undefined => {
-  if (value == null) {
+  if (!isPresent(value)) {
     return undefined;
   }
   return coerceInteger(value);
 };
 
 export const maybeCoerceFloat = (value: unknown): number | undefined => {
-  if (value == null) {
+  if (!isPresent(value)) {
     return undefined;
   }
   return coerceFloat(value);
 };
 
 export const maybeCoerceBoolean = (value: unknown): boolean | undefined => {
-  if (value == null) {
+  if (!isPresent(value)) {
     return undefined;
   }
   return coerceBoolean(value);
@@ -98,7 +103,7 @@ export const maybeCoerceBoolean = (value: unknown): boolean | undefined => {
 export const safeJSON = (text: string): unknown => {
   try {
     return JSON.parse(text);
-  } catch (err) {
+  } catch {
     return undefined;
   }
 };

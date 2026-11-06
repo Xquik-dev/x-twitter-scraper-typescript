@@ -113,7 +113,7 @@ export interface CommunityNotesContributor {
   ratingsCount?: CommunityNotesContributor.RatingsCount;
 }
 
-export namespace CommunityNotesContributor {
+export declare namespace CommunityNotesContributor {
   /**
    * How many notes a contributor wrote, by X's current rating.
    */
@@ -199,7 +199,7 @@ export interface PaginatedCommunityNotes {
   notes: Array<PaginatedCommunityNotes.Note>;
 }
 
-export namespace PaginatedCommunityNotes {
+export declare namespace PaginatedCommunityNotes {
   /**
    * A Community Note as its writer's page lists it, with the post it is on. A deleted
    * note has no text, classification or post. A field X leaves out is left out.
@@ -417,7 +417,7 @@ export namespace PaginatedCommunityNotes {
 
 export type CommunityNoteListContributorDeletedNotesResponse = CommunityNotesAPI.PaginatedCommunityNotes;
 
-export namespace CommunityNoteListContributorDeletedNotesResponse {
+export declare namespace CommunityNoteListContributorDeletedNotesResponse {
   export type Note = CommunityNotesAPI.PaginatedCommunityNotes.Note;
 
   export namespace Note {
@@ -447,7 +447,7 @@ export namespace CommunityNoteListContributorDeletedNotesResponse {
 
 export type CommunityNoteListContributorNotesResponse = CommunityNotesAPI.PaginatedCommunityNotes;
 
-export namespace CommunityNoteListContributorNotesResponse {
+export declare namespace CommunityNoteListContributorNotesResponse {
   export type Note = CommunityNotesAPI.PaginatedCommunityNotes.Note;
 
   export namespace Note {
@@ -484,7 +484,7 @@ export interface CommunityNoteRetrieveContributorResponse {
   contributor: CommunityNotesContributor;
 }
 
-export namespace CommunityNoteRetrieveContributorResponse {
+export declare namespace CommunityNoteRetrieveContributorResponse {
   export type Contributor = CommunityNotesAPI.CommunityNotesContributor;
 
   export namespace Contributor {
