@@ -126,8 +126,6 @@ export declare namespace ComposeCreateResponse {
 
     /**
      * Deprecated compatibility schema. The response array is empty.
-     *
-     * @deprecated
      */
     export interface RadarRecommendation {
       /**
@@ -206,8 +204,6 @@ export declare namespace ComposeCreateResponse {
   export namespace ComposeRefineResult {
     /**
      * Deprecated example-pattern schema. The response array is empty.
-     *
-     * @deprecated
      */
     export interface ExamplePattern {
       description: string;

@@ -7,7 +7,8 @@ import { readGlobal, readProperty, readString } from './globals';
 export const readEnv = (env: string): string | undefined => {
   const process = readGlobal('process');
   if (typeof process !== 'undefined') {
-    return readString(readProperty(process, 'env'), env)?.trim() || undefined;
+    const value = readString(readProperty(process, 'env'), env)?.trim();
+    return value === '' ? undefined : value;
   }
   const deno = readGlobal('Deno');
   if (typeof deno !== 'undefined') {
@@ -15,7 +16,9 @@ export const readEnv = (env: string): string | undefined => {
     const get = readProperty(denoEnv, 'get');
     if (typeof get !== 'function') return undefined;
     const value: unknown = Reflect.apply(get, denoEnv, [env]);
-    return typeof value === 'string' ? value.trim() || undefined : undefined;
+    if (typeof value !== 'string') return undefined;
+    const trimmed = value.trim();
+    return trimmed === '' ? undefined : trimmed;
   }
   return undefined;
 };

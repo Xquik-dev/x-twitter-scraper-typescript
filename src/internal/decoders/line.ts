@@ -25,7 +25,7 @@ export class LineDecoder {
   }
 
   decode(chunk: Bytes): string[] {
-    if (chunk == null) {
+    if (chunk === null || chunk === undefined) {
       return [];
     }
 
@@ -38,14 +38,14 @@ export class LineDecoder {
 
     const lines: string[] = [];
     let patternIndex;
-    while ((patternIndex = findNewlineIndex(this.#buffer, this.#carriageReturnIndex)) != null) {
-      if (patternIndex.carriage && this.#carriageReturnIndex == null) {
+    while ((patternIndex = findNewlineIndex(this.#buffer, this.#carriageReturnIndex)) !== null) {
+      if (patternIndex.carriage && this.#carriageReturnIndex === null) {
         this.#carriageReturnIndex = patternIndex.index;
         continue;
       }
 
       if (
-        this.#carriageReturnIndex != null &&
+        this.#carriageReturnIndex !== null &&
         (patternIndex.index !== this.#carriageReturnIndex + 1 || patternIndex.carriage)
       ) {
         lines.push(decodeUTF8(this.#buffer.subarray(0, this.#carriageReturnIndex - 1)));
@@ -68,7 +68,7 @@ export class LineDecoder {
   }
 
   flush(): string[] {
-    if (!this.#buffer.length) {
+    if (this.#buffer.length === 0) {
       return [];
     }
     return this.decode('\n');

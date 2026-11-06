@@ -14,6 +14,14 @@
 - Request bodies and `toFile` copy a view over a `SharedArrayBuffer` into a plain `ArrayBuffer` before they send it.
 - On an edge runtime with no `process` global, building a request threw a `TypeError`. The SDK now sends `X-Stainless-Runtime-Version: unknown` there.
 - `withOptions` throws an `XTwitterScraperError` when a subclass constructor returns an instance of another class.
+- `APIError.error` is typed `string | number | boolean | object | undefined`, not `Object | undefined`. Code and subclasses that type it as `Object` still compile.
+- When the SDK wraps a thrown value that isn't an `Error` and can't be written as JSON, the message names its type, such as `[object Object]`. It no longer calls the value's own `toString`.
+
+### Bug Fixes
+
+- `defaultHeaders` given as a `Headers` object or as header pairs were dropped when `X_TWITTER_SCRAPER_CUSTOM_HEADERS` was set. The client now sends both.
+- A negative `maxRetries` retried a failed request without end. The client now treats it as 0.
+- A `symbol` value in a multipart form threw a `TypeError` while the SDK built its error message. It now fails with the SDK's own message, which names the value.
 
 ### Chores
 

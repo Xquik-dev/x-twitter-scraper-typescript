@@ -5,6 +5,7 @@
 import { XTwitterScraperError } from '../../core/error';
 import { encodeUTF8 } from './bytes';
 import { readGlobal, readProperty } from './globals';
+import { isPresent } from './values';
 
 type NodeBuffer = {
   from(data: string | Uint8Array, encoding?: 'base64'): Uint8Array & { toString(encoding: 'base64'): string };
@@ -14,19 +15,17 @@ const isNodeBuffer = (value: unknown): value is NodeBuffer =>
   typeof value === 'function' && typeof readProperty(value, 'from') === 'function';
 
 export const toBase64 = (data: string | Uint8Array | null | undefined): string => {
-  if (!data) return '';
+  if (!isPresent(data) || data === '') return '';
 
   const buffer = readGlobal('Buffer');
   if (isNodeBuffer(buffer)) {
     return buffer.from(data).toString('base64');
   }
 
-  if (typeof data === 'string') {
-    data = encodeUTF8(data);
-  }
+  const bytes = typeof data === 'string' ? encodeUTF8(data) : data;
 
   if (typeof btoa !== 'undefined') {
-    return btoa(String.fromCharCode(...data));
+    return btoa(String.fromCharCode(...bytes));
   }
 
   throw new XTwitterScraperError('Cannot generate base64 string; Expected `Buffer` or `btoa` to be defined');

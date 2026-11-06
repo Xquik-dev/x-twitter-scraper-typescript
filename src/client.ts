@@ -6,7 +6,13 @@ import type { RequestInit, RequestInfo, BodyInit } from './internal/builtin-type
 import type { HTTPMethod, PromiseOrValue, MergedRequestInit, FinalizedRequestInit } from './internal/types';
 import { uuid4 } from './internal/utils/uuid';
 import { arrayBufferBytes } from './internal/utils/bytes';
-import { validatePositiveInteger, isAbsoluteURL, safeJSON } from './internal/utils/values';
+import {
+  validatePositiveInteger,
+  isAbsoluteURL,
+  isNonEmptyString,
+  isPresent,
+  safeJSON,
+} from './internal/utils/values';
 import { sleep } from './internal/utils/sleep';
 export type { Logger, LogLevel } from './internal/utils/log';
 import { castToError, isAbortError } from './internal/errors';
@@ -278,10 +284,10 @@ export class XTwitterScraper {
   logLevel: LogLevel | undefined;
   fetchOptions: MergedRequestInit | undefined;
 
-  private fetch: Fetch;
-  #encoder: Opts.RequestEncoder;
+  private readonly fetch: Fetch;
+  readonly #encoder: Opts.RequestEncoder;
   protected idempotencyHeader?: string;
-  private _options: ClientOptions;
+  private readonly _options: ClientOptions;
 
   /**
    * API Client for interfacing with the X Twitter Scraper API.
@@ -302,7 +308,7 @@ export class XTwitterScraper {
     bearerToken = readEnv('X_TWITTER_SCRAPER_BEARER_TOKEN') ?? null,
     ...opts
   }: ClientOptions = {}) {
-    const resolvedBaseURL = baseURL || DEFAULT_BASE_URL;
+    const resolvedBaseURL = isNonEmptyString(baseURL) ? baseURL : DEFAULT_BASE_URL;
     const options: ClientOptions = {
       apiKey,
       bearerToken,
@@ -325,7 +331,7 @@ export class XTwitterScraper {
     this.#encoder = Opts.FallbackEncoder;
 
     const customHeadersEnv = readEnv('X_TWITTER_SCRAPER_CUSTOM_HEADERS');
-    if (customHeadersEnv) {
+    if (customHeadersEnv !== undefined) {
       const parsed: Record<string, string> = {};
       for (const line of customHeadersEnv.split('\n')) {
         const colon = line.indexOf(':');
@@ -333,7 +339,7 @@ export class XTwitterScraper {
           parsed[line.substring(0, colon).trim()] = line.substring(colon + 1).trim();
         }
       }
-      options.defaultHeaders = { ...parsed, ...options.defaultHeaders };
+      options.defaultHeaders = buildHeaders([parsed, options.defaultHeaders]);
     }
 
     this._options = options;
@@ -382,14 +388,14 @@ export class XTwitterScraper {
   }
 
   protected validateHeaders({ values, nulls }: NullableHeaders) {
-    if (this.apiKey && values.get('x-api-key')) {
+    if (isNonEmptyString(this.apiKey) && isNonEmptyString(values.get('x-api-key'))) {
       return;
     }
     if (nulls.has('x-api-key')) {
       return;
     }
 
-    if (this.bearerToken && values.get('authorization')) {
+    if (isNonEmptyString(this.bearerToken) && isNonEmptyString(values.get('authorization'))) {
       return;
     }
     if (nulls.has('authorization')) {
@@ -406,25 +412,25 @@ export class XTwitterScraper {
     schemes: { apiKeyAuth?: boolean; oauthBearerAuth?: boolean },
   ): Promise<NullableHeaders | undefined> {
     return buildHeaders([
-      schemes.apiKeyAuth ? await this.apiKeyAuth(opts) : null,
-      schemes.oauthBearerAuth ? await this.oauthBearerAuth(opts) : null,
+      schemes.apiKeyAuth === true ? await this.apiKeyAuth(opts) : null,
+      schemes.oauthBearerAuth === true ? await this.oauthBearerAuth(opts) : null,
     ]);
   }
 
   protected apiKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined>;
-  protected async apiKeyAuth(): Promise<NullableHeaders | undefined> {
-    if (this.apiKey == null) {
-      return undefined;
+  protected apiKeyAuth(): Promise<NullableHeaders | undefined> {
+    if (this.apiKey === null) {
+      return Promise.resolve(undefined);
     }
-    return buildHeaders([{ 'x-api-key': this.apiKey }]);
+    return Promise.resolve(buildHeaders([{ 'x-api-key': this.apiKey }]));
   }
 
   protected oauthBearerAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined>;
-  protected async oauthBearerAuth(): Promise<NullableHeaders | undefined> {
-    if (this.bearerToken == null) {
-      return undefined;
+  protected oauthBearerAuth(): Promise<NullableHeaders | undefined> {
+    if (this.bearerToken === null) {
+      return Promise.resolve(undefined);
     }
-    return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
+    return Promise.resolve(buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]));
   }
 
   protected stringifyQuery(query: object | Record<string, unknown>): string {
@@ -441,15 +447,16 @@ export class XTwitterScraper {
 
   protected makeStatusError(
     status: number,
-    error: Object | undefined,
+    error: Errors.APIError['error'],
     message: string | undefined,
     headers: Headers,
   ): Errors.APIError {
     return Errors.APIError.generate(status, error, message, headers);
   }
 
-  buildURL(path: string, query: object | null | undefined, defaultBaseURL?: string | undefined): string {
-    const baseURL = (!this.#baseURLOverridden() && defaultBaseURL) || this.baseURL;
+  buildURL(path: string, query: object | null | undefined, defaultBaseURL?: string): string {
+    const baseURL =
+      !this.#baseURLOverridden() && isNonEmptyString(defaultBaseURL) ? defaultBaseURL : this.baseURL;
     const url =
       isAbsoluteURL(path) ?
         new URL(path)
@@ -457,25 +464,30 @@ export class XTwitterScraper {
 
     const defaultQuery = this.defaultQuery();
     const pathQuery = Object.fromEntries(url.searchParams);
-    if (!isEmptyObj(defaultQuery) || !isEmptyObj(pathQuery)) {
-      query = { ...pathQuery, ...defaultQuery, ...query };
-    }
+    const mergedQuery =
+      !isEmptyObj(defaultQuery) || !isEmptyObj(pathQuery) ?
+        { ...pathQuery, ...defaultQuery, ...query }
+      : query;
 
-    if (typeof query === 'object' && query && !Array.isArray(query)) {
-      url.search = this.stringifyQuery(query);
+    if (typeof mergedQuery === 'object' && mergedQuery !== null && !Array.isArray(mergedQuery)) {
+      url.search = this.stringifyQuery(mergedQuery);
     }
 
     return url.toString();
   }
 
   protected prepareOptions(options: FinalRequestOptions): Promise<void>;
-  protected async prepareOptions(): Promise<void> {}
+  protected prepareOptions(): Promise<void> {
+    return Promise.resolve();
+  }
 
   protected prepareRequest(
     request: RequestInit,
     context: { url: string; options: FinalRequestOptions },
   ): Promise<void>;
-  protected async prepareRequest(): Promise<void> {}
+  protected prepareRequest(): Promise<void> {
+    return Promise.resolve();
+  }
 
   get<Rsp>(path: string, opts?: PromiseOrValue<RequestOptions>): APIPromise<Rsp> {
     return this.methodRequest('get', path, opts);
@@ -518,13 +530,18 @@ export class XTwitterScraper {
 
   private async makeRequest(
     optionsInput: PromiseOrValue<FinalRequestOptions>,
-    retriesRemaining: number | null,
+    retriesInput: number | null,
     retryOfRequestLogID: string | undefined,
   ): Promise<APIResponseProps> {
     const options = await optionsInput;
     const maxRetries = options.maxRetries ?? this.maxRetries;
-    if (retriesRemaining == null) {
-      retriesRemaining = maxRetries;
+    const retriesRemaining = retriesInput ?? maxRetries;
+    if (
+      isNonEmptyString(this.idempotencyHeader) &&
+      options.method !== 'get' &&
+      !isNonEmptyString(options.idempotencyKey)
+    ) {
+      options.idempotencyKey = this.defaultIdempotencyKey();
     }
 
     await this.prepareOptions(options);
@@ -550,7 +567,8 @@ export class XTwitterScraper {
       }),
     );
 
-    if (options.signal?.aborted) {
+    const aborted = (): boolean => options.signal?.aborted === true;
+    if (aborted()) {
       throw new Errors.APIUserAbortError();
     }
 
@@ -559,14 +577,14 @@ export class XTwitterScraper {
     const headersTime = Date.now();
 
     if (response instanceof globalThis.Error) {
-      const retryMessage = `retrying, ${retriesRemaining} attempts remaining`;
-      if (options.signal?.aborted) {
+      const retryMessage = `retrying, ${String(retriesRemaining)} attempts remaining`;
+      if (aborted()) {
         throw new Errors.APIUserAbortError();
       }
       const isTimeout =
         isAbortError(response) ||
         /timed? ?out/i.test(String(response) + ('cause' in response ? String(response.cause) : ''));
-      if (retriesRemaining) {
+      if (retriesRemaining > 0) {
         loggerFor(this).info(
           `[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} - ${retryMessage}`,
         );
@@ -579,7 +597,7 @@ export class XTwitterScraper {
             message: response.message,
           }),
         );
-        return this.retryRequest(options, retriesRemaining, retryOfRequestLogID ?? requestLogID);
+        return await this.retryRequest(options, retriesRemaining, retryOfRequestLogID ?? requestLogID);
       }
       loggerFor(this).info(
         `[${requestLogID}] connection ${isTimeout ? 'timed out' : 'failed'} - error; no more retries left`,
@@ -599,14 +617,14 @@ export class XTwitterScraper {
       throw new Errors.APIConnectionError({ cause: response });
     }
 
-    const responseInfo = `[${requestLogID}${retryLogStr}] ${req.method} ${url} ${
+    const responseInfo = `[${requestLogID}${retryLogStr}] ${String(req.method)} ${url} ${
       response.ok ? 'succeeded' : 'failed'
-    } with status ${response.status} in ${headersTime - startTime}ms`;
+    } with status ${String(response.status)} in ${String(headersTime - startTime)}ms`;
 
     if (!response.ok) {
-      const shouldRetry = await this.shouldRetry(response);
-      if (retriesRemaining && shouldRetry) {
-        const retryMessage = `retrying, ${retriesRemaining} attempts remaining`;
+      const shouldRetry = this.shouldRetry(response);
+      if (retriesRemaining > 0 && shouldRetry) {
+        const retryMessage = `retrying, ${String(retriesRemaining)} attempts remaining`;
 
         await Shims.CancelReadableStream(response.body);
         loggerFor(this).info(`${responseInfo} - ${retryMessage}`);
@@ -620,7 +638,7 @@ export class XTwitterScraper {
             durationMs: headersTime - startTime,
           }),
         );
-        return this.retryRequest(
+        return await this.retryRequest(
           options,
           retriesRemaining,
           retryOfRequestLogID ?? requestLogID,
@@ -634,7 +652,7 @@ export class XTwitterScraper {
 
       const errText = await response.text().catch((err: unknown) => castToError(err).message);
       const errJSON = safeJSON(errText);
-      const errMessage = errJSON ? undefined : errText;
+      const errMessage = Boolean(errJSON) ? undefined : errText;
 
       loggerFor(this).debug(
         `[${requestLogID}] response error (${retryMessage})`,
@@ -673,9 +691,9 @@ export class XTwitterScraper {
     ms: number,
     controller: AbortController,
   ): Promise<Response> {
-    const { signal, method, ...options } = init || {};
+    const { signal, method, ...options } = init ?? {};
     const abort = this._makeAbort(controller);
-    if (signal) signal.addEventListener('abort', abort, { once: true });
+    signal?.addEventListener('abort', abort, { once: true });
 
     const timeout = setTimeout(abort, ms);
 
@@ -689,7 +707,7 @@ export class XTwitterScraper {
       method: 'GET',
       ...options,
     };
-    if (method) {
+    if (isNonEmptyString(method)) {
       // Custom methods like 'patch' need to be uppercased
       // See https://github.com/nodejs/undici/issues/2294
       fetchOptions.method = method.toUpperCase();
@@ -702,7 +720,7 @@ export class XTwitterScraper {
     }
   }
 
-  private async shouldRetry(response: Response): Promise<boolean> {
+  private shouldRetry(response: Response): boolean {
     const shouldRetryHeader = response.headers.get('x-should-retry');
 
     if (shouldRetryHeader === 'true') return true;
@@ -723,12 +741,12 @@ export class XTwitterScraper {
     options: FinalRequestOptions,
     retriesRemaining: number,
     requestLogID: string,
-    responseHeaders?: Headers | undefined,
+    responseHeaders?: Headers,
   ): Promise<APIResponseProps> {
     let timeoutMillis: number | undefined;
 
     const retryAfterMillisHeader = responseHeaders?.get('retry-after-ms');
-    if (retryAfterMillisHeader) {
+    if (isNonEmptyString(retryAfterMillisHeader)) {
       const timeoutMs = parseFloat(retryAfterMillisHeader);
       if (!Number.isNaN(timeoutMs)) {
         timeoutMillis = timeoutMs;
@@ -736,7 +754,7 @@ export class XTwitterScraper {
     }
 
     const retryAfterHeader = responseHeaders?.get('retry-after');
-    if (retryAfterHeader && !timeoutMillis) {
+    if (isNonEmptyString(retryAfterHeader) && (timeoutMillis === undefined || timeoutMillis === 0)) {
       const timeoutSeconds = parseFloat(retryAfterHeader);
       if (!Number.isNaN(timeoutSeconds)) {
         timeoutMillis = timeoutSeconds * 1000;
@@ -751,7 +769,7 @@ export class XTwitterScraper {
     }
     await sleep(timeoutMillis);
 
-    return this.makeRequest(options, retriesRemaining - 1, requestLogID);
+    return await this.makeRequest(options, retriesRemaining - 1, requestLogID);
   }
 
   private calculateDefaultRetryTimeoutMillis(retriesRemaining: number, maxRetries: number): number {
@@ -783,9 +801,9 @@ export class XTwitterScraper {
     const req: FinalizedRequestInit = {
       method,
       headers: reqHeaders,
-      ...(options.signal && { signal: options.signal }),
+      ...(isPresent(options.signal) && { signal: options.signal }),
       ...(typeof ReadableStream === 'function' && body instanceof ReadableStream && { duplex: 'half' }),
-      ...(body && { body }),
+      ...(body !== undefined && body !== '' && { body }),
       ...this.fetchOptions,
       ...options.fetchOptions,
     };
@@ -804,10 +822,10 @@ export class XTwitterScraper {
     bodyHeaders: HeadersLike;
     retryCount: number;
   }): Promise<Headers> {
-    let idempotencyHeaders: HeadersLike = {};
-    if (this.idempotencyHeader && method !== 'get') {
-      if (!options.idempotencyKey) options.idempotencyKey = this.defaultIdempotencyKey();
-      idempotencyHeaders[this.idempotencyHeader] = options.idempotencyKey;
+    const idempotencyHeaders: HeadersLike = {};
+    if (isNonEmptyString(this.idempotencyHeader) && method !== 'get') {
+      idempotencyHeaders[this.idempotencyHeader] =
+        isNonEmptyString(options.idempotencyKey) ? options.idempotencyKey : this.defaultIdempotencyKey();
     }
 
     const security = options.__security ?? { apiKeyAuth: true, oauthBearerAuth: true };
@@ -817,7 +835,9 @@ export class XTwitterScraper {
         Accept: 'application/json',
         'User-Agent': this.getUserAgent(),
         'X-Stainless-Retry-Count': String(retryCount),
-        ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
+        ...(options.timeout !== undefined && options.timeout !== 0 ?
+          { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) }
+        : {}),
         ...getPlatformHeaders(),
       },
       await this.authHeaders(options, security),
@@ -826,7 +846,7 @@ export class XTwitterScraper {
       options.headers,
     ]);
 
-    if (security.apiKeyAuth || security.oauthBearerAuth) {
+    if (security.apiKeyAuth === true || security.oauthBearerAuth === true) {
       this.validateHeaders(headers);
     }
 
@@ -834,7 +854,9 @@ export class XTwitterScraper {
   }
 
   private _makeAbort(controller: AbortController) {
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+    };
   }
 
   private buildBody({ options }: { options: FinalRequestOptions }): {
@@ -842,8 +864,8 @@ export class XTwitterScraper {
     body: BodyInit | undefined;
   } {
     const { body, headers: rawHeaders } = options;
-    if (!body) {
-      if (body == null && 'body' in options) {
+    if (!Boolean(body)) {
+      if (!isPresent(body) && 'body' in options) {
         return this.#encoder({ body, headers: buildHeaders([rawHeaders]) });
       }
       return { bodyHeaders: undefined, body: undefined };
@@ -863,12 +885,14 @@ export class XTwitterScraper {
       return { bodyHeaders: undefined, body };
     } else if (
       typeof body === 'object' &&
+      body !== null &&
       (Shims.isAsyncIterable(body) ||
         (Shims.isIterable(body) && 'next' in body && typeof body.next === 'function'))
     ) {
       return { bodyHeaders: undefined, body: Shims.ReadableStreamFrom(Shims.uint8ArrayChunks(body)) };
     } else if (
       typeof body === 'object' &&
+      body !== null &&
       headers.values.get('content-type') === 'application/x-www-form-urlencoded'
     ) {
       return {

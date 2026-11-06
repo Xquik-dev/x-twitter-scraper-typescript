@@ -28,7 +28,7 @@ export const parseLogLevel = (
   sourceName: string,
   client: XTwitterScraper,
 ): LogLevel | undefined => {
-  if (!maybeLevel) {
+  if (maybeLevel === undefined || maybeLevel === '') {
     return undefined;
   }
   if (hasOwn(levelNumbers, maybeLevel)) {
@@ -44,32 +44,22 @@ export const parseLogLevel = (
 
 function noop() {}
 
-function makeLogFn(fnLevel: keyof Logger, logger: Logger | undefined, logLevel: LogLevel) {
-  if (!logger || levelNumbers[fnLevel] > levelNumbers[logLevel]) {
+function makeLogFn(fnLevel: keyof Logger, logger: Logger, logLevel: LogLevel) {
+  if (levelNumbers[fnLevel] > levelNumbers[logLevel]) {
     return noop;
   } else {
     return logger[fnLevel].bind(logger);
   }
 }
 
-const noopLogger = {
-  error: noop,
-  warn: noop,
-  info: noop,
-  debug: noop,
-};
-
-let cachedLoggers = /* @__PURE__ */ new WeakMap<Logger, [LogLevel, Logger]>();
+const cachedLoggers = /* @__PURE__ */ new WeakMap<Logger, [LogLevel, Logger]>();
 
 export function loggerFor(client: XTwitterScraper): Logger {
   const logger = client.logger;
   const logLevel = client.logLevel ?? 'off';
-  if (!logger) {
-    return noopLogger;
-  }
 
   const cachedLogger = cachedLoggers.get(logger);
-  if (cachedLogger && cachedLogger[0] === logLevel) {
+  if (cachedLogger?.[0] === logLevel) {
     return cachedLogger[1];
   }
 
@@ -85,7 +75,7 @@ export function loggerFor(client: XTwitterScraper): Logger {
   return levelLogger;
 }
 
-export const formatRequestDetails = (details: {
+export const formatRequestDetails = (input: {
   options?: RequestOptions | undefined;
   headers?: Headers | Record<string, string> | undefined;
   retryOfRequestLogID?: string | undefined;
@@ -97,11 +87,12 @@ export const formatRequestDetails = (details: {
   message?: unknown;
   body?: unknown;
 }) => {
-  if (details.options) {
+  const details = { ...input };
+  if (details.options !== undefined) {
     details.options = { ...details.options };
     delete details.options['headers'];
   }
-  if (details.headers) {
+  if (details.headers !== undefined) {
     details.headers = Object.fromEntries(
       (details.headers instanceof Headers ? [...details.headers] : Object.entries(details.headers)).map(
         ([name, value]) => [
@@ -120,7 +111,7 @@ export const formatRequestDetails = (details: {
     );
   }
   if ('retryOfRequestLogID' in details) {
-    if (details.retryOfRequestLogID) {
+    if (details.retryOfRequestLogID !== undefined && details.retryOfRequestLogID !== '') {
       details.retryOf = details.retryOfRequestLogID;
     }
     delete details.retryOfRequestLogID;

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { isReadonlyArray } from './utils/values';
+import { isPresent, isReadonlyArray } from './utils/values';
 
 type HeaderValue = string | undefined | null;
 export type HeadersLike =
@@ -22,7 +22,7 @@ export type NullableHeaders = {
 };
 
 function* iterateHeaders(headers: HeadersLike): IterableIterator<readonly [string, string | null]> {
-  if (!headers) return;
+  if (!isPresent(headers)) return;
 
   if (brand_privateNullableHeaders in headers) {
     const { values, nulls } = headers;
@@ -41,9 +41,9 @@ function* iterateHeaders(headers: HeadersLike): IterableIterator<readonly [strin
     iter = headers;
   } else {
     shouldClear = true;
-    iter = Object.entries(headers ?? {});
+    iter = Object.entries(headers);
   }
-  for (let row of iter) {
+  for (const row of iter) {
     const name = row[0];
     if (typeof name !== 'string') throw new TypeError('expected header name to be a string');
     const values = isReadonlyArray(row[1]) ? row[1] : [row[1]];

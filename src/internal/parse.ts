@@ -23,7 +23,7 @@ export async function defaultParseResponse(
 ): Promise<unknown> {
   const { response, requestLogID, retryOfRequestLogID, startTime } = props;
   const body = await (async (): Promise<unknown> => {
-    if (props.options.stream) {
+    if (props.options.stream === true) {
       loggerFor(client).debug('response', response.status, response.url, response.headers, response.body);
 
       return Stream.fromSSEResponse(response, props.controller, client);
@@ -33,23 +33,24 @@ export async function defaultParseResponse(
       return null;
     }
 
-    if (props.options.__binaryResponse) {
+    if (props.options.__binaryResponse === true) {
       return response;
     }
 
     const contentType = response.headers.get('content-type');
     const mediaType = contentType?.split(';')[0]?.trim();
-    const isJSON = mediaType?.includes('application/json') || mediaType?.endsWith('+json');
+    const isJSON =
+      mediaType !== undefined && (mediaType.includes('application/json') || mediaType.endsWith('+json'));
     if (isJSON) {
       const contentLength = response.headers.get('content-length');
       if (contentLength === '0') {
         return undefined;
       }
 
-      return response.json();
+      return await response.json();
     }
 
-    return response.text();
+    return await response.text();
   })();
   loggerFor(client).debug(
     `[${requestLogID}] response parsed`,
