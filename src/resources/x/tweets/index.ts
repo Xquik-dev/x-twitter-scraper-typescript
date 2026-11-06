@@ -3,6 +3,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export {
+  Bookmark,
+  type BookmarkCreateResponse,
+  type BookmarkDeleteResponse,
+  type BookmarkCreateParams,
+  type BookmarkDeleteParams,
+} from './bookmark';
+export {
   Like,
   type LikeCreateResponse,
   type LikeDeleteResponse,
