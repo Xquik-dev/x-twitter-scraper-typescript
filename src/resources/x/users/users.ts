@@ -4,6 +4,14 @@
 
 import { APIResource } from '../../../core/resource';
 import type * as Shared from '../../shared';
+import * as BlockAPI from './block';
+import {
+  Block,
+  type BlockCreateParams,
+  type BlockCreateResponse,
+  type BlockDeleteParams,
+  type BlockDeleteResponse,
+} from './block';
 import * as FollowAPI from './follow';
 import {
   Follow,
@@ -12,13 +20,23 @@ import {
   type FollowDeleteAllParams,
   type FollowDeleteAllResponse,
 } from './follow';
+import * as MuteAPI from './mute';
+import {
+  Mute,
+  type MuteCreateParams,
+  type MuteCreateResponse,
+  type MuteDeleteParams,
+  type MuteDeleteResponse,
+} from './mute';
 import type { APIPromise } from '../../../core/api-promise';
 import { buildHeaders } from '../../../internal/headers';
 import type { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 export class Users extends APIResource {
+  block: BlockAPI.Block = new BlockAPI.Block(this._client);
   follow: FollowAPI.Follow = new FollowAPI.Follow(this._client);
+  mute: MuteAPI.Mute = new MuteAPI.Mute(this._client);
 
   /**
    * Returns one public profile with counts and verification details.
@@ -543,8 +561,14 @@ export interface UserRemoveFollowerResponse {
     | 'unlike'
     | 'retweet'
     | 'unretweet'
+    | 'bookmark'
+    | 'unbookmark'
     | 'follow'
     | 'unfollow'
+    | 'block'
+    | 'unblock'
+    | 'mute'
+    | 'unmute'
     | 'remove_follower'
     | 'send_dm'
     | 'delete_dm'
@@ -5549,7 +5573,9 @@ export interface UserTranslateBioParams {
   omit?: string;
 }
 
+Users.Block = Block;
 Users.Follow = Follow;
+Users.Mute = Mute;
 
 export declare namespace Users {
   export {
@@ -5598,10 +5624,26 @@ export declare namespace Users {
   };
 
   export {
+    Block as Block,
+    type BlockCreateResponse as BlockCreateResponse,
+    type BlockDeleteResponse as BlockDeleteResponse,
+    type BlockCreateParams as BlockCreateParams,
+    type BlockDeleteParams as BlockDeleteParams,
+  };
+
+  export {
     Follow as Follow,
     type FollowCreateResponse as FollowCreateResponse,
     type FollowDeleteAllResponse as FollowDeleteAllResponse,
     type FollowCreateParams as FollowCreateParams,
     type FollowDeleteAllParams as FollowDeleteAllParams,
+  };
+
+  export {
+    Mute as Mute,
+    type MuteCreateResponse as MuteCreateResponse,
+    type MuteDeleteResponse as MuteDeleteResponse,
+    type MuteCreateParams as MuteCreateParams,
+    type MuteDeleteParams as MuteDeleteParams,
   };
 }
