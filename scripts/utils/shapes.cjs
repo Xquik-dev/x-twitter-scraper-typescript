@@ -7,7 +7,7 @@ const opaque = new Set(['free', 'cycle', 'unknown']);
 /** @type {(values?: unknown[] | null) => import('./types').Leaf} */
 const leaf = (values) => ({
   t: 'leaf',
-  enum: values == null ? null : [...new Set(values.map(String))].sort(),
+  enum: values === null || values === undefined ? null : [...new Set(values.map(String))].sort(),
 });
 
 /** @type {(props: import('./types').Props, open?: boolean) => import('./types').ObjectNode} */
@@ -33,7 +33,7 @@ const canon = (node, defs = {}, stack = []) => {
     case 'ref': {
       if (stack.includes(node.name)) return { t: 'cycle' };
       const target = defs[node.name];
-      if (!target) throw new Error(`${node.name} has no definition`);
+      if (target === undefined) throw new Error(`${node.name} has no definition`);
       return canon(target, defs, [...stack, node.name]);
     }
     case 'object':
@@ -48,7 +48,10 @@ const canon = (node, defs = {}, stack = []) => {
       return { t: node.t, items: canon(node.items, defs, stack) };
     case 'union':
       return mergeUnion(node.variants.map((variant) => canon(variant, defs, stack)));
-    default:
+    case 'leaf':
+    case 'free':
+    case 'cycle':
+    case 'unknown':
       return node;
   }
 };
@@ -60,7 +63,7 @@ const mergeProps = (objects) => {
     names.map((name) => {
       const have = objects.flatMap((o) => {
         const p = o.props[name];
-        return p ? [p] : [];
+        return p !== undefined ? [p] : [];
       });
       const reqs = have.map((p) => p.req);
       const nulls = have.map((p) => p.null);
@@ -77,23 +80,23 @@ const mergeProps = (objects) => {
 /** @type {(all: import('./types').Node[]) => import('./types').Node} */
 const mergeUnion = (all) => {
   const known = all.filter((v) => v.t !== 'cycle' && v.t !== 'unknown');
-  const variants = known.length ? known : all;
+  const variants = known.length > 0 ? known : all;
   const [first] = variants;
-  if (!first) return { t: 'unknown' };
+  if (first === undefined) return { t: 'unknown' };
   if (variants.length === 1) return first;
   if (variants.some((v) => v.t === 'free')) return { t: 'free' };
   const objects = variants.filter((v) => v.t === 'object');
-  if (objects.length)
+  if (objects.length > 0)
     return object(
       mergeProps(objects),
       objects.some((o) => o.open),
     );
   for (const t of containerKinds) {
     const containers = variants.filter(isContainer).filter((v) => v.t === t);
-    if (containers.length) return { t, items: mergeUnion(containers.map((c) => c.items)) };
+    if (containers.length > 0) return { t, items: mergeUnion(containers.map((c) => c.items)) };
   }
   const leaves = variants.filter((v) => v.t === 'leaf');
-  if (leaves.length) {
+  if (leaves.length > 0) {
     return leaves.every((l) => l.enum !== null) ? leaf(leaves.flatMap((l) => l.enum)) : leaf();
   }
   return { t: 'unknown' };
@@ -103,10 +106,10 @@ const mergeUnion = (all) => {
 const intersect = (all) => {
   const parts = all.filter((p) => p.t !== 'unknown');
   const [first] = parts;
-  if (!first) return { t: 'unknown' };
+  if (first === undefined) return { t: 'unknown' };
   const unions = parts.filter((p) => p.t === 'union');
   const [union] = unions;
-  if (union && unions.length === 1) {
+  if (union !== undefined && unions.length === 1) {
     const rest = parts.filter((p) => p.t !== 'union');
     return { t: 'union', variants: union.variants.map((v) => intersect([...rest, v])) };
   }
@@ -114,20 +117,25 @@ const intersect = (all) => {
     return { t: first.t, items: intersect(parts.filter(isContainer).map((p) => p.items)) };
   }
   const objects = parts.filter((p) => p.t === 'object');
-  if (!objects.length) return first;
+  if (objects.length === 0) return first;
   /** @type {import('./types').Props} */
   const props = {};
   for (const o of objects) {
     for (const [name, p] of Object.entries(o.props)) {
       const old = props[name];
       props[name] =
-        old ?
-          prop(intersect([old.node, p.node]), Boolean(old.req || p.req), Boolean(old.null && p.null))
+        old !== undefined ?
+          prop(
+            intersect([old.node, p.node]),
+            old.req === true || p.req === true,
+            old.null === true && p.null === true,
+          )
         : { ...p };
     }
   }
   for (const name of parts.flatMap((p) => (p.t === 'free' ? (p.requires ?? []) : []))) {
-    if (props[name]) props[name] = { ...props[name], req: true };
+    const existing = props[name];
+    if (existing !== undefined) props[name] = { ...existing, req: true };
   }
   return object(
     props,
@@ -144,9 +152,9 @@ const compareTree = (spec, sdk, path, side, out) => {
   if (opaque.has(spec.t) || opaque.has(sdk.t)) return;
   if (spec.t === 'object' && sdk.t === 'object') {
     for (const [name, specProp] of Object.entries(spec.props)) {
-      const here = path ? `${path}.${name}` : name;
+      const here = path !== '' ? `${path}.${name}` : name;
       const sdkProp = sdk.props[name];
-      if (!sdkProp) {
+      if (sdkProp === undefined) {
         out.push({ side, kind: 'missing', path: here });
         continue;
       }
@@ -159,7 +167,8 @@ const compareTree = (spec, sdk, path, side, out) => {
     }
     if (!spec.open) {
       for (const name of Object.keys(sdk.props)) {
-        if (!(name in spec.props)) out.push({ side, kind: 'extra', path: path ? `${path}.${name}` : name });
+        if (!(name in spec.props))
+          out.push({ side, kind: 'extra', path: path !== '' ? `${path}.${name}` : name });
       }
     }
     return;
@@ -169,11 +178,11 @@ const compareTree = (spec, sdk, path, side, out) => {
     return;
   }
   if (spec.t === 'leaf' && sdk.t === 'leaf') {
-    if (spec.enum && sdk.enum && spec.enum.join('\n') !== sdk.enum.join('\n'))
+    if (spec.enum !== null && sdk.enum !== null && spec.enum.join('\n') !== sdk.enum.join('\n'))
       out.push({ side, kind: 'enum', path });
     return;
   }
-  out.push(...(path ? [{ side, kind: 'missing', path }] : topLevel(spec, 'missing', side)));
+  out.push(...(path !== '' ? [{ side, kind: 'missing', path }] : topLevel(spec, 'missing', side)));
 };
 
 /** @type {(name: string) => string} */
@@ -181,7 +190,7 @@ const normalized = (name) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 /** @type {(node: import('./types').Node, specOp: import('./types').SpecOperation, specNames: Set<string>) => import('./types').Node} */
 const withoutParams = (node, specOp, specNames) => {
-  if (node?.t !== 'object') return node;
+  if (node.t !== 'object') return node;
   const names = new Set(specOp.nonBodyParams.map(normalized));
   return object(
     Object.fromEntries(
@@ -194,24 +203,24 @@ const withoutParams = (node, specOp, specNames) => {
 /** @type {(specOp: import('./types').SpecOperation, sdkOp: import('./types').SdkShape, defs: import('./types').Defs) => import('./types').Difference[]} */
 const compareOperation = (specOp, sdkOp, defs) => {
   const specQuery = canon(specOp.query);
-  const specBody = specOp.body && canon(specOp.body);
+  const specBody = specOp.body === null ? null : canon(specOp.body);
   const specNames = new Set([
     ...Object.keys(specOp.query.props),
     ...(specBody?.t === 'object' ? Object.keys(specBody.props) : []),
   ]);
   const sdkQuery = withoutParams(canon(sdkOp.query, defs), specOp, specNames);
-  let sdkBody = sdkOp.body && withoutParams(canon(sdkOp.body, defs), specOp, specNames);
-  if (sdkBody?.t === 'object' && !Object.keys(sdkBody.props).length && !specBody) sdkBody = null;
-  const specResponse = specOp.response && canon(specOp.response);
+  let sdkBody = sdkOp.body === null ? null : withoutParams(canon(sdkOp.body, defs), specOp, specNames);
+  if (sdkBody?.t === 'object' && Object.keys(sdkBody.props).length === 0 && specBody === null) sdkBody = null;
+  const specResponse = specOp.response === null ? null : canon(specOp.response);
   /** @type {import('./types').Difference[]} */
   const out = [];
   compareTree(specQuery, sdkQuery, '', 'request', out);
-  if (specBody && sdkBody) compareTree(specBody, sdkBody, '', 'request', out);
-  else if (specBody) out.push(...topLevel(specBody, 'missing', 'request'));
-  else if (sdkBody) out.push(...topLevel(sdkBody, 'extra', 'request'));
-  if (specResponse && sdkOp.response)
+  if (specBody !== null && sdkBody !== null) compareTree(specBody, sdkBody, '', 'request', out);
+  else if (specBody !== null) out.push(...topLevel(specBody, 'missing', 'request'));
+  else if (sdkBody !== null) out.push(...topLevel(sdkBody, 'extra', 'request'));
+  if (specResponse !== null && sdkOp.response !== null)
     compareTree(specResponse, canon(sdkOp.response, defs), '', 'response', out);
-  else if (specResponse) out.push(...topLevel(specResponse, 'missing', 'response'));
+  else if (specResponse !== null) out.push(...topLevel(specResponse, 'missing', 'response'));
   return out;
 };
 

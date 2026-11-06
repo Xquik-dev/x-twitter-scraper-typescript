@@ -46,10 +46,10 @@ const sdkOperations = () => {
     return [...source.matchAll(clientMember)].map(({ index }) => {
       requestCall.lastIndex = index;
       const call = requestCall.exec(source);
-      if (!call) {
+      if (call === null) {
         const line = source.slice(0, index).split('\n').length;
         throw new CheckError(
-          `Could not read the method or path of the request at ${path.relative(root, file)} line ${line}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).`,
+          `Could not read the method or path of the request at ${path.relative(root, file)} line ${String(line)}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).`,
         );
       }
       const [, method = '', quoted, template = ''] = call;
@@ -71,7 +71,7 @@ const coverage = async () => {
     .filter(({ key }) => !sdk.has(key) && !excluded.has(key))
     .map(
       ({ id, operationId }) =>
-        `${id}${operationId ? ` (${operationId})` : ''} is in the API but not in the SDK.`,
+        `${id}${typeof operationId === 'string' && operationId !== '' ? ` (${operationId})` : ''} is in the API but not in the SDK.`,
     );
   const stale = exclusions.flatMap((operation) => {
     if (!inSpec.has(comparable(operation))) {
@@ -83,15 +83,15 @@ const coverage = async () => {
     return [];
   });
 
-  if (missing.length || stale.length) {
+  if (missing.length > 0 || stale.length > 0) {
     const next =
-      missing.length ?
+      missing.length > 0 ?
         `Add each operation above to the SDK, or list it in ${exclusionsFile} with a reason.`
       : `Remove each operation above from ${exclusionsFile}.`;
     throw new CheckError([...missing, ...stale, next].join('\n'));
   }
   const covered = operations.filter(({ key }) => sdk.has(key)).length;
-  return `The SDK covers ${covered} of ${operations.length} API operations, and ${exclusionsFile} lists the other ${operations.length - covered}.`;
+  return `The SDK covers ${String(covered)} of ${String(operations.length)} API operations, and ${exclusionsFile} lists the other ${String(operations.length - covered)}.`;
 };
 
 runCheck(coverage);
