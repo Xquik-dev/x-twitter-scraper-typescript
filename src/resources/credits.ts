@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../core/resource';
-import * as Shared from './shared';
-import { APIPromise } from '../core/api-promise';
+import type * as Shared from './shared';
+import type { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
-import { RequestOptions } from '../internal/request-options';
+import type { RequestOptions } from '../internal/request-options';
 
 /**
  * Subscription, billing, and credits

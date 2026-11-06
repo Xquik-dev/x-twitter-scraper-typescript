@@ -17,7 +17,7 @@ const fallbackOptions = {
   moduleResolution: ts.ModuleResolutionKind.Bundler,
   strict: true,
   exactOptionalPropertyTypes: true,
-  skipLibCheck: true,
+  skipLibCheck: false,
   noEmit: true,
   types: [],
 };

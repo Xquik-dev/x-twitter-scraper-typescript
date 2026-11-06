@@ -26,7 +26,7 @@ describe('resource join', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.communities.join.create('1500000000000000000', {
+    await client.x.communities.join.create('1500000000000000000', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
     });
@@ -47,7 +47,7 @@ describe('resource join', () => {
   });
 
   test('deleteAll: required and optional params', async () => {
-    const response = await client.x.communities.join.deleteAll('1500000000000000000', {
+    await client.x.communities.join.deleteAll('1500000000000000000', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
     });

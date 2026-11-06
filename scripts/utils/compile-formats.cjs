@@ -12,8 +12,8 @@ const repository = path.resolve(__dirname, '..', '..');
 const tsc = path.join(repository, 'node_modules', '@typescript', 'native', 'bin', 'tsc');
 
 const formats = [
-  { name: 'ES modules', module: 'esnext', js: '.mjs', dts: '.d.mts' },
-  { name: 'CommonJS', module: 'commonjs', js: '.js', dts: '.d.ts' },
+  { name: 'ES modules', module: 'esnext', js: '.mjs', dts: '.d.mts', verbatimModuleSyntax: 'true' },
+  { name: 'CommonJS', module: 'commonjs', js: '.js', dts: '.d.ts', verbatimModuleSyntax: 'false' },
 ];
 
 const fail = (message, status = 1) => {
@@ -286,6 +286,8 @@ const compileFormat = (config, layout, format) => {
     config,
     '--module',
     format.module,
+    '--verbatimModuleSyntax',
+    format.verbatimModuleSyntax,
     '--importHelpers',
     '--listEmittedFiles',
   ]);

@@ -21,156 +21,156 @@ import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
 import {
   Account,
-  AccountRetrieveResponse,
-  AccountSetXUsernameParams,
-  AccountSetXUsernameResponse,
-  AccountUpdateLocaleParams,
-  AccountUpdateLocaleResponse,
+  type AccountRetrieveResponse,
+  type AccountSetXUsernameParams,
+  type AccountSetXUsernameResponse,
+  type AccountUpdateLocaleParams,
+  type AccountUpdateLocaleResponse,
 } from './resources/account';
 import {
   Activity,
-  ActivityExportParams,
-  ActivityListParams,
-  ActivityListResponse,
-  ActivityLogRow,
-  ActivityRecord,
+  type ActivityExportParams,
+  type ActivityListParams,
+  type ActivityListResponse,
+  type ActivityLogRow,
+  type ActivityRecord,
 } from './resources/activity';
-import { Compose, ComposeCreateParams, ComposeCreateResponse } from './resources/compose';
+import { Compose, type ComposeCreateParams, type ComposeCreateResponse } from './resources/compose';
 import {
-  CreditRedirectTopupCheckoutParams,
-  CreditRetrieveBalanceResponse,
-  CreditRetrieveTopupStatusParams,
-  CreditRetrieveTopupStatusResponse,
-  CreditTopupBalanceParams,
-  CreditTopupBalanceResponse,
+  type CreditRedirectTopupCheckoutParams,
+  type CreditRetrieveBalanceResponse,
+  type CreditRetrieveTopupStatusParams,
+  type CreditRetrieveTopupStatusResponse,
+  type CreditTopupBalanceParams,
+  type CreditTopupBalanceResponse,
   Credits,
 } from './resources/credits';
 import {
-  Draft,
-  DraftCreateParams,
-  DraftCreateResponse,
-  DraftDetail,
-  DraftListParams,
-  DraftListResponse,
+  type Draft,
+  type DraftCreateParams,
+  type DraftCreateResponse,
+  type DraftDetail,
+  type DraftListParams,
+  type DraftListResponse,
   Drafts,
 } from './resources/drafts';
 import {
-  DrawDetail,
-  DrawExportParams,
-  DrawListItem,
-  DrawListParams,
-  DrawListResponse,
-  DrawRetrieveResponse,
-  DrawRunParams,
-  DrawRunResponse,
+  type DrawDetail,
+  type DrawExportParams,
+  type DrawListItem,
+  type DrawListParams,
+  type DrawListResponse,
+  type DrawRetrieveResponse,
+  type DrawRunParams,
+  type DrawRunResponse,
   Draws,
-  Winner,
+  type Winner,
 } from './resources/draws';
 import {
-  Event,
-  EventDetail,
-  EventListParams,
-  EventListResponse,
-  EventStreamParams,
+  type Event,
+  type EventDetail,
+  type EventListParams,
+  type EventListResponse,
+  type EventStreamParams,
   Events,
 } from './resources/events';
 import {
-  ExtractionCancelResponse,
-  ExtractionEstimateCostParams,
-  ExtractionEstimateCostResponse,
-  ExtractionExportResultsParams,
-  ExtractionJob,
-  ExtractionListParams,
-  ExtractionListResponse,
-  ExtractionRetrieveParams,
-  ExtractionRetrieveResponse,
-  ExtractionRunParams,
-  ExtractionRunResponse,
+  type ExtractionCancelResponse,
+  type ExtractionEstimateCostParams,
+  type ExtractionEstimateCostResponse,
+  type ExtractionExportResultsParams,
+  type ExtractionJob,
+  type ExtractionListParams,
+  type ExtractionListResponse,
+  type ExtractionRetrieveParams,
+  type ExtractionRetrieveResponse,
+  type ExtractionRunParams,
+  type ExtractionRunResponse,
   Extractions,
 } from './resources/extractions';
 import {
-  GuestWalletAmount,
-  GuestWalletCreateParams,
-  GuestWalletCreateResponse,
-  GuestWalletRetrieveStatusResponse,
-  GuestWalletTopupParams,
-  GuestWalletTopupResponse,
+  type GuestWalletAmount,
+  type GuestWalletCreateParams,
+  type GuestWalletCreateResponse,
+  type GuestWalletRetrieveStatusResponse,
+  type GuestWalletTopupParams,
+  type GuestWalletTopupResponse,
   GuestWallets,
 } from './resources/guest-wallets';
 import {
   Radar,
-  RadarItem,
-  RadarRetrieveTrendingTopicsParams,
-  RadarRetrieveTrendingTopicsResponse,
+  type RadarItem,
+  type RadarRetrieveTrendingTopicsParams,
+  type RadarRetrieveTrendingTopicsResponse,
 } from './resources/radar';
 import {
-  StyleAnalyzeParams,
-  StyleCompareParams,
-  StyleCompareResponse,
-  StyleGetPerformanceResponse,
-  StyleListParams,
-  StyleListResponse,
-  StyleProfile,
-  StyleProfileSummary,
-  StyleUpdateParams,
+  type StyleAnalyzeParams,
+  type StyleCompareParams,
+  type StyleCompareResponse,
+  type StyleGetPerformanceResponse,
+  type StyleListParams,
+  type StyleListResponse,
+  type StyleProfile,
+  type StyleProfileSummary,
+  type StyleUpdateParams,
   Styles,
 } from './resources/styles';
-import { Subscribe, SubscribeCreateParams, SubscribeCreateResponse } from './resources/subscribe';
-import { TrendListParams, TrendListResponse, Trends } from './resources/trends';
+import { Subscribe, type SubscribeCreateParams, type SubscribeCreateResponse } from './resources/subscribe';
+import { type TrendListParams, type TrendListResponse, Trends } from './resources/trends';
 import {
-  Delivery,
-  Webhook,
-  WebhookCreateParams,
-  WebhookCreateResponse,
-  WebhookCreateTelegramLinkParams,
-  WebhookCreateTelegramLinkResponse,
-  WebhookDeactivateResponse,
-  WebhookListDeliveriesParams,
-  WebhookListDeliveriesResponse,
-  WebhookListParams,
-  WebhookListResponse,
-  WebhookResumeResponse,
-  WebhookTestResponse,
-  WebhookUpdateParams,
+  type Delivery,
+  type Webhook,
+  type WebhookCreateParams,
+  type WebhookCreateResponse,
+  type WebhookCreateTelegramLinkParams,
+  type WebhookCreateTelegramLinkResponse,
+  type WebhookDeactivateResponse,
+  type WebhookListDeliveriesParams,
+  type WebhookListDeliveriesResponse,
+  type WebhookListParams,
+  type WebhookListResponse,
+  type WebhookResumeResponse,
+  type WebhookTestResponse,
+  type WebhookUpdateParams,
   Webhooks,
 } from './resources/webhooks';
 import {
-  Monitor,
-  MonitorCreateParams,
-  MonitorCreateResponse,
-  MonitorDeactivateResponse,
-  MonitorListParams,
-  MonitorListResponse,
-  MonitorUpdateParams,
+  type Monitor,
+  type MonitorCreateParams,
+  type MonitorCreateResponse,
+  type MonitorDeactivateResponse,
+  type MonitorListParams,
+  type MonitorListResponse,
+  type MonitorUpdateParams,
   Monitors,
 } from './resources/monitors/monitors';
 import { Support } from './resources/support/support';
 import {
-  TrendLocation,
+  type TrendLocation,
   X,
-  XAutocompleteSearchParams,
-  XAutocompleteSearchResponse,
-  XGetArticleParams,
-  XGetArticleResponse,
-  XGetHashflagsParams,
-  XGetHashflagsResponse,
-  XGetHomeTimelineParams,
-  XGetNewsStoryVersionsParams,
-  XGetNewsStoryVersionsResponse,
-  XGetNotificationsParams,
-  XGetNotificationsResponse,
-  XGetTrendLocationsParams,
-  XGetTrendLocationsResponse,
-  XGetTrendsHistoryParams,
-  XGetTrendsHistoryResponse,
-  XGetTrendsParams,
-  XGetTrendsResponse,
-  XSearchPlacesParams,
-  XSearchPlacesResponse,
+  type XAutocompleteSearchParams,
+  type XAutocompleteSearchResponse,
+  type XGetArticleParams,
+  type XGetArticleResponse,
+  type XGetHashflagsParams,
+  type XGetHashflagsResponse,
+  type XGetHomeTimelineParams,
+  type XGetNewsStoryVersionsParams,
+  type XGetNewsStoryVersionsResponse,
+  type XGetNotificationsParams,
+  type XGetNotificationsResponse,
+  type XGetTrendLocationsParams,
+  type XGetTrendLocationsResponse,
+  type XGetTrendsHistoryParams,
+  type XGetTrendsHistoryResponse,
+  type XGetTrendsParams,
+  type XGetTrendsResponse,
+  type XSearchPlacesParams,
+  type XSearchPlacesResponse,
 } from './resources/x/x';
-import { type Fetch } from './internal/builtin-types';
-import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
-import { FinalRequestOptions, RequestOptions } from './internal/request-options';
+import type { Fetch } from './internal/builtin-types';
+import { type HeadersLike, type NullableHeaders, buildHeaders } from './internal/headers';
+import type { FinalRequestOptions, RequestOptions } from './internal/request-options';
 import { readEnv } from './internal/utils/env';
 import {
   type LogLevel,
@@ -398,14 +398,14 @@ export class XTwitterScraper {
     ]);
   }
 
-  protected async apiKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+  protected async apiKeyAuth(_opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     if (this.apiKey == null) {
       return undefined;
     }
     return buildHeaders([{ 'x-api-key': this.apiKey }]);
   }
 
-  protected async oauthBearerAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+  protected async oauthBearerAuth(_opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     if (this.bearerToken == null) {
       return undefined;
     }
@@ -457,11 +457,11 @@ export class XTwitterScraper {
     return url.toString();
   }
 
-  protected async prepareOptions(options: FinalRequestOptions): Promise<void> {}
+  protected async prepareOptions(_options: FinalRequestOptions): Promise<void> {}
 
   protected async prepareRequest(
-    request: RequestInit,
-    { url, options }: { url: string; options: FinalRequestOptions },
+    _request: RequestInit,
+    _context: { url: string; options: FinalRequestOptions },
   ): Promise<void> {}
 
   get<Rsp>(path: string, opts?: PromiseOrValue<RequestOptions>): APIPromise<Rsp> {

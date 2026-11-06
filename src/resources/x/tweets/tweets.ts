@@ -3,20 +3,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../../core/resource';
-import * as Shared from '../../shared';
+import type * as Shared from '../../shared';
 import * as LikeAPI from './like';
-import { Like, LikeCreateParams, LikeCreateResponse, LikeDeleteParams, LikeDeleteResponse } from './like';
+import {
+  Like,
+  type LikeCreateParams,
+  type LikeCreateResponse,
+  type LikeDeleteParams,
+  type LikeDeleteResponse,
+} from './like';
 import * as RetweetAPI from './retweet';
 import {
   Retweet,
-  RetweetCreateParams,
-  RetweetCreateResponse,
-  RetweetDeleteParams,
-  RetweetDeleteResponse,
+  type RetweetCreateParams,
+  type RetweetCreateResponse,
+  type RetweetDeleteParams,
+  type RetweetDeleteResponse,
 } from './retweet';
-import { APIPromise } from '../../../core/api-promise';
+import type { APIPromise } from '../../../core/api-promise';
 import { buildHeaders } from '../../../internal/headers';
-import { RequestOptions } from '../../../internal/request-options';
+import type { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 export class Tweets extends APIResource {

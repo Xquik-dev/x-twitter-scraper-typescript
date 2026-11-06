@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { hasOwn } from './values';
-import { type XTwitterScraper } from '../../client';
-import { RequestOptions } from '../request-options';
+import type { XTwitterScraper } from '../../client';
+import type { RequestOptions } from '../request-options';
 
 type LogFn = (message: string, ...rest: unknown[]) => void;
 export type Logger = {

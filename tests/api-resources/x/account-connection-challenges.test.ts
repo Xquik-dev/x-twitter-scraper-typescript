@@ -25,7 +25,7 @@ describe('resource accountConnectionChallenges', () => {
   });
 
   test('submit: required and optional params', async () => {
-    const response = await client.x.accountConnectionChallenges.submit('xch_AbCdEfGhIjKlMnOp', {
+    await client.x.accountConnectionChallenges.submit('xch_AbCdEfGhIjKlMnOp', {
       email_code: '<EMAIL_VERIFICATION_CODE>',
     });
   });

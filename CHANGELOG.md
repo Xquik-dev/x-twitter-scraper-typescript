@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Chores
+
+* The `tsconfig.json` shipped in `src/` now matches the strict settings the SDK builds with. Editors that open the SDK source through declaration maps no longer flag the old `moduleResolution: node` setting, which TypeScript 6 deprecated.
+
 ## 0.20.0 (2026-11-04)
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)

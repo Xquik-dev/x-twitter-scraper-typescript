@@ -27,7 +27,7 @@ describe('resource guestWallets', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.guestWallets.create({
+    await client.guestWallets.create({
       amount_minor: 1000,
       currency: 'usd',
       'Idempotency-Key': 'e1cb97D8-dDF3-4AaA-ad0a-49E4A0d1CfAa',
@@ -61,7 +61,7 @@ describe('resource guestWallets', () => {
   });
 
   test('topup: required and optional params', async () => {
-    const response = await client.guestWallets.topup({
+    await client.guestWallets.topup({
       amount_minor: 1000,
       currency: 'usd',
       'Idempotency-Key': 'e1cb97D8-dDF3-4AaA-ad0a-49E4A0d1CfAa',

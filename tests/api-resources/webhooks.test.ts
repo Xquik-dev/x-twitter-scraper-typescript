@@ -26,7 +26,7 @@ describe('resource webhooks', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.webhooks.create({
+    await client.webhooks.create({
       eventTypes: ['tweet.new', 'tweet.reply'],
       url: 'https://example.com/webhook',
     });

@@ -28,7 +28,7 @@ describe('resource communities', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.communities.create({
+    await client.x.communities.create({
       account: '@elonmusk',
       name: 'Example Name',
       'Idempotency-Key': 'Idempotency-Key',
@@ -52,7 +52,7 @@ describe('resource communities', () => {
   });
 
   test('delete: required and optional params', async () => {
-    const response = await client.x.communities.delete('1500000000000000000', {
+    await client.x.communities.delete('1500000000000000000', {
       account: '@elonmusk',
       community_name: 'Tesla Fans',
       'Idempotency-Key': 'Idempotency-Key',
@@ -71,7 +71,7 @@ describe('resource communities', () => {
   });
 
   test('find: required and optional params', async () => {
-    const response = await client.x.communities.find({
+    await client.x.communities.find({
       q: 'q',
       cursor: 'cursor',
       fields: 'id,text,author.username',
@@ -327,7 +327,7 @@ describe('resource communities', () => {
   });
 
   test('retrieveSearch: required and optional params', async () => {
-    const response = await client.x.communities.retrieveSearch({
+    await client.x.communities.retrieveSearch({
       q: 'q',
       anyWords: 'anyWords',
       blueVerifiedOnly: true,
@@ -386,7 +386,7 @@ describe('resource communities', () => {
   });
 
   test('searchMembers: required and optional params', async () => {
-    const response = await client.x.communities.searchMembers('id', {
+    await client.x.communities.searchMembers('id', {
       q: 'q',
       bioContains: 'bioContains',
       blueVerifiedOnly: true,

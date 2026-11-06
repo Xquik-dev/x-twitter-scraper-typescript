@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../core/resource';
-import { APIPromise } from '../../core/api-promise';
-import { type Uploadable } from '../../core/uploads';
+import type { APIPromise } from '../../core/api-promise';
+import type { Uploadable } from '../../core/uploads';
 import { buildHeaders } from '../../internal/headers';
-import { RequestOptions } from '../../internal/request-options';
+import type { RequestOptions } from '../../internal/request-options';
 import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
 
 /**

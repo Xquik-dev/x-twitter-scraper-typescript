@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import * as Shared from './shared';
+import type * as Shared from './shared';
 
 /**
  * X broadcast, a live video

@@ -24,7 +24,7 @@ describe('resource credits', () => {
   });
 
   test('redirectTopupCheckout: required and optional params', async () => {
-    const response = await client.credits.redirectTopupCheckout({ session_id: 'session_id' });
+    await client.credits.redirectTopupCheckout({ session_id: 'session_id' });
   });
 
   test('retrieveBalance', async () => {
@@ -50,7 +50,7 @@ describe('resource credits', () => {
   });
 
   test('retrieveTopupStatus: required and optional params', async () => {
-    const response = await client.credits.retrieveTopupStatus({ session_id: 'session_id' });
+    await client.credits.retrieveTopupStatus({ session_id: 'session_id' });
   });
 
   test('topupBalance: only required params', async () => {
@@ -65,7 +65,7 @@ describe('resource credits', () => {
   });
 
   test('topupBalance: required and optional params', async () => {
-    const response = await client.credits.topupBalance({ dollars: 10, locale: 'en' });
+    await client.credits.topupBalance({ dollars: 10, locale: 'en' });
   });
 
   test('topupBalance: sends the tool page to return to after Checkout', async () => {

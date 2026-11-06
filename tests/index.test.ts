@@ -55,7 +55,7 @@ describe('instantiate client', () => {
 
   test('requests name the SDK in X-Xquik-SDK and keep the language header', async () => {
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       capturedRequest = init;
       return new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } });
     };
@@ -280,13 +280,16 @@ describe('instantiate client', () => {
     expect(response).toEqual({ url: 'http://localhost:5000/foo', custom: true });
   });
 
-  test('explicit global fetch', async () => {
-    const client = new XTwitterScraper({
-      baseURL: 'http://localhost:5000/',
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: defaultFetch,
-    });
+  test('explicit global fetch', () => {
+    expect(
+      () =>
+        new XTwitterScraper({
+          baseURL: 'http://localhost:5000/',
+          apiKey: 'My API Key',
+          bearerToken: 'My Bearer Token',
+          fetch: defaultFetch,
+        }),
+    ).not.toThrow();
   });
 
   test('custom signal', async () => {
@@ -318,7 +321,7 @@ describe('instantiate client', () => {
 
   test('normalized method', async () => {
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       capturedRequest = init;
       return new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } });
     };
@@ -604,11 +607,11 @@ describe('retries', () => {
   test('retry on timeout', async () => {
     let count = 0;
     const testFetch = async (
-      url: string | URL | Request,
+      _url: string | URL | Request,
       { signal }: RequestInit = {},
     ): Promise<Response> => {
       if (count++ === 0) {
-        return new Promise((resolve, reject) =>
+        return new Promise((_resolve, reject) =>
           signal?.addEventListener('abort', () => reject(new Error('timed out'))),
         );
       }
@@ -636,7 +639,7 @@ describe('retries', () => {
   test('retry count header', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
         return new Response(undefined, {
@@ -666,7 +669,7 @@ describe('retries', () => {
   test('omit retry count header', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
         return new Response(undefined, {
@@ -700,7 +703,7 @@ describe('retries', () => {
   test('omit retry count header by default', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
         return new Response(undefined, {
@@ -734,7 +737,7 @@ describe('retries', () => {
   test('overwrite retry count header', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
         return new Response(undefined, {
@@ -767,10 +770,7 @@ describe('retries', () => {
 
   test('retry on 429 with retry-after', async () => {
     let count = 0;
-    const testFetch = async (
-      url: string | URL | Request,
-      { signal }: RequestInit = {},
-    ): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, _init: RequestInit = {}): Promise<Response> => {
       if (count++ === 0) {
         return new Response(undefined, {
           status: 429,
@@ -801,10 +801,7 @@ describe('retries', () => {
 
   test('retry on 429 with retry-after-ms', async () => {
     let count = 0;
-    const testFetch = async (
-      url: string | URL | Request,
-      { signal }: RequestInit = {},
-    ): Promise<Response> => {
+    const testFetch = async (_url: string | URL | Request, _init: RequestInit = {}): Promise<Response> => {
       if (count++ === 0) {
         return new Response(undefined, {
           status: 429,
