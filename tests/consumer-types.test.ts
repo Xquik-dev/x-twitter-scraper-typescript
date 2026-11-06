@@ -47,7 +47,7 @@ const checkCopy = (change: (directory: string) => void) => {
 
 const editPackageJson = (directory: string, edit: (packageJson: PackageJson) => void) => {
   const file = join(directory, 'package.json');
-  const packageJson = JSON.parse(readFileSync(file, 'utf8')) as PackageJson;
+  const packageJson: PackageJson = JSON.parse(readFileSync(file, 'utf8'));
   edit(packageJson);
   writeFileSync(file, JSON.stringify(packageJson, null, 2));
 };

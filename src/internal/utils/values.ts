@@ -12,7 +12,7 @@ export const isAbsoluteURL = (url: string): boolean => {
 };
 
 export let isArray = (val: unknown): val is unknown[] => ((isArray = Array.isArray), isArray(val));
-export let isReadonlyArray = isArray as (val: unknown) => val is readonly unknown[];
+export let isReadonlyArray: (val: unknown) => val is readonly unknown[] = isArray;
 
 export function maybeObj(x: unknown): object {
   if (typeof x !== 'object') {
@@ -95,7 +95,7 @@ export const maybeCoerceBoolean = (value: unknown): boolean | undefined => {
   return coerceBoolean(value);
 };
 
-export const safeJSON = (text: string) => {
+export const safeJSON = (text: string): unknown => {
   try {
     return JSON.parse(text);
   } catch (err) {

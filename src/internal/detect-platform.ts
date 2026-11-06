@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { VERSION } from '../version';
+import { readGlobal, readProperty, readString } from './utils/globals';
 
 export const isRunningInBrowser = () => {
   return (
@@ -15,25 +16,19 @@ export const isRunningInBrowser = () => {
 type DetectedPlatform = 'deno' | 'node' | 'edge' | 'unknown';
 
 function getDetectedPlatform(): DetectedPlatform {
-  if (typeof Deno !== 'undefined' && Deno.build != null) {
+  if (readProperty(readGlobal('Deno'), 'build') != null) {
     return 'deno';
   }
-  if (typeof EdgeRuntime !== 'undefined') {
+  if (typeof readGlobal('EdgeRuntime') !== 'undefined') {
     return 'edge';
   }
-  if (
-    Object.prototype.toString.call(
-      typeof (globalThis as any).process !== 'undefined' ? (globalThis as any).process : 0,
-    ) === '[object process]'
-  ) {
+  if (Object.prototype.toString.call(readGlobal('process')) === '[object process]') {
     return 'node';
   }
   return 'unknown';
 }
 
-declare const Deno: any;
 declare const window: { document?: unknown } | undefined;
-declare const EdgeRuntime: any;
 type Arch = 'x32' | 'x64' | 'arm' | 'arm64' | `other:${string}` | 'unknown';
 type PlatformName =
   'MacOS' | 'Linux' | 'Windows' | 'FreeBSD' | 'OpenBSD' | 'iOS' | 'Android' | `Other:${string}` | 'Unknown';
@@ -48,35 +43,39 @@ type PlatformProperties = {
 };
 const getPlatformProperties = (): PlatformProperties => {
   const detectedPlatform = getDetectedPlatform();
+  const process = readGlobal('process');
   if (detectedPlatform === 'deno') {
+    const deno = readGlobal('Deno');
+    const build = readProperty(deno, 'build');
+    const version = readProperty(deno, 'version');
     return {
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
-      'X-Stainless-OS': normalizePlatform(Deno.build.os),
-      'X-Stainless-Arch': normalizeArch(Deno.build.arch),
+      'X-Stainless-OS': normalizePlatform(readString(build, 'os') ?? 'unknown'),
+      'X-Stainless-Arch': normalizeArch(readString(build, 'arch') ?? 'unknown'),
       'X-Stainless-Runtime': 'deno',
       'X-Stainless-Runtime-Version':
-        typeof Deno.version === 'string' ? Deno.version : (Deno.version?.deno ?? 'unknown'),
+        typeof version === 'string' ? version : (readString(version, 'deno') ?? 'unknown'),
     };
   }
-  if (typeof EdgeRuntime !== 'undefined') {
+  if (detectedPlatform === 'edge') {
     return {
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
       'X-Stainless-OS': 'Unknown',
-      'X-Stainless-Arch': `other:${EdgeRuntime}`,
+      'X-Stainless-Arch': `other:${String(readGlobal('EdgeRuntime'))}`,
       'X-Stainless-Runtime': 'edge',
-      'X-Stainless-Runtime-Version': (globalThis as any).process.version,
+      'X-Stainless-Runtime-Version': readString(process, 'version') ?? 'unknown',
     };
   }
   if (detectedPlatform === 'node') {
     return {
       'X-Stainless-Lang': 'js',
       'X-Stainless-Package-Version': VERSION,
-      'X-Stainless-OS': normalizePlatform((globalThis as any).process.platform ?? 'unknown'),
-      'X-Stainless-Arch': normalizeArch((globalThis as any).process.arch ?? 'unknown'),
+      'X-Stainless-OS': normalizePlatform(readString(process, 'platform') ?? 'unknown'),
+      'X-Stainless-Arch': normalizeArch(readString(process, 'arch') ?? 'unknown'),
       'X-Stainless-Runtime': 'node',
-      'X-Stainless-Runtime-Version': (globalThis as any).process.version ?? 'unknown',
+      'X-Stainless-Runtime-Version': readString(process, 'version') ?? 'unknown',
     };
   }
 

@@ -16,21 +16,25 @@ export type APIResponseProps = {
   startTime: number;
 };
 
-export async function defaultParseResponse<T>(client: XTwitterScraper, props: APIResponseProps): Promise<T> {
+export function defaultParseResponse<T>(client: XTwitterScraper, props: APIResponseProps): Promise<T>;
+export async function defaultParseResponse(
+  client: XTwitterScraper,
+  props: APIResponseProps,
+): Promise<unknown> {
   const { response, requestLogID, retryOfRequestLogID, startTime } = props;
-  const body = await (async () => {
+  const body = await (async (): Promise<unknown> => {
     if (props.options.stream) {
       loggerFor(client).debug('response', response.status, response.url, response.headers, response.body);
 
-      return Stream.fromSSEResponse(response, props.controller, client) as any;
+      return Stream.fromSSEResponse(response, props.controller, client);
     }
 
     if (response.status === 204) {
-      return null as T;
+      return null;
     }
 
     if (props.options.__binaryResponse) {
-      return response as unknown as T;
+      return response;
     }
 
     const contentType = response.headers.get('content-type');
@@ -39,15 +43,13 @@ export async function defaultParseResponse<T>(client: XTwitterScraper, props: AP
     if (isJSON) {
       const contentLength = response.headers.get('content-length');
       if (contentLength === '0') {
-        return undefined as T;
+        return undefined;
       }
 
-      const json = await response.json();
-      return json as T;
+      return response.json();
     }
 
-    const text = await response.text();
-    return text as unknown as T;
+    return response.text();
   })();
   loggerFor(client).debug(
     `[${requestLogID}] response parsed`,

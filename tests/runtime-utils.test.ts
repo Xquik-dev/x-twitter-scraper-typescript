@@ -27,7 +27,7 @@ describe('runtime value utilities', () => {
     expect.assertions(16);
 
     const value = { answer: 42 };
-    const inherited = Object.create({ answer: 42 }) as object;
+    const inherited: object = Object.create({ answer: 42 });
 
     expect(isAbsoluteURL('https://xquik.com/api/v1')).toBe(true);
     expect(isAbsoluteURL('/api/v1')).toBe(false);

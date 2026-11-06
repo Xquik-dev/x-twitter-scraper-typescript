@@ -4,6 +4,8 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 import { fixtureClient } from '../../fixture-client';
+import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
+import { formFile } from '../../form-file';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -56,11 +58,11 @@ describe('resource media', () => {
       'Idempotency-Key': 'Idempotency-Key',
     });
 
-    const form = await sent[0]!.formData();
+    const form = await ensurePresent(sent[0]).formData();
     expect(sent[0]?.headers.get('content-type')).toMatch(/^multipart\/form-data; boundary=/);
     expect(form.get('account')).toBe('@elonmusk');
     expect(form.get('is_long_video')).toBe('true');
-    expect((form.get('file') as File).name).toBe('clip.mp4');
-    expect(await (form.get('file') as File).text()).toBe('binary-content');
+    expect(formFile(form.get('file')).name).toBe('clip.mp4');
+    expect(await formFile(form.get('file')).text()).toBe('binary-content');
   });
 });

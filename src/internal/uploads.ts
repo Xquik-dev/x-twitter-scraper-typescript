@@ -5,9 +5,10 @@
 import type { RequestOptions } from './request-options';
 import type { FilePropertyBag, Fetch } from './builtin-types';
 import type { XTwitterScraper } from '../client';
-import { ReadableStreamFrom } from './shims';
+import { isAsyncIterable, ReadableStreamFrom, uint8ArrayChunks } from './shims';
+import { readGlobal, readProperty, readString } from './utils/globals';
 
-export type BlobPart = string | ArrayBuffer | ArrayBufferView | Blob | DataView;
+export type BlobPart = string | ArrayBuffer | Uint8Array<ArrayBuffer> | Blob;
 type FsReadStream = AsyncIterable<Uint8Array> & { path: string | { toString(): string } };
 
 // https://github.com/oven-sh/bun/issues/5980
@@ -17,9 +18,8 @@ interface BunFile extends Blob {
 
 export const checkFileSupport = () => {
   if (typeof File === 'undefined') {
-    const { process } = globalThis as any;
-    const isOldNode =
-      typeof process?.versions?.node === 'string' && parseInt(process.versions.node.split('.')) < 20;
+    const nodeVersion = readString(readProperty(readGlobal('process'), 'versions'), 'node');
+    const isOldNode = nodeVersion !== undefined && parseInt(nodeVersion, 10) < 20;
     throw new Error(
       '`File` is not defined as a global, which is required for file uploads.' +
         (isOldNode ?
@@ -46,27 +46,17 @@ export function makeFile(
   options?: FilePropertyBag,
 ): File {
   checkFileSupport();
-  return new File(fileBits as any, fileName ?? 'unknown_file', options);
+  return new File(fileBits, fileName ?? 'unknown_file', options);
 }
 
-export function getName(value: any): string | undefined {
-  return (
-    (
-      (typeof value === 'object' &&
-        value !== null &&
-        (('name' in value && value.name && String(value.name)) ||
-          ('url' in value && value.url && String(value.url)) ||
-          ('filename' in value && value.filename && String(value.filename)) ||
-          ('path' in value && value.path && String(value.path)))) ||
-      ''
-    )
-      .split(/[\\/]/)
-      .pop() || undefined
-  );
+export function getName(value: unknown): string | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  for (const key of ['name', 'url', 'filename', 'path']) {
+    const field = readProperty(value, key);
+    if (field) return String(field).split(/[\\/]/).pop() || undefined;
+  }
+  return undefined;
 }
-
-export const isAsyncIterable = (value: any): value is AsyncIterable<any> =>
-  value != null && typeof value === 'object' && typeof value[Symbol.asyncIterator] === 'function';
 
 export const maybeMultipartFormRequestOptions = async (
   opts: RequestOptions,
@@ -88,16 +78,25 @@ export const multipartFormRequestOptions = async (
 
 const supportsFormDataMap = /* @__PURE__ */ new WeakMap<Fetch, Promise<boolean>>();
 
+const isFetch = (value: unknown): value is Fetch => typeof value === 'function';
+
+const isResponseClass = (value: unknown): value is typeof Response => typeof value === 'function';
+
+function fetchOf(fetchObject: XTwitterScraper | Fetch): Fetch {
+  if (isFetch(fetchObject)) return fetchObject;
+  const clientFetch: unknown = Reflect.get(fetchObject, 'fetch');
+  if (isFetch(clientFetch)) return clientFetch;
+  throw new TypeError('The client has no fetch function to send file uploads with.');
+}
+
 function supportsFormData(fetchObject: XTwitterScraper | Fetch): Promise<boolean> {
-  const fetch: Fetch = typeof fetchObject === 'function' ? fetchObject : (fetchObject as any).fetch;
+  const fetch = fetchOf(fetchObject);
   const cached = supportsFormDataMap.get(fetch);
   if (cached) return cached;
   const promise = (async () => {
     try {
-      const FetchResponse = (
-        'Response' in fetch ?
-          fetch.Response
-        : (await fetch('data:,')).constructor) as typeof Response;
+      const FetchResponse = 'Response' in fetch ? fetch.Response : (await fetch('data:,')).constructor;
+      if (!isResponseClass(FetchResponse)) return true;
       const data = new FormData();
       if (data.toString() === (await new FetchResponse(data).text())) {
         return false;
@@ -137,7 +136,7 @@ const hasUploadableValue = (value: unknown): boolean => {
   if (Array.isArray(value)) return value.some(hasUploadableValue);
   if (value && typeof value === 'object') {
     for (const k in value) {
-      if (hasUploadableValue((value as any)[k])) return true;
+      if (hasUploadableValue(readProperty(value, k))) return true;
     }
   }
   return false;
@@ -156,7 +155,10 @@ const addFormValue = async (form: FormData, key: string, value: unknown): Promis
   } else if (value instanceof Response) {
     form.append(key, makeFile([await value.blob()], getName(value)));
   } else if (isAsyncIterable(value)) {
-    form.append(key, makeFile([await new Response(ReadableStreamFrom(value)).blob()], getName(value)));
+    form.append(
+      key,
+      makeFile([await new Response(ReadableStreamFrom(uint8ArrayChunks(value))).blob()], getName(value)),
+    );
   } else if (isNamedBlob(value)) {
     form.append(key, value, getName(value));
   } else if (Array.isArray(value)) {

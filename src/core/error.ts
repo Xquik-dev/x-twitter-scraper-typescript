@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { castToError } from '../internal/errors';
+import { readProperty } from '../internal/utils/globals';
 
 export class XTwitterScraperError extends Error {}
 
@@ -25,12 +26,13 @@ export class APIError<
     this.error = error;
   }
 
-  private static makeMessage(status: number | undefined, error: any, message: string | undefined) {
+  private static makeMessage(status: number | undefined, error: unknown, message: string | undefined) {
+    const errorMessage = readProperty(error, 'message');
     const msg =
-      error?.message ?
-        typeof error.message === 'string' ?
-          error.message
-        : JSON.stringify(error.message)
+      errorMessage ?
+        typeof errorMessage === 'string' ?
+          errorMessage
+        : JSON.stringify(errorMessage)
       : error ? JSON.stringify(error)
       : message;
 
@@ -48,15 +50,13 @@ export class APIError<
 
   static generate(
     status: number | undefined,
-    errorResponse: Object | undefined,
+    error: Object | undefined,
     message: string | undefined,
     headers: Headers | undefined,
   ): APIError {
     if (!status || !headers) {
-      return new APIConnectionError({ message, cause: castToError(errorResponse) });
+      return new APIConnectionError({ message, cause: castToError(error) });
     }
-
-    const error = errorResponse as Record<string, any>;
 
     if (status === 400) {
       return new BadRequestError(status, error, message, headers);

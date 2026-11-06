@@ -4,6 +4,7 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 import { _iterSSEMessages, Stream } from 'x-twitter-scraper/core/streaming';
+import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
 
 function sseResponse(chunks: Array<string | Uint8Array>, init?: ResponseInit): Response {
   const encoder = new TextEncoder();
@@ -60,8 +61,8 @@ describe('_iterSSEMessages', () => {
       ),
     );
     expect(events).toHaveLength(1);
-    expect(events[0]!.event).toBe('ping');
-    expect(JSON.parse(events[0]!.data)).toEqual({ foo: true });
+    expect(events[0]?.event).toBe('ping');
+    expect(JSON.parse(ensurePresent(events[0]).data)).toEqual({ foo: true });
   });
 
   test('ids, comments and unknown fields are ignored', async () => {
@@ -127,7 +128,7 @@ describe('_iterSSEMessages', () => {
       );
     } finally {
       if (original) Object.defineProperty(globalThis, 'navigator', original);
-      else delete (globalThis as { navigator?: unknown }).navigator;
+      else Reflect.deleteProperty(globalThis, 'navigator');
     }
   });
 });
@@ -290,10 +291,10 @@ describe('events.stream', () => {
       },
     ]);
     expect(requests).toHaveLength(1);
-    expect(requests[0]!.method).toBe('GET');
-    expect(requests[0]!.url).toBe('https://example.com/api/v1/events/stream');
-    expect(requests[0]!.headers.get('accept')).toBe('text/event-stream');
-    expect(requests[0]!.headers.has('last-event-id')).toBe(false);
+    expect(requests[0]?.method).toBe('GET');
+    expect(requests[0]?.url).toBe('https://example.com/api/v1/events/stream');
+    expect(requests[0]?.headers.get('accept')).toBe('text/event-stream');
+    expect(requests[0]?.headers.has('last-event-id')).toBe(false);
   });
 
   test('resumes after the last event ID', async () => {
@@ -303,6 +304,6 @@ describe('events.stream', () => {
     const stream = await client.events.stream({ 'Last-Event-ID': '42' });
 
     expect(await collect(stream)).toEqual([]);
-    expect(requests[0]!.headers.get('last-event-id')).toBe('42');
+    expect(requests[0]?.headers.get('last-event-id')).toBe('42');
   });
 });

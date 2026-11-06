@@ -14,6 +14,7 @@ import {
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
+import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
 
 const repository = resolve(__dirname, '..');
 const script = join(repository, 'scripts', 'utils', 'compile-formats.cjs');
@@ -288,23 +289,27 @@ describe('scripts/utils/compile-formats.cjs', () => {
   });
 
   it('keeps map positions right after a rewritten import on the same line', () => {
-    const source = sources['index.ts']!.split('\n');
+    const source = ensurePresent(sources['index.ts']).split('\n');
     const sourceLine = source.findIndex((line) => line.includes('m.value'));
     const output = built.read('index.mjs').split('\n');
     const line = output.findIndex((text) => text.includes('import("./value.mjs")'));
 
     expect(
-      originalPosition(JSON.parse(built.read('index.mjs.map')), line, output[line]!.indexOf('m.value')),
+      originalPosition(
+        JSON.parse(built.read('index.mjs.map')),
+        line,
+        ensurePresent(output[line]).indexOf('m.value'),
+      ),
     ).toEqual({
       line: sourceLine,
-      column: source[sourceLine]!.indexOf('m.value'),
+      column: ensurePresent(source[sourceLine]).indexOf('m.value'),
     });
   });
 
   it('gives a rewritten specifier no map position of its own, as the old build tool did', () => {
     const output = built.read('index.mjs').split('\n');
     const line = output.findIndex((text) => text.includes('import("./value.mjs")'));
-    const start = output[line]!.indexOf('"./value.mjs"');
+    const start = ensurePresent(output[line]).indexOf('"./value.mjs"');
     const columns = (decodeMappings(JSON.parse(built.read('index.mjs.map')).mappings)[line] ?? []).map(
       ([column]) => column ?? 0,
     );

@@ -65,7 +65,7 @@ export class Events extends APIResource {
         options?.headers,
       ]),
       stream: true,
-    }) as APIPromise<Stream<Event>>;
+    });
   }
 }
 

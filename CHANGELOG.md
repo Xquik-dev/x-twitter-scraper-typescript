@@ -18,6 +18,13 @@
 * `fetchOptions` takes the options your runtime's global `fetch` accepts. Its type no longer changes with how your packages are installed.
 * If TypeScript loads the DOM lib in a Node project, `fetchOptions` rejects undici's `dispatcher`. TypeScript loads it when `lib` is unset. Set a proxy there with undici's `setGlobalDispatcher`.
 * `fetchOptions` no longer takes node-fetch's `agent`.
+* `APIPromise`'s `then` and `catch` pass the rejection reason as `unknown`, not `any`. Narrow it before you read its fields, for example with `err instanceof XTwitterScraper.APIError`.
+* `Stream.toReadableStream()` returns a `ReadableStream<Uint8Array>`. `Stream.fromReadableStream()` takes a stream of `Uint8Array`, `ArrayBuffer` or string chunks.
+* When an error response's JSON body is `null`, `APIError.error` is `undefined`, the same as for an empty body.
+* A streamed request body or file upload with a chunk that isn't a `Uint8Array` fails with a `TypeError` that names the chunk's type.
+* Request bodies and `toFile` copy a view over a `SharedArrayBuffer` into a plain `ArrayBuffer` before they send it.
+* On an edge runtime with no `process` global, building a request threw a `TypeError`. The SDK now sends `X-Stainless-Runtime-Version: unknown` there.
+* `withOptions` throws an `XTwitterScraperError` when a subclass constructor returns an instance of another class.
 
 ### Chores
 
