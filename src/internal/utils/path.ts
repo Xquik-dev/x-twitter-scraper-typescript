@@ -20,7 +20,7 @@ const EMPTY = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.create(null))
 
 export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
   function path(statics: readonly string[], ...params: readonly unknown[]): string {
-    if (statics.length === 1) return statics[0]!;
+    if (statics.length === 1) return statics[0] ?? '';
 
     let postPath = false;
     const invalidSegments = [];
@@ -35,8 +35,7 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
         (value == null ||
           (typeof value === 'object' &&
             value.toString ===
-              Object.getPrototypeOf(Object.getPrototypeOf((value as any).hasOwnProperty ?? EMPTY) ?? EMPTY)
-                ?.toString))
+              Object.getPrototypeOf(Object.getPrototypeOf(value.hasOwnProperty ?? EMPTY) ?? EMPTY)?.toString))
       ) {
         encoded = value + '';
         invalidSegments.push({
@@ -50,7 +49,7 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
       return previousValue + currentValue + (index === params.length ? '' : encoded);
     }, '');
 
-    const pathOnly = path.split(/[?#]/, 1)[0]!;
+    const [pathOnly = ''] = path.split(/[?#]/, 1);
     const invalidSegmentPattern = /(?<=^|\/)(?:\.|%2e){1,2}(?=\/|$)/gi;
     let match;
 

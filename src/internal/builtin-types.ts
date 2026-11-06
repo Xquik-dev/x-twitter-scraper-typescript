@@ -16,7 +16,7 @@ type _BodyInit = RequestInit['body'];
 
 type _Array<T> = Array<T>;
 
-type _Record<K extends keyof any, T> = Record<K, T>;
+type _Record<K extends PropertyKey, T> = Record<K, T>;
 
 export type {
   _Array as Array,
