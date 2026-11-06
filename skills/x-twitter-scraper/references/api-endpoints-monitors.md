@@ -7,6 +7,7 @@ POST /monitors
 ```
 
 The request body has this shape.
+
 ```json
 {
   "username": "elonmusk",
@@ -15,6 +16,7 @@ The request body has this shape.
 ```
 
 The response has this shape.
+
 ```json
 {
   "id": "7",

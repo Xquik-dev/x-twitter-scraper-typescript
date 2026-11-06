@@ -286,7 +286,7 @@ class SSEDecoder {
       return null;
     }
 
-    let [fieldname, _, value] = partition(line, ':');
+    let [fieldname, , value] = partition(line, ':');
 
     if (value.startsWith(' ')) {
       value = value.substring(1);

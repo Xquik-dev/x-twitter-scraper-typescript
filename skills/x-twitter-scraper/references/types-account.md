@@ -1,9 +1,8 @@
 # Xquik TypeScript types for accounts
 
 ```typescript
-
 interface Account {
-  plan: "active" | "inactive";
+  plan: 'active' | 'inactive';
   monitorsAllowed: number;
   monitorsUsed: number;
   monitorUsage: {
@@ -22,5 +21,4 @@ interface Account {
   };
   xUsername?: string;
 }
-
 ```

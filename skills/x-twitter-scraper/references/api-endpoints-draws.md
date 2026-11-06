@@ -9,6 +9,7 @@ POST /draws
 Run a giveaway draw from a tweet. Picks random winners from replies.
 
 The request body has this shape.
+
 ```json
 {
   "tweetUrl": "https://x.com/NASA/status/2102882545427714266",
@@ -29,6 +30,7 @@ The request body has this shape.
 All filter fields are optional. Only `tweetUrl` is required.
 
 The response has this shape.
+
 ```json
 {
   "id": "42",

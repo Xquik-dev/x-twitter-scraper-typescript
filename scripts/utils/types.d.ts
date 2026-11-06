@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SourceCode } from 'eslint';
 import type * as ts from 'typescript';
 
 export type JsonValue = null | boolean | number | string | JsonValue[] | JsonObject;
@@ -74,9 +73,6 @@ export type Difference = { side: string; kind: string; path: string };
 export type Field =
   | { type: ts.Type; omit: string[]; name?: never; symbol?: never }
   | { name: string; symbol: ts.Symbol | null | undefined; type?: never };
-
-export type Comment = ReturnType<SourceCode['getAllComments']>[number];
-export type AstNode = NonNullable<ReturnType<SourceCode['getNodeByRangeIndex']>>;
 
 export type ExportConditions = {
   import?: string | undefined;

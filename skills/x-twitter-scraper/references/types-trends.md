@@ -1,7 +1,6 @@
 # Xquik TypeScript types for trends
 
 ```typescript
-
 interface Trend {
   name: string;
   description?: string;
@@ -14,5 +13,4 @@ interface TrendList {
   total: number;
   woeid: number;
 }
-
 ```

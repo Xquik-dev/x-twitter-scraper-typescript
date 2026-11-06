@@ -1,24 +1,10 @@
 # Xquik TypeScript types for Radar
 
 ```typescript
-
-type RadarSource =
-  | "github"
-  | "google_trends"
-  | "hacker_news"
-  | "polymarket"
-  | "reddit"
-  | "wikipedia";
+type RadarSource = 'github' | 'google_trends' | 'hacker_news' | 'polymarket' | 'reddit' | 'wikipedia';
 
 type RadarCategory =
-  | "general"
-  | "tech"
-  | "dev"
-  | "science"
-  | "culture"
-  | "politics"
-  | "business"
-  | "entertainment";
+  'general' | 'tech' | 'dev' | 'science' | 'culture' | 'politics' | 'business' | 'entertainment';
 
 interface RadarItem {
   id: string;
@@ -36,5 +22,4 @@ interface RadarItem {
   publishedAt: string;
   createdAt: string;
 }
-
 ```

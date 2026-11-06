@@ -1,36 +1,35 @@
 # Xquik TypeScript types for extractions
 
 ```typescript
-
 type ExtractionToolType =
-  | "article_extractor"
-  | "community_extractor"
-  | "community_moderator_explorer"
-  | "community_post_extractor"
-  | "community_search"
-  | "favoriters"
-  | "follower_explorer"
-  | "following_explorer"
-  | "list_follower_explorer"
-  | "list_member_extractor"
-  | "list_post_extractor"
-  | "mention_extractor"
-  | "people_search"
-  | "post_extractor"
-  | "quote_extractor"
-  | "reply_extractor"
-  | "repost_extractor"
-  | "space_explorer"
-  | "thread_extractor"
-  | "tweet_search_extractor"
-  | "user_likes"
-  | "user_media"
-  | "verified_follower_explorer";
+  | 'article_extractor'
+  | 'community_extractor'
+  | 'community_moderator_explorer'
+  | 'community_post_extractor'
+  | 'community_search'
+  | 'favoriters'
+  | 'follower_explorer'
+  | 'following_explorer'
+  | 'list_follower_explorer'
+  | 'list_member_extractor'
+  | 'list_post_extractor'
+  | 'mention_extractor'
+  | 'people_search'
+  | 'post_extractor'
+  | 'quote_extractor'
+  | 'reply_extractor'
+  | 'repost_extractor'
+  | 'space_explorer'
+  | 'thread_extractor'
+  | 'tweet_search_extractor'
+  | 'user_likes'
+  | 'user_media'
+  | 'verified_follower_explorer';
 
 interface ExtractionJob {
   id: string;
   toolType: ExtractionToolType;
-  status: "pending" | "running" | "completed" | "failed";
+  status: 'pending' | 'running' | 'completed' | 'failed';
   totalResults: number;
   targetTweetId?: string;
   targetUsername?: string;
@@ -69,7 +68,7 @@ interface ExtractionEstimate {
   allowed: boolean;
   creditsAvailable: string;
   creditsRequired: string;
-  source: "replyCount" | "retweetCount" | "quoteCount" | "followers" | "unknown";
+  source: 'replyCount' | 'retweetCount' | 'quoteCount' | 'followers' | 'unknown';
   estimatedResults: number;
   resolvedXUserId?: string;
   error?: string;
@@ -89,8 +88,8 @@ interface CreateExtractionRequest {
   toUser?: string;
   mentioning?: string;
   language?: string;
-  sinceDate?: string;           // YYYY-MM-DD
-  untilDate?: string;           // YYYY-MM-DD
+  sinceDate?: string; // YYYY-MM-DD
+  untilDate?: string; // YYYY-MM-DD
   mediaType?: 'images' | 'videos' | 'gifs' | 'media';
   minFaves?: number;
   minRetweets?: number;
@@ -102,5 +101,4 @@ interface CreateExtractionRequest {
   excludeWords?: string;
   advancedQuery?: string;
 }
-
 ```

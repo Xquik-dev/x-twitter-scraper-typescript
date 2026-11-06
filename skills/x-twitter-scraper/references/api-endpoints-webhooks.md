@@ -7,6 +7,7 @@ POST /webhooks
 ```
 
 The request body has this shape.
+
 ```json
 {
   "url": "https://your-server.com/webhook",
@@ -49,6 +50,7 @@ POST /webhooks/{id}/test
 Sends a `webhook.test` event to the webhook endpoint, HMAC-signed with the webhook's secret. Returns success or failure status with HTTP response details.
 
 Xquik delivers this payload to your endpoint.
+
 ```json
 {
   "eventType": "webhook.test",
