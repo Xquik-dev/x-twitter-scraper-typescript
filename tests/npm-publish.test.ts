@@ -22,15 +22,16 @@ const startRegistry = async (pollsBeforeApproval: number) => {
   let polls = 0;
   const server = createServer((request, response) => {
     const otp = request.headers['npm-otp'];
-    requests.push(`${request.method} ${request.url}${otp ? ` otp=${String(otp)}` : ''}`);
+    const hasOtp = typeof otp === 'string' ? otp !== '' : otp !== undefined;
+    requests.push(`${String(request.method)} ${String(request.url)}${hasOtp ? ` otp=${String(otp)}` : ''}`);
     const answer = (status: number, body: unknown, headers: Record<string, string> = {}) => {
       response.writeHead(status, { 'content-type': 'application/json', ...headers });
       response.end(JSON.stringify(body));
     };
     request.resume();
     request.on('end', () => {
-      const base = `http://127.0.0.1:${portOf(server.address())}`;
-      if (request.method === 'PUT' && !otp) {
+      const base = `http://127.0.0.1:${String(portOf(server.address()))}`;
+      if (request.method === 'PUT' && !hasOtp) {
         answer(
           401,
           { authUrl: `${base}/approve/abc`, doneUrl: `${base}/done/abc` },
@@ -47,12 +48,19 @@ const startRegistry = async (pollsBeforeApproval: number) => {
       }
     });
   });
-  await new Promise<void>((done) => server.listen(0, '127.0.0.1', done));
+  await new Promise<void>((done) => {
+    server.listen(0, '127.0.0.1', done);
+  });
   const port = portOf(server.address());
   return {
-    url: `http://127.0.0.1:${port}`,
+    url: `http://127.0.0.1:${String(port)}`,
     requests,
-    close: () => new Promise<void>((done) => server.close(() => done())),
+    close: () =>
+      new Promise<void>((done) => {
+        server.close(() => {
+          done();
+        });
+      }),
   };
 };
 
@@ -62,7 +70,9 @@ const publish = (args: string[], cwd: string) =>
     let output = '';
     child.stdout.on('data', (chunk: Buffer) => (output += chunk.toString()));
     child.stderr.on('data', (chunk: Buffer) => (output += chunk.toString()));
-    child.on('close', (status) => done({ status, output }));
+    child.on('close', (status) => {
+      done({ status, output });
+    });
   });
 
 describe('scripts/utils/npm-publish', () => {

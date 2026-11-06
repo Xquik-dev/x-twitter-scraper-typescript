@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import fs from 'fs';
+import nodeBuffer from 'node:buffer';
 import type { ResponseLike } from 'x-twitter-scraper/internal/to-file';
 import { toFile } from 'x-twitter-scraper/core/uploads';
 
@@ -12,12 +13,17 @@ class MyClass {
 
 type ToFileArgument = Parameters<typeof toFile>[0];
 
-const toFileUnchecked = (value: unknown): Promise<File> => Reflect.apply(toFile, undefined, [value]);
+const toFileUnchecked = async (value: unknown): Promise<File> => {
+  const pending: unknown = Reflect.apply(toFile, undefined, [value]);
+  const result = await pending;
+  if (!(result instanceof File)) throw new TypeError('toFile returned something other than a File');
+  return result;
+};
 
 function mockResponse({ url, content }: { url: string; content?: Blob }): ResponseLike {
   return {
     url,
-    blob: async () => content || new Blob([]),
+    blob: () => Promise.resolve(content ?? new Blob([])),
   };
 }
 
@@ -81,7 +87,7 @@ describe('toFile', () => {
     const result = await toFile(input);
     const file: File = result;
     const blob: Blob = result;
-    (void file, blob);
+    expect(file).toBe(blob);
   });
 });
 
@@ -90,15 +96,14 @@ describe('missing File error message', () => {
   let prevNodeFile: unknown;
   beforeEach(() => {
     vi.resetModules();
-    const buffer = require('node:buffer');
     prevGlobalFile = globalThis.File;
-    prevNodeFile = buffer.File;
+    prevNodeFile = nodeBuffer.File;
     Reflect.set(globalThis, 'File', undefined);
-    buffer.File = undefined;
+    Reflect.set(nodeBuffer, 'File', undefined);
   });
   afterEach(() => {
     globalThis.File = prevGlobalFile;
-    require('node:buffer').File = prevNodeFile;
+    Reflect.set(nodeBuffer, 'File', prevNodeFile);
     vi.resetModules();
   });
 

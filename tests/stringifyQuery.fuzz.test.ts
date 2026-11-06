@@ -18,7 +18,7 @@ const primitiveQueryValue = fc.oneof(
 
 describe('stringifyQuery fuzz properties', () => {
   it('round-trips arbitrary primitive query entries', () => {
-    expect.assertions(1);
+    expect.assertions(FUZZ_RUNS + 1);
     let completedRuns = 0;
 
     fc.assert(
@@ -28,7 +28,7 @@ describe('stringifyQuery fuzz properties', () => {
           .filter(([, value]) => value !== undefined)
           .map(([key, value]) => [key, value === null ? '' : String(value)]);
 
-        assert.equal(JSON.stringify(actual), JSON.stringify(expected));
+        expect(actual).toEqual(expected);
         completedRuns += 1;
       }),
       { numRuns: FUZZ_RUNS },

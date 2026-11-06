@@ -88,7 +88,7 @@ describe('resource profile', () => {
   test.each(['updateAvatar', 'updateBanner'] as const)(
     '%s: sends a file as multipart form data',
     async (method) => {
-      const { client: fixture, sent } = fixtureClient({});
+      const { client: fixture, forms } = fixtureClient({});
 
       await fixture.x.profile[method]({
         account: '@elonmusk',
@@ -96,7 +96,7 @@ describe('resource profile', () => {
         'Idempotency-Key': 'Idempotency-Key',
       });
 
-      const form = await ensurePresent(sent[0]).formData();
+      const form = ensurePresent(forms[0]);
       expect(form.get('account')).toBe('@elonmusk');
       expect(formFile(form.get('file')).name).toBe('image.png');
       expect(form.has('url')).toBe(false);

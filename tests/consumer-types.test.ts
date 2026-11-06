@@ -15,12 +15,11 @@ import {
 import { spawn, spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { withValueAt } from './value-at';
 
 const repository = resolve(__dirname, '..');
 const script = join(repository, 'scripts', 'utils', 'check-consumer-types.cjs');
 const dist = join(repository, 'dist');
-
-type PackageJson = { exports: { '.': { types: string; require: { types: string } } } };
 
 const checkCopy = (change: (directory: string) => void) => {
   const directory = mkdtempSync(join(tmpdir(), 'consumer-types-'));
@@ -45,11 +44,10 @@ const checkCopy = (change: (directory: string) => void) => {
   }
 };
 
-const editPackageJson = (directory: string, edit: (packageJson: PackageJson) => void) => {
+const editPackageJson = (directory: string, path: ReadonlyArray<string>, value: string) => {
   const file = join(directory, 'package.json');
-  const packageJson: PackageJson = JSON.parse(readFileSync(file, 'utf8'));
-  edit(packageJson);
-  writeFileSync(file, JSON.stringify(packageJson, null, 2));
+  const packageJson: unknown = JSON.parse(readFileSync(file, 'utf8'));
+  writeFileSync(file, JSON.stringify(withValueAt(packageJson, path, value), null, 2));
 };
 
 const failed = (mode: string) => [
@@ -77,33 +75,37 @@ describe('scripts/utils/check-consumer-types.cjs', () => {
   it.each([
     [
       'the import types condition names the CommonJS declarations',
-      (directory: string) =>
-        editPackageJson(directory, (packageJson) => {
-          packageJson.exports['.'].types = './index.d.ts';
-        }),
+      (directory: string) => {
+        editPackageJson(directory, ['exports', '.', 'types'], './index.d.ts');
+      },
       failed('ES modules with nodenext'),
     ],
     [
       'the require types condition names the ES module declarations',
-      (directory: string) =>
-        editPackageJson(directory, (packageJson) => {
-          packageJson.exports['.'].require.types = './index.d.mts';
-        }),
+      (directory: string) => {
+        editPackageJson(directory, ['exports', '.', 'require', 'types'], './index.d.mts');
+      },
       failed('CommonJS with node16'),
     ],
     [
       'client.d.mts is missing',
-      (directory: string) => rmSync(join(directory, 'client.d.mts')),
+      (directory: string) => {
+        rmSync(join(directory, 'client.d.mts'));
+      },
       [...failed('ES modules with nodenext'), ...failed('bundler')],
     ],
     [
       'client.d.mts is empty',
-      (directory: string) => writeFileSync(join(directory, 'client.d.mts'), ''),
+      (directory: string) => {
+        writeFileSync(join(directory, 'client.d.mts'), '');
+      },
       [...failed('ES modules with nodenext'), ...failed('bundler')],
     ],
     [
       'client.d.ts is missing',
-      (directory: string) => rmSync(join(directory, 'client.d.ts')),
+      (directory: string) => {
+        rmSync(join(directory, 'client.d.ts'));
+      },
       failed('CommonJS with node16'),
     ],
   ])(
@@ -164,12 +166,16 @@ fs.mkdtempSync = (...args) => {
           env: { ...process.env, TMPDIR: temp },
           stdio: 'ignore',
         });
-        const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve) =>
-          child.on('exit', (code, stopSignal) => resolve({ code, signal: stopSignal })),
-        );
+        const exited = new Promise<{ code: number | null; signal: NodeJS.Signals | null }>((resolve) => {
+          child.on('exit', (code, stopSignal) => {
+            resolve({ code, signal: stopSignal });
+          });
+        });
         const deadline = Date.now() + 30_000;
         while (readdirSync(temp).length === 0 && Date.now() < deadline) {
-          await new Promise((resolve) => setTimeout(resolve, 10));
+          await new Promise((resolve) => {
+            setTimeout(resolve, 10);
+          });
         }
         child.kill(signal);
 

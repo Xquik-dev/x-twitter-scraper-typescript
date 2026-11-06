@@ -7,6 +7,7 @@ import { APIPromise } from 'x-twitter-scraper/core/api-promise';
 import util from 'node:util';
 import XTwitterScraper from 'x-twitter-scraper';
 import { APIUserAbortError } from 'x-twitter-scraper';
+import { asyncValues } from './async-values';
 
 const headersOf = (init: RequestInit | undefined): Headers => {
   const headers = init?.headers;
@@ -57,13 +58,28 @@ describe('instantiate client', () => {
       });
       expect(req.headers.has('x-my-default-header')).toBe(false);
     });
+
+    test.each([
+      ['a Headers object', new Headers({ 'X-My-Default-Header': '2' })],
+      ['header pairs', [['X-My-Default-Header', '2']]],
+    ])('keep %s next to the custom headers env variable', async (_kind, defaultHeaders) => {
+      process.env['X_TWITTER_SCRAPER_CUSTOM_HEADERS'] = 'X-From-Env: 1';
+      const envClient = new XTwitterScraper({
+        baseURL: 'http://localhost:5000/',
+        defaultHeaders,
+        apiKey: 'My API Key',
+      });
+      const { req } = await envClient.buildRequest({ path: '/foo', method: 'post' });
+      expect(req.headers.get('x-my-default-header')).toEqual('2');
+      expect(req.headers.get('x-from-env')).toEqual('1');
+    });
   });
 
   test('an API promise resolves through Promise.all, Promise.resolve and finally', async () => {
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
       bearerToken: null,
-      fetch: async () => Response.json({ ok: true }),
+      fetch: () => Promise.resolve(Response.json({ ok: true })),
     });
 
     const [fromAll] = await Promise.all([client.get('/foo')]);
@@ -75,9 +91,11 @@ describe('instantiate client', () => {
 
   test('requests name the SDK in X-Xquik-SDK and keep the language header', async () => {
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       capturedRequest = init;
-      return new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
@@ -141,7 +159,7 @@ describe('instantiate client', () => {
       expect(debugMock).toHaveBeenCalled();
     });
 
-    test('default logLevel is warn', async () => {
+    test('default logLevel is warn', () => {
       const client = new XTwitterScraper({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
       expect(client.logLevel).toBe('warn');
     });
@@ -187,7 +205,7 @@ describe('instantiate client', () => {
       expect(debugMock).toHaveBeenCalled();
     });
 
-    test('warn when env var level is invalid', async () => {
+    test('warn when env var level is invalid', () => {
       const warnMock = vi.fn();
       const logger = {
         debug: vi.fn(),
@@ -229,7 +247,7 @@ describe('instantiate client', () => {
       expect(debugMock).not.toHaveBeenCalled();
     });
 
-    test('no warning logged for invalid env var level + valid client level', async () => {
+    test('no warning logged for invalid env var level + valid client level', () => {
       const warnMock = vi.fn();
       const logger = {
         debug: vi.fn(),
@@ -318,20 +336,18 @@ describe('instantiate client', () => {
       apiKey: 'My API Key',
       bearerToken: 'My Bearer Token',
       fetch: (...args) => {
-        return new Promise((resolve, reject) =>
-          setTimeout(
-            () =>
-              defaultFetch(...args)
-                .then(resolve)
-                .catch(reject),
-            300,
-          ),
-        );
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            defaultFetch(...args).then(resolve, reject);
+          }, 300);
+        });
       },
     });
 
     const controller = new AbortController();
-    setTimeout(() => controller.abort(), 200);
+    setTimeout(() => {
+      controller.abort();
+    }, 200);
 
     const spy = vi.spyOn(client, 'request');
 
@@ -341,9 +357,11 @@ describe('instantiate client', () => {
 
   test('normalized method', async () => {
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       capturedRequest = init;
-      return new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
 
     const client = new XTwitterScraper({
@@ -447,7 +465,7 @@ describe('instantiate client', () => {
   });
 
   describe('withOptions', () => {
-    test('creates a new client with overridden options', async () => {
+    test('creates a new client with overridden options', () => {
       const client = new XTwitterScraper({
         baseURL: 'http://localhost:5000/',
         maxRetries: 3,
@@ -580,7 +598,7 @@ describe('default encoder', () => {
     }
   }
   class Collection<T> {
-    #things: T[];
+    readonly #things: T[];
     constructor(things: T[]) {
       this.#things = Array.from(things);
     }
@@ -605,11 +623,7 @@ describe('default encoder', () => {
   }
 
   const encoder = new TextEncoder();
-  const asyncIterable = (async function* () {
-    yield encoder.encode('a\n');
-    yield encoder.encode('b\n');
-    yield encoder.encode('c\n');
-  })();
+  const asyncIterable = asyncValues([encoder.encode('a\n'), encoder.encode('b\n'), encoder.encode('c\n')]);
   for (const streamValue of [
     [encoder.encode('a\nb\nc\n')][Symbol.iterator](),
     new Response('a\nb\nc\n').body,
@@ -650,9 +664,11 @@ describe('retries', () => {
       { signal }: RequestInit = {},
     ): Promise<Response> => {
       if (count++ === 0) {
-        return new Promise((_resolve, reject) =>
-          signal?.addEventListener('abort', () => reject(new Error('timed out'))),
-        );
+        return await new Promise((_resolve, reject) => {
+          signal?.addEventListener('abort', () => {
+            reject(new Error('timed out'));
+          });
+        });
       }
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
@@ -678,18 +694,22 @@ describe('retries', () => {
   test('retry count header', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
-        return new Response(undefined, {
-          status: 429,
-          headers: {
-            'Retry-After': '0.1',
-          },
-        });
+        return Promise.resolve(
+          new Response(undefined, {
+            status: 429,
+            headers: {
+              'Retry-After': '0.1',
+            },
+          }),
+        );
       }
       capturedRequest = init;
-      return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
 
     const client = new XTwitterScraper({
@@ -708,18 +728,22 @@ describe('retries', () => {
   test('omit retry count header', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
-        return new Response(undefined, {
-          status: 429,
-          headers: {
-            'Retry-After': '0.1',
-          },
-        });
+        return Promise.resolve(
+          new Response(undefined, {
+            status: 429,
+            headers: {
+              'Retry-After': '0.1',
+            },
+          }),
+        );
       }
       capturedRequest = init;
-      return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
@@ -742,18 +766,22 @@ describe('retries', () => {
   test('omit retry count header by default', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
-        return new Response(undefined, {
-          status: 429,
-          headers: {
-            'Retry-After': '0.1',
-          },
-        });
+        return Promise.resolve(
+          new Response(undefined, {
+            status: 429,
+            headers: {
+              'Retry-After': '0.1',
+            },
+          }),
+        );
       }
       capturedRequest = init;
-      return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
@@ -776,18 +804,22 @@ describe('retries', () => {
   test('overwrite retry count header', async () => {
     let count = 0;
     let capturedRequest: RequestInit | undefined;
-    const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
       count++;
       if (count <= 2) {
-        return new Response(undefined, {
-          status: 429,
-          headers: {
-            'Retry-After': '0.1',
-          },
-        });
+        return Promise.resolve(
+          new Response(undefined, {
+            status: 429,
+            headers: {
+              'Retry-After': '0.1',
+            },
+          }),
+        );
       }
       capturedRequest = init;
-      return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
     const client = new XTwitterScraper({
       apiKey: 'My API Key',
@@ -809,16 +841,20 @@ describe('retries', () => {
 
   test('retry on 429 with retry-after', async () => {
     let count = 0;
-    const testFetch = async (): Promise<Response> => {
+    const testFetch = (): Promise<Response> => {
       if (count++ === 0) {
-        return new Response(undefined, {
-          status: 429,
-          headers: {
-            'Retry-After': '0.1',
-          },
-        });
+        return Promise.resolve(
+          new Response(undefined, {
+            status: 429,
+            headers: {
+              'Retry-After': '0.1',
+            },
+          }),
+        );
       }
-      return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
 
     const client = new XTwitterScraper({
@@ -840,16 +876,20 @@ describe('retries', () => {
 
   test('retry on 429 with retry-after-ms', async () => {
     let count = 0;
-    const testFetch = async (): Promise<Response> => {
+    const testFetch = (): Promise<Response> => {
       if (count++ === 0) {
-        return new Response(undefined, {
-          status: 429,
-          headers: {
-            'Retry-After-Ms': '10',
-          },
-        });
+        return Promise.resolve(
+          new Response(undefined, {
+            status: 429,
+            headers: {
+              'Retry-After-Ms': '10',
+            },
+          }),
+        );
       }
-      return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
+      return Promise.resolve(
+        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
+      );
     };
 
     const client = new XTwitterScraper({

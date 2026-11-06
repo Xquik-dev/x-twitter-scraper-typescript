@@ -13,7 +13,7 @@ describe('environment variables', () => {
 
   afterEach(() => {
     for (const [name, descriptor] of originals) {
-      if (descriptor) {
+      if (descriptor !== undefined) {
         Object.defineProperty(globalThis, name, descriptor);
       } else {
         Reflect.deleteProperty(globalThis, name);

@@ -107,7 +107,7 @@ const makeSpec = ({
               content: {
                 'application/json': {
                   schema:
-                    requiredLater.length ?
+                    requiredLater.length > 0 ?
                       { allOf: [schema, { type: 'object', required: requiredLater }] }
                     : schema,
                 },

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type XTwitterScraper from 'x-twitter-scraper';
+import { communityCreate } from './community-create';
 import { fixtureClient } from './fixture-client';
 import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
 
@@ -67,7 +68,7 @@ const writes: ReadonlyArray<
   ],
   [
     'POST /x/communities',
-    (client, headers) => client.x.communities.create({ account: '@a', name: 'A', ...headers }),
+    (client, headers) => communityCreate(client).create({ account: '@a', name: 'A', ...headers }),
   ],
   [
     'DELETE /x/communities/1',
@@ -89,12 +90,11 @@ describe('write Prefer header', () => {
 
     await write(client, { 'Idempotency-Key': 'key-1', Prefer: 'wait=50' });
 
-    expect(`${sent[0]?.method} ${new URL(ensurePresent(sent[0]).url).pathname}`).toBe(
-      route.replace(' ', ' /api/v1'),
-    );
-    expect(sent[0]?.headers.get('prefer')).toBe('wait=50');
-    expect(sent[0]?.headers.get('idempotency-key')).toBe('key-1');
-    expect(await ensurePresent(sent[0]).clone().text()).not.toContain('wait=50');
+    const request = ensurePresent(sent[0]);
+    expect(`${request.method} ${new URL(request.url).pathname}`).toBe(route.replace(' ', ' /api/v1'));
+    expect(request.headers.get('prefer')).toBe('wait=50');
+    expect(request.headers.get('idempotency-key')).toBe('key-1');
+    expect(await request.clone().text()).not.toContain('wait=50');
   });
 
   test.each(writes)('%s sends no Prefer header when unset', async (_route, write) => {

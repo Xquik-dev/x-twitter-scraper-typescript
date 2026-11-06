@@ -63,10 +63,9 @@ describe('resource styles', () => {
     const responsePromise = client.styles.delete('id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
+    await expect(responsePromise).resolves.not.toBeInstanceOf(Response);
     const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
+    await expect(responsePromise).resolves.toBe(dataAndResponse.data);
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
