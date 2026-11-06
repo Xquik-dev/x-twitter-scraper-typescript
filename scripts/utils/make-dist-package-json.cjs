@@ -2,25 +2,37 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const pkgJson = require(process.env['PKG_JSON_PATH'] || '../../package.json');
+const asObject = require('./json.cjs').asObject;
 
+/** @type {import('./types').JsonValue} */
+const pkgFile = require(process.env['PKG_JSON_PATH'] || '../../package.json');
+const pkgJson = asObject(pkgFile);
+if (!pkgJson) throw new Error('package.json does not hold an object');
+
+/** @type {(value: string) => string} */
+const withoutDist = (value) => value.replace(/^\.\/dist\//, './');
+
+/** @type {(m: import('./types').JsonValue | undefined) => void} */
 function processExportMap(m) {
-  for (const key in m) {
-    const value = m[key];
-    if (typeof value === 'string') m[key] = value.replace(/^\.\/dist\//, './');
-    else processExportMap(value);
+  if (typeof m !== 'object' || m === null) return;
+  for (const [key, value] of Object.entries(m)) {
+    if (typeof value !== 'string') processExportMap(value);
+    else if (Array.isArray(m)) m[Number(key)] = withoutDist(value);
+    else m[key] = withoutDist(value);
   }
 }
-processExportMap(pkgJson.exports);
+processExportMap(pkgJson['exports']);
 
 for (const key of ['types', 'main', 'module']) {
-  if (typeof pkgJson[key] === 'string') pkgJson[key] = pkgJson[key].replace(/^(\.\/)?dist\//, './');
+  const value = pkgJson[key];
+  if (typeof value === 'string') pkgJson[key] = value.replace(/^(\.\/)?dist\//, './');
 }
 
-delete pkgJson.devDependencies;
-delete pkgJson.typesVersions;
-delete pkgJson.scripts.prepack;
-delete pkgJson.scripts.prepublishOnly;
-delete pkgJson.scripts.prepare;
+const scripts = asObject(pkgJson['scripts']);
+delete pkgJson['devDependencies'];
+delete pkgJson['typesVersions'];
+delete scripts?.['prepack'];
+delete scripts?.['prepublishOnly'];
+delete scripts?.['prepare'];
 
 console.log(JSON.stringify(pkgJson, null, 2));

@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-check
-
-const { spawnSync } = require('child_process');
+const spawnSync = require('child_process').spawnSync;
 const fs = require('fs');
 const path = require('path');
+const asObject = require('./json.cjs').asObject;
 
 const repository = path.resolve(__dirname, '..', '..');
 const tsc = path.join(repository, 'node_modules', '@typescript', 'native', 'bin', 'tsc');
@@ -16,37 +15,50 @@ const formats = [
   { name: 'CommonJS', module: 'commonjs', js: '.js', dts: '.d.ts', verbatimModuleSyntax: 'false' },
 ];
 
+/** @type {(message: string, status?: number) => never} */
 const fail = (message, status = 1) => {
   console.error(message);
   process.exit(status);
 };
 
+/** @type {(args: string[]) => import('child_process').SpawnSyncReturns<string>} */
 const runTsc = (args) => {
   const result = spawnSync(process.execPath, [tsc, ...args], { encoding: 'utf8' });
   if (result.error) throw result.error;
   return result;
 };
 
+/** @type {(config: string) => { outDir: string; rootDir: string }} */
 const readLayout = (config) => {
   const result = runTsc(['--project', config, '--showConfig']);
   if (result.status !== 0) {
     process.stderr.write(result.stdout + result.stderr);
     fail(`TypeScript could not read ${config}. Fix the errors above.`);
   }
-  const { outDir, rootDir } = JSON.parse(result.stdout).compilerOptions;
-  if (!outDir || !rootDir) fail(`${config} needs outDir and rootDir. Add both.`);
+  /** @type {import('./types').JsonValue} */
+  const shown = JSON.parse(result.stdout);
+  const options = asObject(asObject(shown)?.['compilerOptions']);
+  const outDir = options?.['outDir'];
+  const rootDir = options?.['rootDir'];
+  if (!outDir || !rootDir || typeof outDir !== 'string' || typeof rootDir !== 'string') {
+    fail(`${config} needs outDir and rootDir. Add both.`);
+  }
   return {
     outDir: path.resolve(path.dirname(config), outDir),
     rootDir: path.resolve(path.dirname(config), rootDir),
   };
 };
 
+/** @type {(outDir: string, format: (typeof formats)[number]) => string} */
 const helpersFileOf = (outDir, format) => path.join(outDir, 'internal', `tslib${format.js}`);
 
+/** @type {(file: string) => boolean} */
 const isFile = (file) => fs.statSync(file, { throwIfNoEntry: false })?.isFile() ?? false;
 
+/** @type {(file: string) => boolean} */
 const isDirectory = (file) => fs.statSync(file, { throwIfNoEntry: false })?.isDirectory() ?? false;
 
+/** @type {(specifier: string, extension: string, sourceDirectory: string) => string | undefined} */
 const linkSpecifier = (specifier, extension, sourceDirectory) => {
   if (!specifier.startsWith('./') && !specifier.startsWith('../')) return undefined;
   const current = path.extname(specifier);
@@ -63,6 +75,7 @@ const linkSpecifier = (specifier, extension, sourceDirectory) => {
   return `${base}${extension}`;
 };
 
+/** @type {(from: string, to: string) => string} */
 const relativeSpecifier = (from, to) => {
   const relative = path.relative(from, to).split(path.sep).join('/');
   return relative.startsWith('.') ? relative : `./${relative}`;
@@ -75,6 +88,7 @@ const specifierPatterns = [
   /(^\s*import )(['"])([^'"\n]+)\2(?=;)/g,
 ];
 
+/** @type {(line: string, column: number) => boolean} */
 const insideString = (line, column) => {
   /** @type {string | undefined} */
   let quote;
@@ -91,7 +105,9 @@ const insideString = (line, column) => {
   return quote !== undefined;
 };
 
+/** @type {(text: string, rewrite: (specifier: string) => string | undefined) => { text: string; edits: Map<number, Array<{ column: number; length: number; delta: number }>> }} */
 const rewriteSpecifiers = (text, rewrite) => {
+  /** @type {Map<number, Array<{ column: number; length: number; delta: number }>>} */
   const edits = new Map();
   const lines = text.split('\n').map((line, index) => {
     const matches = specifierPatterns
@@ -102,6 +118,7 @@ const rewriteSpecifiers = (text, rewrite) => {
         specifier: match[3] ?? '',
       }))
       .sort((a, b) => a.column - b.column);
+    /** @type {Array<{ column: number; length: number; delta: number }>} */
     const lineEdits = [];
     let output = '';
     let cursor = 0;
@@ -121,6 +138,7 @@ const rewriteSpecifiers = (text, rewrite) => {
 
 const base64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
+/** @type {(segment: string) => number[]} */
 const decodeSegment = (segment) => {
   /** @type {number[]} */
   const values = [];
@@ -141,6 +159,7 @@ const decodeSegment = (segment) => {
   return values;
 };
 
+/** @type {(value: number) => string} */
 const encodeValue = (value) => {
   let rest = value < 0 ? (-value << 1) | 1 : value << 1;
   let output = '';
@@ -152,6 +171,7 @@ const encodeValue = (value) => {
   return output;
 };
 
+/** @type {(mappings: string, edits: Map<number, Array<{ column: number; length: number; delta: number }>>) => string} */
 const shiftMappings = (mappings, edits) => {
   if (edits.size === 0) return mappings;
   const decoded = [0, 0, 0, 0, 0];
@@ -189,6 +209,7 @@ const shiftMappings = (mappings, edits) => {
     .join(';');
 };
 
+/** @type {(text: string) => Map<string, string>} */
 const readHelperDeclarations = (text) => {
   /** @type {Map<string, string[]>} */
   const declarations = new Map();
@@ -208,11 +229,13 @@ const readHelperDeclarations = (text) => {
   return new Map([...declarations].map(([name, lines]) => [name, lines.join('\n').trimEnd()]));
 };
 
+/** @type {(names: Set<string>, format: (typeof formats)[number]) => string} */
 const buildHelpers = (names, format) => {
   const tslibFile = require.resolve('tslib/tslib.es6.mjs', { paths: [repository] });
   const declarations = readHelperDeclarations(fs.readFileSync(tslibFile, 'utf8'));
   /** @type {Set<string>} */
   const needed = new Set();
+  /** @type {(name: string) => void} */
   const add = (name) => {
     if (needed.has(name)) return;
     const code = declarations.get(name);
@@ -239,6 +262,7 @@ const buildHelpers = (names, format) => {
   return `${code}\n\nexport { ${exported.join(', ')} };\n`;
 };
 
+/** @type {(text: string) => string[]} */
 const helpersUsed = (text) => {
   const names = [...text.matchAll(/^import \{([^}]*)\} from "tslib";$/gm)].flatMap((match) =>
     (match[1] ?? '').split(',').map((name) => name.trim()),
@@ -252,6 +276,7 @@ const helpersUsed = (text) => {
   return names.filter(Boolean);
 };
 
+/** @type {(file: string, layout: { outDir: string; rootDir: string }, format: (typeof formats)[number]) => string[]} */
 const relinkFile = (file, { outDir, rootDir }, format) => {
   const declaration = file.endsWith('.d.ts');
   const target = file.replace(declaration ? /\.d\.ts$/ : /\.js$/, declaration ? format.dts : format.js);
@@ -266,9 +291,13 @@ const relinkFile = (file, { outDir, rootDir }, format) => {
 
   const mapFile = `${file}.map`;
   if (isFile(mapFile)) {
-    const map = JSON.parse(fs.readFileSync(mapFile, 'utf8'));
-    map.file = path.basename(target);
-    map.mappings = shiftMappings(map.mappings, edits);
+    /** @type {import('./types').JsonValue} */
+    const parsed = JSON.parse(fs.readFileSync(mapFile, 'utf8'));
+    const map = asObject(parsed);
+    const mappings = map?.['mappings'];
+    if (!map || typeof mappings !== 'string') fail(`${mapFile} has no mappings. Check the TypeScript build.`);
+    map['file'] = path.basename(target);
+    map['mappings'] = shiftMappings(mappings, edits);
     fs.writeFileSync(`${target}.map`, JSON.stringify(map));
     if (target !== file) fs.rmSync(mapFile);
   }
@@ -280,6 +309,7 @@ const relinkFile = (file, { outDir, rootDir }, format) => {
   return declaration ? [] : helpersUsed(original);
 };
 
+/** @type {(config: string, layout: { outDir: string; rootDir: string }, format: (typeof formats)[number]) => void} */
 const compileFormat = (config, layout, format) => {
   const result = runTsc([
     '--project',
