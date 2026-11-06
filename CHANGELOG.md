@@ -13,6 +13,12 @@
 - Media download items return `posterUrl`, a video's cover image, & `qualities`, its MP4 sizes. Code that builds an item by hand must set both.
 - Extraction results return `quotedMedia`, the quoted post's media, with `outputPreset=flat`.
 
+### Changes
+
+* `fetchOptions` takes the options your runtime's global `fetch` accepts. Its type no longer changes with how your packages are installed.
+* If TypeScript loads the DOM lib in a Node project, `fetchOptions` rejects undici's `dispatcher`. TypeScript loads it when `lib` is unset. Set a proxy there with undici's `setGlobalDispatcher`.
+* `fetchOptions` no longer takes node-fetch's `agent`.
+
 ### Chores
 
 * The `tsconfig.json` shipped in `src/` now matches the strict settings the SDK builds with. Editors that open the SDK source through declaration maps no longer flag the old `moduleResolution: node` setting, which TypeScript 6 deprecated.

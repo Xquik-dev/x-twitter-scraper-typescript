@@ -103,7 +103,6 @@ export class APIUserAbortError extends APIError<undefined, undefined, undefined>
 export class APIConnectionError extends APIError<undefined, undefined, undefined> {
   constructor({ message, cause }: { message?: string | undefined; cause?: Error | undefined }) {
     super(undefined, undefined, message || 'Connection error.', undefined);
-    // @ts-ignore
     if (cause) this.cause = cause;
   }
 }

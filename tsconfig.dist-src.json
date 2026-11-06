@@ -5,7 +5,7 @@
   "include": ["index.ts"],
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["es2020", "DOM", "DOM.Iterable"],
+    "lib": ["es2020", "es2022.error", "DOM", "DOM.Iterable"],
     "module": "preserve",
     "moduleResolution": "bundler",
     "noEmit": true,
