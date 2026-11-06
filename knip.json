@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/*.ts",
+    "src/core/**/*.ts",
+    "src/resources/**/*.ts",
+    "scripts/utils/{attw-report,check-api-coverage,check-api-fields,check-consumer-types,check-version,compile-formats,make-dist-package-json,postprocess-files}.cjs",
+    "tests/**/*.ts",
+    "examples/**/*.ts"
+  ],
+  "project": ["src/**/*.ts", "scripts/**/*.cjs", "tests/**/*.ts", "examples/**/*.ts", "*.{js,mjs,cjs}"]
+}
