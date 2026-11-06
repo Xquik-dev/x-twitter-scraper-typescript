@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `false` keeps it to the text.
+- `ContextAvailability.media` returns `'images'` when the AI read the post's images. A `switch` that handles every value needs a case for it.
+- `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.
 - `client.x.tweets.bookmark.create` & `delete` add & remove a bookmark through a connected X account. Only that account sees its bookmarks.
 - `client.x.users.block.create` & `delete` block & unblock a user. A block removes follows both ways, and an unblock doesn't restore them.
 - `client.x.users.mute.create` & `delete` mute & unmute a user. X doesn't tell the muted user.

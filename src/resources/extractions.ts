@@ -212,6 +212,12 @@ export interface ExtractionJob {
    */
   totalResults: number;
 
+  /**
+   * Dashboard page where a signed-in user follows this job & downloads its rows as
+   * CSV, XLSX, JSON, Markdown, PDF or text.
+   */
+  url: string;
+
   completedAt?: string;
 
   /**
@@ -491,6 +497,13 @@ export namespace ExtractionRunResponse {
       | 'user_likes'
       | 'user_media'
       | 'verified_follower_explorer';
+
+    /**
+     * Dashboard page of the job. A signed-in user follows its progress there and
+     * downloads every row as CSV, XLSX, JSON, Markdown, PDF or text, so give this link
+     * to a person who wants the whole list as a file.
+     */
+    url: string;
 
     waitUrl: string;
   }
