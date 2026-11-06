@@ -4,6 +4,7 @@
 
 import type XTwitterScraper from 'x-twitter-scraper';
 import { fixtureClient } from './fixture-client';
+import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
 
 type WriteHeaders = { 'Idempotency-Key': string; Prefer?: string };
 
@@ -88,10 +89,12 @@ describe('write Prefer header', () => {
 
     await write(client, { 'Idempotency-Key': 'key-1', Prefer: 'wait=50' });
 
-    expect(`${sent[0]!.method} ${new URL(sent[0]!.url).pathname}`).toBe(route.replace(' ', ' /api/v1'));
-    expect(sent[0]!.headers.get('prefer')).toBe('wait=50');
-    expect(sent[0]!.headers.get('idempotency-key')).toBe('key-1');
-    expect(await sent[0]!.clone().text()).not.toContain('wait=50');
+    expect(`${sent[0]?.method} ${new URL(ensurePresent(sent[0]).url).pathname}`).toBe(
+      route.replace(' ', ' /api/v1'),
+    );
+    expect(sent[0]?.headers.get('prefer')).toBe('wait=50');
+    expect(sent[0]?.headers.get('idempotency-key')).toBe('key-1');
+    expect(await ensurePresent(sent[0]).clone().text()).not.toContain('wait=50');
   });
 
   test.each(writes)('%s sends no Prefer header when unset', async (_route, write) => {
@@ -99,6 +102,6 @@ describe('write Prefer header', () => {
 
     await write(client, { 'Idempotency-Key': 'key-1' });
 
-    expect(sent[0]!.headers.has('prefer')).toBe(false);
+    expect(sent[0]?.headers.has('prefer')).toBe(false);
   });
 });
