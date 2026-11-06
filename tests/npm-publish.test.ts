@@ -9,6 +9,12 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
+const portOf = (address: AddressInfo | string | null): number => {
+  if (address === null || typeof address === 'string')
+    throw new Error('Expected the server to listen on a TCP port');
+  return address.port;
+};
+
 const script = resolve(__dirname, '..', 'scripts', 'utils', 'npm-publish');
 
 const startRegistry = async (pollsBeforeApproval: number) => {
@@ -23,7 +29,7 @@ const startRegistry = async (pollsBeforeApproval: number) => {
     };
     request.resume();
     request.on('end', () => {
-      const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+      const base = `http://127.0.0.1:${portOf(server.address())}`;
       if (request.method === 'PUT' && !otp) {
         answer(
           401,
@@ -42,7 +48,7 @@ const startRegistry = async (pollsBeforeApproval: number) => {
     });
   });
   await new Promise<void>((done) => server.listen(0, '127.0.0.1', done));
-  const { port } = server.address() as AddressInfo;
+  const port = portOf(server.address());
   return {
     url: `http://127.0.0.1:${port}`,
     requests,

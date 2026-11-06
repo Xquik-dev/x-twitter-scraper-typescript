@@ -4,6 +4,7 @@
 
 import type XTwitterScraper from 'x-twitter-scraper';
 import { fixtureClient } from './fixture-client';
+import { listedMonitorPost, monitorPost } from './monitor-post';
 
 const label: XTwitterScraper.SoftIntervention = {
   displayType: 'Fosnr',
@@ -89,7 +90,7 @@ describe('softIntervention', () => {
     });
 
     const response = await client.events.retrieve('42');
-    const data = response.data as XTwitterScraper.EventDetail.MonitorPost;
+    const data = monitorPost(response.data);
 
     const labels: Labels = [data.softIntervention, data.quoted_tweet?.softIntervention];
 
@@ -112,7 +113,7 @@ describe('softIntervention', () => {
     });
 
     const response = await client.events.list();
-    const data = response.events[0]?.data as XTwitterScraper.Event.MonitorPost;
+    const data = listedMonitorPost(response.events[0]?.data);
 
     const labels: Labels = [data.softIntervention, data.retweeted_tweet?.softIntervention];
 

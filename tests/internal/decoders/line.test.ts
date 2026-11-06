@@ -106,7 +106,7 @@ describe('line decoder', () => {
   });
 
   test('accepts ArrayBuffer chunks', () => {
-    const buffer = new TextEncoder().encode('foo\nbar\n').buffer as ArrayBuffer;
+    const buffer = new TextEncoder().encode('foo\nbar\n').buffer;
     expect(decodeChunks([buffer], { flush: false })).toEqual(['foo', 'bar']);
   });
 });

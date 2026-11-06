@@ -4,6 +4,8 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 import { fixtureClient } from '../../fixture-client';
+import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
+import { formFile } from '../../form-file';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -113,10 +115,10 @@ describe('resource tickets', () => {
       ],
     });
 
-    const form = await sent[0]!.formData();
+    const form = await ensurePresent(sent[0]).formData();
     expect(form.get('subject')).toBe('Billing question');
     expect(form.get('body')).toBe('The screenshot shows the charge.');
-    expect(form.getAll('attachments').map((file) => (file as File).name)).toEqual(['screen.png', 'clip.mp4']);
+    expect(form.getAll('attachments').map((file) => formFile(file).name)).toEqual(['screen.png', 'clip.mp4']);
   });
 
   test('reply: sends attachments with the message', async () => {
@@ -127,7 +129,7 @@ describe('resource tickets', () => {
       attachments: [new File(['first'], 'screen.png', { type: 'image/png' })],
     });
 
-    const form = await sent[0]!.formData();
-    expect(form.getAll('attachments').map((file) => (file as File).name)).toEqual(['screen.png']);
+    const form = await ensurePresent(sent[0]).formData();
+    expect(form.getAll('attachments').map((file) => formFile(file).name)).toEqual(['screen.png']);
   });
 });

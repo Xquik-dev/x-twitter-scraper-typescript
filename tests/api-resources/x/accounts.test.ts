@@ -93,7 +93,7 @@ describe('resource accounts', () => {
     await fixture.x.accounts.bulkRetry({ accountIds: ['1', 'xacct_2'] });
 
     expect(requests).toEqual(['POST https://xquik.test/api/v1/x/accounts/bulk-retry']);
-    expect(await sent[0]!.json()).toEqual({ accountIds: ['1', 'xacct_2'] });
+    expect(await sent[0]?.json()).toEqual({ accountIds: ['1', 'xacct_2'] });
   });
 
   test('bulkRetry omits accountIds when no params are provided', async () => {
@@ -102,7 +102,7 @@ describe('resource accounts', () => {
     await fixture.x.accounts.bulkRetry();
 
     expect(requests).toEqual(['POST https://xquik.test/api/v1/x/accounts/bulk-retry']);
-    expect(await sent[0]!.json()).toEqual({});
+    expect(await sent[0]?.json()).toEqual({});
   });
 
   test('reauth: only required params', async () => {

@@ -4,6 +4,8 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 import { fixtureClient } from '../../fixture-client';
+import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
+import { formFile } from '../../form-file';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -94,9 +96,9 @@ describe('resource profile', () => {
         'Idempotency-Key': 'Idempotency-Key',
       });
 
-      const form = await sent[0]!.formData();
+      const form = await ensurePresent(sent[0]).formData();
       expect(form.get('account')).toBe('@elonmusk');
-      expect((form.get('file') as File).name).toBe('image.png');
+      expect(formFile(form.get('file')).name).toBe('image.png');
       expect(form.has('url')).toBe(false);
     },
   );
