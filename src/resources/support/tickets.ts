@@ -9,6 +9,7 @@ import { buildHeaders } from '../../internal/headers';
 import type { RequestOptions } from '../../internal/request-options';
 import { maybeMultipartFormRequestOptions } from '../../internal/uploads';
 import { path } from '../../internal/utils/path';
+import { isPresent } from '../../internal/utils/values';
 
 /**
  * Support ticket management
@@ -34,7 +35,7 @@ export class Tickets extends APIResource {
           body,
           ...options,
           headers: buildHeaders([
-            { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+            { ...(isPresent(idempotencyKey) ? { 'Idempotency-Key': idempotencyKey } : undefined) },
             options?.headers,
           ]),
         },
@@ -107,7 +108,7 @@ export class Tickets extends APIResource {
           body,
           ...options,
           headers: buildHeaders([
-            { ...(idempotencyKey != null ? { 'Idempotency-Key': idempotencyKey } : undefined) },
+            { ...(isPresent(idempotencyKey) ? { 'Idempotency-Key': idempotencyKey } : undefined) },
             options?.headers,
           ]),
         },

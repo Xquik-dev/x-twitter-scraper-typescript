@@ -25,7 +25,7 @@ export function arrayBufferBytes(view: ArrayBufferView): Uint8Array<ArrayBuffer>
 
 let encodeUTF8_: ((str: string) => Uint8Array) | undefined;
 export function encodeUTF8(str: string) {
-  if (!encodeUTF8_) {
+  if (encodeUTF8_ === undefined) {
     const encoder = new globalThis.TextEncoder();
     encodeUTF8_ = encoder.encode.bind(encoder);
   }
@@ -34,7 +34,7 @@ export function encodeUTF8(str: string) {
 
 let decodeUTF8_: ((bytes: Uint8Array) => string) | undefined;
 export function decodeUTF8(bytes: Uint8Array) {
-  if (!decodeUTF8_) {
+  if (decodeUTF8_ === undefined) {
     const decoder = new globalThis.TextDecoder();
     decodeUTF8_ = decoder.decode.bind(decoder);
   }

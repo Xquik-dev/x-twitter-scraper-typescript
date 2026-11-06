@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { XTwitterScraperError } from '../../core/error';
+import { readProperty } from './globals';
+import { isPresent } from './values';
 
 /**
  * Percent-encode everything that isn't safe to have in a path without encoding safe chars.
@@ -16,7 +18,15 @@ export function encodeURIPath(str: string) {
   return str.replace(/[^A-Za-z0-9\-._~!$&'()*+,;=:@]+/g, encodeURIComponent);
 }
 
-const EMPTY = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.create(null));
+const realmObjectToString = (value: object): unknown => {
+  const hasOwnProperty = readProperty(value, 'hasOwnProperty');
+  if (typeof hasOwnProperty !== 'function') return undefined;
+  const functionPrototype = Reflect.getPrototypeOf(hasOwnProperty);
+  return readProperty(
+    functionPrototype === null ? null : Reflect.getPrototypeOf(functionPrototype),
+    'toString',
+  );
+};
 
 export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
   function path(statics: readonly string[], ...params: readonly unknown[]): string {
@@ -29,15 +39,13 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
         postPath = true;
       }
       const value = params[index];
-      let encoded = (postPath ? encodeURIComponent : pathEncoder)('' + value);
+      let encoded = (postPath ? encodeURIComponent : pathEncoder)(String(value));
       if (
         index !== params.length &&
-        (value == null ||
-          (typeof value === 'object' &&
-            value.toString ===
-              Object.getPrototypeOf(Object.getPrototypeOf(value.hasOwnProperty ?? EMPTY) ?? EMPTY)?.toString))
+        (!isPresent(value) ||
+          (typeof value === 'object' && readProperty(value, 'toString') === realmObjectToString(value)))
       ) {
-        encoded = value + '';
+        encoded = isPresent(value) ? Object.prototype.toString.call(value) : String(value);
         invalidSegments.push({
           start: previousValue.length + currentValue.length,
           length: encoded.length,
@@ -57,7 +65,7 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
       invalidSegments.push({
         start: match.index,
         length: match[0].length,
-        error: `Value "${match[0]}" can\'t be safely passed as a path parameter`,
+        error: `Value "${match[0]}" can't be safely passed as a path parameter`,
       });
     }
 

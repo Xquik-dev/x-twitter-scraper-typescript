@@ -7,6 +7,7 @@ import type { FilePropertyBag, Fetch } from './builtin-types';
 import type { XTwitterScraper } from '../client';
 import { isAsyncIterable, ReadableStreamFrom, uint8ArrayChunks } from './shims';
 import { readGlobal, readProperty, readString } from './utils/globals';
+import { describeValue } from './errors';
 
 export type BlobPart = string | ArrayBuffer | Uint8Array<ArrayBuffer> | Blob;
 type FsReadStream = AsyncIterable<Uint8Array> & { path: string | { toString(): string } };
@@ -53,7 +54,10 @@ export function getName(value: unknown): string | undefined {
   if (typeof value !== 'object' || value === null) return undefined;
   for (const key of ['name', 'url', 'filename', 'path']) {
     const field = readProperty(value, key);
-    if (field) return String(field).split(/[\\/]/).pop() || undefined;
+    if (Boolean(field)) {
+      const name = String(field).split(/[\\/]/).pop();
+      return name === '' ? undefined : name;
+    }
   }
   return undefined;
 }
@@ -92,13 +96,13 @@ function fetchOf(fetchObject: XTwitterScraper | Fetch): Fetch {
 function supportsFormData(fetchObject: XTwitterScraper | Fetch): Promise<boolean> {
   const fetch = fetchOf(fetchObject);
   const cached = supportsFormDataMap.get(fetch);
-  if (cached) return cached;
+  if (cached !== undefined) return cached;
   const promise = (async () => {
     try {
       const FetchResponse = 'Response' in fetch ? fetch.Response : (await fetch('data:,')).constructor;
       if (!isResponseClass(FetchResponse)) return true;
       const data = new FormData();
-      if (data.toString() === (await new FetchResponse(data).text())) {
+      if (Object.prototype.toString.call(data) === (await new FetchResponse(data).text())) {
         return false;
       }
       return true;
@@ -110,17 +114,15 @@ function supportsFormData(fetchObject: XTwitterScraper | Fetch): Promise<boolean
   return promise;
 }
 
-export const createForm = async <T = Record<string, unknown>>(
-  body: T | undefined,
-  fetch: XTwitterScraper | Fetch,
-): Promise<FormData> => {
+export const createForm = async (body: unknown, fetch: XTwitterScraper | Fetch): Promise<FormData> => {
   if (!(await supportsFormData(fetch))) {
     throw new TypeError(
       'The provided fetch function does not support file uploads with the current global FormData class.',
     );
   }
   const form = new FormData();
-  await Promise.all(Object.entries(body || {}).map(([key, value]) => addFormValue(form, key, value)));
+  const entries = typeof body === 'object' && body !== null ? Object.entries(body) : [];
+  await Promise.all(entries.map(([key, value]) => addFormValue(form, key, value)));
   return form;
 };
 
@@ -134,7 +136,7 @@ const isUploadable = (value: unknown) =>
 const hasUploadableValue = (value: unknown): boolean => {
   if (isUploadable(value)) return true;
   if (Array.isArray(value)) return value.some(hasUploadableValue);
-  if (value && typeof value === 'object') {
+  if (typeof value === 'object' && value !== null) {
     for (const k in value) {
       if (hasUploadableValue(readProperty(value, k))) return true;
     }
@@ -144,7 +146,7 @@ const hasUploadableValue = (value: unknown): boolean => {
 
 const addFormValue = async (form: FormData, key: string, value: unknown): Promise<void> => {
   if (value === undefined) return;
-  if (value == null) {
+  if (value === null) {
     throw new TypeError(
       `Received null for "${key}"; to pass null in FormData, you must use the string 'null'`,
     );
@@ -169,7 +171,7 @@ const addFormValue = async (form: FormData, key: string, value: unknown): Promis
     );
   } else {
     throw new TypeError(
-      `Invalid value given to form, expected a string, number, boolean, object, Array, File or Blob but got ${value} instead`,
+      `Invalid value given to form, expected a string, number, boolean, object, Array, File or Blob but got ${String(describeValue(value))} instead`,
     );
   }
 };

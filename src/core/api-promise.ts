@@ -13,12 +13,12 @@ import { type APIResponseProps, defaultParseResponse } from '../internal/parse';
  */
 export class APIPromise<T> extends Promise<T> {
   private parsedPromise: Promise<T> | undefined;
-  #client: XTwitterScraper;
+  readonly #client: XTwitterScraper;
 
   constructor(
     client: XTwitterScraper,
-    private responsePromise: Promise<APIResponseProps>,
-    private parseResponse: (
+    private readonly responsePromise: Promise<APIResponseProps>,
+    private readonly parseResponse: (
       client: XTwitterScraper,
       props: APIResponseProps,
     ) => PromiseOrValue<T> = defaultParseResponse,
@@ -56,26 +56,24 @@ export class APIPromise<T> extends Promise<T> {
   }
 
   private parse(): Promise<T> {
-    if (!this.parsedPromise) {
-      this.parsedPromise = this.responsePromise.then((data) => this.parseResponse(this.#client, data));
-    }
+    this.parsedPromise ??= this.responsePromise.then((data) => this.parseResponse(this.#client, data));
     return this.parsedPromise;
   }
 
   override then<TResult1 = T, TResult2 = never>(
-    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null,
-    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | undefined | null,
+    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2> {
     return this.parse().then(onfulfilled, onrejected);
   }
 
   override catch<TResult = never>(
-    onrejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | undefined | null,
+    onrejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | null,
   ): Promise<T | TResult> {
     return this.parse().catch(onrejected);
   }
 
-  override finally(onfinally?: (() => void) | undefined | null): Promise<T> {
+  override finally(onfinally?: (() => void) | null): Promise<T> {
     return this.parse().finally(onfinally);
   }
 }
