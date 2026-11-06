@@ -4,6 +4,14 @@
 
 import { APIResource } from '../../../core/resource';
 import type * as Shared from '../../shared';
+import * as BookmarkAPI from './bookmark';
+import {
+  Bookmark,
+  type BookmarkCreateParams,
+  type BookmarkCreateResponse,
+  type BookmarkDeleteParams,
+  type BookmarkDeleteResponse,
+} from './bookmark';
 import * as LikeAPI from './like';
 import {
   Like,
@@ -26,6 +34,7 @@ import type { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 export class Tweets extends APIResource {
+  bookmark: BookmarkAPI.Bookmark = new BookmarkAPI.Bookmark(this._client);
   like: LikeAPI.Like = new LikeAPI.Like(this._client);
   retweet: RetweetAPI.Retweet = new RetweetAPI.Retweet(this._client);
 
@@ -1851,8 +1860,14 @@ export interface TweetCreateResponse {
     | 'unlike'
     | 'retweet'
     | 'unretweet'
+    | 'bookmark'
+    | 'unbookmark'
     | 'follow'
     | 'unfollow'
+    | 'block'
+    | 'unblock'
+    | 'mute'
+    | 'unmute'
     | 'remove_follower'
     | 'send_dm'
     | 'delete_dm'
@@ -2138,8 +2153,14 @@ export interface TweetDeleteResponse {
     | 'unlike'
     | 'retweet'
     | 'unretweet'
+    | 'bookmark'
+    | 'unbookmark'
     | 'follow'
     | 'unfollow'
+    | 'block'
+    | 'unblock'
+    | 'mute'
+    | 'unmute'
     | 'remove_follower'
     | 'send_dm'
     | 'delete_dm'
@@ -5464,6 +5485,7 @@ export interface TweetTranslateParams {
   omit?: string;
 }
 
+Tweets.Bookmark = Bookmark;
 Tweets.Like = Like;
 Tweets.Retweet = Retweet;
 
@@ -5503,6 +5525,14 @@ export declare namespace Tweets {
     type TweetResolveLinksParams as TweetResolveLinksParams,
     type TweetSearchParams as TweetSearchParams,
     type TweetTranslateParams as TweetTranslateParams,
+  };
+
+  export {
+    Bookmark as Bookmark,
+    type BookmarkCreateResponse as BookmarkCreateResponse,
+    type BookmarkDeleteResponse as BookmarkDeleteResponse,
+    type BookmarkCreateParams as BookmarkCreateParams,
+    type BookmarkDeleteParams as BookmarkDeleteParams,
   };
 
   export {

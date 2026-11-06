@@ -463,7 +463,11 @@ export declare namespace AnalysisBrandResponse {
 
         author: 'available' | 'missing';
 
-        media: 'text_descriptions_only' | 'not_supplied';
+        /**
+         * images when the AI read the post's images. text_descriptions_only when it read
+         * only their alt text.
+         */
+        media: 'images' | 'text_descriptions_only' | 'not_supplied';
 
         /**
          * truncated when the post was cut to fit.
@@ -871,7 +875,11 @@ export declare namespace AnalysisClassifyResponse {
 
         author: 'available' | 'missing';
 
-        media: 'text_descriptions_only' | 'not_supplied';
+        /**
+         * images when the AI read the post's images. text_descriptions_only when it read
+         * only their alt text.
+         */
+        media: 'images' | 'text_descriptions_only' | 'not_supplied';
 
         /**
          * truncated when the post was cut to fit.
@@ -1279,7 +1287,11 @@ export declare namespace AnalysisMarketSignalsResponse {
 
         author: 'available' | 'missing';
 
-        media: 'text_descriptions_only' | 'not_supplied';
+        /**
+         * images when the AI read the post's images. text_descriptions_only when it read
+         * only their alt text.
+         */
+        media: 'images' | 'text_descriptions_only' | 'not_supplied';
 
         /**
          * truncated when the post was cut to fit.
@@ -1687,7 +1699,11 @@ export declare namespace AnalysisNewsResponse {
 
         author: 'available' | 'missing';
 
-        media: 'text_descriptions_only' | 'not_supplied';
+        /**
+         * images when the AI read the post's images. text_descriptions_only when it read
+         * only their alt text.
+         */
+        media: 'images' | 'text_descriptions_only' | 'not_supplied';
 
         /**
          * truncated when the post was cut to fit.
@@ -2095,7 +2111,11 @@ export declare namespace AnalysisSentimentResponse {
 
         author: 'available' | 'missing';
 
-        media: 'text_descriptions_only' | 'not_supplied';
+        /**
+         * images when the AI read the post's images. text_descriptions_only when it read
+         * only their alt text.
+         */
+        media: 'images' | 'text_descriptions_only' | 'not_supplied';
 
         /**
          * truncated when the post was cut to fit.
@@ -2503,7 +2523,11 @@ export declare namespace AnalysisViralScoreResponse {
 
         author: 'available' | 'missing';
 
-        media: 'text_descriptions_only' | 'not_supplied';
+        /**
+         * images when the AI read the post's images. text_descriptions_only when it read
+         * only their alt text.
+         */
+        media: 'images' | 'text_descriptions_only' | 'not_supplied';
 
         /**
          * truncated when the post was cut to fit.
@@ -2685,6 +2709,12 @@ export declare namespace AnalysisBrandParams {
      * Background the AI reads with every post.
      */
     context?: string;
+
+    /**
+     * Reads up to 4 images per post with its text, at no extra cost. Images of posts X
+     * marks sensitive stay unread. Send false to analyze the text alone.
+     */
+    images?: boolean;
 
     /**
      * Bytes of post, quote & settings the AI reads. Longer posts are cut to fit. Empty
@@ -2910,6 +2940,12 @@ export declare namespace AnalysisClassifyParams {
     context?: string;
 
     /**
+     * Reads up to 4 images per post with its text, at no extra cost. Images of posts X
+     * marks sensitive stay unread. Send false to analyze the text alone.
+     */
+    images?: boolean;
+
+    /**
      * Bytes of post, quote & settings the AI reads. Longer posts are cut to fit. Empty
      * settings take 219 bytes, so a smaller value gets a 400.
      */
@@ -3131,6 +3167,12 @@ export declare namespace AnalysisMarketSignalsParams {
      * Background the AI reads with every post.
      */
     context?: string;
+
+    /**
+     * Reads up to 4 images per post with its text, at no extra cost. Images of posts X
+     * marks sensitive stay unread. Send false to analyze the text alone.
+     */
+    images?: boolean;
 
     /**
      * Bytes of post, quote & settings the AI reads. Longer posts are cut to fit. Empty
@@ -3356,6 +3398,12 @@ export declare namespace AnalysisNewsParams {
     context?: string;
 
     /**
+     * Reads up to 4 images per post with its text, at no extra cost. Images of posts X
+     * marks sensitive stay unread. Send false to analyze the text alone.
+     */
+    images?: boolean;
+
+    /**
      * Bytes of post, quote & settings the AI reads. Longer posts are cut to fit. Empty
      * settings take 219 bytes, so a smaller value gets a 400.
      */
@@ -3579,6 +3627,12 @@ export declare namespace AnalysisSentimentParams {
     context?: string;
 
     /**
+     * Reads up to 4 images per post with its text, at no extra cost. Images of posts X
+     * marks sensitive stay unread. Send false to analyze the text alone.
+     */
+    images?: boolean;
+
+    /**
      * Bytes of post, quote & settings the AI reads. Longer posts are cut to fit. Empty
      * settings take 219 bytes, so a smaller value gets a 400.
      */
@@ -3800,6 +3854,12 @@ export declare namespace AnalysisViralScoreParams {
      * Background the AI reads with every post.
      */
     context?: string;
+
+    /**
+     * Reads up to 4 images per post with its text, at no extra cost. Images of posts X
+     * marks sensitive stay unread. Send false to analyze the text alone.
+     */
+    images?: boolean;
 
     /**
      * Bytes of post, quote & settings the AI reads. Longer posts are cut to fit. Empty

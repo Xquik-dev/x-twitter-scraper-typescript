@@ -1164,6 +1164,14 @@ export interface MonitorFollow {
   followedAtExact?: boolean;
 
   /**
+   * Why a removed account is back, on following.added & follower.added. refollow
+   * means the account followed again. return means X lists the old follow again, so
+   * it never ended. It covers removals the monitor reported in the last 30 days. It
+   * is missing on a first follow.
+   */
+  followKind?: 'refollow' | 'return';
+
+  /**
    * Why the account left the list, on following.removed & follower.removed.
    * unavailable means X no longer serves the account. unfollowed means X's follow
    * check says the follow ended. It is missing when X fails the check. Xquik sends no

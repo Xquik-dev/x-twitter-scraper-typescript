@@ -55,3 +55,26 @@ describe('API fields added on 2026-11-04', () => {
     expect(await sent[2]?.json()).toMatchObject({ textOnlyTerms: 'rocket' });
   });
 });
+
+describe('API fields added on 2026-11-05', () => {
+  test('each AI analysis route sends analysis.images', async () => {
+    const { client, sent } = fixtureClient({ results: [] });
+
+    await client.x.analysis.sentiment({ tweetIds: ['1'], analysis: { images: false } });
+    await client.x.analysis.brand({ tweetIds: ['1'], analysis: { images: false } });
+    await client.x.analysis.news({ tweetIds: ['1'], analysis: { images: false } });
+    await client.x.analysis.marketSignals({ tweetIds: ['1'], analysis: { images: false } });
+    await client.x.analysis.viralScore({ tweetIds: ['1'], analysis: { images: false } });
+    await client.x.analysis.classify({ tweetIds: ['1'], analysis: { images: true } });
+
+    const bodies = await Promise.all(sent.map((request) => request.json()));
+    expect(bodies).toMatchObject([
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: false } },
+      { analysis: { images: true } },
+    ]);
+  });
+});

@@ -89,6 +89,18 @@ export declare namespace MediaDownloadResponse {
     mediaUrl: string;
 
     /**
+     * Cover image of a video or GIF. Null for photos & files first saved to Xquik
+     * before 2026-11-03.
+     */
+    posterUrl: string | null;
+
+    /**
+     * The MP4 sizes X stores for a video, highest bitrate first. Empty for photos,
+     * GIFs & files first saved to Xquik before 2026-11-03.
+     */
+    qualities: Array<Item.Quality>;
+
+    /**
      * File size in bytes, as a string.
      */
     fileSize: string | null;
@@ -112,6 +124,21 @@ export declare namespace MediaDownloadResponse {
 
     views: number | null;
   }
+
+  export namespace Item {
+    /**
+     * 1 MP4 size of the video.
+     */
+    export interface Quality {
+      bitrate: number;
+
+      height: number;
+
+      url: string;
+
+      width: number;
+    }
+  }
 }
 
 /**
@@ -134,8 +161,14 @@ export interface MediaUploadResponse {
     | 'unlike'
     | 'retweet'
     | 'unretweet'
+    | 'bookmark'
+    | 'unbookmark'
     | 'follow'
     | 'unfollow'
+    | 'block'
+    | 'unblock'
+    | 'mute'
+    | 'unmute'
     | 'remove_follower'
     | 'send_dm'
     | 'delete_dm'
