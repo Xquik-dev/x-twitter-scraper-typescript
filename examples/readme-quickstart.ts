@@ -10,5 +10,4 @@ const client = new XTwitterScraper({
 
 const searchParams: XTwitterScraper.X.TweetSearchParams = { q: 'from:elonmusk', limit: 10 };
 
-void client;
-void searchParams;
+export { client, searchParams };

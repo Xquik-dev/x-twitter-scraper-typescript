@@ -4,6 +4,7 @@
 
 import { multipartFormRequestOptions, createForm } from 'x-twitter-scraper/internal/uploads';
 import { toFile } from 'x-twitter-scraper/core/uploads';
+import { asyncValues } from './async-values';
 import { formFile } from './form-file';
 
 describe('form data validation', () => {
@@ -36,21 +37,15 @@ describe('form data validation', () => {
   });
 
   test('a streamed file with a chunk that is not a Uint8Array fails with a TypeError', async () => {
-    async function* chunks(): AsyncGenerator<unknown> {
-      yield new Uint8Array([1]);
-      yield 'two';
-    }
+    const chunks = asyncValues<unknown>([new Uint8Array([1]), 'two']);
 
-    await expect(createForm({ file: chunks() }, fetch)).rejects.toThrow(TypeError);
+    await expect(createForm({ file: chunks }, fetch)).rejects.toThrow(TypeError);
   });
 
   test('a streamed file of Uint8Array chunks keeps its bytes', async () => {
-    async function* chunks(): AsyncGenerator<Uint8Array> {
-      yield new Uint8Array([1, 2]);
-      yield new Uint8Array([3]);
-    }
+    const chunks = asyncValues([new Uint8Array([1, 2]), new Uint8Array([3])]);
 
-    const file = formFile((await createForm({ file: chunks() }, fetch)).get('file'));
+    const file = formFile((await createForm({ file: chunks }, fetch)).get('file'));
     expect([...new Uint8Array(await file.arrayBuffer())]).toEqual([1, 2, 3]);
   });
 

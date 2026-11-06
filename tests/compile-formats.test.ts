@@ -15,6 +15,7 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
+import { stringAt, valueAt } from './value-at';
 
 const repository = resolve(__dirname, '..');
 const script = join(repository, 'scripts', 'utils', 'compile-formats.cjs');
@@ -105,10 +106,10 @@ const decodeMappings = (mappings: string): number[][][] => {
         for (const char of segment) {
           const digit = alphabet.indexOf(char);
           value += (digit & 31) << shift;
-          if (digit & 32) {
+          if ((digit & 32) !== 0) {
             shift += 5;
           } else {
-            values.push(value & 1 ? -(value >>> 1) : value >>> 1);
+            values.push((value & 1) !== 0 ? -(value >>> 1) : value >>> 1);
             value = 0;
             shift = 0;
           }
@@ -118,10 +119,10 @@ const decodeMappings = (mappings: string): number[][][] => {
   });
 };
 
-const originalPosition = (map: { mappings: string }, line: number, column: number) => {
-  const segments = decodeMappings(map.mappings)[line] ?? [];
+const originalPosition = (mappings: string, line: number, column: number) => {
+  const segments = decodeMappings(mappings)[line] ?? [];
   const segment = segments.filter(([generated]) => (generated ?? 0) <= column).pop();
-  if (!segment) return undefined;
+  if (segment === undefined) return undefined;
   const [generated = 0, , sourceLine, sourceColumn = 0] = segment;
   return { line: sourceLine, column: sourceColumn + column - generated };
 };
@@ -283,9 +284,9 @@ describe('scripts/utils/compile-formats.cjs', () => {
     ['index.d.mts', 'index.d.mts.map', 'index.d.mts'],
   ])('%s links its own map, which names the file and the source', (file, mapFile, mapped) => {
     expect(built.read(file).split('\n').pop()).toBe(`//# sourceMappingURL=${mapFile}`);
-    const map = JSON.parse(built.read(mapFile));
-    expect(map.file).toBe(mapped);
-    expect(map.sources).toEqual(['src/index.ts']);
+    const map: unknown = JSON.parse(built.read(mapFile));
+    expect(valueAt(map, ['file'])).toBe(mapped);
+    expect(valueAt(map, ['sources'])).toEqual(['src/index.ts']);
   });
 
   it('keeps map positions right after a rewritten import on the same line', () => {
@@ -296,7 +297,7 @@ describe('scripts/utils/compile-formats.cjs', () => {
 
     expect(
       originalPosition(
-        JSON.parse(built.read('index.mjs.map')),
+        stringAt(JSON.parse(built.read('index.mjs.map')), ['mappings']),
         line,
         ensurePresent(output[line]).indexOf('m.value'),
       ),
@@ -310,9 +311,9 @@ describe('scripts/utils/compile-formats.cjs', () => {
     const output = built.read('index.mjs').split('\n');
     const line = output.findIndex((text) => text.includes('import("./value.mjs")'));
     const start = ensurePresent(output[line]).indexOf('"./value.mjs"');
-    const columns = (decodeMappings(JSON.parse(built.read('index.mjs.map')).mappings)[line] ?? []).map(
-      ([column]) => column ?? 0,
-    );
+    const columns = (
+      decodeMappings(stringAt(JSON.parse(built.read('index.mjs.map')), ['mappings']))[line] ?? []
+    ).map(([column]) => column ?? 0);
 
     expect(columns.filter((column) => column >= start && column <= start + '"./value.mjs"'.length)).toEqual(
       [],

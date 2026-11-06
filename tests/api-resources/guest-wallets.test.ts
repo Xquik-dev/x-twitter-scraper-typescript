@@ -74,9 +74,9 @@ describe('resource guestWallets', () => {
       apiKey: null,
       bearerToken: 'guest-key',
       baseURL: 'https://example.com/api/v1',
-      fetch: async (input, init) => {
+      fetch: (input, init) => {
         requests.push(new Request(input, init));
-        return Response.json({});
+        return Promise.resolve(Response.json({}));
       },
     });
 

@@ -276,7 +276,7 @@ describe('scripts/utils/check-api-coverage.cjs', () => {
 
     expect(result.stdout).toBe('');
     expect(result.stderr).toBe(
-      `Could not read the method or path of the request at src/resources/x/media.ts line ${line}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).\n`,
+      `Could not read the method or path of the request at src/resources/x/media.ts line ${String(line)}. Write it as this._client.get('/path') or this._client.get(path\`/path/\${id}\`).\n`,
     );
     expect(result.status).toBe(1);
   });

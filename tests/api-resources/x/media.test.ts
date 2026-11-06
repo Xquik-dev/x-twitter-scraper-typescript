@@ -49,7 +49,7 @@ describe('resource media', () => {
   });
 
   test('upload: sends a file as multipart form data', async () => {
-    const { client: fixture, sent } = fixtureClient({});
+    const { client: fixture, forms, sent } = fixtureClient({});
 
     await fixture.x.media.upload({
       account: '@elonmusk',
@@ -58,7 +58,7 @@ describe('resource media', () => {
       'Idempotency-Key': 'Idempotency-Key',
     });
 
-    const form = await ensurePresent(sent[0]).formData();
+    const form = ensurePresent(forms[0]);
     expect(sent[0]?.headers.get('content-type')).toMatch(/^multipart\/form-data; boundary=/);
     expect(form.get('account')).toBe('@elonmusk');
     expect(form.get('is_long_video')).toBe('true');
