@@ -360,6 +360,18 @@ Methods
 - <code title="get /x/tweets/search">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">search</a>({ ...params }) -> TweetSearchResponse</code>
 - <code title="get /x/tweets/{id}/translation">client.x.tweets.<a href="./src/resources/x/tweets/tweets.ts">translate</a>(id, { ...params }) -> TweetTranslateResponse</code>
 
+### Bookmark
+
+Types
+
+- <code><a href="./src/resources/x/tweets/bookmark.ts">BookmarkCreateResponse</a></code>
+- <code><a href="./src/resources/x/tweets/bookmark.ts">BookmarkDeleteResponse</a></code>
+
+Methods
+
+- <code title="post /x/tweets/{id}/bookmark">client.x.tweets.bookmark.<a href="./src/resources/x/tweets/bookmark.ts">create</a>(id, { ...params }) -> BookmarkCreateResponse</code>
+- <code title="delete /x/tweets/{id}/bookmark">client.x.tweets.bookmark.<a href="./src/resources/x/tweets/bookmark.ts">delete</a>(id, { ...params }) -> BookmarkDeleteResponse</code>
+
 ### Like
 
 Types
@@ -434,6 +446,18 @@ Methods
 - <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveVerifiedFollowers</a>(id, { ...params }) -> UserRetrieveVerifiedFollowersResponse</code>
 - <code title="get /x/users/{id}/translation">client.x.users.<a href="./src/resources/x/users/users.ts">translateBio</a>(id, { ...params }) -> UserTranslateBioResponse</code>
 
+### Block
+
+Types
+
+- <code><a href="./src/resources/x/users/block.ts">BlockCreateResponse</a></code>
+- <code><a href="./src/resources/x/users/block.ts">BlockDeleteResponse</a></code>
+
+Methods
+
+- <code title="post /x/users/{id}/block">client.x.users.block.<a href="./src/resources/x/users/block.ts">create</a>(id, { ...params }) -> BlockCreateResponse</code>
+- <code title="delete /x/users/{id}/block">client.x.users.block.<a href="./src/resources/x/users/block.ts">delete</a>(id, { ...params }) -> BlockDeleteResponse</code>
+
 ### Follow
 
 Types
@@ -445,6 +469,18 @@ Methods
 
 - <code title="post /x/users/{id}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">create</a>(id, { ...params }) -> FollowCreateResponse</code>
 - <code title="delete /x/users/{id}/follow">client.x.users.follow.<a href="./src/resources/x/users/follow.ts">deleteAll</a>(id, { ...params }) -> FollowDeleteAllResponse</code>
+
+### Mute
+
+Types
+
+- <code><a href="./src/resources/x/users/mute.ts">MuteCreateResponse</a></code>
+- <code><a href="./src/resources/x/users/mute.ts">MuteDeleteResponse</a></code>
+
+Methods
+
+- <code title="post /x/users/{id}/mute">client.x.users.mute.<a href="./src/resources/x/users/mute.ts">create</a>(id, { ...params }) -> MuteCreateResponse</code>
+- <code title="delete /x/users/{id}/mute">client.x.users.mute.<a href="./src/resources/x/users/mute.ts">delete</a>(id, { ...params }) -> MuteDeleteResponse</code>
 
 ## Followers
 
