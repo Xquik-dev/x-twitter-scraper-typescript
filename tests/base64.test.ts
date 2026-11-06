@@ -9,8 +9,7 @@ describe.each(['Buffer', 'atob'])('with %s', (mode) => {
   beforeAll(() => {
     if (mode === 'atob') {
       originalBuffer = globalThis.Buffer;
-      // @ts-expect-error Can't assign undefined to BufferConstructor
-      delete globalThis.Buffer;
+      Reflect.deleteProperty(globalThis, 'Buffer');
     }
   });
   afterAll(() => {
