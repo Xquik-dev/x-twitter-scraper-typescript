@@ -1,7 +1,6 @@
 # Xquik TypeScript types for monitors
 
 ```typescript
-
 interface Monitor {
   id: string;
   username: string;
@@ -11,10 +10,5 @@ interface Monitor {
   createdAt: string;
 }
 
-type EventType =
-  | "tweet.new"
-  | "tweet.quote"
-  | "tweet.reply"
-  | "tweet.retweet";
-
+type EventType = 'tweet.new' | 'tweet.quote' | 'tweet.reply' | 'tweet.retweet';
 ```

@@ -809,7 +809,7 @@ describe('retries', () => {
 
   test('retry on 429 with retry-after', async () => {
     let count = 0;
-    const testFetch = async (_url: string | URL | Request, _init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (): Promise<Response> => {
       if (count++ === 0) {
         return new Response(undefined, {
           status: 429,
@@ -840,7 +840,7 @@ describe('retries', () => {
 
   test('retry on 429 with retry-after-ms', async () => {
     let count = 0;
-    const testFetch = async (_url: string | URL | Request, _init: RequestInit = {}): Promise<Response> => {
+    const testFetch = async (): Promise<Response> => {
       if (count++ === 0) {
         return new Response(undefined, {
           status: 429,

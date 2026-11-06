@@ -163,39 +163,39 @@ Event types are `tweet.new`, `tweet.quote`, `tweet.reply`, `tweet.retweet` and `
 
 ## Endpoint guide
 
-| Goal                                 | Endpoint                                           | Usage                                               |
-| ------------------------------------ | -------------------------------------------------- | --------------------------------------------------- |
-| **Get a single tweet** by ID/URL     | `GET /x/tweets/{id}`                               | Metered                                             |
-| **Get an X Article** by tweet ID     | `GET /x/articles/{tweetId}`                        | Metered                                             |
-| **Search tweets** by keyword/hashtag | `GET /x/tweets/search?q=...`                       | Metered per result                                  |
-| **Get a user profile**               | `GET /x/users/{id}`                                | Metered                                             |
-| **Get user's recent tweets**         | `GET /x/users/{id}/tweets`                         | Metered per result                                  |
-| **Get user's liked tweets**          | `GET /x/users/{id}/likes`                          | Metered per result                                  |
-| **Get user's media tweets**          | `GET /x/users/{id}/media`                          | Metered per result                                  |
-| **Get tweet favoriters**             | `GET /x/tweets/{id}/favoriters`                    | Metered per result                                  |
-| **Get mutual followers**             | `GET /x/users/{id}/followers-you-know`             | Metered per result                                  |
-| **Check follow relationship**        | `GET /x/followers/check?source=A&target=B`         | Metered                                             |
-| **Get trending topics**              | `GET /trends?woeid=1`                              | Metered                                             |
-| **Get radar (trending news)**        | `GET /radar?source=hacker_news`                    | Included                                            |
-| **Get bookmarks**                    | `GET /x/bookmarks`                                 | Metered per result                                  |
-| **Get bookmark folders**             | `GET /x/bookmarks/folders`                         | Metered                                             |
-| **Get notifications**                | `GET /x/notifications`                             | Metered per result                                  |
-| **Get home timeline**                | `GET /x/timeline`                                  | Metered per result                                  |
-| **Get DM history**                   | `GET /x/dm/{userId}/history`                       | Metered per result                                  |
-| **Monitor an X account**             | `POST /monitors`                                   | Active monitors are metered hourly                  |
-| **Poll for events**                  | `GET /events`                                      | Included                                            |
-| **Receive events via webhook**       | `POST /webhooks`                                   | Included, but the destination URL needs approval    |
-| **Run a giveaway draw**              | `POST /draws`                                      | Metered per entry                                   |
-| **Download tweet media**             | `POST /x/media/download`                           | Metered per item                                    |
-| **Extract bulk data**                | `POST /extractions`                                | Metered per result                                  |
-| **Check credits**                    | `GET /credits`                                     | Included                                            |
-| **Compose a tweet**                  | `POST /compose`                                    | Included                                            |
-| **Post a tweet**                     | `POST /x/tweets`                                   | Metered write action                                |
-| **Like / Unlike a tweet**            | `POST` or delete request to `/x/tweets/{id}/like`  | Metered write action                                |
-| **Retweet**                          | `POST /x/tweets/{id}/retweet`                      | Metered write action                                |
-| **Follow / Unfollow**                | `POST` or delete request to `/x/users/{id}/follow` | Metered write action                                |
-| **Send a DM**                        | `POST /x/dm/{userId}`                              | Metered write action                                |
-| **Update profile**                   | `PATCH /x/profile`                                 | Metered write action                                |
-| **Upload media**                     | `POST /x/media`                                    | Metered write action                                |
-| **Community actions**                | `POST /x/communities`, join/leave                  | Metered write action                                |
-| **Support tickets**                  | `POST /support/tickets`                            | Included                                            |
+| Goal                                 | Endpoint                                           | Usage                                            |
+| ------------------------------------ | -------------------------------------------------- | ------------------------------------------------ |
+| **Get a single tweet** by ID/URL     | `GET /x/tweets/{id}`                               | Metered                                          |
+| **Get an X Article** by tweet ID     | `GET /x/articles/{tweetId}`                        | Metered                                          |
+| **Search tweets** by keyword/hashtag | `GET /x/tweets/search?q=...`                       | Metered per result                               |
+| **Get a user profile**               | `GET /x/users/{id}`                                | Metered                                          |
+| **Get user's recent tweets**         | `GET /x/users/{id}/tweets`                         | Metered per result                               |
+| **Get user's liked tweets**          | `GET /x/users/{id}/likes`                          | Metered per result                               |
+| **Get user's media tweets**          | `GET /x/users/{id}/media`                          | Metered per result                               |
+| **Get tweet favoriters**             | `GET /x/tweets/{id}/favoriters`                    | Metered per result                               |
+| **Get mutual followers**             | `GET /x/users/{id}/followers-you-know`             | Metered per result                               |
+| **Check follow relationship**        | `GET /x/followers/check?source=A&target=B`         | Metered                                          |
+| **Get trending topics**              | `GET /trends?woeid=1`                              | Metered                                          |
+| **Get radar (trending news)**        | `GET /radar?source=hacker_news`                    | Included                                         |
+| **Get bookmarks**                    | `GET /x/bookmarks`                                 | Metered per result                               |
+| **Get bookmark folders**             | `GET /x/bookmarks/folders`                         | Metered                                          |
+| **Get notifications**                | `GET /x/notifications`                             | Metered per result                               |
+| **Get home timeline**                | `GET /x/timeline`                                  | Metered per result                               |
+| **Get DM history**                   | `GET /x/dm/{userId}/history`                       | Metered per result                               |
+| **Monitor an X account**             | `POST /monitors`                                   | Active monitors are metered hourly               |
+| **Poll for events**                  | `GET /events`                                      | Included                                         |
+| **Receive events via webhook**       | `POST /webhooks`                                   | Included, but the destination URL needs approval |
+| **Run a giveaway draw**              | `POST /draws`                                      | Metered per entry                                |
+| **Download tweet media**             | `POST /x/media/download`                           | Metered per item                                 |
+| **Extract bulk data**                | `POST /extractions`                                | Metered per result                               |
+| **Check credits**                    | `GET /credits`                                     | Included                                         |
+| **Compose a tweet**                  | `POST /compose`                                    | Included                                         |
+| **Post a tweet**                     | `POST /x/tweets`                                   | Metered write action                             |
+| **Like / Unlike a tweet**            | `POST` or delete request to `/x/tweets/{id}/like`  | Metered write action                             |
+| **Retweet**                          | `POST /x/tweets/{id}/retweet`                      | Metered write action                             |
+| **Follow / Unfollow**                | `POST` or delete request to `/x/users/{id}/follow` | Metered write action                             |
+| **Send a DM**                        | `POST /x/dm/{userId}`                              | Metered write action                             |
+| **Update profile**                   | `PATCH /x/profile`                                 | Metered write action                             |
+| **Upload media**                     | `POST /x/media`                                    | Metered write action                             |
+| **Community actions**                | `POST /x/communities`, join/leave                  | Metered write action                             |
+| **Support tickets**                  | `POST /support/tickets`                            | Included                                         |

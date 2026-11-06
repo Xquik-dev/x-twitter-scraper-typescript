@@ -8,14 +8,15 @@ GET /events
 
 It takes these query parameters.
 
-| Param | Type | Description |
-|-------|------|-------------|
-| `monitorId` | string | Filter by monitor ID |
-| `eventType` | string | Filter by event type |
-| `limit` | number | Results per page (1-100, default 50) |
-| `after` | string | Cursor for next page |
+| Param       | Type   | Description                          |
+| ----------- | ------ | ------------------------------------ |
+| `monitorId` | string | Filter by monitor ID                 |
+| `eventType` | string | Filter by event type                 |
+| `limit`     | number | Results per page (1-100, default 50) |
+| `after`     | string | Cursor for next page                 |
 
 The response has this shape.
+
 ```json
 {
   "events": [

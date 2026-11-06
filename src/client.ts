@@ -411,14 +411,16 @@ export class XTwitterScraper {
     ]);
   }
 
-  protected async apiKeyAuth(_opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+  protected apiKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined>;
+  protected async apiKeyAuth(): Promise<NullableHeaders | undefined> {
     if (this.apiKey == null) {
       return undefined;
     }
     return buildHeaders([{ 'x-api-key': this.apiKey }]);
   }
 
-  protected async oauthBearerAuth(_opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+  protected oauthBearerAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined>;
+  protected async oauthBearerAuth(): Promise<NullableHeaders | undefined> {
     if (this.bearerToken == null) {
       return undefined;
     }
@@ -466,12 +468,14 @@ export class XTwitterScraper {
     return url.toString();
   }
 
-  protected async prepareOptions(_options: FinalRequestOptions): Promise<void> {}
+  protected prepareOptions(options: FinalRequestOptions): Promise<void>;
+  protected async prepareOptions(): Promise<void> {}
 
-  protected async prepareRequest(
-    _request: RequestInit,
-    _context: { url: string; options: FinalRequestOptions },
-  ): Promise<void> {}
+  protected prepareRequest(
+    request: RequestInit,
+    context: { url: string; options: FinalRequestOptions },
+  ): Promise<void>;
+  protected async prepareRequest(): Promise<void> {}
 
   get<Rsp>(path: string, opts?: PromiseOrValue<RequestOptions>): APIPromise<Rsp> {
     return this.methodRequest('get', path, opts);

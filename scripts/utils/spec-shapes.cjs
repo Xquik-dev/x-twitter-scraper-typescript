@@ -23,6 +23,9 @@ const ignoredRefSiblings = new Set([
 /** @type {Array<'oneOf' | 'anyOf'>} */
 const variantKeywords = ['oneOf', 'anyOf'];
 
+/** @type {(schema: import('./types').Schema, key: string) => import('./types').Schema} */
+const without = (schema, key) => Object.fromEntries(Object.entries(schema).filter(([name]) => name !== key));
+
 /** @type {(value: import('./types').JsonValue | undefined) => import('./types').JsonValue[]} */
 const asArray = (value) => (Array.isArray(value) ? value : []);
 
@@ -74,7 +77,7 @@ class SpecShapes {
     }
     if (Array.isArray(schema.allOf)) {
       const parts = schema.allOf.map((sub) => this.node(sub, stack)[0]);
-      const { allOf, ...rest } = schema;
+      const rest = without(schema, 'allOf');
       if (rest.properties && Object.keys(rest.properties).length) parts.push(this.node(rest, stack)[0]);
       return [intersect(parts), nullable];
     }
@@ -99,7 +102,7 @@ class SpecShapes {
         variants.push(variant);
       }
       if (schema.properties && Object.keys(schema.properties).length) {
-        const { [keyword]: dropped, ...rest } = schema;
+        const rest = without(schema, keyword);
         const [base] = this.node(rest, stack);
         variants = variants.map((variant) => intersect([base, variant]));
       }

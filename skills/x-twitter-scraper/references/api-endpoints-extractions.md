@@ -9,6 +9,7 @@ POST /extractions
 Run a bulk data extraction job. See `references/extractions.md` for all 23 tool types.
 
 The request body has this shape.
+
 ```json
 {
   "toolType": "reply_extractor",
@@ -21,28 +22,29 @@ The request body has this shape.
 
 These tweet search filters apply to `tweet_search_extractor` only.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `fromUser` | string | Author username |
-| `toUser` | string | Directed to user |
-| `mentioning` | string | Mentions user |
-| `language` | string | Language code (e.g., `en`) |
-| `sinceDate` | string | Start date (YYYY-MM-DD) |
-| `untilDate` | string | End date (YYYY-MM-DD) |
-| `mediaType` | string | `images`, `videos`, `gifs`, or `media` |
-| `minFaves` | number | Minimum likes |
-| `minRetweets` | number | Minimum retweets |
-| `minReplies` | number | Minimum replies |
-| `verifiedOnly` | boolean | Verified authors only |
-| `replies` | string | `include`, `exclude`, or `only` |
-| `retweets` | string | `include`, `exclude`, or `only` |
-| `exactPhrase` | string | Exact match text |
-| `excludeWords` | string | Comma-separated words to exclude |
-| `advancedQuery` | string | Raw X search operators appended to query |
+| Field           | Type    | Description                              |
+| --------------- | ------- | ---------------------------------------- |
+| `fromUser`      | string  | Author username                          |
+| `toUser`        | string  | Directed to user                         |
+| `mentioning`    | string  | Mentions user                            |
+| `language`      | string  | Language code (e.g., `en`)               |
+| `sinceDate`     | string  | Start date (YYYY-MM-DD)                  |
+| `untilDate`     | string  | End date (YYYY-MM-DD)                    |
+| `mediaType`     | string  | `images`, `videos`, `gifs`, or `media`   |
+| `minFaves`      | number  | Minimum likes                            |
+| `minRetweets`   | number  | Minimum retweets                         |
+| `minReplies`    | number  | Minimum replies                          |
+| `verifiedOnly`  | boolean | Verified authors only                    |
+| `replies`       | string  | `include`, `exclude`, or `only`          |
+| `retweets`      | string  | `include`, `exclude`, or `only`          |
+| `exactPhrase`   | string  | Exact match text                         |
+| `excludeWords`  | string  | Comma-separated words to exclude         |
+| `advancedQuery` | string  | Raw X search operators appended to query |
 
 These filters are converted to X search operators and combined with `searchQuery`.
 
 The response has this shape.
+
 ```json
 {
   "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -60,6 +62,7 @@ POST /extractions/estimate
 Preview usage before running. Same body as create.
 
 The response has this shape.
+
 ```json
 {
   "allowed": true,

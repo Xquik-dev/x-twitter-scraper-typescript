@@ -1,7 +1,6 @@
 # Xquik TypeScript types for X Articles
 
 ```typescript
-
 interface Article {
   title: string;
   coverImage?: string;
@@ -17,5 +16,4 @@ interface Article {
     name: string;
   };
 }
-
 ```
