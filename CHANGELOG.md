@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### BREAKING CHANGES
+
+* `require('x-twitter-scraper')` returns the package's exports, as its types always said. It's no longer a function, so calling it or using it with `new` fails. Use `new XTwitterScraper(options)` with `XTwitterScraper` from `require('x-twitter-scraper')`.
+
+### Bug Fixes
+
+* A subpath that ends in `.js` or `.mjs`, such as `x-twitter-scraper/client.js`, loads the ES module build for `import` and the CommonJS build for `require`. Each subpath now gives the same classes as the package root in both module systems.
+
 ### Chores
 
 * The `tsconfig.json` shipped in `src/` now matches the strict settings the SDK builds with. Editors that open the SDK source through declaration maps no longer flag the old `moduleResolution: node` setting, which TypeScript 6 deprecated.
