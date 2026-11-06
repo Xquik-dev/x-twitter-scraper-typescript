@@ -15,7 +15,7 @@ import {
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { delimiter, join, resolve } from 'node:path';
-import { leftoverStep, runUntilStarted, waitingStep } from './signal-run';
+import { itStopsCleanly, leftoverStep, runUntilStarted, waitingStep } from './signal-run';
 
 const script = resolve(__dirname, '..', 'scripts', 'check-reproducible');
 
@@ -56,21 +56,7 @@ describe('scripts/check-reproducible', () => {
     }
   });
 
-  it.each([
-    ['SIGTERM', 143],
-    ['SIGINT', null],
-    ['SIGHUP', 129],
-  ] as const)('removes its temp directory when %s stops it mid-run', async (signal, code) => {
-    const { root, temp, command, env } = setUp(waitingStep);
-    try {
-      const result = await runUntilStarted(command, [], { env, root, signal });
-
-      expect(result).toEqual({ code, signal: signal === 'SIGINT' ? signal : null });
-      expect(readdirSync(temp)).toEqual([]);
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
-  });
+  itStopsCleanly(() => setUp(waitingStep));
 
   it('stops its bash parent before the next command when SIGINT reaches the process group', async () => {
     const { root, temp, command, env } = setUp(waitingStep);

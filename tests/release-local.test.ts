@@ -6,7 +6,7 @@ import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, w
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { delimiter, join, resolve } from 'node:path';
-import { leftoverStep, runUntilStarted, waitingStep } from './signal-run';
+import { itStopsCleanly, leftoverStep, waitingStep } from './signal-run';
 
 const script = resolve(__dirname, '..', 'bin', 'release-local');
 
@@ -90,20 +90,6 @@ describe('bin/release-local', () => {
       }
     });
 
-    it.each([
-      ['SIGTERM', 143],
-      ['SIGINT', null],
-      ['SIGHUP', 129],
-    ] as const)('removes its temp directory when %s stops it mid-run', async (signal, code) => {
-      const { root, temp, command, env } = setUp(waitingStep);
-      try {
-        const result = await runUntilStarted(command, [], { env, root, signal });
-
-        expect(result).toEqual({ code, signal: signal === 'SIGINT' ? signal : null });
-        expect(readdirSync(temp)).toEqual([]);
-      } finally {
-        rmSync(root, { recursive: true, force: true });
-      }
-    });
+    itStopsCleanly(() => setUp(waitingStep));
   });
 });

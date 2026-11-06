@@ -9,17 +9,25 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Running eslint"
-./node_modules/.bin/eslint .
+./node_modules/.bin/eslint --max-warnings 0 .
 
 echo "==> Building"
 ./scripts/build
 
 echo "==> Checking types"
-./node_modules/@typescript/native/bin/tsc
+pnpm run --silent lint:types
 
 echo "==> Running Are The Types Wrong?"
-./node_modules/.bin/attw --pack dist -f json >.attw.json || true
+attw_status=0
+pnpm run --silent lint:attw >.attw.json || attw_status=$?
 node scripts/utils/attw-report.cjs
+[ "$attw_status" -eq 0 ]
 
 echo "==> Running publint"
-./node_modules/.bin/publint dist
+pnpm run --silent lint:publint
+
+echo "==> Finding unused files, exports and dependencies"
+pnpm run --silent lint:knip
+
+echo "==> Finding duplicate code"
+pnpm run --silent lint:jscpd
