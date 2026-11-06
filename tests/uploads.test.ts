@@ -10,6 +10,10 @@ class MyClass {
   name: string = 'foo';
 }
 
+type ToFileArgument = Parameters<typeof toFile>[0];
+
+const toFileUnchecked = (value: unknown): Promise<File> => Reflect.apply(toFile, undefined, [value]);
+
 function mockResponse({ url, content }: { url: string; content?: Blob }): ResponseLike {
   return {
     url,
@@ -19,20 +23,21 @@ function mockResponse({ url, content }: { url: string; content?: Blob }): Respon
 
 describe('toFile', () => {
   it('throws a helpful error for mismatched types', async () => {
-    await expect(
-      // @ts-expect-error intentionally mismatched type
-      toFile({ foo: 'string' }),
-    ).rejects.toThrow('Unexpected data type: object; constructor: Object; props: ["foo"]');
+    expectTypeOf<{ foo: string }>().not.toExtend<ToFileArgument>();
+    expectTypeOf<MyClass>().not.toExtend<ToFileArgument>();
 
-    await expect(
-      // @ts-expect-error intentionally mismatched type
-      toFile(new MyClass()),
-    ).rejects.toThrow('Unexpected data type: object; constructor: MyClass; props: ["name"]');
+    await expect(toFileUnchecked({ foo: 'string' })).rejects.toThrow(
+      'Unexpected data type: object; constructor: Object; props: ["foo"]',
+    );
+
+    await expect(toFileUnchecked(new MyClass())).rejects.toThrow(
+      'Unexpected data type: object; constructor: MyClass; props: ["name"]',
+    );
   });
 
   it('disallows string at the type-level', async () => {
-    // @ts-expect-error we intentionally do not type support for `string`
-    const file = await toFile('contents');
+    expectTypeOf<string>().not.toExtend<ToFileArgument>();
+    const file = await toFileUnchecked('contents');
     await expect(file.text()).resolves.toEqual('contents');
   });
 
@@ -72,20 +77,17 @@ describe('toFile', () => {
 });
 
 describe('missing File error message', () => {
-  let prevGlobalFile: unknown;
+  let prevGlobalFile: typeof globalThis.File;
   let prevNodeFile: unknown;
   beforeEach(() => {
     vi.resetModules();
     const buffer = require('node:buffer');
-    // @ts-ignore
     prevGlobalFile = globalThis.File;
     prevNodeFile = buffer.File;
-    // @ts-ignore
-    globalThis.File = undefined;
+    Reflect.set(globalThis, 'File', undefined);
     buffer.File = undefined;
   });
   afterEach(() => {
-    // @ts-ignore
     globalThis.File = prevGlobalFile;
     require('node:buffer').File = prevNodeFile;
     vi.resetModules();
