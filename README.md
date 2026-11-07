@@ -1,6 +1,6 @@
-# X API & Twitter API TypeScript SDK by Xquik
+# Twitter scraper & X API TypeScript SDK by Xquik
 
-Use this Twitter API TypeScript SDK by Xquik to search tweets from Node.js.
+Use this Twitter scraper TypeScript SDK by Xquik to search tweets from Node.js.
 Types cover every request & response.
 Public reads need no X developer account.
 
@@ -107,7 +107,7 @@ Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authenti
 
 ## Request & response types
 
-The package types every request parameter and response field. Import them directly.
+The package types every request parameter and response field. Import those types from the package.
 
 <!-- prettier-ignore -->
 ```ts
@@ -462,7 +462,7 @@ const client = new XTwitterScraper({
 This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions.
 
 1. Static type changes that preserve runtime behavior.
-2. Changes to undocumented internals that remain technically public.
+2. Changes to undocumented internals that stay public.
 3. Changes unlikely to affect normal use.
 
 Open an [issue](https://github.com/Xquik-dev/x-twitter-scraper-typescript/issues) with questions, bugs or suggestions.
