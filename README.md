@@ -4,7 +4,7 @@ Use this Twitter scraper TypeScript SDK by Xquik to search tweets from Node.js.
 Types cover every request & response.
 Public reads need no X developer account.
 
-Xquik is the world's fastest and cheapest X Twitter scraper service with the most complete X data.
+Xquik is the world's fastest and cheapest X (Twitter) scraper service with the most complete X (Twitter) data.
 Most other Apify Actors charge before filtering or deduplication.
 Xquik charges only for delivered, unique, filter-matching results and never pads rows.
 Xquik is independent and not affiliated with X Corp.
