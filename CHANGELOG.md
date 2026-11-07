@@ -18,6 +18,7 @@
 - Article reads return `unknownCounts`, the counts X did not send, so each 0 means unknown.
 - Extraction results return `isDeleted` on a post its author deleted after Xquik saw it.
 - `client.x.users.retrieveInsights` & `retrieveShadowban` take `limit`, the recent posts to read.
+- Extraction tool types gain `user_affiliates`.
 
 ## 0.20.0 (2026-11-04)
 

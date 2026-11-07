@@ -203,6 +203,7 @@ export interface ExtractionJob {
     | 'space_explorer'
     | 'thread_extractor'
     | 'tweet_search_extractor'
+    | 'user_affiliates'
     | 'user_likes'
     | 'user_media'
     | 'verified_follower_explorer';
@@ -545,6 +546,7 @@ export namespace ExtractionRunResponse {
       | 'space_explorer'
       | 'thread_extractor'
       | 'tweet_search_extractor'
+      | 'user_affiliates'
       | 'user_likes'
       | 'user_media'
       | 'verified_follower_explorer';
@@ -641,6 +643,7 @@ export interface ExtractionListParams {
     | 'space_explorer'
     | 'thread_extractor'
     | 'tweet_search_extractor'
+    | 'user_affiliates'
     | 'user_likes'
     | 'user_media'
     | 'verified_follower_explorer';
@@ -671,6 +674,7 @@ export interface ExtractionEstimateCostParams {
     | 'space_explorer'
     | 'thread_extractor'
     | 'tweet_search_extractor'
+    | 'user_affiliates'
     | 'user_likes'
     | 'user_media'
     | 'verified_follower_explorer';
@@ -1417,6 +1421,7 @@ export interface ExtractionRunParams {
     | 'space_explorer'
     | 'thread_extractor'
     | 'tweet_search_extractor'
+    | 'user_affiliates'
     | 'user_likes'
     | 'user_media'
     | 'verified_follower_explorer';

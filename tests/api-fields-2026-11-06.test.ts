@@ -87,6 +87,15 @@ describe('API fields added on 2026-11-06', () => {
     >();
   });
 
+  test('every extraction tool type takes user_affiliates', () => {
+    expectTypeOf<'user_affiliates'>().toExtend<XTwitterScraper.ExtractionJob['toolType']>();
+    expectTypeOf<'user_affiliates'>().toExtend<
+      NonNullable<XTwitterScraper.ExtractionListParams['toolType']>
+    >();
+    expectTypeOf<'user_affiliates'>().toExtend<XTwitterScraper.ExtractionEstimateCostParams['toolType']>();
+    expectTypeOf<'user_affiliates'>().toExtend<XTwitterScraper.ExtractionRunParams['toolType']>();
+  });
+
   test('a tweet search can run without q', () => {
     expectTypeOf<{ fromUser: string }>().toExtend<XTwitterScraper.X.TweetSearchParams>();
   });
