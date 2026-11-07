@@ -847,6 +847,13 @@ export namespace XGetArticleResponse {
 
     title?: string;
 
+    /**
+     * X did not send these counts, so each 0 means unknown.
+     */
+    unknownCounts?: Array<
+      'retweetCount' | 'replyCount' | 'likeCount' | 'quoteCount' | 'viewCount' | 'bookmarkCount'
+    >;
+
     viewCount?: number;
   }
 

@@ -254,7 +254,7 @@ export class Users extends APIResource {
 
   /**
    * Returns engagement insights for one profile: engagement rate, averages per post
-   * and posting rate, from its counts and its last 20 posts. Reposts and the pinned
+   * and posting rate, from its counts and its most recent posts. It reads 20 posts unless limit names another number. Reposts and the pinned
    * post stay out of the averages. Each report costs 1 credit, whatever it reads.
    *
    * @example
@@ -3465,6 +3465,13 @@ export interface UserRetrieveInsightsParams {
   fields?: string;
 
   /**
+   * Recent posts to read for the averages and rates. The read stops at this count,
+   * at the end of the timeline or after about 40 seconds, and `sample.posts` says
+   * how many it read.
+   */
+  limit?: number;
+
+  /**
    * Fields to drop from each row, comma-separated. It takes the same names as
    * fields. With fields, it drops from the kept fields.
    */
@@ -4805,6 +4812,12 @@ export interface UserRetrieveShadowbanParams {
    * named fields.
    */
   fields?: string;
+
+  /**
+   * Recent posts to read for the timeline, engagement & reply checks. The read stops
+   * at this count, at the end of the timeline or after about 40 seconds.
+   */
+  limit?: number;
 
   /**
    * Fields to drop from each row, comma-separated. It takes the same names as

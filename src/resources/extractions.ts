@@ -317,6 +317,14 @@ export namespace ExtractionRetrieveResponse {
     quoteCount?: number;
 
     /**
+     * True on a post its author deleted from X after Xquik saw it, with
+     * outputPreset=flat. Default nested output uses enrichmentData.tweet.isDeleted. An
+     * account post list with a date range adds such posts from the last 30 days.
+     * Absent on every other row.
+     */
+    isDeleted?: boolean;
+
+    /**
      * Media of the quoted post with outputPreset=flat. Default nested output uses
      * enrichmentData.tweet.quotedMedia.
      */
