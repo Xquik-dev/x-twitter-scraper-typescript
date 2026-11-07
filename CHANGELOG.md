@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `false` keeps it to the text.
+- `ContextAvailability.media` returns `'images'` when the AI read the post's images. A `switch` that handles every value needs a case for it.
+- `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.
+- `client.x.tweets.bookmark.create` & `delete` add & remove a bookmark through a connected X account. Only that account sees its bookmarks.
+- `client.x.users.block.create` & `delete` block & unblock a user. A block removes follows both ways, and an unblock doesn't restore them.
+- `client.x.users.mute.create` & `delete` mute & unmute a user. X doesn't tell the muted user.
+- Write records' `action` gains `bookmark`, `unbookmark`, `block`, `unblock`, `mute` & `unmute`. A `switch` that handles every action needs a case for each.
+- `MonitorFollow.followKind` says why a removed account is back, as `refollow` or `return`.
+- Media download items return `posterUrl`, a video's cover image, & `qualities`, its MP4 sizes. Code that builds an item by hand must set both.
+- Extraction results return `quotedMedia`, `quotedPost`, `quotedPossiblySensitive` & `possiblySensitive` with `outputPreset=flat`.
+- `PostMonitor.authorAffiliate` returns the organization badge X shows beside the author's name.
+- `monitors.posts.create` takes `isActive`. Send `false` to create the monitor paused.
+- `q` is optional on `client.x.tweets.search` when `fromUser`, `keywords` or another field forms the search.
+
 ## 0.20.0 (2026-11-04)
 
 [Full changelog from v0.19.0 to v0.20.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.19.0...v0.20.0)

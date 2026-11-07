@@ -4,6 +4,14 @@
 
 import { APIResource } from '../../../core/resource';
 import * as Shared from '../../shared';
+import * as BookmarkAPI from './bookmark';
+import {
+  Bookmark,
+  BookmarkCreateParams,
+  BookmarkCreateResponse,
+  BookmarkDeleteParams,
+  BookmarkDeleteResponse,
+} from './bookmark';
 import * as LikeAPI from './like';
 import { Like, LikeCreateParams, LikeCreateResponse, LikeDeleteParams, LikeDeleteResponse } from './like';
 import * as RetweetAPI from './retweet';
@@ -20,6 +28,7 @@ import { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 export class Tweets extends APIResource {
+  bookmark: BookmarkAPI.Bookmark = new BookmarkAPI.Bookmark(this._client);
   like: LikeAPI.Like = new LikeAPI.Like(this._client);
   retweet: RetweetAPI.Retweet = new RetweetAPI.Retweet(this._client);
 
@@ -1845,8 +1854,14 @@ export interface TweetCreateResponse {
     | 'unlike'
     | 'retweet'
     | 'unretweet'
+    | 'bookmark'
+    | 'unbookmark'
     | 'follow'
     | 'unfollow'
+    | 'block'
+    | 'unblock'
+    | 'mute'
+    | 'unmute'
     | 'remove_follower'
     | 'send_dm'
     | 'delete_dm'
@@ -2132,8 +2147,14 @@ export interface TweetDeleteResponse {
     | 'unlike'
     | 'retweet'
     | 'unretweet'
+    | 'bookmark'
+    | 'unbookmark'
     | 'follow'
     | 'unfollow'
+    | 'block'
+    | 'unblock'
+    | 'mute'
+    | 'unmute'
     | 'remove_follower'
     | 'send_dm'
     | 'delete_dm'
@@ -5085,16 +5106,17 @@ export interface TweetResolveLinksParams {
 
 export interface TweetSearchParams {
   /**
-   * Query, Tweet ID, or URL. Alias query. Hyphens negate terms. Use exactPhrase for
-   * literals. Valid bounds apply per page. `since:` & `until:` dates are UTC days,
-   * written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also work, since each has 1 reading.
-   * 04/01/2026 has 2 & answers 424 with the form to write. `since_time:` &
-   * `until_time:` take Unix seconds or an ISO 8601 time. `list:` takes a public
-   * List's ID. A private List answers 404 list_not_found. X searches up to 512
-   * characters. A longer query answers 424 before any read, unless a term of its
-   * first OR group fits alone.
+   * Query, Tweet ID, or URL. Alias query. Optional when fromUser, keywords or another
+   * field forms the search. Without either, it answers 400 missing_query. Hyphens
+   * negate terms. Use exactPhrase for literals. Valid bounds apply per page. `since:`
+   * & `until:` dates are UTC days, written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also
+   * work, since each has 1 reading. 04/01/2026 has 2 & answers 424 with the form to
+   * write. `since_time:` & `until_time:` take Unix seconds or an ISO 8601 time.
+   * `list:` takes a public List's ID. A private List answers 404 list_not_found. X
+   * searches up to 512 characters. A longer query answers 424 before any read, unless
+   * a term of its first OR group fits alone.
    */
-  q: string;
+  q?: string;
 
   /**
    * Raw advanced search query appended as-is.
@@ -5458,6 +5480,7 @@ export interface TweetTranslateParams {
   omit?: string;
 }
 
+Tweets.Bookmark = Bookmark;
 Tweets.Like = Like;
 Tweets.Retweet = Retweet;
 
@@ -5497,6 +5520,14 @@ export declare namespace Tweets {
     type TweetResolveLinksParams as TweetResolveLinksParams,
     type TweetSearchParams as TweetSearchParams,
     type TweetTranslateParams as TweetTranslateParams,
+  };
+
+  export {
+    Bookmark as Bookmark,
+    type BookmarkCreateResponse as BookmarkCreateResponse,
+    type BookmarkDeleteResponse as BookmarkDeleteResponse,
+    type BookmarkCreateParams as BookmarkCreateParams,
+    type BookmarkDeleteParams as BookmarkDeleteParams,
   };
 
   export {
