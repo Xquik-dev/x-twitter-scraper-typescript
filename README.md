@@ -47,11 +47,11 @@ Next, read the [TypeScript SDK guide](https://docs.xquik.com/sdks/typescript), [
 [![Twitter API p99 server read time](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Frest-p99.json)](https://xquik.com/benchmarks#speed)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13740/badge)](https://www.bestpractices.dev/projects/13740)
 
-- 7,500+ downloads of x-twitter-scraper on npm ([source](https://www.npmjs.com/package/x-twitter-scraper)) <!-- trust:npm-x-twitter-scraper 7502 -->
+- 7,800+ downloads of x-twitter-scraper on npm ([source](https://www.npmjs.com/package/x-twitter-scraper)) <!-- trust:npm-x-twitter-scraper 7860 -->
 - 6.4 s p99 REST API server read time over 7 days, failed reads included ([source](https://xquik.com/benchmarks#speed)) <!-- trust:rest-p99 6317 -->
 - This repo meets the OpenSSF Best Practices passing criteria ([source](https://www.bestpractices.dev/projects/13740)) <!-- trust:openssf-x-twitter-scraper-typescript 1 -->
 
-Checked on 2026-11-06. See each number with its date & source on [xquik.com/benchmarks](https://xquik.com/benchmarks) or as [JSON](https://xquik.com/trust.json).
+Checked on 2026-11-07. See each number with its date & source on [xquik.com/benchmarks](https://xquik.com/benchmarks) or as [JSON](https://xquik.com/trust.json).
 
 <!-- trust:end -->
 
