@@ -68,6 +68,25 @@ describe('API fields added on 2026-11-06', () => {
     >();
   });
 
+  test('an article says which counts X did not send', () => {
+    type Article = XTwitterScraper.X.XGetArticleResponse['article'];
+
+    expectTypeOf<'viewCount'>().toExtend<NonNullable<Article['unknownCounts']>[number]>();
+  });
+
+  test('an extraction row says when its author deleted the post', () => {
+    type Row = XTwitterScraper.ExtractionRetrieveResponse.Result;
+
+    expectTypeOf<Row['isDeleted']>().toEqualTypeOf<boolean | undefined>();
+  });
+
+  test('user insights and shadowban reads take limit', () => {
+    expectTypeOf<XTwitterScraper.X.UserRetrieveInsightsParams['limit']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<XTwitterScraper.X.UserRetrieveShadowbanParams['limit']>().toEqualTypeOf<
+      number | undefined
+    >();
+  });
+
   test('a tweet search can run without q', () => {
     expectTypeOf<{ fromUser: string }>().toExtend<XTwitterScraper.X.TweetSearchParams>();
   });

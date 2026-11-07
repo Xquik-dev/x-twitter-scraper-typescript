@@ -15,6 +15,9 @@
 - `PostMonitor.authorAffiliate` returns the organization badge X shows beside the author's name.
 - `monitors.posts.create` takes `isActive`. Send `false` to create the monitor paused.
 - `q` is optional on `client.x.tweets.search` when `fromUser`, `keywords` or another field forms the search.
+- Article reads return `unknownCounts`, the counts X did not send, so each 0 means unknown.
+- Extraction results return `isDeleted` on a post its author deleted after Xquik saw it.
+- `client.x.users.retrieveInsights` & `retrieveShadowban` take `limit`, the recent posts to read.
 
 ## 0.20.0 (2026-11-04)
 
