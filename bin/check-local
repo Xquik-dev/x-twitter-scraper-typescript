@@ -89,7 +89,7 @@ run_codeql() {
   local extraction_diagnostic="js/diagnostics/extraction-errors"
   local count unread
 
-  printf 'paths-ignore:\n  - dist\n  - dist-deno\n  - node_modules\n' >"$config"
+  printf 'paths-ignore:\n  - dist\n  - node_modules\n' >"$config"
   codeql database create "$database" --language=javascript --build-mode=none --source-root=. \
     --codescanning-config="$config" --threads=0 || return 1
   codeql database analyze "$database" codeql/javascript-queries:codeql-suites/javascript-security-extended.qls \

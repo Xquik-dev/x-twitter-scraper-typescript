@@ -27,7 +27,7 @@ describe('resource profile', () => {
   });
 
   test('update: required and optional params', async () => {
-    const response = await client.x.profile.update({
+    await client.x.profile.update({
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
       description: 'description_value',
@@ -53,7 +53,7 @@ describe('resource profile', () => {
   });
 
   test('updateAvatar: required and optional params', async () => {
-    const response = await client.x.profile.updateAvatar({
+    await client.x.profile.updateAvatar({
       account: '@elonmusk',
       url: 'https://example.com/avatar.png',
       'Idempotency-Key': 'Idempotency-Key',
@@ -76,7 +76,7 @@ describe('resource profile', () => {
   });
 
   test('updateBanner: required and optional params', async () => {
-    const response = await client.x.profile.updateBanner({
+    await client.x.profile.updateBanner({
       account: '@elonmusk',
       url: 'https://example.com/banner.png',
       'Idempotency-Key': 'Idempotency-Key',

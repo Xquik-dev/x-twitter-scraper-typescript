@@ -36,7 +36,7 @@ describe('resource styles', () => {
   });
 
   test('update: required and optional params', async () => {
-    const response = await client.styles.update('id', {
+    await client.styles.update('id', {
       tweets: [{ text: 'Excited to share our latest research.' }],
       label: 'Professional Voice',
     });
@@ -82,7 +82,7 @@ describe('resource styles', () => {
   });
 
   test('analyze: required and optional params', async () => {
-    const response = await client.styles.analyze({ username: 'elonmusk' });
+    await client.styles.analyze({ username: 'elonmusk' });
   });
 
   test('compare: only required params', async () => {
@@ -97,7 +97,7 @@ describe('resource styles', () => {
   });
 
   test('compare: required and optional params', async () => {
-    const response = await client.styles.compare({ username1: 'username1', username2: 'username2' });
+    await client.styles.compare({ username1: 'username1', username2: 'username2' });
   });
 
   test('getPerformance', async () => {

@@ -4,19 +4,19 @@
 
 import { APIResource } from '../../core/resource';
 import * as AttachmentsAPI from './attachments';
-import { AttachmentDownloadParams, Attachments } from './attachments';
+import { type AttachmentDownloadParams, Attachments } from './attachments';
 import * as TicketsAPI from './tickets';
 import {
-  SupportReceipt,
-  TicketCreateParams,
-  TicketCreateResponse,
-  TicketListParams,
-  TicketListResponse,
-  TicketReplyParams,
-  TicketReplyResponse,
-  TicketRetrieveResponse,
-  TicketUpdateParams,
-  TicketUpdateResponse,
+  type SupportReceipt,
+  type TicketCreateParams,
+  type TicketCreateResponse,
+  type TicketListParams,
+  type TicketListResponse,
+  type TicketReplyParams,
+  type TicketReplyResponse,
+  type TicketRetrieveResponse,
+  type TicketUpdateParams,
+  type TicketUpdateResponse,
   Tickets,
 } from './tickets';
 

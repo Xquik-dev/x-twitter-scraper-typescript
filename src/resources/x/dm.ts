@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../core/resource';
-import { APIPromise } from '../../core/api-promise';
+import type { APIPromise } from '../../core/api-promise';
 import { buildHeaders } from '../../internal/headers';
-import { RequestOptions } from '../../internal/request-options';
+import type { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 export class Dm extends APIResource {

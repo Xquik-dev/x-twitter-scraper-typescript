@@ -40,7 +40,7 @@ describe('resource draws', () => {
   });
 
   test('export: required and optional params', async () => {
-    const response = await client.draws.export('f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345', {
+    await client.draws.export('f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345', {
       format: 'csv',
       type: 'winners',
     });
@@ -58,7 +58,7 @@ describe('resource draws', () => {
   });
 
   test('run: required and optional params', async () => {
-    const response = await client.draws.run({
+    await client.draws.run({
       tweetUrl: 'https://x.com/elonmusk/status/1234567890',
       backupCount: 2,
       filterAccountAgeDays: 30,

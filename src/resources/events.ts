@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../core/resource';
-import * as Shared from './shared';
-import * as PostsAPI from './monitors/posts';
-import { APIPromise } from '../core/api-promise';
-import { Stream } from '../core/streaming';
+import type * as Shared from './shared';
+import type * as PostsAPI from './monitors/posts';
+import type { APIPromise } from '../core/api-promise';
+import type { Stream } from '../core/streaming';
 import { buildHeaders } from '../internal/headers';
-import { RequestOptions } from '../internal/request-options';
+import type { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
 
 /**

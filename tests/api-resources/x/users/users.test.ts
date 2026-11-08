@@ -48,7 +48,7 @@ describe('resource users', () => {
   });
 
   test('removeFollower: required and optional params', async () => {
-    const response = await client.x.users.removeFollower('id', {
+    await client.x.users.removeFollower('id', {
       account: '@elonmusk',
       'Idempotency-Key': 'Idempotency-Key',
     });
@@ -850,7 +850,7 @@ describe('resource users', () => {
   });
 
   test('retrieveSearch: required and optional params', async () => {
-    const response = await client.x.users.retrieveSearch({
+    await client.x.users.retrieveSearch({
       q: 'q',
       bioContains: 'bioContains',
       blueVerifiedOnly: true,
@@ -1109,7 +1109,7 @@ describe('resource users', () => {
   });
 
   test('translateBio: required and optional params', async () => {
-    const response = await client.x.users.translateBio('id', {
+    await client.x.users.translateBio('id', {
       language: 'es',
       fields: 'id,text,author.username',
       omit: 'entities,media',

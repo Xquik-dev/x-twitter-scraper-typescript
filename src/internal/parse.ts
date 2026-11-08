@@ -4,7 +4,7 @@
 
 import type { FinalRequestOptions } from './request-options';
 import { Stream } from '../core/streaming';
-import { type XTwitterScraper } from '../client';
+import type { XTwitterScraper } from '../client';
 import { formatRequestDetails, loggerFor } from './utils/log';
 
 export type APIResponseProps = {

@@ -204,6 +204,37 @@ describe('scripts/utils/compile-formats.cjs', () => {
     }
   });
 
+  it('fails when a type comes in through a value import', () => {
+    const withType = build({
+      'shape.ts': 'export type Shape = { side: number };\n',
+      'area.ts':
+        "import { Shape } from './shape';\nexport const area = (shape: Shape): number => shape.side ** 2;\n",
+    });
+    try {
+      expect(withType.status).not.toBe(0);
+      expect(withType.output).toContain('TS1484');
+    } finally {
+      rmSync(withType.root, { recursive: true, force: true });
+    }
+  });
+
+  it.each([
+    ['area.js', 'require('],
+    ['area.mjs', 'import '],
+  ])('drops a type-only import from %s', (file, loader) => {
+    const withType = build({
+      'shape.ts': 'export type Shape = { side: number };\n',
+      'area.ts':
+        "import type { Shape } from './shape';\nexport const area = (shape: Shape): number => shape.side ** 2;\n",
+    });
+    try {
+      expect(withType.status).toBe(0);
+      expect(withType.read(file)).not.toContain(loader);
+    } finally {
+      rmSync(withType.root, { recursive: true, force: true });
+    }
+  });
+
   it.each([
     ['commonjs' as const, "require('./index.js')"],
     ['module' as const, "await import('./index.mjs')"],

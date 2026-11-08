@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../core/resource';
-import * as Shared from '../shared';
-import { APIPromise } from '../../core/api-promise';
-import { RequestOptions } from '../../internal/request-options';
+import type * as Shared from '../shared';
+import type { APIPromise } from '../../core/api-promise';
+import type { RequestOptions } from '../../internal/request-options';
 
 /**
  * AI analysis of posts, at 2 credits per analyzed post

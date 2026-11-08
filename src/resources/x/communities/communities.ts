@@ -3,22 +3,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../../core/resource';
-import * as Shared from '../../shared';
+import type * as Shared from '../../shared';
 import * as JoinAPI from './join';
 import {
   Join,
-  JoinCreateParams,
-  JoinCreateResponse,
-  JoinDeleteAllParams,
-  JoinDeleteAllResponse,
+  type JoinCreateParams,
+  type JoinCreateResponse,
+  type JoinDeleteAllParams,
+  type JoinDeleteAllResponse,
 } from './join';
 import * as MediaAPI from './media';
-import { Media, MediaListParams } from './media';
+import { Media, type MediaListParams } from './media';
 import * as TweetsAPI from './tweets';
-import { TweetListByCommunityParams, TweetListParams, Tweets } from './tweets';
-import { APIPromise } from '../../../core/api-promise';
+import { type TweetListByCommunityParams, type TweetListParams, Tweets } from './tweets';
+import type { APIPromise } from '../../../core/api-promise';
 import { buildHeaders } from '../../../internal/headers';
-import { RequestOptions } from '../../../internal/request-options';
+import type { RequestOptions } from '../../../internal/request-options';
 import { path } from '../../../internal/utils/path';
 
 export class Communities extends APIResource {
