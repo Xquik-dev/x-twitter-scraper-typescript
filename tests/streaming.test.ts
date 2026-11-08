@@ -19,7 +19,7 @@ function sseResponse(chunks: Array<string | Uint8Array>, init?: ResponseInit): R
   return new Response(body, { headers: { 'content-type': 'text/event-stream' }, ...init });
 }
 
-async function collect<T>(iterable: AsyncIterable<T>): Promise<T[]> {
+async function collect<T>(iterable: AsyncIterable<T, unknown, undefined>): Promise<T[]> {
   const items: T[] = [];
   for await (const item of iterable) items.push(item);
   return items;
@@ -305,5 +305,13 @@ describe('events.stream', () => {
 
     expect(await collect(stream)).toEqual([]);
     expect(requests[0]?.headers.get('last-event-id')).toBe('42');
+  });
+});
+
+describe('Stream iterator types', () => {
+  test('a stream iterator returns unknown and takes no value in next', () => {
+    expectTypeOf<ReturnType<Stream<number>[typeof Symbol.asyncIterator]>>().toEqualTypeOf<
+      AsyncIterator<number, unknown, undefined>
+    >();
   });
 });

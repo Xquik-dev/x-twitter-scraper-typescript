@@ -20,6 +20,9 @@ echo "==> Building"
 echo "==> Checking types"
 pnpm run --silent lint:types
 
+echo "==> Measuring type coverage"
+pnpm run --silent lint:type-coverage
+
 echo "==> Running Are The Types Wrong?"
 attw_status=0
 pnpm run --silent lint:attw >.attw.json || attw_status=$?

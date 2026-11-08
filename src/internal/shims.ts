@@ -32,16 +32,16 @@ export function makeReadableStream<R>(source: ReadableStreamSource<R> = {}): Rea
   return new globalThis.ReadableStream<R>(source);
 }
 
-export const isAsyncIterable = (value: unknown): value is AsyncIterable<unknown> =>
+export const isAsyncIterable = (value: unknown): value is AsyncIterable<unknown, unknown, undefined> =>
   typeof value === 'object' &&
   value !== null &&
   typeof readProperty(value, Symbol.asyncIterator) === 'function';
 
-export const isIterable = (value: object): value is Iterable<unknown> =>
+export const isIterable = (value: object): value is Iterable<unknown, unknown, undefined> =>
   typeof readProperty(value, Symbol.iterator) === 'function';
 
 export async function* uint8ArrayChunks(
-  iterable: Iterable<unknown> | AsyncIterable<unknown>,
+  iterable: Iterable<unknown, unknown, undefined> | AsyncIterable<unknown, unknown, undefined>,
 ): AsyncGenerator<Uint8Array, void, undefined> {
   for await (const chunk of iterable) {
     if (!(chunk instanceof Uint8Array)) {
@@ -53,8 +53,10 @@ export async function* uint8ArrayChunks(
   }
 }
 
-export function ReadableStreamFrom<T>(iterable: Iterable<T> | AsyncIterable<T>): ReadableStream<T> {
-  const iter: AsyncIterator<T> | Iterator<T> =
+export function ReadableStreamFrom<T>(
+  iterable: Iterable<T, unknown, undefined> | AsyncIterable<T, unknown, undefined>,
+): ReadableStream<T> {
+  const iter: AsyncIterator<T, unknown, undefined> | Iterator<T, unknown, undefined> =
     Symbol.asyncIterator in iterable ? iterable[Symbol.asyncIterator]() : iterable[Symbol.iterator]();
 
   return makeReadableStream<T>({
@@ -87,13 +89,15 @@ const isReaderSource = (value: object): value is ReaderSource<unknown> =>
 /**
  * This polyfill was pulled from https://github.com/MattiasBuelens/web-streams-polyfill/pull/122#issuecomment-1627354490
  */
-export function ReadableStreamToAsyncIterable<T>(stream: AsyncIterable<T>): AsyncIterable<T>;
+export function ReadableStreamToAsyncIterable<T>(
+  stream: AsyncIterable<T, unknown, undefined>,
+): AsyncIterable<T, unknown, undefined>;
 export function ReadableStreamToAsyncIterable<T>(
   stream: ReaderSource<T>,
 ): AsyncIterableIterator<T, undefined, undefined>;
 export function ReadableStreamToAsyncIterable<T>(
-  stream: AsyncIterable<T> | ReaderSource<T>,
-): AsyncIterable<T> {
+  stream: AsyncIterable<T, unknown, undefined> | ReaderSource<T>,
+): AsyncIterable<T, unknown, undefined> {
   if (Symbol.asyncIterator in stream) return stream;
 
   const reader = stream.getReader();

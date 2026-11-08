@@ -13,3 +13,7 @@ export const readString = (value: unknown, key: PropertyKey): string | undefined
   const property = readProperty(value, key);
   return typeof property === 'string' ? property : undefined;
 };
+
+const plainObject = {};
+
+export const objectTag = (value: unknown): string => plainObject.toString.call(value);

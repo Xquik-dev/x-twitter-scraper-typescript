@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { VERSION } from '../version';
-import { readGlobal, readProperty, readString } from './utils/globals';
+import { objectTag, readGlobal, readProperty, readString } from './utils/globals';
 import { isPresent } from './utils/values';
 
 export const isRunningInBrowser = () => {
@@ -24,7 +24,7 @@ function getDetectedPlatform(): DetectedPlatform {
   if (typeof readGlobal('EdgeRuntime') !== 'undefined') {
     return 'edge';
   }
-  if (Object.prototype.toString.call(readGlobal('process')) === '[object process]') {
+  if (objectTag(readGlobal('process')) === '[object process]') {
     return 'node';
   }
   return 'unknown';

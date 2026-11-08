@@ -21,12 +21,12 @@ export type ServerSentEvent = {
   raw: string[];
 };
 
-export class Stream<Item> implements AsyncIterable<Item> {
+export class Stream<Item> implements AsyncIterable<Item, unknown, undefined> {
   controller: AbortController;
   readonly #client: XTwitterScraper | undefined;
 
   constructor(
-    private readonly iterator: () => AsyncIterator<Item>,
+    private readonly iterator: () => AsyncIterator<Item, unknown, undefined>,
     controller: AbortController,
     client?: XTwitterScraper,
   ) {
@@ -124,7 +124,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
     return new Stream(iterator, controller, client);
   }
 
-  [Symbol.asyncIterator](): AsyncIterator<Item> {
+  [Symbol.asyncIterator](): AsyncIterator<Item, unknown, undefined> {
     return this.iterator();
   }
 
@@ -133,14 +133,14 @@ export class Stream<Item> implements AsyncIterable<Item> {
    * independently read from at different speeds.
    */
   tee(): [Stream<Item>, Stream<Item>] {
-    const left: Array<Promise<IteratorResult<Item>>> = [];
-    const right: Array<Promise<IteratorResult<Item>>> = [];
+    const left: Array<Promise<IteratorResult<Item, unknown>>> = [];
+    const right: Array<Promise<IteratorResult<Item, unknown>>> = [];
     const iterator = this.iterator();
 
     const teeIterator = (
-      queue: Array<Promise<IteratorResult<Item>>>,
-      other: Array<Promise<IteratorResult<Item>>>,
-    ): AsyncIterator<Item> => {
+      queue: Array<Promise<IteratorResult<Item, unknown>>>,
+      other: Array<Promise<IteratorResult<Item, unknown>>>,
+    ): AsyncIterator<Item, unknown, undefined> => {
       return {
         next: () => {
           const queued = queue.shift();
@@ -193,7 +193,8 @@ export async function* _iterSSEMessages(
   response: Response,
   controller: AbortController,
 ): AsyncGenerator<ServerSentEvent, void, unknown> {
-  if (response.body === null) {
+  const { body }: { body: ReadableStream<Bytes> | null } = response;
+  if (body === null) {
     controller.abort();
     if (readProperty(readGlobal('navigator'), 'product') === 'ReactNative') {
       throw new XTwitterScraperError(
@@ -206,7 +207,7 @@ export async function* _iterSSEMessages(
   const sseDecoder = new SSEDecoder();
   const lineDecoder = new LineDecoder();
 
-  const iter = ReadableStreamToAsyncIterable<Bytes>(response.body);
+  const iter = ReadableStreamToAsyncIterable<Bytes>(body);
   for await (const sseChunk of iterSSEChunks(iter)) {
     for (const line of lineDecoder.decode(sseChunk)) {
       const sse = sseDecoder.decode(line);
@@ -220,7 +221,9 @@ export async function* _iterSSEMessages(
   }
 }
 
-async function* iterSSEChunks(iterator: AsyncIterable<Bytes>): AsyncGenerator<Uint8Array> {
+async function* iterSSEChunks(
+  iterator: AsyncIterable<Bytes, unknown, undefined>,
+): AsyncGenerator<Uint8Array, void, undefined> {
   let data = new Uint8Array();
 
   for await (const chunk of iterator) {
@@ -238,7 +241,7 @@ async function* iterSSEChunks(iterator: AsyncIterable<Bytes>): AsyncGenerator<Ui
     newData.set(binaryChunk, data.length);
     data = newData;
 
-    let patternIndex;
+    let patternIndex: number;
     while ((patternIndex = findDoubleNewlineIndex(data)) !== -1) {
       yield data.slice(0, patternIndex);
       data = data.slice(patternIndex);

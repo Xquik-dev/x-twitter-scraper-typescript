@@ -34,7 +34,7 @@ function* iterateHeaders(headers: HeadersLike): IterableIterator<readonly [strin
   }
 
   let shouldClear = false;
-  let iter: Iterable<readonly (HeaderValue | readonly HeaderValue[])[]>;
+  let iter: Iterable<readonly (HeaderValue | readonly HeaderValue[])[], undefined, undefined>;
   if (headers instanceof Headers) {
     iter = headers.entries();
   } else if (isReadonlyArray(headers)) {
