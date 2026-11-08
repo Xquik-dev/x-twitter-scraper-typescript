@@ -38,6 +38,7 @@ const member = (value, key) => {
 
 class SpecShapes {
   constructor(/** @type {import('./types').SpecDocument} */ spec) {
+    /** @type {import('./types').SpecDocument} */
     this.spec = spec;
   }
 

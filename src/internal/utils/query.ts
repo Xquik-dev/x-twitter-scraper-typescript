@@ -5,7 +5,8 @@
 import { XTwitterScraperError } from '../../core/error';
 
 export function stringifyQuery(query: object | Record<string, unknown>) {
-  return Object.entries(query)
+  const entries: [string, unknown][] = Object.entries(query);
+  return entries
     .filter(([, value]) => typeof value !== 'undefined')
     .map(([key, value]) => {
       if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {

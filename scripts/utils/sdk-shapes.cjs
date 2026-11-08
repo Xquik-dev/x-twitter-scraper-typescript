@@ -60,8 +60,8 @@ const unquoted = (text) => text.replace(/^['"]|['"]$/g, '');
 const compilerOptions = (root) => {
   const configFile = path.join(root, 'tsconfig.json');
   if (!fs.existsSync(configFile)) return fallbackOptions;
+  /** @type {{ config?: unknown; error?: import('typescript').Diagnostic }} */
   const result = ts.readConfigFile(configFile, (file) => ts.sys.readFile(file));
-  /** @type {unknown} */
   const config = result.config;
   const error = result.error;
   if (isPresent(error))
@@ -356,6 +356,7 @@ const sdkShapes = (root, basePath) => {
       if (ts.isSpreadAssignment(property)) continue;
       const key = property.name.getText();
       if (key !== 'query' && key !== 'body') continue;
+      /** @type {ReturnType<typeof fieldsOf>} */
       let fields;
       if (ts.isShorthandPropertyAssignment(property)) fields = fieldsOf(property.name, property);
       else if (ts.isPropertyAssignment(property)) fields = fieldsOf(property.initializer);
@@ -382,6 +383,7 @@ const sdkShapes = (root, basePath) => {
           if (!ts.isMethodDeclaration(member) || !isPresent(member.body)) continue;
           const call = requestCall(member.body);
           if (!isPresent(call)) continue;
+          /** @type {ReturnType<typeof operation>} */
           let entry;
           try {
             entry = operation(member, call);

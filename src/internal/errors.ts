@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { readProperty } from './utils/globals';
+import { objectTag, readProperty } from './utils/globals';
 
 export function isAbortError(err: unknown) {
   return (
@@ -25,7 +25,7 @@ export const describeValue = (value: unknown): string | undefined => {
     case 'symbol':
       return String(value);
     case 'object':
-      return value === null ? 'null' : Object.prototype.toString.call(value);
+      return value === null ? 'null' : objectTag(value);
     case 'function':
       return Function.prototype.toString.call(value);
   }
@@ -40,7 +40,7 @@ const orUndefined = <T>(make: () => T): T | undefined => {
 };
 
 const copyErrorLike = (err: object): Error | undefined => {
-  if (Object.prototype.toString.call(err) !== '[object Error]') return undefined;
+  if (objectTag(err) !== '[object Error]') return undefined;
   const cause = readProperty(err, 'cause');
   const stack = readProperty(err, 'stack');
   const name = readProperty(err, 'name');

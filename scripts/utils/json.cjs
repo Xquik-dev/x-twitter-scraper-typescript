@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+/** @type {(value: unknown) => value is unknown[]} */
+const isArray = Array.isArray;
+
 /** @type {(value: import('./types').JsonValue | undefined) => import('./types').JsonObject | undefined} */
 const asObject = (value) =>
   typeof value === 'object' && value !== null && !Array.isArray(value) ? value : undefined;
@@ -19,7 +22,7 @@ function isJsonValue(value) {
   ) {
     return true;
   }
-  if (Array.isArray(value)) return value.every(isJsonValue);
+  if (isArray(value)) return value.every(isJsonValue);
   return typeof value === 'object' && Object.values(value).every(isJsonValue);
 }
 

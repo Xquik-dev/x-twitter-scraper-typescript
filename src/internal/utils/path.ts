@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { XTwitterScraperError } from '../../core/error';
-import { readProperty } from './globals';
+import { objectTag, readProperty } from './globals';
 import { isPresent } from './values';
 
 /**
@@ -33,7 +33,7 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
     if (statics.length === 1) return statics[0] ?? '';
 
     let postPath = false;
-    const invalidSegments = [];
+    const invalidSegments: { start: number; length: number; error: string }[] = [];
     const path = statics.reduce((previousValue, currentValue, index) => {
       if (/[?#]/.test(currentValue)) {
         postPath = true;
@@ -45,13 +45,11 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
         (!isPresent(value) ||
           (typeof value === 'object' && readProperty(value, 'toString') === realmObjectToString(value)))
       ) {
-        encoded = isPresent(value) ? Object.prototype.toString.call(value) : String(value);
+        encoded = isPresent(value) ? objectTag(value) : String(value);
         invalidSegments.push({
           start: previousValue.length + currentValue.length,
           length: encoded.length,
-          error: `Value of type ${Object.prototype.toString
-            .call(value)
-            .slice(8, -1)} is not a valid path parameter`,
+          error: `Value of type ${objectTag(value).slice(8, -1)} is not a valid path parameter`,
         });
       }
       return previousValue + currentValue + (index === params.length ? '' : encoded);
@@ -59,7 +57,7 @@ export const createPathTagFunction = (pathEncoder = encodeURIPath) =>
 
     const [pathOnly = ''] = path.split(/[?#]/, 1);
     const invalidSegmentPattern = /(?<=^|\/)(?:\.|%2e){1,2}(?=\/|$)/gi;
-    let match;
+    let match: RegExpExecArray | null;
 
     while ((match = invalidSegmentPattern.exec(pathOnly)) !== null) {
       invalidSegments.push({

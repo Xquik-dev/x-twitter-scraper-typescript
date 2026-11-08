@@ -6,7 +6,8 @@ import type { RequestOptions } from './request-options';
 import type { FilePropertyBag, Fetch } from './builtin-types';
 import type { XTwitterScraper } from '../client';
 import { isAsyncIterable, ReadableStreamFrom, uint8ArrayChunks } from './shims';
-import { readGlobal, readProperty, readString } from './utils/globals';
+import { objectTag, readGlobal, readProperty, readString } from './utils/globals';
+import { isArray } from './utils/values';
 import { describeValue } from './errors';
 
 export type BlobPart = string | ArrayBuffer | Uint8Array<ArrayBuffer> | Blob;
@@ -102,7 +103,7 @@ function supportsFormData(fetchObject: XTwitterScraper | Fetch): Promise<boolean
       const FetchResponse = 'Response' in fetch ? fetch.Response : (await fetch('data:,')).constructor;
       if (!isResponseClass(FetchResponse)) return true;
       const data = new FormData();
-      if (Object.prototype.toString.call(data) === (await new FetchResponse(data).text())) {
+      if (objectTag(data) === (await new FetchResponse(data).text())) {
         return false;
       }
       return true;
@@ -121,7 +122,7 @@ export const createForm = async (body: unknown, fetch: XTwitterScraper | Fetch):
     );
   }
   const form = new FormData();
-  const entries = typeof body === 'object' && body !== null ? Object.entries(body) : [];
+  const entries: [string, unknown][] = typeof body === 'object' && body !== null ? Object.entries(body) : [];
   await Promise.all(entries.map(([key, value]) => addFormValue(form, key, value)));
   return form;
 };
@@ -135,7 +136,7 @@ const isUploadable = (value: unknown) =>
 
 const hasUploadableValue = (value: unknown): boolean => {
   if (isUploadable(value)) return true;
-  if (Array.isArray(value)) return value.some(hasUploadableValue);
+  if (isArray(value)) return value.some(hasUploadableValue);
   if (typeof value === 'object' && value !== null) {
     for (const k in value) {
       if (hasUploadableValue(readProperty(value, k))) return true;
@@ -163,12 +164,11 @@ const addFormValue = async (form: FormData, key: string, value: unknown): Promis
     );
   } else if (isNamedBlob(value)) {
     form.append(key, value, getName(value));
-  } else if (Array.isArray(value)) {
+  } else if (isArray(value)) {
     await Promise.all(value.map((entry) => addFormValue(form, key, entry)));
   } else if (typeof value === 'object') {
-    await Promise.all(
-      Object.entries(value).map(([name, prop]) => addFormValue(form, `${key}[${name}]`, prop)),
-    );
+    const props: [string, unknown][] = Object.entries(value);
+    await Promise.all(props.map(([name, prop]) => addFormValue(form, `${key}[${name}]`, prop)));
   } else {
     throw new TypeError(
       `Invalid value given to form, expected a string, number, boolean, object, Array, File or Blob but got ${String(describeValue(value))} instead`,

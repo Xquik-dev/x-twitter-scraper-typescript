@@ -34,7 +34,7 @@ export function isEmptyObj(obj: object | null | undefined): boolean {
 }
 
 export function hasOwn<T extends object = object>(obj: T, key: PropertyKey): key is keyof T {
-  return Object.prototype.hasOwnProperty.call(obj, key);
+  return Object.getOwnPropertyDescriptor(obj, key) !== undefined;
 }
 
 export function isObj(obj: unknown): obj is Record<string, unknown> {

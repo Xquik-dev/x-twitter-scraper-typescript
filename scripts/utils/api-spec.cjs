@@ -116,6 +116,7 @@ const groupEntries = (groups, { field, noun, entryPattern, entryHint, key }) => 
 const readGroups = (root, file, rules) => {
   /** @type {(problem: string) => CheckError} */
   const invalid = (problem) => new CheckError(`${file} is not valid. ${problem}.`);
+  /** @type {string} */
   let text;
   try {
     text = fs.readFileSync(path.join(root, file), 'utf8');

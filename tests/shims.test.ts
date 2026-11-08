@@ -67,7 +67,7 @@ describe('runtime shims', () => {
   test('adapts readers without native async iteration', async () => {
     expect.assertions(9);
 
-    const nativeStream = new ReadableStream();
+    const nativeStream = new ReadableStream<unknown>();
     expect(ReadableStreamToAsyncIterable(nativeStream)).toBe(nativeStream);
 
     let reads = 0;

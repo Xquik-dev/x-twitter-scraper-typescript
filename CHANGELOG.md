@@ -44,6 +44,7 @@
 - `withOptions` throws an `XTwitterScraperError` when a subclass constructor returns an instance of another class.
 - `APIError.error` is typed `string | number | boolean | object | undefined`, not `Object | undefined`. Code and subclasses that type it as `Object` still compile.
 - When the SDK wraps a thrown value that isn't an `Error` and can't be written as JSON, the message names its type, such as `[object Object]`. It no longer calls the value's own `toString`.
+- `Stream`'s async iterator types its return value as `unknown` and the value `next` takes as `undefined`, where both were `any`. `for await` loops compile as before.
 
 ### Bug Fixes
 
