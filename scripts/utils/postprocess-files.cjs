@@ -4,14 +4,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const asObject = require('./json.cjs').asObject;
-const parseJson = require('./json.cjs').parseJson;
+const { asObject, parseJson } = require('./json.cjs');
 
-const distPath = process.env['DIST_PATH'];
-const distDir =
-  distPath !== undefined && distPath !== '' ?
-    path.resolve(distPath)
-  : path.resolve(__dirname, '..', '..', 'dist');
+const distDir = path.resolve(__dirname, '..', '..', 'dist');
 
 /** @type {(dir: string) => AsyncGenerator<string>} */
 async function* walk(dir) {
@@ -55,30 +50,16 @@ async function postprocess() {
   for (const entry of await fs.promises.readdir(distDir, { withFileTypes: true })) {
     if (entry.isDirectory() && !nonModuleDirectories.has(entry.name)) {
       const subpath = './' + entry.name;
-      newExports[subpath + '/*.mjs'] = {
-        default: subpath + '/*.mjs',
-      };
-      newExports[subpath + '/*.js'] = {
-        default: subpath + '/*.js',
-      };
-      newExports[subpath + '/*'] = {
-        import: subpath + '/*.mjs',
-        require: subpath + '/*.js',
-      };
-    } else if (entry.isFile() && /\.[cm]?js$/.test(entry.name)) {
-      const { name, ext } = path.parse(entry.name);
-      const subpathWithoutExt = './' + name;
-      const subpath = './' + entry.name;
-      const conditions = (newExports[subpathWithoutExt] ??= { import: undefined, require: undefined });
-      const isModule = ext[1] === 'm';
-      if (isModule) {
-        conditions.import = subpath;
-      } else {
-        conditions.require = subpath;
-      }
-      newExports[subpath] = {
-        default: subpath,
-      };
+      const formats = { import: subpath + '/*.mjs', require: subpath + '/*.js' };
+      newExports[subpath + '/*.mjs'] = formats;
+      newExports[subpath + '/*.js'] = formats;
+      newExports[subpath + '/*'] = formats;
+    } else if (entry.isFile() && entry.name.endsWith('.mjs')) {
+      const subpath = './' + entry.name.slice(0, -'.mjs'.length);
+      const formats = { import: subpath + '.mjs', require: subpath + '.js' };
+      newExports[subpath] = formats;
+      newExports[subpath + '.mjs'] = formats;
+      newExports[subpath + '.js'] = formats;
     }
   }
   const distPackage = parseJson(await fs.promises.readFile('dist/package.json', 'utf-8'));

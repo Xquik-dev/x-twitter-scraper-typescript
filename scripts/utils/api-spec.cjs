@@ -4,8 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const asObject = require('./json.cjs').asObject;
-const parseJson = require('./json.cjs').parseJson;
+const { asObject, parseJson } = require('./json.cjs');
 
 const publicSpec = 'https://xquik.com/openapi.json';
 const httpMethods = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];

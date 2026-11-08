@@ -3,37 +3,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const fs = require('fs');
-const asObject = require('./json.cjs').asObject;
-const parseJson = require('./json.cjs').parseJson;
+const { asObject, parseJson } = require('./json.cjs');
 
-/** @type {(problem: import('./types').JsonValue) => boolean} */
-const isExpected = (problem) => {
-  const fields = asObject(problem);
-  /** @type {(key: string) => string} */
-  const text = (key) => {
-    const value = fields?.[key];
-    return typeof value === 'string' ? value : '';
-  };
-  const kind = fields?.['kind'];
-  return (
-    (kind === 'CJSResolvesToESM' && text('entrypoint').endsWith('.mjs')) ||
-    (kind === 'MissingExportEquals' && text('implementationFileName').endsWith('/index.js')) ||
-    (kind === 'InternalResolutionError' && text('moduleSpecifier').includes('node_modules'))
+const report = parseJson(fs.readFileSync('.attw.json', 'utf-8'));
+fs.unlinkSync('.attw.json');
+const found = asObject(asObject(report)?.['problems']);
+if (found === undefined) {
+  process.stdout.write(
+    'The attw report has no problems list, so attw checked no types.\n' + JSON.stringify(report) + '\n',
   );
-};
-
-const report = asObject(parseJson(fs.readFileSync('.attw.json', 'utf-8')));
-const problems = Object.values(asObject(report?.['problems']) ?? {})
-  .flatMap((list) =>
+  process.exitCode = 1;
+} else {
+  const problems = Object.values(found).flatMap((list) =>
     Array.isArray(list) ? list
     : list === undefined ? []
     : [list],
-  )
-  .filter((problem) => !isExpected(problem));
-fs.unlinkSync('.attw.json');
-if (problems.length > 0) {
-  process.stdout.write('The types are wrong!\n' + JSON.stringify(problems, null, 2) + '\n');
-  process.exitCode = 1;
-} else {
-  process.stdout.write('Types ok!\n');
+  );
+  if (problems.length > 0) {
+    process.stdout.write('The types are wrong!\n' + JSON.stringify(problems, null, 2) + '\n');
+    process.exitCode = 1;
+  } else {
+    process.stdout.write('Types ok!\n');
+  }
 }

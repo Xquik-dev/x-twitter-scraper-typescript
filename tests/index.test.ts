@@ -122,6 +122,8 @@ describe('instantiate client', () => {
       process.env = env;
     });
 
+    const mockLogger = () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+
     const forceAPIResponseForClient = async (client: XTwitterScraper) => {
       await new APIPromise(
         client,
@@ -140,13 +142,7 @@ describe('instantiate client', () => {
     };
 
     test('debug logs when log level is debug', async () => {
-      const debugMock = vi.fn();
-      const logger = {
-        debug: debugMock,
-        info: vi.fn(),
-        warn: vi.fn(),
-        error: vi.fn(),
-      };
+      const logger = mockLogger();
 
       const client = new XTwitterScraper({
         logger: logger,
@@ -156,7 +152,7 @@ describe('instantiate client', () => {
       });
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).toHaveBeenCalled();
+      expect(logger.debug).toHaveBeenCalled();
     });
 
     test('default logLevel is warn', () => {
@@ -165,13 +161,7 @@ describe('instantiate client', () => {
     });
 
     test('debug logs are skipped when log level is info', async () => {
-      const debugMock = vi.fn();
-      const logger = {
-        debug: debugMock,
-        info: vi.fn(),
-        warn: vi.fn(),
-        error: vi.fn(),
-      };
+      const logger = mockLogger();
 
       const client = new XTwitterScraper({
         logger: logger,
@@ -181,17 +171,11 @@ describe('instantiate client', () => {
       });
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).not.toHaveBeenCalled();
+      expect(logger.debug).not.toHaveBeenCalled();
     });
 
     test('debug logs happen with debug env var', async () => {
-      const debugMock = vi.fn();
-      const logger = {
-        debug: debugMock,
-        info: vi.fn(),
-        warn: vi.fn(),
-        error: vi.fn(),
-      };
+      const logger = mockLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'debug';
       const client = new XTwitterScraper({
@@ -202,17 +186,11 @@ describe('instantiate client', () => {
       expect(client.logLevel).toBe('debug');
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).toHaveBeenCalled();
+      expect(logger.debug).toHaveBeenCalled();
     });
 
     test('warn when env var level is invalid', () => {
-      const warnMock = vi.fn();
-      const logger = {
-        debug: vi.fn(),
-        info: vi.fn(),
-        warn: warnMock,
-        error: vi.fn(),
-      };
+      const logger = mockLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'not a log level';
       const client = new XTwitterScraper({
@@ -221,19 +199,13 @@ describe('instantiate client', () => {
         bearerToken: 'My Bearer Token',
       });
       expect(client.logLevel).toBe('warn');
-      expect(warnMock).toHaveBeenCalledWith(
+      expect(logger.warn).toHaveBeenCalledWith(
         'process.env[\'X_TWITTER_SCRAPER_LOG\'] was set to "not a log level", expected one of ["off","error","warn","info","debug"]',
       );
     });
 
     test('client log level overrides env var', async () => {
-      const debugMock = vi.fn();
-      const logger = {
-        debug: debugMock,
-        info: vi.fn(),
-        warn: vi.fn(),
-        error: vi.fn(),
-      };
+      const logger = mockLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'debug';
       const client = new XTwitterScraper({
@@ -244,17 +216,11 @@ describe('instantiate client', () => {
       });
 
       await forceAPIResponseForClient(client);
-      expect(debugMock).not.toHaveBeenCalled();
+      expect(logger.debug).not.toHaveBeenCalled();
     });
 
     test('no warning logged for invalid env var level + valid client level', () => {
-      const warnMock = vi.fn();
-      const logger = {
-        debug: vi.fn(),
-        info: vi.fn(),
-        warn: warnMock,
-        error: vi.fn(),
-      };
+      const logger = mockLogger();
 
       process.env['X_TWITTER_SCRAPER_LOG'] = 'not a log level';
       const client = new XTwitterScraper({
@@ -264,7 +230,7 @@ describe('instantiate client', () => {
         bearerToken: 'My Bearer Token',
       });
       expect(client.logLevel).toBe('debug');
-      expect(warnMock).not.toHaveBeenCalled();
+      expect(logger.warn).not.toHaveBeenCalled();
     });
   });
 
@@ -657,6 +623,29 @@ describe('default encoder', () => {
 });
 
 describe('retries', () => {
+  const retriedTwice = (defaultHeaders?: Record<string, string | null>) => {
+    let count = 0;
+    let captured: RequestInit | undefined;
+    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
+      count++;
+      if (count <= 2) {
+        return Promise.resolve(new Response(undefined, { status: 429, headers: { 'Retry-After': '0.1' } }));
+      }
+      captured = init;
+      return Promise.resolve(
+        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
+      );
+    };
+    const client = new XTwitterScraper({
+      apiKey: 'My API Key',
+      bearerToken: 'My Bearer Token',
+      fetch: testFetch,
+      maxRetries: 4,
+      ...(defaultHeaders === undefined ? {} : { defaultHeaders }),
+    });
+    return { client, capturedRequest: () => captured, count: () => count };
+  };
+
   test('retry on timeout', async () => {
     let count = 0;
     const testFetch = async (
@@ -692,65 +681,16 @@ describe('retries', () => {
   });
 
   test('retry count header', async () => {
-    let count = 0;
-    let capturedRequest: RequestInit | undefined;
-    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
-      count++;
-      if (count <= 2) {
-        return Promise.resolve(
-          new Response(undefined, {
-            status: 429,
-            headers: {
-              'Retry-After': '0.1',
-            },
-          }),
-        );
-      }
-      capturedRequest = init;
-      return Promise.resolve(
-        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
-      );
-    };
-
-    const client = new XTwitterScraper({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-      maxRetries: 4,
-    });
+    const { client, capturedRequest, count } = retriedTwice();
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
 
-    expect(headersOf(capturedRequest).get('x-stainless-retry-count')).toEqual('2');
-    expect(count).toEqual(3);
+    expect(headersOf(capturedRequest()).get('x-stainless-retry-count')).toEqual('2');
+    expect(count()).toEqual(3);
   });
 
   test('omit retry count header', async () => {
-    let count = 0;
-    let capturedRequest: RequestInit | undefined;
-    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
-      count++;
-      if (count <= 2) {
-        return Promise.resolve(
-          new Response(undefined, {
-            status: 429,
-            headers: {
-              'Retry-After': '0.1',
-            },
-          }),
-        );
-      }
-      capturedRequest = init;
-      return Promise.resolve(
-        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
-      );
-    };
-    const client = new XTwitterScraper({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-      maxRetries: 4,
-    });
+    const { client, capturedRequest } = retriedTwice();
 
     expect(
       await client.request({
@@ -760,36 +700,11 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect(headersOf(capturedRequest).has('x-stainless-retry-count')).toBe(false);
+    expect(headersOf(capturedRequest()).has('x-stainless-retry-count')).toBe(false);
   });
 
   test('omit retry count header by default', async () => {
-    let count = 0;
-    let capturedRequest: RequestInit | undefined;
-    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
-      count++;
-      if (count <= 2) {
-        return Promise.resolve(
-          new Response(undefined, {
-            status: 429,
-            headers: {
-              'Retry-After': '0.1',
-            },
-          }),
-        );
-      }
-      capturedRequest = init;
-      return Promise.resolve(
-        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
-      );
-    };
-    const client = new XTwitterScraper({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-      maxRetries: 4,
-      defaultHeaders: { 'X-Stainless-Retry-Count': null },
-    });
+    const { client, capturedRequest } = retriedTwice({ 'X-Stainless-Retry-Count': null });
 
     expect(
       await client.request({
@@ -798,35 +713,11 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect(headersOf(capturedRequest)).not.toHaveProperty('x-stainless-retry-count');
+    expect(headersOf(capturedRequest())).not.toHaveProperty('x-stainless-retry-count');
   });
 
   test('overwrite retry count header', async () => {
-    let count = 0;
-    let capturedRequest: RequestInit | undefined;
-    const testFetch = (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
-      count++;
-      if (count <= 2) {
-        return Promise.resolve(
-          new Response(undefined, {
-            status: 429,
-            headers: {
-              'Retry-After': '0.1',
-            },
-          }),
-        );
-      }
-      capturedRequest = init;
-      return Promise.resolve(
-        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
-      );
-    };
-    const client = new XTwitterScraper({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-      maxRetries: 4,
-    });
+    const { client, capturedRequest } = retriedTwice();
 
     expect(
       await client.request({
@@ -836,56 +727,17 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect(headersOf(capturedRequest).get('x-stainless-retry-count')).toEqual('42');
+    expect(headersOf(capturedRequest()).get('x-stainless-retry-count')).toEqual('42');
   });
 
-  test('retry on 429 with retry-after', async () => {
+  test.each([
+    ['retry-after', 'Retry-After', '0.1'],
+    ['retry-after-ms', 'Retry-After-Ms', '10'],
+  ])('retry on 429 with %s', async (_name, header, value) => {
     let count = 0;
     const testFetch = (): Promise<Response> => {
       if (count++ === 0) {
-        return Promise.resolve(
-          new Response(undefined, {
-            status: 429,
-            headers: {
-              'Retry-After': '0.1',
-            },
-          }),
-        );
-      }
-      return Promise.resolve(
-        new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),
-      );
-    };
-
-    const client = new XTwitterScraper({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-    });
-
-    expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
-    expect(count).toEqual(2);
-    expect(
-      await client
-        .request({ path: '/foo', method: 'get' })
-        .asResponse()
-        .then((r) => r.text()),
-    ).toEqual(JSON.stringify({ a: 1 }));
-    expect(count).toEqual(3);
-  });
-
-  test('retry on 429 with retry-after-ms', async () => {
-    let count = 0;
-    const testFetch = (): Promise<Response> => {
-      if (count++ === 0) {
-        return Promise.resolve(
-          new Response(undefined, {
-            status: 429,
-            headers: {
-              'Retry-After-Ms': '10',
-            },
-          }),
-        );
+        return Promise.resolve(new Response(undefined, { status: 429, headers: { [header]: value } }));
       }
       return Promise.resolve(
         new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } }),

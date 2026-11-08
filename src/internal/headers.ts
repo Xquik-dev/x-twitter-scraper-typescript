@@ -82,8 +82,3 @@ export const buildHeaders = (newHeaders: HeadersLike[]): NullableHeaders => {
   }
   return { [brand_privateNullableHeaders]: true, values: targetHeaders, nulls: nullHeaders };
 };
-
-export const isEmptyHeaders = (headers: HeadersLike) => {
-  for (const _ of iterateHeaders(headers)) return false;
-  return true;
-};

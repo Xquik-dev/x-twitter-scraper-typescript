@@ -26,6 +26,10 @@
 - `client.x.users.retrieveFollowerAudit` reads an account's newest followers and returns a `FollowerAudit`. Each follower gets 1 `FollowerClass` with its score & signals, and the report adds coverage, a quality grade, arrival bands, join cohorts, languages, places, top followers & the account's insights. Each follower read costs 1 credit, and the insights add 1.
 - `Error.requiredScope` names the scope an API key needs when the API answers `insufficient_scope`, as `write`, `monitors`, `exports`, `billing` or `full`.
 
+### BREAKING CHANGES
+
+- `require('x-twitter-scraper')` returns the package's exports, as its types always said. It's no longer a function, so calling it or using it with `new` fails. Use `new XTwitterScraper(options)` with `XTwitterScraper` from `require('x-twitter-scraper')`.
+
 ### Changes
 
 - `fetchOptions` takes the options your runtime's global `fetch` accepts. Its type no longer changes with how your packages are installed.
@@ -46,6 +50,7 @@
 - `defaultHeaders` given as a `Headers` object or as header pairs were dropped when `X_TWITTER_SCRAPER_CUSTOM_HEADERS` was set. The client now sends both.
 - A negative `maxRetries` retried a failed request without end. The client now treats it as 0.
 - A `symbol` value in a multipart form threw a `TypeError` while the SDK built its error message. It now fails with the SDK's own message, which names the value.
+- A subpath that ends in `.js` or `.mjs`, such as `x-twitter-scraper/client.js`, loads the ES module build for `import` and the CommonJS build for `require`. Each subpath now gives the same classes as the package root in both module systems.
 
 ### Chores
 

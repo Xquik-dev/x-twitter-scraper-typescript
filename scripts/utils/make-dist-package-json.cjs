@@ -3,16 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const fs = require('fs');
-const asObject = require('./json.cjs').asObject;
-const parseJson = require('./json.cjs').parseJson;
+const { asObject, parseJson } = require('./json.cjs');
 
-const pkgPath = process.env['PKG_JSON_PATH'];
-const pkgFile = parseJson(
-  fs.readFileSync(
-    require.resolve(pkgPath !== undefined && pkgPath !== '' ? pkgPath : '../../package.json'),
-    'utf8',
-  ),
-);
+const pkgFile = parseJson(fs.readFileSync(require.resolve('../../package.json'), 'utf8'));
 const pkgJson = asObject(pkgFile);
 if (pkgJson === undefined) throw new Error('package.json does not hold an object');
 

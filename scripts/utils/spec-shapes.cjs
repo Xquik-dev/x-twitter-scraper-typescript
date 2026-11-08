@@ -2,11 +2,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const CheckError = require('./api-spec.cjs').CheckError;
-const asObject = require('./json.cjs').asObject;
-const shapes = require('./shapes.cjs');
-
-const { intersect, leaf, object, prop } = shapes;
+const { CheckError } = require('./api-spec.cjs');
+const { asObject } = require('./json.cjs');
+const { intersect, leaf, object, prop } = require('./shapes.cjs');
 
 const bodyTypes = new Set(['application/json', 'multipart/form-data', 'application/x-www-form-urlencoded']);
 const ignoredRefSiblings = new Set([

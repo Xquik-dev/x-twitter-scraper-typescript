@@ -4,8 +4,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const api = require('./api-spec.cjs');
-
 const {
   CheckError,
   comparable,
@@ -15,7 +13,7 @@ const {
   readExclusions,
   runCheck,
   specOperations,
-} = api;
+} = require('./api-spec.cjs');
 
 const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
 const clientMember = /this\._client\s*(?:\?\.|\.|\[)/g;

@@ -3,11 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const path = require('path');
-const api = require('./api-spec.cjs');
-const compareOperation = require('./shapes.cjs').compareOperation;
-const SpecShapes = require('./spec-shapes.cjs').SpecShapes;
-const sdkShapes = require('./sdk-shapes.cjs').sdkShapes;
-
 const {
   CheckError,
   comparable,
@@ -18,7 +13,10 @@ const {
   readGroups,
   runCheck,
   specOperations,
-} = api;
+} = require('./api-spec.cjs');
+const { compareOperation } = require('./shapes.cjs');
+const { SpecShapes } = require('./spec-shapes.cjs');
+const { sdkShapes } = require('./sdk-shapes.cjs');
 
 const root = path.resolve(process.argv[2] ?? path.join(__dirname, '..', '..'));
 const acceptedFile = 'accepted-field-differences.json';

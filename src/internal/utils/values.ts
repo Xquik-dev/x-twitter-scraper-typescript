@@ -12,7 +12,7 @@ export const isAbsoluteURL = (url: string): boolean => {
 };
 
 export let isArray = (val: unknown): val is unknown[] => ((isArray = Array.isArray), isArray(val));
-export const isReadonlyArray: (val: unknown) => val is readonly unknown[] = isArray;
+export const isReadonlyArray = (val: unknown): val is readonly unknown[] => Array.isArray(val);
 
 export const isPresent = <T>(value: T): value is NonNullable<T> => value !== null && value !== undefined;
 
