@@ -2,4 +2,4 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-export type ReadableStream<R = any> = globalThis.ReadableStream<R>;
+export type ReadableStream<R = unknown> = globalThis.ReadableStream<R>;

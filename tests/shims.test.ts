@@ -80,7 +80,9 @@ describe('runtime shims', () => {
       getReader: () => ({
         read: async () => {
           reads += 1;
-          return reads === 1 ? { done: false, value: 'value' } : { done: true, value: undefined };
+          return reads === 1 ?
+              ({ done: false, value: 'value' } as const)
+            : ({ done: true, value: undefined } as const);
         },
         cancel: async () => undefined,
         releaseLock: () => {

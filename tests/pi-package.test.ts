@@ -35,12 +35,12 @@ type SkillMetadata = {
 
 const packageRoot = resolve(__dirname, '..');
 
-const manifest = JSON.parse(readFileSync(resolve(packageRoot, 'package.json'), 'utf8')) as PackageManifest;
+const manifest: PackageManifest = JSON.parse(readFileSync(resolve(packageRoot, 'package.json'), 'utf8'));
 const skillRoot = resolve(packageRoot, 'skills/x-twitter-scraper');
 const skill = readFileSync(resolve(skillRoot, 'SKILL.md'), 'utf8');
 const researchSkill = readFileSync(resolve(packageRoot, 'skills/xquik-social-research/SKILL.md'), 'utf8');
 const accountSkill = readFileSync(resolve(packageRoot, 'skills/xquik-account-automation/SKILL.md'), 'utf8');
-const skillMetadata = JSON.parse(readFileSync(resolve(skillRoot, 'metadata.json'), 'utf8')) as SkillMetadata;
+const skillMetadata: SkillMetadata = JSON.parse(readFileSync(resolve(skillRoot, 'metadata.json'), 'utf8'));
 const mcpSetup = readFileSync(resolve(skillRoot, 'references/mcp-setup.md'), 'utf8');
 const mcpTools = readFileSync(resolve(skillRoot, 'references/mcp-tools.md'), 'utf8');
 const skillSpectorReport = readFileSync(resolve(skillRoot, 'skillspector-report.md'), 'utf8');

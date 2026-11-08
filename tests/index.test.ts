@@ -7,6 +7,12 @@ import { APIPromise } from 'x-twitter-scraper/core/api-promise';
 import util from 'node:util';
 import XTwitterScraper from 'x-twitter-scraper';
 import { APIUserAbortError } from 'x-twitter-scraper';
+
+const headersOf = (init: RequestInit | undefined): Headers => {
+  const headers = init?.headers;
+  if (headers instanceof Headers) return headers;
+  throw new Error('Expected the request to carry a Headers object');
+};
 const defaultFetch = fetch;
 
 describe('instantiate client', () => {
@@ -53,6 +59,20 @@ describe('instantiate client', () => {
     });
   });
 
+  test('an API promise resolves through Promise.all, Promise.resolve and finally', async () => {
+    const client = new XTwitterScraper({
+      apiKey: 'My API Key',
+      bearerToken: null,
+      fetch: async () => Response.json({ ok: true }),
+    });
+
+    const [fromAll] = await Promise.all([client.get('/foo')]);
+
+    expect(fromAll).toEqual({ ok: true });
+    await expect(Promise.resolve(client.get('/foo'))).resolves.toEqual({ ok: true });
+    expect(await client.get('/foo').finally(() => undefined)).toEqual({ ok: true });
+  });
+
   test('requests name the SDK in X-Xquik-SDK and keep the language header', async () => {
     let capturedRequest: RequestInit | undefined;
     const testFetch = async (_url: string | URL | Request, init: RequestInit = {}): Promise<Response> => {
@@ -67,7 +87,7 @@ describe('instantiate client', () => {
 
     await client.request({ path: '/foo', method: 'get' });
 
-    const headers = capturedRequest!.headers as Headers;
+    const headers = headersOf(capturedRequest);
     expect(headers.get('x-xquik-sdk')).toEqual('js');
     expect(headers.get('x-stainless-lang')).toEqual('js');
   });
@@ -494,6 +514,25 @@ describe('instantiate client', () => {
 
       expect(newClient.buildURL('/bar', null)).toEqual('http://localhost:6000/bar');
     });
+
+    test('keeps the subclass of the parent client', () => {
+      class Subclient extends XTwitterScraper {}
+      const client = new Subclient({ apiKey: 'My API Key', bearerToken: null });
+
+      expect(client.withOptions({ maxRetries: 1 })).toBeInstanceOf(Subclient);
+    });
+
+    test('rejects a subclass whose constructor returns another class', () => {
+      class Forwarding extends XTwitterScraper {
+        constructor(options: ConstructorParameters<typeof XTwitterScraper>[0]) {
+          super(options);
+          if (options?.maxRetries === 1) return new XTwitterScraper(options);
+        }
+      }
+      const client = new Forwarding({ apiKey: 'My API Key', bearerToken: null });
+
+      expect(() => client.withOptions({ maxRetries: 1 })).toThrow(XTwitterScraper.XTwitterScraperError);
+    });
   });
 
   test('with environment variable arguments', () => {
@@ -662,7 +701,7 @@ describe('retries', () => {
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
 
-    expect((capturedRequest!.headers as Headers).get('x-stainless-retry-count')).toEqual('2');
+    expect(headersOf(capturedRequest).get('x-stainless-retry-count')).toEqual('2');
     expect(count).toEqual(3);
   });
 
@@ -697,7 +736,7 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect((capturedRequest!.headers as Headers).has('x-stainless-retry-count')).toBe(false);
+    expect(headersOf(capturedRequest).has('x-stainless-retry-count')).toBe(false);
   });
 
   test('omit retry count header by default', async () => {
@@ -731,7 +770,7 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect(capturedRequest!.headers as Headers).not.toHaveProperty('x-stainless-retry-count');
+    expect(headersOf(capturedRequest)).not.toHaveProperty('x-stainless-retry-count');
   });
 
   test('overwrite retry count header', async () => {
@@ -765,7 +804,7 @@ describe('retries', () => {
       }),
     ).toEqual({ a: 1 });
 
-    expect((capturedRequest!.headers as Headers).get('x-stainless-retry-count')).toEqual('42');
+    expect(headersOf(capturedRequest).get('x-stainless-retry-count')).toEqual('42');
   });
 
   test('retry on 429 with retry-after', async () => {

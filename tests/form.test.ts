@@ -4,6 +4,7 @@
 
 import { multipartFormRequestOptions, createForm } from 'x-twitter-scraper/internal/uploads';
 import { toFile } from 'x-twitter-scraper/core/uploads';
+import { formFile } from './form-file';
 
 describe('form data validation', () => {
   test('valid values do not error', async () => {
@@ -32,6 +33,25 @@ describe('form data validation', () => {
         fetch,
       ),
     ).rejects.toThrow(TypeError);
+  });
+
+  test('a streamed file with a chunk that is not a Uint8Array fails with a TypeError', async () => {
+    async function* chunks(): AsyncGenerator<unknown> {
+      yield new Uint8Array([1]);
+      yield 'two';
+    }
+
+    await expect(createForm({ file: chunks() }, fetch)).rejects.toThrow(TypeError);
+  });
+
+  test('a streamed file of Uint8Array chunks keeps its bytes', async () => {
+    async function* chunks(): AsyncGenerator<Uint8Array> {
+      yield new Uint8Array([1, 2]);
+      yield new Uint8Array([3]);
+    }
+
+    const file = formFile((await createForm({ file: chunks() }, fetch)).get('file'));
+    expect([...new Uint8Array(await file.arrayBuffer())]).toEqual([1, 2, 3]);
   });
 
   test('undefined is stripped', async () => {

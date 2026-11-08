@@ -10,6 +10,7 @@ import { ReadableStreamToAsyncIterable } from '../internal/shims';
 import { isAbortError } from '../internal/errors';
 import { encodeUTF8 } from '../internal/utils/bytes';
 import { loggerFor } from '../internal/utils/log';
+import { readGlobal, readProperty } from '../internal/utils/globals';
 import type { XTwitterScraper } from '../client';
 
 type Bytes = string | ArrayBuffer | Uint8Array | null | undefined;
@@ -41,7 +42,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
     let consumed = false;
     const logger = client ? loggerFor(client) : console;
 
-    async function* iterator(): AsyncIterator<Item, any, undefined> {
+    async function* iterator(): AsyncIterator<Item, void, undefined> {
       if (consumed) {
         throw new XTwitterScraperError(
           'Cannot iterate over a consumed stream, use `.tee()` to split the stream.',
@@ -78,7 +79,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
    * where each item is a JSON value.
    */
   static fromReadableStream<Item>(
-    readableStream: ReadableStream,
+    readableStream: ReadableStream<Bytes>,
     controller: AbortController,
     client?: XTwitterScraper,
   ): Stream<Item> {
@@ -99,7 +100,7 @@ export class Stream<Item> implements AsyncIterable<Item> {
       }
     }
 
-    async function* iterator(): AsyncIterator<Item, any, undefined> {
+    async function* iterator(): AsyncIterator<Item, void, undefined> {
       if (consumed) {
         throw new XTwitterScraperError(
           'Cannot iterate over a consumed stream, use `.tee()` to split the stream.',
@@ -137,22 +138,24 @@ export class Stream<Item> implements AsyncIterable<Item> {
     const right: Array<Promise<IteratorResult<Item>>> = [];
     const iterator = this.iterator();
 
-    const teeIterator = (queue: Array<Promise<IteratorResult<Item>>>): AsyncIterator<Item> => {
+    const teeIterator = (
+      queue: Array<Promise<IteratorResult<Item>>>,
+      other: Array<Promise<IteratorResult<Item>>>,
+    ): AsyncIterator<Item> => {
       return {
         next: () => {
-          if (queue.length === 0) {
-            const result = iterator.next();
-            left.push(result);
-            right.push(result);
-          }
-          return queue.shift()!;
+          const queued = queue.shift();
+          if (queued) return queued;
+          const result = iterator.next();
+          other.push(result);
+          return result;
         },
       };
     };
 
     return [
-      new Stream(() => teeIterator(left), this.controller, this.#client),
-      new Stream(() => teeIterator(right), this.controller, this.#client),
+      new Stream(() => teeIterator(left, right), this.controller, this.#client),
+      new Stream(() => teeIterator(right, left), this.controller, this.#client),
     ];
   }
 
@@ -161,15 +164,11 @@ export class Stream<Item> implements AsyncIterable<Item> {
    * JSON stringified values in the stream
    * which can be turned back into a Stream with `Stream.fromReadableStream()`.
    */
-  toReadableStream(): ReadableStream {
-    const self = this;
-    let iter: AsyncIterator<Item>;
+  toReadableStream(): ReadableStream<Uint8Array> {
+    const iter = this[Symbol.asyncIterator]();
 
-    return makeReadableStream({
-      async start() {
-        iter = self[Symbol.asyncIterator]();
-      },
-      async pull(ctrl: any) {
+    return makeReadableStream<Uint8Array>({
+      async pull(ctrl) {
         try {
           const { value, done } = await iter.next();
           if (done) return ctrl.close();
@@ -194,10 +193,7 @@ export async function* _iterSSEMessages(
 ): AsyncGenerator<ServerSentEvent, void, unknown> {
   if (!response.body) {
     controller.abort();
-    if (
-      typeof (globalThis as any).navigator !== 'undefined' &&
-      (globalThis as any).navigator.product === 'ReactNative'
-    ) {
+    if (readProperty(readGlobal('navigator'), 'product') === 'ReactNative') {
       throw new XTwitterScraperError(
         `The default react-native fetch implementation does not support streaming. Please use expo/fetch: https://docs.expo.dev/versions/latest/sdk/expo/#expofetch-api`,
       );
@@ -222,7 +218,7 @@ export async function* _iterSSEMessages(
   }
 }
 
-async function* iterSSEChunks(iterator: AsyncIterableIterator<Bytes>): AsyncGenerator<Uint8Array> {
+async function* iterSSEChunks(iterator: AsyncIterable<Bytes>): AsyncGenerator<Uint8Array> {
   let data = new Uint8Array();
 
   for await (const chunk of iterator) {

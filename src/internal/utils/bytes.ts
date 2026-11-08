@@ -17,20 +17,26 @@ export function concatBytes(buffers: Uint8Array[]): Uint8Array {
   return output;
 }
 
-let encodeUTF8_: (str: string) => Uint8Array;
-export function encodeUTF8(str: string) {
-  let encoder;
-  return (
-    encodeUTF8_ ??
-    ((encoder = new (globalThis as any).TextEncoder()), (encodeUTF8_ = encoder.encode.bind(encoder)))
-  )(str);
+export function arrayBufferBytes(view: ArrayBufferView): Uint8Array<ArrayBuffer> {
+  return view.buffer instanceof ArrayBuffer ?
+      new Uint8Array(view.buffer, view.byteOffset, view.byteLength)
+    : new Uint8Array(view.buffer, view.byteOffset, view.byteLength).slice();
 }
 
-let decodeUTF8_: (bytes: Uint8Array) => string;
+let encodeUTF8_: ((str: string) => Uint8Array) | undefined;
+export function encodeUTF8(str: string) {
+  if (!encodeUTF8_) {
+    const encoder = new globalThis.TextEncoder();
+    encodeUTF8_ = encoder.encode.bind(encoder);
+  }
+  return encodeUTF8_(str);
+}
+
+let decodeUTF8_: ((bytes: Uint8Array) => string) | undefined;
 export function decodeUTF8(bytes: Uint8Array) {
-  let decoder;
-  return (
-    decodeUTF8_ ??
-    ((decoder = new (globalThis as any).TextDecoder()), (decodeUTF8_ = decoder.decode.bind(decoder)))
-  )(bytes);
+  if (!decodeUTF8_) {
+    const decoder = new globalThis.TextDecoder();
+    decodeUTF8_ = decoder.decode.bind(decoder);
+  }
+  return decodeUTF8_(bytes);
 }

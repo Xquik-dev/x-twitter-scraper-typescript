@@ -4,6 +4,7 @@
 
 import XTwitterScraper from 'x-twitter-scraper';
 import { fixtureClient } from '../fixture-client';
+import { monitorPost } from '../monitor-post';
 
 const client = new XTwitterScraper({
   apiKey: 'My API Key',
@@ -157,7 +158,7 @@ describe('resource events', () => {
     const { client: fixture } = fixtureClient(example);
 
     const response: XTwitterScraper.EventDetail = await fixture.events.retrieve('42');
-    const data = response.data as XTwitterScraper.EventDetail.MonitorPost;
+    const data = monitorPost(response.data);
     const createdAt: string | undefined = data.retweeted_tweet?.createdAt;
 
     expect(response).toEqual(example);

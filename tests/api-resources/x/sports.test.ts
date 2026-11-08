@@ -874,7 +874,7 @@ describe('resource sports', () => {
       'GET https://xquik.test/api/v1/x/sports/nfl/games?from=2026-10-01&to=2026-10-08&team=689566294702555136',
     ]);
     expect(response).toEqual(schedule);
-    expect(response.teams['689566294702555136']!.abbreviation).toBe('SF');
+    expect(response.teams['689566294702555136']?.abbreviation).toBe('SF');
   });
 
   test('retrieveScoreboard reads 1 game', async () => {
@@ -889,7 +889,7 @@ describe('resource sports', () => {
       'GET https://xquik.test/api/v1/x/sports/nfl/games/2055084502741811200?fields=id%2Chome',
     ]);
     expect(response.home.timeoutsLeft).toBe(2);
-    expect(response.lastPlay!.id).toBe('170');
+    expect(response.lastPlay?.id).toBe('170');
   });
 
   test('retrieveBoxScore reads team & player stats', async () => {
@@ -900,8 +900,8 @@ describe('resource sports', () => {
     expect(requests).toEqual([
       'GET https://xquik.test/api/v1/x/sports/ncaafb/games/2055084502741811200/box-score',
     ]);
-    expect(response.home.totals!.thirdDowns).toEqual({ attempts: 14, successes: 7 });
-    expect(response.home.players[0]!.passing!.yards).toBe(264);
+    expect(response.home.totals?.thirdDowns).toEqual({ attempts: 14, successes: 7 });
+    expect(response.home.players[0]?.passing?.yards).toBe(264);
   });
 
   test('retrievePlays reads drives & plays', async () => {
@@ -915,7 +915,7 @@ describe('resource sports', () => {
     expect(requests).toEqual([
       'GET https://xquik.test/api/v1/x/sports/nfl/games/2055084502741811200/plays?omit=players',
     ]);
-    expect(response.quarters[0]!.drives[0]!.plays[0]!.type).toBe('Pass');
+    expect(response.quarters[0]?.drives[0]?.plays[0]?.type).toBe('Pass');
   });
 
   test('retrieveAudience reads viewers, team picks & chat', async () => {
@@ -932,7 +932,7 @@ describe('resource sports', () => {
     expect(response.viewers?.count).toBe(155);
     expect(response.teamPicks.teams.map((pick) => pick.count)).toEqual([4998, 2978]);
     expect(response.chat.opensIn).toEqual({ days: 0, hours: 12, minutes: 2 });
-    expect(response.teams['689566294702555136']!.record).toBeNull();
+    expect(response.teams['689566294702555136']?.record).toBeNull();
   });
 
   test("retrieveRoster reads both teams' players", async () => {

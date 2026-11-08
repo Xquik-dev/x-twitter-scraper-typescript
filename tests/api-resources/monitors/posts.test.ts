@@ -72,7 +72,7 @@ describe('resource posts', () => {
     });
 
     expect(requests).toEqual(['POST https://xquik.test/api/v1/monitors/posts']);
-    expect(await sent[0]!.json()).toEqual({
+    expect(await sent[0]?.json()).toEqual({
       post: 'https://x.com/xquik/status/2104984505677430978',
       name: 'Launch post',
       eventTypes: ['post.reply.new', 'post.likes.changed'],
@@ -97,7 +97,7 @@ describe('resource posts', () => {
     const response = await client.monitors.posts.update('31', { isActive: false, name: null });
 
     expect(requests).toEqual(['PATCH https://xquik.test/api/v1/monitors/posts/31']);
-    expect(await sent[0]!.json()).toEqual({ isActive: false, name: null });
+    expect(await sent[0]?.json()).toEqual({ isActive: false, name: null });
     expect(response.id).toBe('31');
   });
 
@@ -170,7 +170,7 @@ describe('resource posts', () => {
     const response = await client.monitors.posts.retrieveMetrics('31', { hours: 12 });
 
     expect(requests).toEqual(['GET https://xquik.test/api/v1/monitors/posts/31/metrics?hours=12']);
-    expect(response.buckets[0]!.metrics.views).toEqual({ value: 541600, gain: 500 });
+    expect(response.buckets[0]?.metrics.views).toEqual({ value: 541600, gain: 500 });
   });
 
   test('events filter by post monitor & carry the post', async () => {

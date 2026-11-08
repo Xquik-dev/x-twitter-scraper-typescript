@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { fixtureClient } from './fixture-client';
+import { ensurePresent } from 'x-twitter-scraper/internal/utils/values';
 
 describe('API fields added on 2026-11-04', () => {
   test('exportResults sends the account filters and the compare run', async () => {
@@ -20,7 +21,7 @@ describe('API fields added on 2026-11-04', () => {
       location: 'Berlin',
     });
 
-    const query = new URL(sent[0]!.url).searchParams;
+    const query = new URL(ensurePresent(sent[0]).url).searchParams;
     expect(Object.fromEntries(query)).toEqual({
       format: 'csv',
       compare: 'run-0',
@@ -49,9 +50,9 @@ describe('API fields added on 2026-11-04', () => {
       textOnlyTerms: 'rocket',
     });
 
-    expect(new URL(sent[0]!.url).searchParams.get('textOnlyTerms')).toBe('rocket');
-    expect(await sent[1]!.json()).toMatchObject({ textOnlyTerms: 'rocket' });
-    expect(await sent[2]!.json()).toMatchObject({ textOnlyTerms: 'rocket' });
+    expect(new URL(ensurePresent(sent[0]).url).searchParams.get('textOnlyTerms')).toBe('rocket');
+    expect(await sent[1]?.json()).toMatchObject({ textOnlyTerms: 'rocket' });
+    expect(await sent[2]?.json()).toMatchObject({ textOnlyTerms: 'rocket' });
   });
 });
 

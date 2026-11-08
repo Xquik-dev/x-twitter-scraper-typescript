@@ -5,6 +5,7 @@
 import type { RequestInit, RequestInfo, BodyInit } from './internal/builtin-types';
 import type { HTTPMethod, PromiseOrValue, MergedRequestInit, FinalizedRequestInit } from './internal/types';
 import { uuid4 } from './internal/utils/uuid';
+import { arrayBufferBytes } from './internal/utils/bytes';
 import { validatePositiveInteger, isAbsoluteURL, safeJSON } from './internal/utils/values';
 import { sleep } from './internal/utils/sleep';
 export type { Logger, LogLevel } from './internal/utils/log';
@@ -301,14 +302,15 @@ export class XTwitterScraper {
     bearerToken = readEnv('X_TWITTER_SCRAPER_BEARER_TOKEN') ?? null,
     ...opts
   }: ClientOptions = {}) {
+    const resolvedBaseURL = baseURL || DEFAULT_BASE_URL;
     const options: ClientOptions = {
       apiKey,
       bearerToken,
       ...opts,
-      baseURL: baseURL || DEFAULT_BASE_URL,
+      baseURL: resolvedBaseURL,
     };
 
-    this.baseURL = options.baseURL!;
+    this.baseURL = resolvedBaseURL;
     this.timeout = options.timeout ?? XTwitterScraper.DEFAULT_TIMEOUT;
     this.logger = options.logger ?? console;
     const defaultLogLevel = 'warn';
@@ -344,20 +346,31 @@ export class XTwitterScraper {
    * Create a new client instance re-using the same options given to the current client with optional overriding.
    */
   withOptions(options: Partial<ClientOptions>): this {
-    const client = new (this.constructor as any as new (props: ClientOptions) => typeof this)({
-      ...this._options,
-      baseURL: this.baseURL,
-      maxRetries: this.maxRetries,
-      timeout: this.timeout,
-      logger: this.logger,
-      logLevel: this.logLevel,
-      fetch: this.fetch,
-      fetchOptions: this.fetchOptions,
-      apiKey: this.apiKey,
-      bearerToken: this.bearerToken,
-      ...options,
-    });
+    const client: unknown = Reflect.construct(this.constructor, [
+      {
+        ...this._options,
+        baseURL: this.baseURL,
+        maxRetries: this.maxRetries,
+        timeout: this.timeout,
+        logger: this.logger,
+        logLevel: this.logLevel,
+        fetch: this.fetch,
+        fetchOptions: this.fetchOptions,
+        apiKey: this.apiKey,
+        bearerToken: this.bearerToken,
+        ...options,
+      },
+    ]);
+    if (!this.#isSameClient(client)) {
+      throw new Errors.XTwitterScraperError(
+        'The client constructor did not return an instance of its own class.',
+      );
+    }
     return client;
+  }
+
+  #isSameClient(value: unknown): value is this {
+    return value instanceof this.constructor;
   }
 
   #baseURLOverridden(): boolean {
@@ -426,18 +439,14 @@ export class XTwitterScraper {
 
   protected makeStatusError(
     status: number,
-    error: Object,
+    error: Object | undefined,
     message: string | undefined,
     headers: Headers,
   ): Errors.APIError {
     return Errors.APIError.generate(status, error, message, headers);
   }
 
-  buildURL(
-    path: string,
-    query: Record<string, unknown> | null | undefined,
-    defaultBaseURL?: string | undefined,
-  ): string {
+  buildURL(path: string, query: object | null | undefined, defaultBaseURL?: string | undefined): string {
     const baseURL = (!this.#baseURLOverridden() && defaultBaseURL) || this.baseURL;
     const url =
       isAbsoluteURL(path) ?
@@ -619,8 +628,8 @@ export class XTwitterScraper {
 
       loggerFor(this).info(`${responseInfo} - ${retryMessage}`);
 
-      const errText = await response.text().catch((err: any) => castToError(err).message);
-      const errJSON = safeJSON(errText) as any;
+      const errText = await response.text().catch((err: unknown) => castToError(err).message);
+      const errJSON = safeJSON(errText);
       const errMessage = errJSON ? undefined : errText;
 
       loggerFor(this).debug(
@@ -635,7 +644,7 @@ export class XTwitterScraper {
         }),
       );
 
-      const err = this.makeStatusError(response.status, errJSON, errMessage, response.headers);
+      const err = this.makeStatusError(response.status, errJSON ?? undefined, errMessage, response.headers);
       throw err;
     }
 
@@ -667,11 +676,11 @@ export class XTwitterScraper {
     const timeout = setTimeout(abort, ms);
 
     const isReadableBody =
-      ((globalThis as any).ReadableStream && options.body instanceof (globalThis as any).ReadableStream) ||
+      (typeof ReadableStream === 'function' && options.body instanceof ReadableStream) ||
       (typeof options.body === 'object' && options.body !== null && Symbol.asyncIterator in options.body);
 
     const fetchOptions: RequestInit = {
-      signal: controller.signal as any,
+      signal: controller.signal,
       ...(isReadableBody ? { duplex: 'half' } : {}),
       method: 'GET',
       ...options,
@@ -761,7 +770,7 @@ export class XTwitterScraper {
     const options = { ...inputOptions };
     const { method, path, query, defaultBaseURL } = options;
 
-    const url = this.buildURL(path!, query as Record<string, unknown>, defaultBaseURL);
+    const url = this.buildURL(path, query, defaultBaseURL);
     if ('timeout' in options) validatePositiveInteger('timeout', options.timeout);
     options.timeout = options.timeout ?? this.timeout;
     const { bodyHeaders, body } = this.buildBody({ options });
@@ -771,11 +780,10 @@ export class XTwitterScraper {
       method,
       headers: reqHeaders,
       ...(options.signal && { signal: options.signal }),
-      ...((globalThis as any).ReadableStream &&
-        body instanceof (globalThis as any).ReadableStream && { duplex: 'half' }),
+      ...(typeof ReadableStream === 'function' && body instanceof ReadableStream && { duplex: 'half' }),
       ...(body && { body }),
-      ...((this.fetchOptions as any) ?? {}),
-      ...((options.fetchOptions as any) ?? {}),
+      ...this.fetchOptions,
+      ...options.fetchOptions,
     };
 
     return { req, url, timeout: options.timeout };
@@ -837,23 +845,24 @@ export class XTwitterScraper {
       return { bodyHeaders: undefined, body: undefined };
     }
     const headers = buildHeaders([rawHeaders]);
+    if (ArrayBuffer.isView(body)) {
+      return { bodyHeaders: undefined, body: arrayBufferBytes(body) };
+    }
     if (
-      ArrayBuffer.isView(body) ||
       body instanceof ArrayBuffer ||
-      body instanceof DataView ||
       (typeof body === 'string' && headers.values.has('content-type')) ||
-      ((globalThis as any).Blob && body instanceof (globalThis as any).Blob) ||
+      (typeof Blob === 'function' && body instanceof Blob) ||
       body instanceof FormData ||
       body instanceof URLSearchParams ||
-      ((globalThis as any).ReadableStream && body instanceof (globalThis as any).ReadableStream)
+      (typeof ReadableStream === 'function' && body instanceof ReadableStream)
     ) {
-      return { bodyHeaders: undefined, body: body as BodyInit };
+      return { bodyHeaders: undefined, body };
     } else if (
       typeof body === 'object' &&
-      (Symbol.asyncIterator in body ||
-        (Symbol.iterator in body && 'next' in body && typeof body.next === 'function'))
+      (Shims.isAsyncIterable(body) ||
+        (Shims.isIterable(body) && 'next' in body && typeof body.next === 'function'))
     ) {
-      return { bodyHeaders: undefined, body: Shims.ReadableStreamFrom(body as AsyncIterable<Uint8Array>) };
+      return { bodyHeaders: undefined, body: Shims.ReadableStreamFrom(Shims.uint8ArrayChunks(body)) };
     } else if (
       typeof body === 'object' &&
       headers.values.get('content-type') === 'application/x-www-form-urlencoded'

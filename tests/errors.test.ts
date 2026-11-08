@@ -37,9 +37,9 @@ describe('runtime errors', () => {
     expect.assertions(9);
 
     const local = new Error('local');
-    const remote = runInNewContext(
+    const remote: unknown = runInNewContext(
       "Object.assign(new Error('remote'), { name: 'RemoteError', cause: new Error('cause') })",
-    ) as Error & { cause: Error };
+    );
     const cyclic: Record<string, unknown> = {};
     cyclic['self'] = cyclic;
 
@@ -49,7 +49,7 @@ describe('runtime errors', () => {
     expect(normalizedRemote).not.toBe(remote);
     expect(normalizedRemote.message).toBe('remote');
     expect(normalizedRemote.name).toBe('RemoteError');
-    expect((normalizedRemote as Error & { cause?: Error }).cause?.message).toBe('cause');
+    expect(normalizedRemote.cause).toHaveProperty('message', 'cause');
 
     expect(castToError({ code: 'bad' }).message).toBe('{"code":"bad"}');
     expect(castToError(cyclic).message).toBe('[object Object]');
@@ -110,7 +110,7 @@ describe('API errors', () => {
 
     const generated = APIError.generate(undefined, { reason: 'offline' }, 'request failed', undefined);
     expect(generated).toBeInstanceOf(APIConnectionError);
-    expect((generated as APIConnectionError & { cause?: Error }).cause?.message).toBe('{"reason":"offline"}');
+    expect(generated.cause).toHaveProperty('message', '{"reason":"offline"}');
 
     expect(new APIUserAbortError().message).toBe('Request was aborted.');
     expect(new APIUserAbortError({ message: 'stopped' }).message).toBe('stopped');
@@ -118,7 +118,7 @@ describe('API errors', () => {
     const cause = new Error('offline');
     const connection = new APIConnectionError({ cause });
     expect(connection.message).toBe('Connection error.');
-    expect((connection as APIConnectionError & { cause?: Error }).cause).toBe(cause);
+    expect(connection.cause).toBe(cause);
     expect(new APIConnectionError({ message: 'network failed' }).message).toBe('network failed');
 
     expect(new APIConnectionTimeoutError().message).toBe('Request timed out.');
