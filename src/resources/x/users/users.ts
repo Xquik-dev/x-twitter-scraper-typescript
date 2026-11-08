@@ -116,7 +116,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Returns public profiles for up to 100 user IDs, usernames or profile links. Send
+   * Returns public profiles for user IDs, usernames or profile links. Send
    * ids or usernames, not both. Each returned profile costs 1 credit.
    *
    * @example
@@ -132,7 +132,7 @@ export class Users extends APIResource {
   }
 
   /**
-   * Returns the newest posts of up to 20 users, named by user ID, username or
+   * Returns the newest posts of users named by user ID, username or
    * profile link, in the order named. Send ids or usernames, not both. Each post
    * costs 1 credit. A user in unavailable_ids or unprocessed_ids costs nothing.
    *
@@ -2961,7 +2961,7 @@ export interface UserRetrieveBatchParams {
   hasWebsite?: boolean;
 
   /**
-   * Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
+   * Comma-separated numeric user IDs. Duplicate IDs are ignored while
    * preserving first-seen order.
    */
   ids?: string;
@@ -3019,7 +3019,7 @@ export interface UserRetrieveBatchParams {
 
   /**
    * Comma-separated X usernames, with or without @, or profile links such as
-   * x.com/nasa (1-100 values), in place of ids. A name in another case is the same
+   * x.com/nasa, in place of ids. A name in another case is the same
    * account.
    */
   usernames?: string;
@@ -3047,7 +3047,7 @@ export interface UserRetrieveBatchTweetsParams {
   fields?: string;
 
   /**
-   * Comma-separated numeric user IDs (1-20 values). Duplicate IDs are ignored while
+   * Comma-separated numeric IDs of the users to read posts from. Duplicate IDs are ignored while
    * preserving first-seen order.
    */
   ids?: string;
@@ -3059,14 +3059,14 @@ export interface UserRetrieveBatchTweetsParams {
   omit?: string;
 
   /**
-   * Posts per user (1-20, default 20). Credits can return fewer. Aliases: limit,
+   * Posts per user (1-300, default 20). Credits can return fewer. Aliases: limit,
    * count, max_results, maxItems, max_items & per_page.
    */
   pageSize?: number;
 
   /**
    * Comma-separated X usernames, with or without @, or profile links such as
-   * x.com/nasa (1-20 values), in place of ids. A name in another case is the same
+   * x.com/nasa, in place of ids. A name in another case is the same
    * account.
    */
   usernames?: string;
