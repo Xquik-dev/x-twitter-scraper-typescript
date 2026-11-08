@@ -143,6 +143,29 @@ export class Users extends APIResource {
   }
 
   /**
+   * Reads the newest followers of a public account & returns a follower audit. It
+   * gives each follower 1 class with its score & signals, then adds coverage, a
+   * quality score, signal counts, arrival bands, join cohorts, countries, top
+   * followers & the account's engagement. Each follower read costs 1 credit, and the
+   * engagement adds 1 credit. Signals come from public profiles, so a real person
+   * can match. Older followers may differ from the newest ones.
+   *
+   * @example
+   * ```ts
+   * const response = await client.x.users.retrieveFollowerAudit(
+   *   'id',
+   * );
+   * ```
+   */
+  retrieveFollowerAudit(
+    id: string,
+    query: UserRetrieveFollowerAuditParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<UserRetrieveFollowerAuditResponse> {
+    return this._client.get(path`/x/users/${id}/follower-audit`, { query, ...options });
+  }
+
+  /**
    * Returns the user IDs of the selected user's followers, newest first, up to 5,000
    * a page. Use it when you need IDs only. Each ID costs 1 credit.
    *
@@ -876,6 +899,266 @@ export interface UserRetrieveBatchTweetsResponse {
    * call ran out of time or credits ran out. They cost nothing. Send them again.
    */
   unprocessed_ids: Array<string>;
+}
+
+export interface UserRetrieveFollowerAuditResponse {
+  /**
+   * Report on the followers read. Classes rest on public profile signals, so they
+   * say what a profile looks like, never who runs it.
+   */
+  audit: FollowerAudit;
+}
+
+/**
+ * Report on the followers read. Classes rest on public profile signals, so they say
+ * what a profile looks like, never who runs it.
+ */
+export interface FollowerAudit {
+  /**
+   * The audited account's engagement insights.
+   */
+  account: UserRetrieveInsightsResponse.Insights;
+
+  /**
+   * Likely fake share by position in the newest-first list.
+   */
+  arrivalBands: Array<FollowerAudit.ArrivalBand>;
+
+  /**
+   * How many followers fall in each class.
+   */
+  classes: Array<FollowerAudit.Class>;
+
+  /**
+   * Followers who joined X in the same UTC week.
+   */
+  cohorts: Array<FollowerAudit.Cohort>;
+
+  /**
+   * How many of the account's followers the audit read.
+   */
+  coverage: FollowerAudit.Coverage;
+
+  /**
+   * Each follower the audit read, newest first.
+   */
+  followers: Array<AuditedFollower>;
+
+  /**
+   * How many followers share each profile language.
+   */
+  languages: Array<FollowerValueCount>;
+
+  /**
+   * How many followers share each profile place.
+   */
+  places: Array<FollowerValueCount>;
+
+  /**
+   * The audit's grade & score for the followers read.
+   */
+  quality: FollowerAudit.Quality;
+
+  /**
+   * How many followers match each signal & the points it adds.
+   */
+  signals: Array<FollowerAudit.Signal>;
+
+  /**
+   * The followers the audit ranks highest.
+   */
+  topFollowers: Array<AuditedFollower>;
+
+  /**
+   * How many followers are verified.
+   */
+  verified: FollowerAudit.Verified;
+}
+
+export namespace FollowerAudit {
+  export interface ArrivalBand {
+    /**
+     * Whole number from 0.
+     */
+    count: number;
+
+    /**
+     * Whole number from 0.
+     */
+    from: number;
+
+    percent: number;
+
+    /**
+     * Whole number from 0.
+     */
+    read: number;
+
+    /**
+     * Whole number from 0.
+     */
+    to: number;
+  }
+
+  export interface Class {
+    /**
+     * What 1 follower looks like from its public profile.
+     */
+    class: FollowerClass;
+
+    /**
+     * Whole number from 0.
+     */
+    count: number;
+
+    percent: number;
+  }
+
+  export interface Cohort {
+    /**
+     * Whole number from 0.
+     */
+    count: number;
+
+    /**
+     * Followers in the cohort the audit classes as likelyFake. Whole number from 0.
+     */
+    likelyFake: number;
+
+    percent: number;
+
+    /**
+     * Start of the UTC week, in milliseconds since the Unix epoch.
+     */
+    weekStartMs: number;
+  }
+
+  export interface Coverage {
+    percent: number;
+
+    /**
+     * Whole number from 0.
+     */
+    read: number;
+
+    /**
+     * Whole number from 0.
+     */
+    total: number;
+  }
+
+  export interface Quality {
+    grade: 'A' | 'B' | 'C' | 'D' | 'F';
+
+    /**
+     * Whole number from 0 to 100.
+     */
+    score: number;
+  }
+
+  export interface Signal {
+    /**
+     * Whole number from 0.
+     */
+    count: number;
+
+    id: string;
+
+    percent: number;
+
+    /**
+     * Whole number from 0.
+     */
+    points: number;
+  }
+
+  export interface Verified {
+    /**
+     * Whole number from 0.
+     */
+    count: number;
+
+    percent: number;
+  }
+}
+
+/**
+ * 1 follower the audit read, with its class, score & signals.
+ */
+export interface AuditedFollower {
+  id: string;
+
+  /**
+   * What 1 follower looks like from its public profile.
+   */
+  class: FollowerClass;
+
+  /**
+   * Whole number from 0.
+   */
+  followers: number;
+
+  /**
+   * Whole number from 0.
+   */
+  following: number;
+
+  /**
+   * Whole number from 0.
+   */
+  likes: number;
+
+  name: string;
+
+  /**
+   * The follower's place in the newest-first list. Whole number from 0.
+   */
+  position: number;
+
+  /**
+   * Whole number from 0.
+   */
+  posts: number;
+
+  /**
+   * Whole number from 0.
+   */
+  score: number;
+
+  signals: Array<string>;
+
+  userName: string;
+
+  /**
+   * When the follower joined X, in milliseconds since the Unix epoch.
+   */
+  joinedAtMs?: number;
+
+  /**
+   * Account that runs an automated follower, when X names it.
+   */
+  owner?: string;
+
+  pictureUrl?: string;
+}
+
+/**
+ * What 1 follower looks like from its public profile.
+ */
+export type FollowerClass = 'automated' | 'inactive' | 'likelyFake' | 'likelyReal' | 'tooNew';
+
+/**
+ * How many followers share 1 value, such as a language or place.
+ */
+export interface FollowerValueCount {
+  /**
+   * Whole number from 0.
+   */
+  count: number;
+
+  percent: number;
+
+  value: string;
 }
 
 export type UserRetrieveFollowerIDsResponse = Shared.PaginatedUserIds;
@@ -2775,6 +3058,32 @@ export interface UserRetrieveBatchTweetsParams {
    * account.
    */
   usernames?: string;
+}
+
+export interface UserRetrieveFollowerAuditParams {
+  /**
+   * Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+   * author.username. A list keeps the field in each item. Case & underscores do not
+   * matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+   * always stay. An unknown name answers 400 unknown_field with the valid names,
+   * before any read. The price stays the same. SDK row types then hold only the
+   * named fields.
+   */
+  fields?: string;
+
+  /**
+   * Most followers to read, newest first. Left out, a read takes up to 200 and a low
+   * balance reads fewer. A very long read returns what it finished, & coverage shows
+   * how many. Its aliases are pageSize, count, max_results, maxItems, max_items &
+   * per_page.
+   */
+  limit?: number;
+
+  /**
+   * Fields to drop from each row, comma-separated. It takes the same names as
+   * fields. With fields, it drops from the kept fields.
+   */
+  omit?: string;
 }
 
 export interface UserRetrieveFollowerIDsParams {
@@ -5646,6 +5955,11 @@ export declare namespace Users {
     type UserRemoveFollowerResponse as UserRemoveFollowerResponse,
     type UserRetrieveBatchResponse as UserRetrieveBatchResponse,
     type UserRetrieveBatchTweetsResponse as UserRetrieveBatchTweetsResponse,
+    type UserRetrieveFollowerAuditResponse as UserRetrieveFollowerAuditResponse,
+    type FollowerAudit as FollowerAudit,
+    type AuditedFollower as AuditedFollower,
+    type FollowerClass as FollowerClass,
+    type FollowerValueCount as FollowerValueCount,
     type UserRetrieveFollowerIDsResponse as UserRetrieveFollowerIDsResponse,
     type UserRetrieveFollowersResponse as UserRetrieveFollowersResponse,
     type UserRetrieveFollowingResponse as UserRetrieveFollowingResponse,
@@ -5664,6 +5978,7 @@ export declare namespace Users {
     type UserRetrieveArticlesParams as UserRetrieveArticlesParams,
     type UserRetrieveBatchParams as UserRetrieveBatchParams,
     type UserRetrieveBatchTweetsParams as UserRetrieveBatchTweetsParams,
+    type UserRetrieveFollowerAuditParams as UserRetrieveFollowerAuditParams,
     type UserRetrieveFollowerIDsParams as UserRetrieveFollowerIDsParams,
     type UserRetrieveFollowersParams as UserRetrieveFollowersParams,
     type UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,
