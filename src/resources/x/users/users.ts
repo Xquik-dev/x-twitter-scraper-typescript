@@ -981,7 +981,7 @@ export interface FollowerAudit {
   verified: FollowerAudit.Verified;
 }
 
-export namespace FollowerAudit {
+export declare namespace FollowerAudit {
   export interface ArrivalBand {
     /**
      * Whole number from 0.

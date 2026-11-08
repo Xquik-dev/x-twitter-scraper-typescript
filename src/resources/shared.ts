@@ -1166,7 +1166,7 @@ export interface ImageFilteredTweets extends PaginatedTweets {
   tweets: Array<ImageFilteredTweets.Tweet>;
 }
 
-export namespace ImageFilteredTweets {
+export declare namespace ImageFilteredTweets {
   /**
    * A post the image filter kept, with its score.
    */
@@ -1214,7 +1214,7 @@ export interface ImageFilterSummary {
   unchecked: Array<ImageFilterSummary.Unchecked>;
 }
 
-export namespace ImageFilterSummary {
+export declare namespace ImageFilterSummary {
   /**
    * A post the image filter left out without a score, with the reason.
    */
@@ -2926,7 +2926,7 @@ export interface TopicFilteredTweets extends PaginatedTweets {
   tweets: Array<TopicFilteredTweets.Tweet>;
 }
 
-export namespace TopicFilteredTweets {
+export declare namespace TopicFilteredTweets {
   /**
    * A post the topic filter kept, with its score.
    */
@@ -2973,7 +2973,7 @@ export interface TopicFilterSummary {
   unchecked: Array<TopicFilterSummary.Unchecked>;
 }
 
-export namespace TopicFilterSummary {
+export declare namespace TopicFilterSummary {
   /**
    * A post the topic filter left out without a score, with the reason.
    */
