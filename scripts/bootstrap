@@ -25,6 +25,4 @@ fi
 
 echo "==> Installing Node dependencies…"
 
-PACKAGE_MANAGER=$(command -v pnpm >/dev/null 2>&1 && echo "pnpm" || echo "npm")
-
-$PACKAGE_MANAGER install "$@"
+bun install "$@"

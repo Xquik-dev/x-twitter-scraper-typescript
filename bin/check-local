@@ -129,11 +129,11 @@ source scripts/temp-directory.sh xquik-typescript-check finish
 post_commit_status pending "Local checks are running."
 
 current_check="Find tools"
-for tool in pnpm node jq codeql uv; do
+for tool in bun node jq codeql uv; do
   if ! command -v "$tool" >/dev/null 2>&1; then
     case "$tool" in
       codeql) install_hint="brew install --cask codeql" ;;
-      pnpm) install_hint="brew install pnpm" ;;
+      bun) install_hint="brew install oven-sh/bun/bun" ;;
       *) install_hint="brew install ${tool}" ;;
     esac
     echo "Check failed because ${tool} is missing. Install it with ${install_hint}, then run bin/check-local again." >&2
@@ -141,21 +141,14 @@ for tool in pnpm node jq codeql uv; do
   fi
 done
 
-current_check="Start pnpm"
-if ! pnpm_output="$(pnpm --version 2>&1)"; then
-  printf '%s\n' "$pnpm_output" >&2
-  echo "Check failed because pnpm could not start the pnpm version that package.json pins. Upgrade pnpm to 11.28.4 or newer, then run bin/check-local again." >&2
-  exit 1
-fi
-
 run_check "API coverage" \
   "Fix what the check reported above, then run bin/check-local again." \
   node scripts/utils/check-api-coverage.cjs
 passed+=("API coverage")
 
 run_check "Install dependencies" \
-  "Run pnpm install and commit the updated pnpm-lock.yaml." \
-  pnpm install --frozen-lockfile
+  "Run bun install and commit the updated bun.lock." \
+  bun install --frozen-lockfile
 passed+=("install")
 
 run_check "API fields" \
@@ -170,11 +163,11 @@ passed+=("REUSE")
 
 run_check "Audit dependencies" \
   "Upgrade, override or replace each vulnerable package above." \
-  pnpm audit
+  bun audit
 passed+=("audit")
 
 run_check "Lint, build & check types" \
-  "Run pnpm fix, then fix the remaining errors above." \
+  "Run bun run fix, then fix the remaining errors above." \
   ./scripts/lint
 passed+=("lint & types")
 

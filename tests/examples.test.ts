@@ -11,9 +11,9 @@ const examples = readdirSync(resolve(repository, 'examples')).filter((file) => f
 
 describe('examples', () => {
   it.each(examples)(
-    'pnpm tsn -T runs examples/%s',
+    'bun run tsn -T runs examples/%s',
     (file) => {
-      const result = spawnSync('pnpm', ['--silent', 'tsn', '-T', `examples/${file}`], {
+      const result = spawnSync('bun', ['run', '--silent', 'tsn', '-T', `examples/${file}`], {
         cwd: repository,
         encoding: 'utf8',
       });

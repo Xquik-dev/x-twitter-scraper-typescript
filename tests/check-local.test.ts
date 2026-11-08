@@ -71,11 +71,11 @@ const fieldsMatch = fakeCheck(
   "The SDK's fields match the API for 180 operations, and accepted-field-differences.json lists 42 accepted differences.",
 );
 
-type Setup = { pnpm?: string; apiCoverage?: string; apiFields?: string; lint?: string };
+type Setup = { bun?: string; apiCoverage?: string; apiFields?: string; lint?: string };
 
 const setUp = (
   codeqlSarif: string,
-  { pnpm = passes, apiCoverage = covered, apiFields = fieldsMatch, lint = passes }: Setup = {},
+  { bun = passes, apiCoverage = covered, apiFields = fieldsMatch, lint = passes }: Setup = {},
 ) => {
   const root = mkdtempSync(join(tmpdir(), 'check-local-'));
   const write = (path: string, content: string, mode = 0o755) => {
@@ -87,7 +87,7 @@ const setUp = (
   mkdirSync(join(root, 'tmp'));
   copyFileSync(script, join(root, 'project', 'bin', 'check-local'));
   for (const tool of ['uv', 'uvx']) write(join('tools', tool), passes);
-  write(join('tools', 'pnpm'), pnpm);
+  write(join('tools', 'bun'), bun);
   write(join('tools', 'codeql'), fakeCodeql);
   write(join('project', 'scripts', 'lint'), lint);
   write(join('project', 'scripts', 'check-reproducible'), passes);
@@ -112,8 +112,8 @@ const setUp = (
   };
 };
 
-const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, apiFields = fieldsMatch) => {
-  const { root, command, env } = setUp(codeqlSarif, { pnpm, apiCoverage, apiFields });
+const checkLocal = (codeqlSarif: string, bun = passes, apiCoverage = covered, apiFields = fieldsMatch) => {
+  const { root, command, env } = setUp(codeqlSarif, { bun, apiCoverage, apiFields });
   try {
     const result = spawnSync(command, ['--no-status'], { encoding: 'utf8', env });
     return { status: result.status, stdout: result.stdout, stderr: result.stderr };
@@ -170,24 +170,6 @@ describe('bin/check-local', () => {
         'Check failed at API fields. Fix what the check reported above, then run bin/check-local again.\n',
     );
     expect(result.stdout).not.toContain('==> Check license notices');
-  });
-
-  it('stops with the upgrade step when pnpm cannot start the pinned pnpm', () => {
-    const oldPnpm = `#!/bin/sh
-if [ "$1" = "--version" ]; then
-  echo " ERROR  Failed to switch pnpm to v12.10.1." >&2
-  exit 1
-fi
-`;
-
-    const result = checkLocal(sarif({}), oldPnpm);
-
-    expect(result.status).toBe(1);
-    expect(result.stderr).toBe(
-      ' ERROR  Failed to switch pnpm to v12.10.1.\n' +
-        'Check failed because pnpm could not start the pnpm version that package.json pins. Upgrade pnpm to 11.28.4 or newer, then run bin/check-local again.\n',
-    );
-    expect(result.stdout).not.toContain('==> Install dependencies');
   });
 
   it('fails and names each file that CodeQL could not parse', () => {

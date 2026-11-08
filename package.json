@@ -53,7 +53,7 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@12.10.1",
+  "packageManager": "bun@1.4.4",
   "files": [
     "**/*"
   ],
@@ -65,7 +65,7 @@
     "test": "./scripts/test",
     "build": "./scripts/build",
     "check:reproducible": "./scripts/check-reproducible",
-    "check:all": "node scripts/utils/check-api-coverage.cjs && node scripts/utils/check-api-fields.cjs && pnpm lint && pnpm test --no-file-parallelism && pnpm run check:reproducible && pnpm audit",
+    "check:all": "node scripts/utils/check-api-coverage.cjs && node scripts/utils/check-api-fields.cjs && bun run lint && bun run test --no-file-parallelism && bun run check:reproducible && bun audit",
     "prepublishOnly": "echo 'Direct publish blocked. Build first, then publish from dist.' && exit 1",
     "format": "./scripts/format",
     "prepare": "./scripts/build",
@@ -90,6 +90,16 @@
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-eslint": "8.71.1",
     "vitest": "5.0.5"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.12",
+    "flat-cache": {
+      "flatted": "3.4.2"
+    },
+    "minimatch": "11.0.4",
+    "ts-node": {
+      "diff": "4.0.4"
+    }
   },
   "exports": {
     ".": {

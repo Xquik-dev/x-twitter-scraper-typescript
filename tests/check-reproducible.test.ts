@@ -19,7 +19,7 @@ import { leftoverStep, runUntilStarted, waitingStep } from './signal-run';
 
 const script = resolve(__dirname, '..', 'scripts', 'check-reproducible');
 
-const setUp = (pnpm: string) => {
+const setUp = (bun: string) => {
   const root = mkdtempSync(join(tmpdir(), 'check-reproducible-'));
   mkdirSync(join(root, 'project', 'scripts'), { recursive: true });
   mkdirSync(join(root, 'tools'));
@@ -29,8 +29,8 @@ const setUp = (pnpm: string) => {
     resolve(__dirname, '..', 'scripts', 'temp-directory.sh'),
     join(root, 'project', 'scripts', 'temp-directory.sh'),
   );
-  writeFileSync(join(root, 'tools', 'pnpm'), pnpm);
-  chmodSync(join(root, 'tools', 'pnpm'), 0o755);
+  writeFileSync(join(root, 'tools', 'bun'), bun);
+  chmodSync(join(root, 'tools', 'bun'), 0o755);
   return {
     root,
     temp: join(root, 'tmp'),

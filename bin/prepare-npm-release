@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-pnpm build
+bun run build
 cd dist
 
 package_name="$(jq -r -e '.name' package.json)"

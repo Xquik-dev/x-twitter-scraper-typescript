@@ -55,7 +55,7 @@ describe('bin/release-local', () => {
       for (const [tool, content] of [
         ['gh', gh],
         ['npm', '#!/bin/sh\n'],
-        ['pnpm', '#!/bin/sh\n'],
+        ['bun', '#!/bin/sh\n'],
         ['security', '#!/bin/sh\n'],
       ] as const) {
         writeFileSync(join(root, 'tools', tool), content);

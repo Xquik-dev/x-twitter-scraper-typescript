@@ -11,10 +11,10 @@ cd "$(dirname "$0")/.."
 source scripts/temp-directory.sh xquik-typescript-reproducible
 mkdir "$work_directory/first" "$work_directory/second"
 
-pnpm build
+bun run build
 (cd dist && npm pack --silent --pack-destination "$work_directory/first" >/dev/null)
 
-pnpm build
+bun run build
 (cd dist && npm pack --silent --pack-destination "$work_directory/second" >/dev/null)
 
 first_archive="$(find "$work_directory/first" -type f -name '*.tgz' -print -quit)"

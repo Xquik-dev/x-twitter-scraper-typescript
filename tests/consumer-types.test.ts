@@ -60,7 +60,7 @@ const failed = (mode: string) => [
 describe('scripts/utils/check-consumer-types.cjs', () => {
   beforeAll(() => {
     if (!existsSync(join(dist, 'package.json'))) {
-      throw new Error('dist is missing. Run pnpm build, then run the tests again.');
+      throw new Error('dist is missing. Run bun run build, then run the tests again.');
     }
   });
 

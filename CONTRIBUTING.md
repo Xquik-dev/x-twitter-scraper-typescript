@@ -1,19 +1,18 @@
 ## Set up the environment
 
-This repository uses [`pnpm`](https://pnpm.io/).
+This repository uses [Bun](https://bun.com/) to install dependencies and run scripts, and the `packageManager` field in `package.json` names its version.
 Other package managers may work but are not officially supported for development.
-The `packageManager` field in `package.json` pins the pnpm version, and pnpm 11.28.4 or newer switches to it on its own.
-Older pnpm releases fail to start pnpm 12 on macOS and Windows, so upgrade pnpm first.
+The build and the tests still run on Node, the runtime most customers use.
 
 Install dependencies and build `dist/`.
 
 ```sh
-pnpm install
-pnpm build
+bun install
+bun run build
 ```
 
 The build and the type checks use TypeScript 7.
-`pnpm build` compiles once for CommonJS and once for ES modules with `scripts/utils/compile-formats.cjs`.
+`bun run build` compiles once for CommonJS and once for ES modules with `scripts/utils/compile-formats.cjs`.
 TypeScript 7 has no compiler API yet.
 ESLint and ts-node load the TypeScript 6.0 API from the `typescript` alias, as the TypeScript 7 release notes recommend.
 
@@ -49,7 +48,7 @@ Publish each release from a local machine, as [Publish releases](#publish-releas
 ## Add examples
 
 Add each example as a script in `examples/`.
-`tests/examples.test.ts` runs every example with `pnpm tsn -T` and fails when one writes to stderr or exits with an error.
+`tests/examples.test.ts` runs every example with `bun run tsn -T` and fails when one writes to stderr or exits with an error.
 
 ```ts
 // add an example to examples/<your-example>.ts
@@ -61,7 +60,7 @@ Add each example as a script in `examples/`.
 ```sh
 chmod +x examples/<your-example>.ts
 # Run the example against your API.
-pnpm tsn -T examples/<your-example>.ts
+bun run tsn -T examples/<your-example>.ts
 ```
 
 ## Use the repository from source
@@ -84,16 +83,16 @@ yarn link
 cd ../my-package
 yarn link x-twitter-scraper
 
-# Use pnpm.
-pnpm link --global
+# Use Bun.
+bun link
 cd ../my-package
-pnpm link --global x-twitter-scraper
+bun link x-twitter-scraper
 ```
 
 ## Run tests
 
 ```sh
-pnpm run test
+bun run test
 ```
 
 Tests enforce 90% statement coverage and 80% branch coverage.
@@ -118,7 +117,7 @@ It stops at the first failure and says what to fix.
 When the tree is clean and `HEAD` is pushed, it posts the `xquik-local-checks` commit status.
 Pass `--no-status` to skip the status.
 
-`pnpm audit` fails the run on any advisory, in a shipped or a development dependency.
+`bun audit` fails the run on any advisory, in a shipped or a development dependency.
 Severity never excuses a finding.
 Fix a finding by upgrading, overriding or replacing the vulnerable package.
 
@@ -204,13 +203,13 @@ Use [Prettier](https://www.npmjs.com/package/prettier) and
 Lint with this command.
 
 ```sh
-pnpm lint
+bun run lint
 ```
 
 Format and fix every lint issue with this command.
 
 ```sh
-pnpm fix
+bun run fix
 ```
 
 ## Publish releases

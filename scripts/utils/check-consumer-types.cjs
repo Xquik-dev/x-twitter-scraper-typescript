@@ -91,7 +91,7 @@ const compile = (compiler, project, workspace) =>
 
 const main = async () => {
   if (!fs.existsSync(path.join(packageDirectory, 'package.json'))) {
-    console.error(`${packageDirectory} has no package.json. Run pnpm build first.`);
+    console.error(`${packageDirectory} has no package.json. Run bun run build first.`);
     process.exit(1);
   }
   let workspace;
