@@ -25,6 +25,7 @@
 - `client.x.media.download` takes `imageShows` and returns `imageFilter`.
 - `client.x.users.retrieveFollowerAudit` reads an account's newest followers and returns a `FollowerAudit`. Each follower gets 1 `FollowerClass` with its score & signals, and the report adds coverage, a quality grade, arrival bands, join cohorts, languages, places, top followers & the account's insights. Each follower read costs 1 credit, and the insights add 1.
 - `Error.requiredScope` names the scope an API key needs when the API answers `insufficient_scope`, as `write`, `monitors`, `exports`, `billing` or `full`.
+- `EmbeddedTweet`, `TweetDetail` and `Event.MonitorPost` extend `SearchTweet`, and `EventDetail.MonitorPost` names `Event.MonitorPost`. Every type and field reads as before. Sub-types such as `TweetDetail.Article` name the `SearchTweet` ones, so a declaration merge goes on the `SearchTweet` sub-type.
 
 ### BREAKING CHANGES
 
