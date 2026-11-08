@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `client.monitors.upsertByUsername` creates the monitor for an account, or updates it if it exists, so the same call twice still leaves 1 monitor. `created` says which one ran.
+- `client.x.media.download` returns `unprocessedTweetIds`, the posts Xquik had no time to read, at no charge. Send them again.
 - `sample` on user insights and follower audits returns `read`, the posts the read covered with reposts and the pinned post included. `posts` counts the ones the averages used, so it can be lower.
 - The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `false` keeps it to the text.
 - `ContextAvailability.media` returns `'images'` when the AI read the post's images. A `switch` that handles every value needs a case for it.

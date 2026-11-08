@@ -146,9 +146,11 @@ import {
   type MonitorCreateParams,
   type MonitorCreateResponse,
   type MonitorDeactivateResponse,
+  type MonitorUpsertByUsernameResponse,
   type MonitorListParams,
   type MonitorListResponse,
   type MonitorUpdateParams,
+  type MonitorUpsertByUsernameParams,
   Monitors,
 } from './resources/monitors/monitors';
 import { Support } from './resources/support/support';
@@ -1074,8 +1076,10 @@ export declare namespace XTwitterScraper {
     type MonitorCreateResponse as MonitorCreateResponse,
     type MonitorListResponse as MonitorListResponse,
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
+    type MonitorUpsertByUsernameResponse as MonitorUpsertByUsernameResponse,
     type MonitorCreateParams as MonitorCreateParams,
     type MonitorUpdateParams as MonitorUpdateParams,
+    type MonitorUpsertByUsernameParams as MonitorUpsertByUsernameParams,
     type MonitorListParams as MonitorListParams,
   };
 

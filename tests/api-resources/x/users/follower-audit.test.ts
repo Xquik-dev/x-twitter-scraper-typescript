@@ -44,7 +44,12 @@ const audit: XTwitterScraper.X.UserRetrieveFollowerAuditResponse = {
         views: 480000,
         engagements: 5425,
       },
-      sample: { posts: 20, read: 22, newestAt: '2026-11-07T21:00:00.000Z', oldestAt: '2026-11-05T09:00:00.000Z' },
+      sample: {
+        posts: 20,
+        read: 22,
+        newestAt: '2026-11-07T21:00:00.000Z',
+        oldestAt: '2026-11-05T09:00:00.000Z',
+      },
     },
     coverage: { read: 2, total: 89000000, percent: 0 },
     quality: { grade: 'B', score: 74 },
