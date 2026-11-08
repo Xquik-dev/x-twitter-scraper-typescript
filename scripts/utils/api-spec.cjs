@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const asObject = require('./json.cjs').asObject;
 
 const publicSpec = 'https://xquik.com/openapi.json';
 const httpMethods = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
@@ -11,10 +12,13 @@ const baseUrlConstant = /^const DEFAULT_BASE_URL = '([^']+)';$/m;
 
 class CheckError extends Error {}
 
+/** @type {(url: string) => string} */
 const urlPath = (url) => new URL(url, 'http://localhost').pathname.replace(/\/$/, '');
 
+/** @type {(operation: string) => string} */
 const comparable = (operation) => operation.replace(/\{[^}]*\}/g, '{}');
 
+/** @type {(source: string) => Promise<import('./types').SpecDocument>} */
 const readSpec = async (source) => {
   try {
     const text =
@@ -24,9 +28,12 @@ const readSpec = async (source) => {
           return response.text();
         })
       : fs.readFileSync(source, 'utf8');
-    const spec = JSON.parse(text);
-    if (typeof spec?.paths !== 'object' || spec.paths === null) throw new Error('no paths');
-    return spec;
+    /** @type {import('./types').JsonValue} */
+    const parsed = JSON.parse(text);
+    const spec = asObject(parsed);
+    const paths = spec?.['paths'];
+    if (!spec || typeof paths !== 'object' || paths === null) throw new Error('no paths');
+    return { ...spec, paths };
   } catch {
     throw new CheckError(
       `Could not read the API spec from ${source}. Check network access, or set XQUIK_OPENAPI_SPEC to a local copy of ${publicSpec}.`,
@@ -36,19 +43,23 @@ const readSpec = async (source) => {
 
 const readConfiguredSpec = () => readSpec(process.env['XQUIK_OPENAPI_SPEC'] || publicSpec);
 
+/** @type {(spec: import('./types').SpecDocument) => import('./types').SpecEntry[]} */
 const specOperations = (spec) =>
-  Object.entries(spec.paths).flatMap(([pathKey, pathItem]) =>
-    httpMethods
-      .filter((method) => typeof pathItem?.[method] === 'object' && pathItem[method] !== null)
-      .map((method) => {
-        const operation = pathItem[method];
-        const servers = operation.servers ?? pathItem.servers ?? spec.servers ?? [];
-        const serverPath = servers[0]?.url ? urlPath(servers[0].url) : '';
-        const id = `${method.toUpperCase()} ${serverPath}${pathKey}`;
-        return { id, key: comparable(id), operationId: operation.operationId, pathItem, operation };
-      }),
-  );
+  Object.entries(spec.paths).flatMap(([pathKey, value]) => {
+    const pathItem = asObject(value);
+    if (!pathItem) return [];
+    return httpMethods.flatMap((method) => {
+      const operation = asObject(pathItem[method]);
+      if (!operation) return [];
+      const servers = operation['servers'] ?? pathItem['servers'] ?? spec['servers'] ?? [];
+      const url = Array.isArray(servers) ? asObject(servers[0])?.['url'] : undefined;
+      const serverPath = typeof url === 'string' && url ? urlPath(url) : '';
+      const id = `${method.toUpperCase()} ${serverPath}${pathKey}`;
+      return [{ id, key: comparable(id), operationId: operation['operationId'], pathItem, operation }];
+    });
+  });
 
+/** @type {(root: string) => string} */
 const readBasePath = (root) => {
   const client = fs.readFileSync(path.join(root, 'src', 'client.ts'), 'utf8');
   const baseUrl = client.match(baseUrlConstant)?.[1];
@@ -60,55 +71,64 @@ const readBasePath = (root) => {
   return urlPath(baseUrl);
 };
 
-const groupProblem = (groups, { field, noun, entryPattern, entryHint, key }) => {
-  if (!Array.isArray(groups)) return 'It must hold a list of groups';
+/** @type {(groups: import('./types').JsonValue, rules: import('./types').GroupRules) => { problem: string } | { entries: string[] }} */
+const groupEntries = (groups, { field, noun, entryPattern, entryHint, key }) => {
+  if (!Array.isArray(groups)) return { problem: 'It must hold a list of groups' };
+  /** @type {Set<string>} */
   const seen = new Set();
+  /** @type {string[]} */
+  const entries = [];
   for (const [index, group] of groups.entries()) {
     const label = `Group ${index + 1}`;
-    if (typeof group !== 'object' || group === null || Array.isArray(group)) {
-      return `${label} is not an object`;
+    const object = asObject(group);
+    if (!object) return { problem: `${label} is not an object` };
+    const extra = Object.keys(object).filter((property) => property !== 'reason' && property !== field);
+    if (extra.length) return { problem: `${label} has the unknown field ${extra[0]}` };
+    const reason = object['reason'];
+    if (typeof reason !== 'string' || !reason.trim()) return { problem: `${label} needs a reason` };
+    const listed = object[field];
+    if (!Array.isArray(listed) || !listed.length) {
+      return { problem: `${label} needs at least 1 ${noun}` };
     }
-    const extra = Object.keys(group).filter((property) => property !== 'reason' && property !== field);
-    if (extra.length) return `${label} has the unknown field ${extra[0]}`;
-    if (typeof group.reason !== 'string' || !group.reason.trim()) return `${label} needs a reason`;
-    if (!Array.isArray(group[field]) || !group[field].length) {
-      return `${label} needs at least 1 ${noun}`;
-    }
-    for (const entry of group[field]) {
+    for (const entry of listed) {
       if (typeof entry !== 'string' || !entryPattern.test(entry)) {
-        return `${label} lists ${JSON.stringify(entry)}, which ${entryHint}`;
+        return { problem: `${label} lists ${JSON.stringify(entry)}, which ${entryHint}` };
       }
-      if (seen.has(key(entry))) return `It lists ${entry} more than once`;
+      if (seen.has(key(entry))) return { problem: `It lists ${entry} more than once` };
       seen.add(key(entry));
+      entries.push(entry);
     }
   }
-  return undefined;
+  return { entries };
 };
 
+/** @type {(root: string, file: string, rules: import('./types').GroupRules) => string[]} */
 const readGroups = (root, file, rules) => {
+  /** @type {(problem: string) => CheckError} */
   const invalid = (problem) => new CheckError(`${file} is not valid. ${problem}.`);
   let text;
   try {
     text = fs.readFileSync(path.join(root, file), 'utf8');
   } catch (error) {
-    throw invalid(
-      error.code === 'ENOENT' ? 'The repository root has no such file' : `It cannot be read (${error.code})`,
-    );
+    const code = error instanceof Error && 'code' in error ? error.code : undefined;
+    throw invalid(code === 'ENOENT' ? 'The repository root has no such file' : `It cannot be read (${code})`);
   }
+  /** @type {import('./types').JsonValue} */
   let groups;
   try {
     groups = JSON.parse(text);
   } catch (error) {
-    const position = error.message.match(/at position (\d+)/)?.[1];
+    const position = error instanceof Error ? error.message.match(/at position (\d+)/)?.[1] : undefined;
     throw invalid(`It is not JSON${position ? ` near position ${position}` : ''}`);
   }
-  const problem = groupProblem(groups, rules);
-  if (problem) throw invalid(problem);
-  return groups.flatMap((group) => group[rules.field]);
+  const result = groupEntries(groups, rules);
+  if ('problem' in result) throw invalid(result.problem);
+  return result.entries;
 };
 
 const exclusionsFile = 'excluded-operations.json';
 
+/** @type {(root: string) => string[]} */
 const readExclusions = (root) =>
   readGroups(root, exclusionsFile, {
     field: 'operations',
@@ -118,6 +138,7 @@ const readExclusions = (root) =>
     key: comparable,
   });
 
+/** @type {(check: () => Promise<string>) => Promise<void>} */
 const runCheck = async (check) => {
   try {
     process.stdout.write(`${await check()}\n`);

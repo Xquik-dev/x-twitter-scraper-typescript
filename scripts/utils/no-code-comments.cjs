@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+const asObject = require('./json.cjs').asObject;
+
 const proof = /https:\/\/|SPDX-/u;
 const directive =
   /^\s*(?:eslint-disable(?:-next-line|-line)?|eslint-enable|eslint|globals?|exported)(?:\s|$)|^\*?\s*@ts-(?:check|nocheck|expect-error|ignore)\b|^\s*prettier-ignore\b|^\s*(?:c8|v8|istanbul) ignore\b|^\/\s*<reference\s|^\*\s*@type\s*\{|[#@]__(?:PURE|NO_SIDE_EFFECTS)__/u;
@@ -28,16 +30,24 @@ const declarations = new Set([
   'VariableDeclaration',
 ]);
 
+/** @type {(sourceCode: import('eslint').SourceCode, comment: import('./types').Comment) => import('./types').AstNode | undefined} */
 function declarationAfter(sourceCode, comment) {
   const token = sourceCode.getTokenAfter(comment);
   if (!token) {
     return undefined;
   }
-  let node = sourceCode.getNodeByRangeIndex(token.range[0]);
-  while (node && node.parent && node.parent.type !== 'Program' && node.parent.range[0] === node.range[0]) {
-    node = node.parent;
+  const start = sourceCode.getNodeByRangeIndex(token.range[0]);
+  if (!start) {
+    return undefined;
   }
-  return node && declarations.has(node.type) ? node : undefined;
+  let node = start;
+  for (const ancestor of sourceCode.getAncestors(start).reverse()) {
+    if (ancestor.type === 'Program' || sourceCode.getRange(ancestor)[0] !== sourceCode.getRange(node)[0]) {
+      break;
+    }
+    node = ancestor;
+  }
+  return declarations.has(node.type) ? node : undefined;
 }
 
 const bodies = new Set([
@@ -48,15 +58,15 @@ const bodies = new Set([
   'StaticBlock',
 ]);
 
-function isPublic(node) {
+/** @type {(sourceCode: import('eslint').SourceCode, node: import('./types').AstNode) => boolean} */
+function isPublic(sourceCode, node) {
   if (
-    node.accessibility === 'private' ||
-    node.accessibility === 'protected' ||
-    node.key?.type === 'PrivateIdentifier'
+    ('accessibility' in node && (node.accessibility === 'private' || node.accessibility === 'protected')) ||
+    ('key' in node && node.key?.type === 'PrivateIdentifier')
   ) {
     return false;
   }
-  for (let ancestor = node; ancestor; ancestor = ancestor.parent) {
+  for (const ancestor of [node, ...sourceCode.getAncestors(node).reverse()]) {
     if (exported.has(ancestor.type)) {
       return true;
     }
@@ -67,19 +77,22 @@ function isPublic(node) {
   return false;
 }
 
+/** @type {(sourceCode: import('eslint').SourceCode, comment: import('./types').Comment) => boolean} */
 function documentsPublicApi(sourceCode, comment) {
   if (comment.type !== 'Block' || !comment.value.startsWith('*')) {
     return false;
   }
   const node = declarationAfter(sourceCode, comment);
-  return node !== undefined && isPublic(node);
+  return node !== undefined && isPublic(sourceCode, node);
 }
 
+/** @type {(sourceCode: import('eslint').SourceCode, earlier: import('./types').Comment, later: import('./types').Comment) => boolean} */
 function adjacent(sourceCode, earlier, later) {
-  const between = sourceCode.text.slice(earlier.range[1], later.range[0]);
+  const between = sourceCode.text.slice(sourceCode.getRange(earlier)[1], sourceCode.getRange(later)[0]);
   return /^[^\S\n]*\n?[^\S\n]*$/u.test(between);
 }
 
+/** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
     type: 'problem',
@@ -99,17 +112,22 @@ module.exports = {
   },
   create(context) {
     const sourceCode = context.sourceCode;
-    const publicApiDocs = context.options[0]?.publicApiDocs === true;
+    /** @type {import('./types').JsonValue | undefined} */
+    const option = context.options[0];
+    const publicApiDocs = asObject(option)?.['publicApiDocs'] === true;
     return {
       Program() {
-        const comments = sourceCode.getAllComments().filter((comment) => comment.type !== 'Shebang');
-        const proven = new Array(comments.length).fill(false);
-        for (let index = comments.length - 1; index >= 0; index -= 1) {
-          const comment = comments[index];
+        const comments = sourceCode.getAllComments().filter((comment) => {
+          /** @type {string} */
+          const type = comment.type;
+          return type !== 'Shebang';
+        });
+        const proven = comments.map(() => false);
+        for (const [index, comment] of [...comments.entries()].reverse()) {
           const next = comments[index + 1];
           proven[index] =
             proof.test(comment.value) ||
-            (next !== undefined && proven[index + 1] && adjacent(sourceCode, comment, next));
+            (next !== undefined && proven[index + 1] === true && adjacent(sourceCode, comment, next));
         }
         comments.forEach((comment, index) => {
           if (
@@ -119,7 +137,7 @@ module.exports = {
           ) {
             return;
           }
-          context.report({ loc: comment.loc, messageId: 'comment' });
+          context.report({ loc: sourceCode.getLoc(comment), messageId: 'comment' });
         });
       },
     };
