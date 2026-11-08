@@ -872,6 +872,11 @@ export interface Error {
   reason?: string;
 
   /**
+   * With insufficient_scope, the scope the API key needs for this route.
+   */
+  requiredScope?: 'write' | 'monitors' | 'exports' | 'billing' | 'full';
+
+  /**
    * Seconds until the next permitted request.
    */
   retryAfter?: number;

@@ -4,6 +4,7 @@
 
 import { runInNewContext } from 'node:vm';
 
+import XTwitterScraper from 'x-twitter-scraper';
 import {
   APIConnectionError,
   APIConnectionTimeoutError,
@@ -93,6 +94,15 @@ describe('API errors', () => {
     expect(new APIError(400, undefined, undefined, headers).message).toBe('400 status code (no body)');
     expect(new APIError(undefined, undefined, 'failure', undefined).message).toBe('failure');
     expect(new APIError(undefined, undefined, undefined, undefined).message).toBe('(no status code or body)');
+  });
+
+  test('an insufficient_scope error body names the scope the key needs', () => {
+    const body: XTwitterScraper.Error = { error: 'insufficient_scope', requiredScope: 'monitors' };
+
+    expect(body.requiredScope).toBe('monitors');
+    expectTypeOf<XTwitterScraper.Error['requiredScope']>().toEqualTypeOf<
+      'write' | 'monitors' | 'exports' | 'billing' | 'full' | undefined
+    >();
   });
 
   test('creates connection and cancellation errors', () => {

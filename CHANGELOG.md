@@ -24,6 +24,7 @@
 - `extractions.run` & `estimateCost` take `topic` & `imageShows`, and `ExtractionJob` returns the `topicFilter` or `imageFilter` it ran.
 - `client.x.media.download` takes `imageShows` and returns `imageFilter`.
 - `client.x.users.retrieveFollowerAudit` reads an account's newest followers and returns a `FollowerAudit`. Each follower gets 1 `FollowerClass` with its score & signals, and the report adds coverage, a quality grade, arrival bands, join cohorts, languages, places, top followers & the account's insights. Each follower read costs 1 credit, and the insights add 1.
+- `Error.requiredScope` names the scope an API key needs when the API answers `insufficient_scope`, as `write`, `monitors`, `exports`, `billing` or `full`.
 
 ## 0.20.0 (2026-11-04)
 
