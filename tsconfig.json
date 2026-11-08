@@ -1,13 +1,5 @@
 {
-  "include": [
-    "src",
-    "tests",
-    "examples",
-    "eslint.config.mjs",
-    "vitest.config.mjs",
-    "scripts/utils/*.cjs",
-    "scripts/utils/*.d.ts"
-  ],
+  "include": ["src", "tests", "examples", "eslint.config.mjs", "vitest.config.mjs"],
   "exclude": [],
   "compilerOptions": {
     "target": "es2020",

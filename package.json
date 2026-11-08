@@ -71,7 +71,7 @@
     "prepare": "./scripts/build",
     "tsn": "ts-node -r tsconfig-paths/register",
     "lint": "./scripts/lint",
-    "lint:types": "tsc",
+    "lint:types": "tsc && tsc -p scripts/utils",
     "lint:attw": "attw --pack dist --format json",
     "lint:publint": "publint dist --strict",
     "lint:knip": "knip",

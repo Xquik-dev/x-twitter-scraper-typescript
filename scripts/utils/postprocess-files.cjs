@@ -4,8 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const asObject = require('./json.cjs').asObject;
-const parseJson = require('./json.cjs').parseJson;
+const { asObject, parseJson } = require('./json.cjs');
 
 const distPath = process.env['DIST_PATH'];
 const distDir =

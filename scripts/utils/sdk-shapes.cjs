@@ -5,11 +5,8 @@
 const fs = require('fs');
 const path = require('path');
 const ts = require('typescript');
-const api = require('./api-spec.cjs');
-const shapes = require('./shapes.cjs');
-
-const { CheckError, comparable, isPresent } = api;
-const { leaf, object } = shapes;
+const { CheckError, comparable, isPresent } = require('./api-spec.cjs');
+const { leaf, object } = require('./shapes.cjs');
 
 const verbs = new Set(['get', 'post', 'put', 'patch', 'delete']);
 const fileTypes = new Set(['Blob', 'File', 'Response', 'Date', 'ReadableStream']);

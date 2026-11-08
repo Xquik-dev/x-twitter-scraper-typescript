@@ -2,11 +2,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-const spawnSync = require('child_process').spawnSync;
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const asObject = require('./json.cjs').asObject;
-const parseJson = require('./json.cjs').parseJson;
+const { asObject, parseJson } = require('./json.cjs');
 
 const repository = path.resolve(__dirname, '..', '..');
 const tsc = path.join(repository, 'node_modules', '@typescript', 'native', 'bin', 'tsc');

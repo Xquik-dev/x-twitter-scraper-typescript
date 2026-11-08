@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const fs = require('fs');
-const asObject = require('./json.cjs').asObject;
-const parseJson = require('./json.cjs').parseJson;
+const { asObject, parseJson } = require('./json.cjs');
 
 const report = asObject(parseJson(fs.readFileSync('.attw.json', 'utf-8')));
 const problems = Object.values(asObject(report?.['problems']) ?? {}).flatMap((list) =>
