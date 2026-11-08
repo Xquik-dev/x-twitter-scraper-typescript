@@ -6,11 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { asObject, parseJson } = require('./json.cjs');
 
-const distPath = process.env['DIST_PATH'];
-const distDir =
-  distPath !== undefined && distPath !== '' ?
-    path.resolve(distPath)
-  : path.resolve(__dirname, '..', '..', 'dist');
+const distDir = path.resolve(__dirname, '..', '..', 'dist');
 
 /** @type {(dir: string) => AsyncGenerator<string>} */
 async function* walk(dir) {
