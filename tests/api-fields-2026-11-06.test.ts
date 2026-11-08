@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import XTwitterScraper from 'x-twitter-scraper';
+import type XTwitterScraper from 'x-twitter-scraper';
 
 type WriteAction = XTwitterScraper.X.WriteActionRetrieveResponse;
 

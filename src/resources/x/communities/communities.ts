@@ -283,7 +283,7 @@ export interface CommunityAnalytics {
   periodEndsAt: string;
 }
 
-export namespace CommunityAnalytics {
+export declare namespace CommunityAnalytics {
   /**
    * The period's activity, each metric with its count and changePercent. likes
    * counts likes on community posts and newMembers the accounts that joined. posts
@@ -514,7 +514,7 @@ export interface CommunityCreateResponse {
   updatedAt?: string;
 }
 
-export namespace CommunityCreateResponse {
+export declare namespace CommunityCreateResponse {
   /**
    * Connected account selected for the write.
    */
@@ -771,7 +771,7 @@ export interface CommunityDeleteResponse {
   updatedAt?: string;
 }
 
-export namespace CommunityDeleteResponse {
+export declare namespace CommunityDeleteResponse {
   /**
    * Connected account selected for the write.
    */

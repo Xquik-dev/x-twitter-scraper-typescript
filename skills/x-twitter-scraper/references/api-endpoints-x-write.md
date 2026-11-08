@@ -10,15 +10,15 @@ POST /x/tweets
 
 The request body takes these fields.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `account` | string | Yes | Connected X username or account ID |
-| `text` | string | No | Tweet text (280 chars, or 25,000 if `is_note_tweet` is true). Required unless `media` is provided |
-| `reply_to_tweet_id` | string | No | Tweet ID to reply to |
-| `attachment_url` | string | No | URL to attach as a card |
-| `community_id` | string | No | Community ID to post into |
-| `is_note_tweet` | boolean | No | Long-form note tweet (up to 25,000 chars) |
-| `media` | string[] | No | Public image URLs to attach (max 4). `POST /x/media` returns `mediaUrl` values for this field |
+| Field               | Type     | Required | Description                                                                                       |
+| ------------------- | -------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `account`           | string   | Yes      | Connected X username or account ID                                                                |
+| `text`              | string   | No       | Tweet text (280 chars, or 25,000 if `is_note_tweet` is true). Required unless `media` is provided |
+| `reply_to_tweet_id` | string   | No       | Tweet ID to reply to                                                                              |
+| `attachment_url`    | string   | No       | URL to attach as a card                                                                           |
+| `community_id`      | string   | No       | Community ID to post into                                                                         |
+| `is_note_tweet`     | boolean  | No       | Long-form note tweet (up to 25,000 chars)                                                         |
+| `media`             | string[] | No       | Public image URLs to attach (max 4). `POST /x/media` returns `mediaUrl` values for this field     |
 
 The response is `{ tweetId, success: true }`.
 
@@ -104,12 +104,12 @@ POST /x/dm/{userId}
 
 The request body takes these fields.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `account` | string | Yes | Connected X username or account ID |
-| `text` | string | Yes | Message text |
-| `media_ids` | string[] | No | Media IDs to attach |
-| `reply_to_message_id` | string | No | Message ID to reply to |
+| Field                 | Type     | Required | Description                        |
+| --------------------- | -------- | -------- | ---------------------------------- |
+| `account`             | string   | Yes      | Connected X username or account ID |
+| `text`                | string   | Yes      | Message text                       |
+| `media_ids`           | string[] | No       | Media IDs to attach                |
+| `reply_to_message_id` | string   | No       | Message ID to reply to             |
 
 ### Get DM History
 

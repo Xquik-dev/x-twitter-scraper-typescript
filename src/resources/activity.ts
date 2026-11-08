@@ -188,7 +188,7 @@ export interface ActivityRecord {
   url: string;
 }
 
-export namespace ActivityRecord {
+export declare namespace ActivityRecord {
   export interface Caller {
     /**
      * Name and prefix of the API key used. Never its value.

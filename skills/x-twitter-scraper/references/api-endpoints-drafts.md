@@ -8,11 +8,11 @@ Save a tweet draft for later.
 
 The request body takes these fields.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `text` | string | Yes | The draft tweet text |
-| `topic` | string | No | Topic the tweet is about |
-| `goal` | string | No | Optimization goal, one of `engagement`, `followers`, `authority`, `conversation` |
+| Field   | Type   | Required | Description                                                                      |
+| ------- | ------ | -------- | -------------------------------------------------------------------------------- |
+| `text`  | string | Yes      | The draft tweet text                                                             |
+| `topic` | string | No       | Topic the tweet is about                                                         |
+| `goal`  | string | No       | Optimization goal, one of `engagement`, `followers`, `authority`, `conversation` |
 
 A `201` response has this shape.
 
@@ -37,10 +37,10 @@ List saved tweet drafts with cursor pagination.
 
 It takes these query parameters.
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `limit` | number | No | 50 | Results per page (max 50) |
-| `afterCursor` | string | No | - | Pagination cursor from previous response |
+| Parameter     | Type   | Required | Default | Description                              |
+| ------------- | ------ | -------- | ------- | ---------------------------------------- |
+| `limit`       | number | No       | 50      | Results per page (max 50)                |
+| `afterCursor` | string | No       | -       | Pagination cursor from previous response |
 
 A `200` response has this shape.
 

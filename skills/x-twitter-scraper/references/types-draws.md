@@ -1,7 +1,6 @@
 # Xquik TypeScript types for draws
 
 ```typescript
-
 interface Draw {
   id: string;
   tweetId: string;
@@ -12,7 +11,7 @@ interface Draw {
   tweetRetweetCount: number;
   tweetReplyCount: number;
   tweetQuoteCount: number;
-  status: "pending" | "running" | "completed" | "failed";
+  status: 'pending' | 'running' | 'completed' | 'failed';
   totalEntries: number;
   validEntries: number;
   createdAt: string;
@@ -22,7 +21,7 @@ interface Draw {
 interface DrawListItem {
   id: string;
   tweetUrl: string;
-  status: "pending" | "running" | "completed" | "failed";
+  status: 'pending' | 'running' | 'completed' | 'failed';
   totalEntries: number;
   validEntries: number;
   createdAt: string;
@@ -56,5 +55,4 @@ interface CreateDrawRequest {
   requiredHashtags?: string[];
   requiredMentions?: string[];
 }
-
 ```

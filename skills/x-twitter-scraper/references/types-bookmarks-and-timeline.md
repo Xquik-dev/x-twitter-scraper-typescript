@@ -1,7 +1,6 @@
 # Xquik TypeScript types for bookmarks & timeline
 
 ```typescript
-
 interface BookmarksResponse {
   tweets: Tweet[];
   has_next_page: boolean;
@@ -42,5 +41,4 @@ interface DmMessage {
   createdAt: string;
   media?: TweetMediaItem[];
 }
-
 ```

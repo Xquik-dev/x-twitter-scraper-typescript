@@ -113,7 +113,7 @@ export interface ListRetrieveResponse {
   list: Shared.XList;
 }
 
-export namespace ListRetrieveResponse {
+export declare namespace ListRetrieveResponse {
   export type List = Shared.XList;
 
   export namespace List {
@@ -149,7 +149,7 @@ export namespace ListRetrieveResponse {
 export type ListRetrieveFollowersResponse =
   Shared.UserListPage | ListRetrieveFollowersResponse.UserListCoverageResponse;
 
-export namespace ListRetrieveFollowersResponse {
+export declare namespace ListRetrieveFollowersResponse {
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -264,7 +264,7 @@ export namespace ListRetrieveFollowersResponse {
 export type ListRetrieveMembersResponse =
   Shared.UserListPage | ListRetrieveMembersResponse.UserListCoverageResponse;
 
-export namespace ListRetrieveMembersResponse {
+export declare namespace ListRetrieveMembersResponse {
   /**
    * Terminal relationship coverage response with diagnostics.
    */
@@ -375,7 +375,7 @@ export namespace ListRetrieveMembersResponse {
 
 export type ListRetrieveSearchResponse = Shared.PaginatedLists;
 
-export namespace ListRetrieveSearchResponse {
+export declare namespace ListRetrieveSearchResponse {
   export type List = Shared.XList;
 
   export namespace List {

@@ -2,7 +2,34 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-export * from './shared';
+export type {
+  Broadcast,
+  Community,
+  CommunityPage,
+  CommunityTopic,
+  ContentDisclosure,
+  Currency,
+  EmbeddedTweet,
+  Error,
+  EventType,
+  FilterablePaginatedTweets,
+  ImageFilterSummary,
+  ImageFilteredTweets,
+  MonitorFollow,
+  PaginatedLists,
+  PaginatedTweets,
+  PaginatedUserIds,
+  PaginatedUsers,
+  SearchTweet,
+  SoftIntervention,
+  TopicFilterSummary,
+  TopicFilteredTweets,
+  TweetMedia,
+  UserListPage,
+  UserProfile,
+  XList,
+  XListBanner,
+} from './shared';
 export {
   Account,
   type AccountRetrieveResponse,

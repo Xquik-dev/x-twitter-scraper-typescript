@@ -23,6 +23,12 @@ const ignoredRefSiblings = new Set([
 /** @type {Array<'oneOf' | 'anyOf'>} */
 const variantKeywords = ['oneOf', 'anyOf'];
 
+/** @type {(value: import('./types').JsonValue | undefined) => boolean} */
+const hasKeys = (value) => typeof value === 'object' && value !== null && Object.keys(value).length > 0;
+
+/** @type {(schema: import('./types').Schema, key: string) => import('./types').Schema} */
+const without = (schema, key) => Object.fromEntries(Object.entries(schema).filter(([name]) => name !== key));
+
 /** @type {(value: import('./types').JsonValue | undefined) => import('./types').JsonValue[]} */
 const asArray = (value) => (Array.isArray(value) ? value : []);
 
@@ -52,7 +58,7 @@ class SpecShapes {
   /** @type {(value: import('./types').JsonValue | undefined) => import('./types').JsonObject | undefined} */
   deref(value) {
     const ref = asObject(value)?.['$ref'];
-    return asObject(typeof ref === 'string' && ref ? this.resolve(ref) : value);
+    return asObject(typeof ref === 'string' && ref !== '' ? this.resolve(ref) : value);
   }
 
   /** @type {(value: import('./types').JsonValue | undefined, stack?: string[]) => [import('./types').Node, boolean]} */
@@ -74,8 +80,8 @@ class SpecShapes {
     }
     if (Array.isArray(schema.allOf)) {
       const parts = schema.allOf.map((sub) => this.node(sub, stack)[0]);
-      const { allOf, ...rest } = schema;
-      if (rest.properties && Object.keys(rest.properties).length) parts.push(this.node(rest, stack)[0]);
+      const rest = without(schema, 'allOf');
+      if (hasKeys(rest.properties)) parts.push(this.node(rest, stack)[0]);
       return [intersect(parts), nullable];
     }
     for (const keyword of variantKeywords) {
@@ -98,23 +104,23 @@ class SpecShapes {
         nullable = nullable || variantNullable;
         variants.push(variant);
       }
-      if (schema.properties && Object.keys(schema.properties).length) {
-        const { [keyword]: dropped, ...rest } = schema;
+      if (hasKeys(schema.properties)) {
+        const rest = without(schema, keyword);
         const [base] = this.node(rest, stack);
         variants = variants.map((variant) => intersect([base, variant]));
       }
       const [only] = variants;
-      return [only && variants.length === 1 ? only : { t: 'union', variants }, nullable];
+      return [only !== undefined && variants.length === 1 ? only : { t: 'union', variants }, nullable];
     }
     if ('const' in schema) return [leaf([schema.const]), nullable];
     if (Array.isArray(schema.enum)) {
       const values = schema.enum.filter((value) => value !== null);
       return [leaf(values), nullable || values.length < schema.enum.length];
     }
-    const isObject = types?.includes('object') || 'properties' in schema;
+    const isObject = types?.includes('object') === true || 'properties' in schema;
     const required = asArray(schema.required).filter((name) => typeof name === 'string');
     const properties = asObject(schema.properties);
-    if (isObject && properties && Object.keys(properties).length) {
+    if (isObject && properties !== undefined && Object.keys(properties).length > 0) {
       const requiredNames = new Set(required);
       const props = Object.fromEntries(
         Object.entries(properties).map(([name, sub]) => {
@@ -123,16 +129,21 @@ class SpecShapes {
         }),
       );
       return [
-        object(props, schema.additionalProperties != null && schema.additionalProperties !== false),
+        object(
+          props,
+          schema.additionalProperties !== null &&
+            schema.additionalProperties !== undefined &&
+            schema.additionalProperties !== false,
+        ),
         nullable,
       ];
     }
     const values = schema.additionalProperties;
     const typedValues = values !== null && typeof values === 'object' && Object.keys(values).length > 0;
-    if (isObject && typedValues && !required.length)
+    if (isObject && typedValues && required.length === 0)
       return [{ t: 'map', items: this.node(values, stack)[0] }, nullable];
-    if (isObject) return [required.length ? { t: 'free', requires: required } : { t: 'free' }, nullable];
-    if (types?.includes('array')) {
+    if (isObject) return [required.length > 0 ? { t: 'free', requires: required } : { t: 'free' }, nullable];
+    if (types?.includes('array') === true) {
       if ('items' in schema && !('prefixItems' in schema))
         return [{ t: 'array', items: this.node(schema.items, stack)[0] }, nullable];
       return [leaf(), nullable];
@@ -158,7 +169,9 @@ class SpecShapes {
   schemas(content, accept) {
     return Object.entries(asObject(content) ?? {}).flatMap(([type, media]) => {
       const schema = asObject(media)?.['schema'];
-      return accept((type.split(';')[0] ?? '').trim()) && schema ? [schema] : [];
+      return accept((type.split(';')[0] ?? '').trim()) && schema !== undefined && Boolean(schema) ?
+          [schema]
+        : [];
     });
   }
 
@@ -168,7 +181,7 @@ class SpecShapes {
     const params = new Map();
     for (const raw of [...asArray(pathItem['parameters']), ...asArray(operation['parameters'])]) {
       const param = this.deref(raw);
-      if (param) params.set(`${param['in']} ${param['name']}`, param);
+      if (param !== undefined) params.set(JSON.stringify([param['in'], param['name']]), param);
     }
     /** @type {import('./types').Props} */
     const query = {};
@@ -186,7 +199,7 @@ class SpecShapes {
       (s) => this.node(s)[0],
     );
     const responses = Object.entries(asObject(operation['responses']) ?? {})
-      .filter(([code]) => String(code).startsWith('2'))
+      .filter(([code]) => code.startsWith('2'))
       .flatMap(([, raw]) =>
         this.schemas(
           this.deref(raw)?.['content'],
@@ -198,7 +211,7 @@ class SpecShapes {
     const one = (nodes) => {
       const [first] = nodes;
       return (
-        !first ? null
+        first === undefined ? null
         : nodes.length === 1 ? first
         : { t: 'union', variants: nodes }
       );

@@ -1,7 +1,6 @@
 # Xquik TypeScript types for user activity
 
 ```typescript
-
 interface UserTweetsResponse {
   tweets: Tweet[];
   has_next_page: boolean;
@@ -31,5 +30,4 @@ interface FollowersYouKnowResponse {
   has_next_page: boolean;
   next_cursor?: string;
 }
-
 ```

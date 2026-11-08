@@ -59,7 +59,7 @@ const sarif = ({
   });
 
 const fakeCheck = (exitCode: number, line: string) =>
-  `process.${exitCode === 0 ? 'stdout' : 'stderr'}.write(${JSON.stringify(`${line}\n`)});\nprocess.exitCode = ${exitCode};\n`;
+  `process.${exitCode === 0 ? 'stdout' : 'stderr'}.write(${JSON.stringify(`${line}\n`)});\nprocess.exitCode = ${String(exitCode)};\n`;
 
 const covered = fakeCheck(
   0,

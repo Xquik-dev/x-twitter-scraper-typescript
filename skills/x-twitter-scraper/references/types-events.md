@@ -1,7 +1,6 @@
 # Xquik TypeScript types for events
 
 ```typescript
-
 interface XquikEvent {
   id: string;
   type: EventType;
@@ -39,5 +38,4 @@ interface EventList {
   hasMore: boolean;
   nextCursor?: string;
 }
-
 ```

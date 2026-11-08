@@ -43,7 +43,9 @@ export const client = new XTwitterScraper({ apiKey: 'key' });
 
 /** @type {(names: string[]) => string} */
 const sentenceList = (names) =>
-  names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : (names[0] ?? '');
+  names.length > 1 ?
+    `${names.slice(0, -1).join(', ')} and ${names[names.length - 1] ?? ''}`
+  : (names[0] ?? '');
 
 /** @type {(project: string, mode: (typeof modes)[number]) => void} */
 const writeProject = (project, mode) => {
@@ -82,8 +84,12 @@ const compile = (compiler, project, workspace) =>
     running.add(child);
     let stdout = '';
     let stderr = '';
-    child.stdout.on('data', (/** @type {Buffer} */ chunk) => (stdout += chunk));
-    child.stderr.on('data', (/** @type {Buffer} */ chunk) => (stderr += chunk));
+    child.stdout.on('data', (/** @type {Buffer} */ chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr.on('data', (/** @type {Buffer} */ chunk) => {
+      stderr += chunk.toString();
+    });
     child.on('error', reject);
     child.on('close', (status) => {
       running.delete(child);
@@ -96,10 +102,9 @@ const main = async () => {
     console.error(`${packageDirectory} has no package.json. Run pnpm build first.`);
     process.exit(1);
   }
-  /** @type {string | undefined} */
-  let workspace;
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
   const removeWorkspace = () => {
-    if (workspace) fs.rmSync(workspace, { recursive: true, force: true });
+    fs.rmSync(workspace, { recursive: true, force: true });
   };
   /** @type {NodeJS.Signals[]} */
   const signals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
@@ -111,7 +116,6 @@ const main = async () => {
       process.kill(process.pid, signal);
     });
   }
-  workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'xquik-typescript-consumer-types-'));
   /** @type {string[]} */
   const failures = [];
   try {
@@ -140,4 +144,7 @@ const main = async () => {
   console.log(`Consumer types passed for ${modeNames} under ${compilerNames}.`);
 };
 
-main();
+main().catch((/** @type {unknown} */ error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

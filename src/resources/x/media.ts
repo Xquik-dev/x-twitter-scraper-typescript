@@ -76,7 +76,7 @@ export interface MediaDownloadResponse {
   tweetId?: string;
 }
 
-export namespace MediaDownloadResponse {
+export declare namespace MediaDownloadResponse {
   /**
    * 1 file saved to your gallery.
    */
@@ -329,7 +329,7 @@ export interface MediaUploadResponse {
   updatedAt?: string;
 }
 
-export namespace MediaUploadResponse {
+export declare namespace MediaUploadResponse {
   /**
    * Connected account selected for the write.
    */

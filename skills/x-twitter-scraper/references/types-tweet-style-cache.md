@@ -1,7 +1,6 @@
 # Xquik TypeScript types for the tweet style cache
 
 ```typescript
-
 interface TweetStyleCache {
   xUsername: string;
   tweetCount: number;
@@ -46,5 +45,4 @@ interface PerformanceTweet {
   viewCount: number;
   bookmarkCount: number;
 }
-
 ```

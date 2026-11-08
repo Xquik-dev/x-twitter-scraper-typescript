@@ -84,7 +84,7 @@ export interface AccountRetrieveResponse {
   xUsername?: string;
 }
 
-export namespace AccountRetrieveResponse {
+export declare namespace AccountRetrieveResponse {
   export interface MonitorBilling {
     /**
      * Daily credits for currently active monitors.

@@ -37,7 +37,7 @@ export type ComposeCreateResponse =
   | ComposeCreateResponse.ComposeRefineResult
   | ComposeCreateResponse.ComposeScoreResult;
 
-export namespace ComposeCreateResponse {
+export declare namespace ComposeCreateResponse {
   /**
    * Rules, questions, and research guidance for drafting a post.
    */
@@ -126,8 +126,6 @@ export namespace ComposeCreateResponse {
 
     /**
      * Deprecated compatibility schema. The response array is empty.
-     *
-     * @deprecated
      */
     export interface RadarRecommendation {
       /**
@@ -206,8 +204,6 @@ export namespace ComposeCreateResponse {
   export namespace ComposeRefineResult {
     /**
      * Deprecated example-pattern schema. The response array is empty.
-     *
-     * @deprecated
      */
     export interface ExamplePattern {
       description: string;

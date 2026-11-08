@@ -8,9 +8,9 @@ Fetch recent tweets from an X account and cache them for style analysis. **Consu
 
 The request body takes these fields.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `username` | string | Yes | X username to analyze (without @) |
+| Field      | Type   | Required | Description                       |
+| ---------- | ------ | -------- | --------------------------------- |
+| `username` | string | Yes      | X username to analyze (without @) |
 
 A `201` response has this shape.
 
@@ -64,10 +64,10 @@ Save a custom style profile from tweet texts. The body `label` controls the save
 
 The request body takes these fields.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `label` | string | Yes | Style label name (1-30 characters) |
-| `tweets` | object[] | Yes | Array of tweet objects (1-100). Each must have a `text` field |
+| Field    | Type     | Required | Description                                                   |
+| -------- | -------- | -------- | ------------------------------------------------------------- |
+| `label`  | string   | Yes      | Style label name (1-30 characters)                            |
+| `tweets` | object[] | Yes      | Array of tweet objects (1-100). Each must have a `text` field |
 
 A `200` response returns the style object with label, `tweetCount`, `isOwnAccount: false`, `fetchedAt`, and a `tweets` array.
 
@@ -105,10 +105,10 @@ Compare two cached tweet style profiles side by side.
 
 It takes these query parameters.
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `username1` | string | Yes | First X username |
-| `username2` | string | Yes | Second X username |
+| Parameter   | Type   | Required | Description       |
+| ----------- | ------ | -------- | ----------------- |
+| `username1` | string | Yes      | First X username  |
+| `username2` | string | Yes      | Second X username |
 
 A `200` response has this shape.
 

@@ -265,7 +265,7 @@ export interface PostMonitor {
   pausedAt?: string;
 }
 
-export namespace PostMonitor {
+export declare namespace PostMonitor {
   /**
    * The organization badge X shows beside the author's name.
    */

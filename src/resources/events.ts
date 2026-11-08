@@ -10,6 +10,7 @@ import type { Stream } from '../core/streaming';
 import { buildHeaders } from '../internal/headers';
 import type { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
+import { isPresent } from '../internal/utils/values';
 
 /**
  * Activity events from monitored accounts
@@ -60,7 +61,7 @@ export class Events extends APIResource {
       headers: buildHeaders([
         {
           Accept: 'text/event-stream',
-          ...(lastEventID != null ? { 'Last-Event-ID': lastEventID } : undefined),
+          ...(isPresent(lastEventID) ? { 'Last-Event-ID': lastEventID } : undefined),
         },
         options?.headers,
       ]),
@@ -165,7 +166,7 @@ export interface Event {
   xUserId?: string;
 }
 
-export namespace Event {
+export declare namespace Event {
   /**
    * Monitored post with public fields and retained legacy fields.
    */
@@ -1842,7 +1843,7 @@ export interface EventDetail {
   xUserId?: string;
 }
 
-export namespace EventDetail {
+export declare namespace EventDetail {
   /**
    * Monitored post with public fields and retained legacy fields.
    */

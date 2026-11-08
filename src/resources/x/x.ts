@@ -560,7 +560,7 @@ export interface XAutocompleteSearchResponse {
   users: Array<XAutocompleteSearchResponse.User>;
 }
 
-export namespace XAutocompleteSearchResponse {
+export declare namespace XAutocompleteSearchResponse {
   /**
    * A stock or crypto token X suggests for the query.
    */
@@ -789,7 +789,7 @@ export interface XGetArticleResponse {
   author?: XGetArticleResponse.Author;
 }
 
-export namespace XGetArticleResponse {
+export declare namespace XGetArticleResponse {
   export interface Article {
     /**
      * X's ID for the Article, which differs from its post's ID
@@ -1046,7 +1046,7 @@ export interface XGetHashflagsResponse {
   message?: string;
 }
 
-export namespace XGetHashflagsResponse {
+export declare namespace XGetHashflagsResponse {
   /**
    * A custom emoji X shows after a hashtag for a set time.
    */
@@ -1116,7 +1116,7 @@ export interface XGetNewsStoryVersionsResponse {
   versions: Array<XGetNewsStoryVersionsResponse.Version>;
 }
 
-export namespace XGetNewsStoryVersionsResponse {
+export declare namespace XGetNewsStoryVersionsResponse {
   /**
    * 1 version X wrote of a news story.
    */
@@ -1152,7 +1152,7 @@ export interface XGetNotificationsResponse {
   notifications: Array<XGetNotificationsResponse.Notification>;
 }
 
-export namespace XGetNotificationsResponse {
+export declare namespace XGetNotificationsResponse {
   export interface Notification {
     id: string;
 
@@ -1225,7 +1225,7 @@ export interface XGetTrendLocationsResponse {
   message?: string;
 }
 
-export namespace XGetTrendLocationsResponse {
+export declare namespace XGetTrendLocationsResponse {
   export type Location = TrendLocation;
 }
 
@@ -1255,7 +1255,7 @@ export interface XGetTrendsResponse {
   requestedAt?: string;
 }
 
-export namespace XGetTrendsResponse {
+export declare namespace XGetTrendsResponse {
   export interface Trend {
     name: string;
 
@@ -1326,7 +1326,7 @@ export interface XGetTrendsHistoryResponse {
   location?: TrendLocation;
 }
 
-export namespace XGetTrendsHistoryResponse {
+export declare namespace XGetTrendsHistoryResponse {
   export interface Snapshot {
     /**
      * When Xquik read this stored list from X. Xquik never estimates it.
@@ -1393,7 +1393,7 @@ export interface XSearchPlacesResponse {
   message?: string;
 }
 
-export namespace XSearchPlacesResponse {
+export declare namespace XSearchPlacesResponse {
   /**
    * A place X found, with the larger places it lies in.
    */

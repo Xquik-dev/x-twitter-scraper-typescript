@@ -32,7 +32,7 @@ export type AccountConnectionAttemptRetrieveResponse =
   | AccountConnectionAttemptRetrieveResponse.XAccountConnectionAttemptFailed
   | AccountConnectionAttemptRetrieveResponse.XAccountConnectionChallenge;
 
-export namespace AccountConnectionAttemptRetrieveResponse {
+export declare namespace AccountConnectionAttemptRetrieveResponse {
   /**
    * The connection is still in progress.
    */

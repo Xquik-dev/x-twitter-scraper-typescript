@@ -1,7 +1,6 @@
 # Xquik TypeScript types for API keys
 
 ```typescript
-
 interface ApiKeyCreated {
   id: string;
   fullKey: string;
@@ -18,5 +17,4 @@ interface ApiKey {
   createdAt: string;
   lastUsedAt?: string;
 }
-
 ```

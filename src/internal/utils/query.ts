@@ -6,7 +6,7 @@ import { XTwitterScraperError } from '../../core/error';
 
 export function stringifyQuery(query: object | Record<string, unknown>) {
   return Object.entries(query)
-    .filter(([_, value]) => typeof value !== 'undefined')
+    .filter(([, value]) => typeof value !== 'undefined')
     .map(([key, value]) => {
       if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
         return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;

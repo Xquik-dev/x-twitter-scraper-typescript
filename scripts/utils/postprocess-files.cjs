@@ -5,10 +5,12 @@
 const fs = require('fs');
 const path = require('path');
 const asObject = require('./json.cjs').asObject;
+const parseJson = require('./json.cjs').parseJson;
 
+const distPath = process.env['DIST_PATH'];
 const distDir =
-  process.env['DIST_PATH'] ?
-    path.resolve(process.env['DIST_PATH'])
+  distPath !== undefined && distPath !== '' ?
+    path.resolve(distPath)
   : path.resolve(__dirname, '..', '..', 'dist');
 
 /** @type {(dir: string) => AsyncGenerator<string>} */
@@ -37,7 +39,7 @@ async function postprocess() {
     }
   }
 
-  /** @type {Record<string, import('./types').ExportConditions>} */
+  /** @type {Record<string, import('./types').ExportConditions | undefined>} */
   const newExports = {
     '.': {
       require: {
@@ -67,7 +69,7 @@ async function postprocess() {
       const { name, ext } = path.parse(entry.name);
       const subpathWithoutExt = './' + name;
       const subpath = './' + entry.name;
-      const conditions = (newExports[subpathWithoutExt] ||= { import: undefined, require: undefined });
+      const conditions = (newExports[subpathWithoutExt] ??= { import: undefined, require: undefined });
       const isModule = ext[1] === 'm';
       if (isModule) {
         conditions.import = subpath;
@@ -79,8 +81,7 @@ async function postprocess() {
       };
     }
   }
-  /** @type {import('./types').JsonValue} */
-  const distPackage = JSON.parse(await fs.promises.readFile('dist/package.json', 'utf-8'));
+  const distPackage = parseJson(await fs.promises.readFile('dist/package.json', 'utf-8'));
   await fs.promises.writeFile(
     'dist/package.json',
     JSON.stringify(
@@ -93,4 +94,7 @@ async function postprocess() {
     ),
   );
 }
-postprocess();
+postprocess().catch((/** @type {unknown} */ error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

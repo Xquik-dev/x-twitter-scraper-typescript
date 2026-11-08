@@ -1,7 +1,6 @@
 # Xquik TypeScript types for support
 
 ```typescript
-
 interface SupportTicket {
   id: string;
   subject: string;
@@ -21,5 +20,4 @@ interface CreateTicketRequest {
   subject: string;
   body: string;
 }
-
 ```

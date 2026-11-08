@@ -10,12 +10,13 @@ Download images, videos, and GIFs from tweets. Single or bulk (up to 50). Return
 
 In the body, provide either `tweetInput` (single tweet) or `tweetIds` (bulk). Exactly 1 is required.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `tweetInput` | string | Tweet URL or numeric tweet ID for a single download. Accepts `x.com` and `twitter.com` URL formats |
-| `tweetIds` | string[] | Array of tweet URLs or IDs for bulk download. Maximum 50 items. Returns a single combined gallery |
+| Field        | Type     | Description                                                                                        |
+| ------------ | -------- | -------------------------------------------------------------------------------------------------- |
+| `tweetInput` | string   | Tweet URL or numeric tweet ID for a single download. Accepts `x.com` and `twitter.com` URL formats |
+| `tweetIds`   | string[] | Array of tweet URLs or IDs for bulk download. Maximum 50 items. Returns a single combined gallery  |
 
 A single-tweet response has this shape.
+
 ```json
 {
   "tweetId": "1893456789012345678",
@@ -25,6 +26,7 @@ A single-tweet response has this shape.
 ```
 
 A bulk response has this shape.
+
 ```json
 {
   "galleryUrl": "https://xquik.com/g/def456",

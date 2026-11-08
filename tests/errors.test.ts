@@ -4,7 +4,7 @@
 
 import { runInNewContext } from 'node:vm';
 
-import XTwitterScraper from 'x-twitter-scraper';
+import type XTwitterScraper from 'x-twitter-scraper';
 import {
   APIConnectionError,
   APIConnectionTimeoutError,

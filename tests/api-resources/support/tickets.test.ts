@@ -104,7 +104,7 @@ describe('resource tickets', () => {
   });
 
   test('create: sends each attachment under the attachments field', async () => {
-    const { client: fixture, sent } = fixtureClient({});
+    const { client: fixture, forms } = fixtureClient({});
 
     await fixture.support.tickets.create({
       subject: 'Billing question',
@@ -115,21 +115,21 @@ describe('resource tickets', () => {
       ],
     });
 
-    const form = await ensurePresent(sent[0]).formData();
+    const form = ensurePresent(forms[0]);
     expect(form.get('subject')).toBe('Billing question');
     expect(form.get('body')).toBe('The screenshot shows the charge.');
     expect(form.getAll('attachments').map((file) => formFile(file).name)).toEqual(['screen.png', 'clip.mp4']);
   });
 
   test('reply: sends attachments with the message', async () => {
-    const { client: fixture, sent } = fixtureClient({});
+    const { client: fixture, forms } = fixtureClient({});
 
     await fixture.support.tickets.reply('1', {
       body: 'Here is the screenshot.',
       attachments: [new File(['first'], 'screen.png', { type: 'image/png' })],
     });
 
-    const form = await ensurePresent(sent[0]).formData();
+    const form = ensurePresent(forms[0]);
     expect(form.getAll('attachments').map((file) => formFile(file).name)).toEqual(['screen.png']);
   });
 });

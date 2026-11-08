@@ -63,14 +63,13 @@ export interface TweetCreateParams {
 }
 `;
 
-const responseProperties: Record<string, object> = {
+const withoutLang: Record<string, object> = {
   id: { type: 'string' },
   text: { type: 'string' },
   author: { $ref: '#/components/schemas/Author' },
-  lang: { type: 'string' },
 };
 
-const { lang: _lang, ...withoutLang } = responseProperties;
+const responseProperties: Record<string, object> = { ...withoutLang, lang: { type: 'string' } };
 
 type SpecOptions = {
   response?: Record<string, object>;
@@ -108,7 +107,7 @@ const makeSpec = ({
               content: {
                 'application/json': {
                   schema:
-                    requiredLater.length ?
+                    requiredLater.length > 0 ?
                       { allOf: [schema, { type: 'object', required: requiredLater }] }
                     : schema,
                 },

@@ -207,7 +207,7 @@ export interface WriteActionRetrieveResponse {
   updatedAt?: string;
 }
 
-export namespace WriteActionRetrieveResponse {
+export declare namespace WriteActionRetrieveResponse {
   /**
    * Connected account selected for the write.
    */

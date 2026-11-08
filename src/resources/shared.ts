@@ -134,7 +134,7 @@ export interface Broadcast {
   width?: number;
 }
 
-export namespace Broadcast {
+export declare namespace Broadcast {
   /**
    * Broadcaster, as X's live video service names the account
    */
@@ -264,7 +264,7 @@ export interface Community {
   searchTags?: Array<string>;
 }
 
-export namespace Community {
+export declare namespace Community {
   /**
    * The banner X shows for a community, with its size & colors.
    */
@@ -455,7 +455,7 @@ export interface CommunityTopic {
   subtopics: Array<CommunityTopic.Subtopic>;
 }
 
-export namespace CommunityTopic {
+export declare namespace CommunityTopic {
   export interface Subtopic {
     /**
      * Subtopic ID, which topicId also takes
@@ -479,7 +479,7 @@ export interface ContentDisclosure {
   aiGenerated?: ContentDisclosure.AIGenerated;
 }
 
-export namespace ContentDisclosure {
+export declare namespace ContentDisclosure {
   export interface Advertising {
     /**
      * True when X labels the tweet as paid promotion content.
@@ -887,7 +887,7 @@ export interface Error {
   retryAfterMs?: number;
 }
 
-export namespace Error {
+export declare namespace Error {
   export type Code =
     | 'internal_error'
     | 'account_already_connected'
@@ -1166,7 +1166,7 @@ export interface ImageFilteredTweets extends PaginatedTweets {
   tweets: Array<ImageFilteredTweets.Tweet>;
 }
 
-export namespace ImageFilteredTweets {
+export declare namespace ImageFilteredTweets {
   /**
    * A post the image filter kept, with its score.
    */
@@ -1214,7 +1214,7 @@ export interface ImageFilterSummary {
   unchecked: Array<ImageFilterSummary.Unchecked>;
 }
 
-export namespace ImageFilterSummary {
+export declare namespace ImageFilterSummary {
   /**
    * A post the image filter left out without a score, with the reason.
    */
@@ -1321,7 +1321,7 @@ export interface PaginatedTweets {
   windowComplete?: true;
 }
 
-export namespace PaginatedTweets {
+export declare namespace PaginatedTweets {
   /**
    * What X shows beside a search's posts that is the same for every reader. Present
    * on a search for a cashtag X has a card for, such as $BTC.
@@ -1691,7 +1691,7 @@ export interface SearchTweet {
   viewState?: string;
 }
 
-export namespace SearchTweet {
+export declare namespace SearchTweet {
   /**
    * Describes an X Article preview and its lifecycle metadata.
    */
@@ -2855,7 +2855,7 @@ export interface SoftIntervention {
   url?: SoftIntervention.URL;
 }
 
-export namespace SoftIntervention {
+export declare namespace SoftIntervention {
   export interface Text {
     /**
      * Links inside the label, by character range.
@@ -2926,7 +2926,7 @@ export interface TopicFilteredTweets extends PaginatedTweets {
   tweets: Array<TopicFilteredTweets.Tweet>;
 }
 
-export namespace TopicFilteredTweets {
+export declare namespace TopicFilteredTweets {
   /**
    * A post the topic filter kept, with its score.
    */
@@ -2973,7 +2973,7 @@ export interface TopicFilterSummary {
   unchecked: Array<TopicFilterSummary.Unchecked>;
 }
 
-export namespace TopicFilterSummary {
+export declare namespace TopicFilterSummary {
   /**
    * A post the topic filter left out without a score, with the reason.
    */
@@ -3166,7 +3166,7 @@ export interface TweetMedia {
   width?: number;
 }
 
-export namespace TweetMedia {
+export declare namespace TweetMedia {
   export interface FaceRect {
     /**
      * Whole number from 0.
@@ -3275,7 +3275,7 @@ export interface UserListPage extends PaginatedUsers {
   scanLimit?: UserListPage.ScanLimit;
 }
 
-export namespace UserListPage {
+export declare namespace UserListPage {
   /**
    * Present on the last page of a filtered automatic read that sent no maxScan,
    * once the list scanned 100,000 profiles across its pages. That page is the
@@ -3605,7 +3605,7 @@ export interface UserProfile {
   withheldScope?: string;
 }
 
-export namespace UserProfile {
+export declare namespace UserProfile {
   /**
    * X's best-effort public label inferred from aggregated account-access IP
    * addresses. It does not state nationality, residence, identity, registration,
@@ -3967,7 +3967,7 @@ export interface XListBanner {
   width?: number;
 }
 
-export namespace XListBanner {
+export declare namespace XListBanner {
   export interface Palette {
     /**
      * Share of the banner, from 0 to 100.

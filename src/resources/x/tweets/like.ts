@@ -234,7 +234,7 @@ export interface LikeCreateResponse {
   updatedAt?: string;
 }
 
-export namespace LikeCreateResponse {
+export declare namespace LikeCreateResponse {
   /**
    * Connected account selected for the write.
    */
@@ -491,7 +491,7 @@ export interface LikeDeleteResponse {
   updatedAt?: string;
 }
 
-export namespace LikeDeleteResponse {
+export declare namespace LikeDeleteResponse {
   /**
    * Connected account selected for the write.
    */

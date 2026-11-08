@@ -1,7 +1,6 @@
 # Xquik TypeScript types for webhooks
 
 ```typescript
-
 interface WebhookCreated {
   id: string;
   url: string;
@@ -21,7 +20,7 @@ interface Webhook {
 interface Delivery {
   id: string;
   streamEventId: string;
-  status: "pending" | "delivered" | "failed" | "exhausted";
+  status: 'pending' | 'delivered' | 'failed' | 'exhausted';
   attempts: number;
   lastStatusCode?: number;
   lastError?: string;
@@ -34,5 +33,4 @@ interface WebhookPayload {
   username: string;
   data: EventData;
 }
-
 ```

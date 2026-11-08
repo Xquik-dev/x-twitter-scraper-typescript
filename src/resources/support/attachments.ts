@@ -7,6 +7,7 @@ import type { APIPromise } from '../../core/api-promise';
 import { buildHeaders } from '../../internal/headers';
 import type { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
+import { isPresent } from '../../internal/utils/values';
 
 /**
  * Support ticket management
@@ -35,7 +36,7 @@ export class Attachments extends APIResource {
     return this._client.get(path`/support/attachments/${id}`, {
       ...options,
       headers: buildHeaders([
-        { Accept: 'application/octet-stream', ...(Range != null ? { Range: Range } : undefined) },
+        { Accept: 'application/octet-stream', ...(isPresent(Range) ? { Range: Range } : undefined) },
         options?.headers,
       ]),
       __binaryResponse: true,

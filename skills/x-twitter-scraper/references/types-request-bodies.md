@@ -1,7 +1,6 @@
 # Xquik TypeScript types for request bodies
 
 ```typescript
-
 interface CreateMonitorRequest {
   username: string;
   eventTypes: EventType[];
@@ -26,5 +25,4 @@ interface UpdateWebhookRequest {
 interface CreateApiKeyRequest {
   name?: string;
 }
-
 ```

@@ -1,10 +1,9 @@
 # Xquik TypeScript types for the X API
 
 ```typescript
-
 interface TweetMediaItem {
   mediaUrl: string;
-  type: string;       // "photo" | "video" | "animated_gif"
+  type: string; // "photo" | "video" | "animated_gif"
   url: string;
   allowDownload?: boolean;
   altText?: string;
@@ -80,9 +79,9 @@ interface TweetSearchResult {
   id: string;
   text: string;
   createdAt?: string;
-  likeCount: number;    // Zero can mean X did not report the count
+  likeCount: number; // Zero can mean X did not report the count
   retweetCount: number; // Zero can mean X did not report the count
-  replyCount: number;   // Zero can mean X did not report the count
+  replyCount: number; // Zero can mean X did not report the count
   media?: TweetMediaItem[];
   author?: UserProfile;
 }
@@ -107,7 +106,6 @@ interface FollowerCheck {
   isFollowing: boolean;
   isFollowedBy: boolean;
 }
-
 ```
 
 Optional fields appear only when X supplies them. Never infer missing values.

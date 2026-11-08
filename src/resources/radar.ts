@@ -89,7 +89,7 @@ export interface RadarItem {
   url?: string;
 }
 
-export namespace RadarItem {
+export declare namespace RadarItem {
   /**
    * Source fields vary:
    * - reddit: { author, authorId?, subreddit, subredditId?, subredditSubscribers?,

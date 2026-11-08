@@ -172,7 +172,7 @@ export interface AnalysisBrandResponse {
   unanalyzed: Array<AnalysisBrandResponse.Unanalyzed>;
 }
 
-export namespace AnalysisBrandResponse {
+export declare namespace AnalysisBrandResponse {
   /**
    * Totals of the answers across the analyzed posts.
    */
@@ -584,7 +584,7 @@ export interface AnalysisClassifyResponse {
   unanalyzed: Array<AnalysisClassifyResponse.Unanalyzed>;
 }
 
-export namespace AnalysisClassifyResponse {
+export declare namespace AnalysisClassifyResponse {
   /**
    * Totals of the answers across the analyzed posts.
    */
@@ -996,7 +996,7 @@ export interface AnalysisMarketSignalsResponse {
   unanalyzed: Array<AnalysisMarketSignalsResponse.Unanalyzed>;
 }
 
-export namespace AnalysisMarketSignalsResponse {
+export declare namespace AnalysisMarketSignalsResponse {
   /**
    * Totals of the answers across the analyzed posts.
    */
@@ -1408,7 +1408,7 @@ export interface AnalysisNewsResponse {
   unanalyzed: Array<AnalysisNewsResponse.Unanalyzed>;
 }
 
-export namespace AnalysisNewsResponse {
+export declare namespace AnalysisNewsResponse {
   /**
    * Totals of the answers across the analyzed posts.
    */
@@ -1820,7 +1820,7 @@ export interface AnalysisSentimentResponse {
   unanalyzed: Array<AnalysisSentimentResponse.Unanalyzed>;
 }
 
-export namespace AnalysisSentimentResponse {
+export declare namespace AnalysisSentimentResponse {
   /**
    * Totals of the answers across the analyzed posts.
    */
@@ -2232,7 +2232,7 @@ export interface AnalysisViralScoreResponse {
   unanalyzed: Array<AnalysisViralScoreResponse.Unanalyzed>;
 }
 
-export namespace AnalysisViralScoreResponse {
+export declare namespace AnalysisViralScoreResponse {
   /**
    * Totals of the answers across the analyzed posts.
    */
@@ -2694,7 +2694,7 @@ export interface AnalysisBrandParams {
   username?: string;
 }
 
-export namespace AnalysisBrandParams {
+export declare namespace AnalysisBrandParams {
   /**
    * Analysis settings, the same as the analysis input of Xquik's AI Actors. Leave it
    * out for the route's own questions.
@@ -2923,7 +2923,7 @@ export interface AnalysisClassifyParams {
   username?: string;
 }
 
-export namespace AnalysisClassifyParams {
+export declare namespace AnalysisClassifyParams {
   /**
    * Analysis settings, the same as the analysis input of Xquik's AI Actors. Leave it
    * out for the route's own questions.
@@ -3152,7 +3152,7 @@ export interface AnalysisMarketSignalsParams {
   username?: string;
 }
 
-export namespace AnalysisMarketSignalsParams {
+export declare namespace AnalysisMarketSignalsParams {
   /**
    * Analysis settings, the same as the analysis input of Xquik's AI Actors. Leave it
    * out for the route's own questions.
@@ -3381,7 +3381,7 @@ export interface AnalysisNewsParams {
   username?: string;
 }
 
-export namespace AnalysisNewsParams {
+export declare namespace AnalysisNewsParams {
   /**
    * Analysis settings, the same as the analysis input of Xquik's AI Actors. Leave it
    * out for the route's own questions.
@@ -3610,7 +3610,7 @@ export interface AnalysisSentimentParams {
   username?: string;
 }
 
-export namespace AnalysisSentimentParams {
+export declare namespace AnalysisSentimentParams {
   /**
    * Analysis settings, the same as the analysis input of Xquik's AI Actors. Leave it
    * out for the route's own questions.
@@ -3839,7 +3839,7 @@ export interface AnalysisViralScoreParams {
   username?: string;
 }
 
-export namespace AnalysisViralScoreParams {
+export declare namespace AnalysisViralScoreParams {
   /**
    * Analysis settings, the same as the analysis input of Xquik's AI Actors. Leave it
    * out for the route's own questions.

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import XTwitterScraper, { BadRequestError } from 'x-twitter-scraper';
+import { asyncValues } from './async-values';
 
 const sentBytes = async (body: unknown): Promise<number[]> => {
   let sent: Request | undefined;
@@ -10,13 +11,13 @@ const sentBytes = async (body: unknown): Promise<number[]> => {
     apiKey: 'My API Key',
     bearerToken: null,
     baseURL: 'https://xquik.test/api/v1',
-    fetch: async (input, init) => {
+    fetch: (input, init) => {
       sent = new Request(input, init);
-      return Response.json({});
+      return Promise.resolve(Response.json({}));
     },
   });
   await client.post('/upload', { body, headers: { 'content-type': 'application/octet-stream' } });
-  if (!sent) throw new Error('Expected the client to send a request');
+  if (sent === undefined) throw new Error('Expected the client to send a request');
   return [...new Uint8Array(await sent.arrayBuffer())];
 };
 
@@ -41,11 +42,7 @@ describe('request bodies', () => {
   });
 
   test('a streamed body with a chunk that is not a Uint8Array fails with a TypeError', async () => {
-    async function* chunks(): AsyncGenerator<unknown> {
-      yield new Uint8Array([1]);
-      yield 'two';
-    }
-    await expect(sentBytes(chunks())).rejects.toThrow(TypeError);
+    await expect(sentBytes(asyncValues<unknown>([new Uint8Array([1]), 'two']))).rejects.toThrow(TypeError);
   });
 });
 
@@ -56,8 +53,10 @@ describe('error bodies', () => {
       bearerToken: null,
       baseURL: 'https://xquik.test/api/v1',
       maxRetries: 0,
-      fetch: async () =>
-        new Response('null', { status: 400, headers: { 'content-type': 'application/json' } }),
+      fetch: () =>
+        Promise.resolve(
+          new Response('null', { status: 400, headers: { 'content-type': 'application/json' } }),
+        ),
     });
 
     const error = await client.get('/account').then(
