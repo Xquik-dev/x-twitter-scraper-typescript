@@ -136,6 +136,7 @@ Types
 - <code><a href="./src/resources/monitors/monitors.ts">MonitorCreateResponse</a></code>
 - <code><a href="./src/resources/monitors/monitors.ts">MonitorListResponse</a></code>
 - <code><a href="./src/resources/monitors/monitors.ts">MonitorDeactivateResponse</a></code>
+- <code><a href="./src/resources/monitors/monitors.ts">MonitorUpsertByUsernameResponse</a></code>
 
 Methods
 
@@ -144,6 +145,7 @@ Methods
 - <code title="patch /monitors/{id}">client.monitors.<a href="./src/resources/monitors/monitors.ts">update</a>(id, { ...params }) -> Monitor</code>
 - <code title="get /monitors">client.monitors.<a href="./src/resources/monitors/monitors.ts">list</a>({ ...params }) -> MonitorListResponse</code>
 - <code title="delete /monitors/{id}">client.monitors.<a href="./src/resources/monitors/monitors.ts">deactivate</a>(id) -> MonitorDeactivateResponse</code>
+- <code title="put /monitors/username/{username}">client.monitors.<a href="./src/resources/monitors/monitors.ts">upsertByUsername</a>(username, { ...params }) -> MonitorUpsertByUsernameResponse</code>
 
 ## Keywords
 

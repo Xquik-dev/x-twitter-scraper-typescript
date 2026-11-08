@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- `client.x.users.retrieveBatchTweets` takes `pageSize` up to 300 posts per user.
+- `client.monitors.upsertByUsername` creates the monitor for an account, or updates it if it exists, so the same call twice still leaves 1 monitor. `created` says which one ran.
+- `client.x.media.download` returns `unprocessedTweetIds`, the posts Xquik had no time to read, at no charge. Send them again.
+- `sample` on user insights and follower audits returns `read`, the posts the read covered with reposts and the pinned post included. `posts` counts the ones the averages used, so it can be lower.
 - The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `false` keeps it to the text.
 - `ContextAvailability.media` returns `'images'` when the AI read the post's images. A `switch` that handles every value needs a case for it.
 - `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.
@@ -25,6 +29,7 @@
 - `client.x.media.download` takes `imageShows` and returns `imageFilter`.
 - `client.x.users.retrieveFollowerAudit` reads an account's newest followers and returns a `FollowerAudit`. Each follower gets 1 `FollowerClass` with its score & signals, and the report adds coverage, a quality grade, arrival bands, join cohorts, languages, places, top followers & the account's insights. Each follower read costs 1 credit, and the insights add 1.
 - `Error.requiredScope` names the scope an API key needs when the API answers `insufficient_scope`, as `write`, `monitors`, `exports`, `billing` or `full`.
+- `EmbeddedTweet`, `TweetDetail` and `Event.MonitorPost` extend `SearchTweet`, and `EventDetail.MonitorPost` names `Event.MonitorPost`. Every type and field reads as before. Sub-types such as `TweetDetail.Article` name the `SearchTweet` ones, so a declaration merge goes on the `SearchTweet` sub-type.
 
 ### BREAKING CHANGES
 

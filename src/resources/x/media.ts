@@ -74,6 +74,11 @@ export interface MediaDownloadResponse {
   totalTweets?: number;
 
   tweetId?: string;
+
+  /**
+   * Posts Xquik had no time to read, at no charge. Send them again.
+   */
+  unprocessedTweetIds?: Array<string>;
 }
 
 export declare namespace MediaDownloadResponse {
@@ -421,8 +426,9 @@ export interface MediaDownloadParams {
   tweetId?: string;
 
   /**
-   * Up to 50 tweet URLs or IDs. An item that names no post gets 400
-   * `invalid_tweet_id`, which says which item.
+   * Tweet URLs or IDs. An item that names no post gets 400 `invalid_tweet_id`, which
+   * says which item. Posts Xquik had no time to read come back in
+   * `unprocessedTweetIds`, with no charge. Send them again.
    */
   tweetIds?: Array<string>;
 

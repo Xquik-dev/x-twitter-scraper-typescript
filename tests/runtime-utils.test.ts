@@ -143,6 +143,17 @@ describe('UUID generation', () => {
     expect(uuid4()).toBe('10000000-1000-4000-8000-100000000000');
   });
 
+  test('falls back to Math.random when Web Crypto has no random source', async () => {
+    expect.assertions(1);
+
+    Object.defineProperty(globalThis, 'crypto', { configurable: true, value: {} });
+    Math.random = () => 0;
+
+    vi.resetModules();
+    const { uuid4 } = await import('x-twitter-scraper/internal/utils/uuid');
+    expect(uuid4()).toBe('10000000-1000-4000-8000-100000000000');
+  });
+
   test('falls back to Math.random without Web Crypto', async () => {
     expect.assertions(1);
 

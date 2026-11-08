@@ -20,8 +20,10 @@ export {
   type MonitorCreateResponse,
   type MonitorListResponse,
   type MonitorDeactivateResponse,
+  type MonitorUpsertByUsernameResponse,
   type MonitorCreateParams,
   type MonitorUpdateParams,
+  type MonitorUpsertByUsernameParams,
   type MonitorListParams,
 } from './monitors';
 export {
