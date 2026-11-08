@@ -6,11 +6,8 @@ import { VERSION } from '../version';
 
 export const isRunningInBrowser = () => {
   return (
-    // @ts-ignore
     typeof window !== 'undefined' &&
-    // @ts-ignore
     typeof window.document !== 'undefined' &&
-    // @ts-ignore
     typeof navigator !== 'undefined'
   );
 };
@@ -35,6 +32,7 @@ function getDetectedPlatform(): DetectedPlatform {
 }
 
 declare const Deno: any;
+declare const window: { document?: unknown } | undefined;
 declare const EdgeRuntime: any;
 type Arch = 'x32' | 'x64' | 'arm' | 'arm64' | `other:${string}` | 'unknown';
 type PlatformName =

@@ -434,6 +434,8 @@ const client = new XTwitterScraper({
 });
 ```
 
+If TypeScript loads the DOM lib, `fetchOptions` rejects `dispatcher`. TypeScript loads it when `lib` is unset. Call `undici.setGlobalDispatcher(proxyAgent)` there instead. It applies to every `fetch` in the process.
+
 **Bun** <sup>[[docs](https://bun.sh/guides/http/proxy)]</sup>
 
 ```ts

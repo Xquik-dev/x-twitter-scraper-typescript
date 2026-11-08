@@ -26,6 +26,12 @@
 - `client.x.users.retrieveFollowerAudit` reads an account's newest followers and returns a `FollowerAudit`. Each follower gets 1 `FollowerClass` with its score & signals, and the report adds coverage, a quality grade, arrival bands, join cohorts, languages, places, top followers & the account's insights. Each follower read costs 1 credit, and the insights add 1.
 - `Error.requiredScope` names the scope an API key needs when the API answers `insufficient_scope`, as `write`, `monitors`, `exports`, `billing` or `full`.
 
+### Changes
+
+* `fetchOptions` takes the options your runtime's global `fetch` accepts. Its type no longer changes with how your packages are installed.
+* If TypeScript loads the DOM lib in a Node project, `fetchOptions` rejects undici's `dispatcher`. TypeScript loads it when `lib` is unset. Set a proxy there with undici's `setGlobalDispatcher`.
+* `fetchOptions` no longer takes node-fetch's `agent`.
+
 ### Chores
 
 * The `tsconfig.json` shipped in `src/` now matches the strict settings the SDK builds with. Editors that open the SDK source through declaration maps no longer flag the old `moduleResolution: node` setting, which TypeScript 6 deprecated.
