@@ -73,6 +73,7 @@
     "lint": "./scripts/lint",
     "lint:format": "prettier --check .",
     "lint:types": "tsc && tsc -p scripts/utils",
+    "lint:type-coverage": "type-coverage --strict --at-least 100 && cd scripts/utils && type-coverage --strict --at-least 100",
     "lint:attw": "attw --pack dist --format json",
     "lint:publint": "publint dist --strict",
     "lint:knip": "knip",
@@ -94,6 +95,7 @@
     "ts-node": "10.9.2",
     "tsconfig-paths": "4.2.0",
     "tslib": "2.8.1",
+    "type-coverage": "2.31.1",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-eslint": "8.71.1",
     "vitest": "5.0.5"
