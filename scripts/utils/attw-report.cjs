@@ -5,16 +5,24 @@
 const fs = require('fs');
 const { asObject, parseJson } = require('./json.cjs');
 
-const report = asObject(parseJson(fs.readFileSync('.attw.json', 'utf-8')));
-const problems = Object.values(asObject(report?.['problems']) ?? {}).flatMap((list) =>
-  Array.isArray(list) ? list
-  : list === undefined ? []
-  : [list],
-);
+const report = parseJson(fs.readFileSync('.attw.json', 'utf-8'));
 fs.unlinkSync('.attw.json');
-if (problems.length > 0) {
-  process.stdout.write('The types are wrong!\n' + JSON.stringify(problems, null, 2) + '\n');
+const found = asObject(asObject(report)?.['problems']);
+if (found === undefined) {
+  process.stdout.write(
+    'The attw report has no problems list, so attw checked no types.\n' + JSON.stringify(report) + '\n',
+  );
   process.exitCode = 1;
 } else {
-  process.stdout.write('Types ok!\n');
+  const problems = Object.values(found).flatMap((list) =>
+    Array.isArray(list) ? list
+    : list === undefined ? []
+    : [list],
+  );
+  if (problems.length > 0) {
+    process.stdout.write('The types are wrong!\n' + JSON.stringify(problems, null, 2) + '\n');
+    process.exitCode = 1;
+  } else {
+    process.stdout.write('Types ok!\n');
+  }
 }
