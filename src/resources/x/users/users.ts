@@ -359,7 +359,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveMediaParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<Shared.FilterablePaginatedTweets> {
     return this._client.get(path`/x/users/${id}/media`, { query, ...options });
   }
 
@@ -395,7 +395,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveRepliesParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<Shared.FilterablePaginatedTweets> {
     return this._client.get(path`/x/users/${id}/replies`, { query, ...options });
   }
 
@@ -493,7 +493,7 @@ export class Users extends APIResource {
     id: string,
     query: UserRetrieveTweetsParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<Shared.PaginatedTweets> {
+  ): APIPromise<Shared.FilterablePaginatedTweets> {
     return this._client.get(path`/x/users/${id}/tweets`, { query, ...options });
   }
 
@@ -3890,6 +3890,16 @@ export interface UserRetrieveMediaParams {
   hashtags?: string;
 
   /**
+   * Keep only posts whose photos show this. Send charts, screenshots, product_photos,
+   * memes or people, or describe it in words, such as a rocket. AI-powered analysis
+   * checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or more.
+   * Other posts stay out at no charge. Each kept post costs 2 credits, the AI analysis
+   * price, instead of the read price, & a post the filter drops costs nothing.
+   * imageFilter states the cutoff & counts.
+   */
+  imageShows?: string;
+
+  /**
    * Only replies to this tweet ID.
    */
   inReplyToTweetId?: string;
@@ -4041,6 +4051,15 @@ export interface UserRetrieveMediaParams {
    * @deprecated The API ignores this filter on this route. Remove it.
    */
   source?: string;
+
+  /**
+   * Keep only posts about this topic. AI-powered analysis asks "Is this post about
+   * <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+   * photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+   * price, & a post the filter drops costs nothing. limit counts checked posts, & only
+   * kept posts come back. topicFilter states the cutoff & counts.
+   */
+  topic?: string;
 
   /**
    * Filter replies sent to a username.
@@ -4432,6 +4451,16 @@ export interface UserRetrieveRepliesParams {
   hashtags?: string;
 
   /**
+   * Keep only posts whose photos show this. Send charts, screenshots, product_photos,
+   * memes or people, or describe it in words, such as a rocket. AI-powered analysis
+   * checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or more.
+   * Other posts stay out at no charge. Each kept post costs 2 credits, the AI analysis
+   * price, instead of the read price, & a post the filter drops costs nothing.
+   * imageFilter states the cutoff & counts.
+   */
+  imageShows?: string;
+
+  /**
    * Include each reply's parent tweet as parentTweet on the reply. A reply whose
    * parent X does not return comes without it. Search-only filters such as keywords
    * do not apply with it.
@@ -4628,6 +4657,15 @@ export interface UserRetrieveRepliesParams {
    * nothing.
    */
   source?: string;
+
+  /**
+   * Keep only posts about this topic. AI-powered analysis asks "Is this post about
+   * <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+   * photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+   * price, & a post the filter drops costs nothing. limit counts checked posts, & only
+   * kept posts come back. topicFilter states the cutoff & counts.
+   */
+  topic?: string;
 
   /**
    * Filter replies sent to a username.
@@ -5160,6 +5198,16 @@ export interface UserRetrieveTweetsParams {
   hashtags?: string;
 
   /**
+   * Keep only posts whose photos show this. Send charts, screenshots, product_photos,
+   * memes or people, or describe it in words, such as a rocket. AI-powered analysis
+   * checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or more.
+   * Other posts stay out at no charge. Each kept post costs 2 credits, the AI analysis
+   * price, instead of the read price, & a post the filter drops costs nothing.
+   * imageFilter states the cutoff & counts.
+   */
+  imageShows?: string;
+
+  /**
    * Include each reply's parent tweet as parentTweet on the reply. A reply whose
    * parent X does not return comes without it. Search-only filters such as keywords
    * do not apply with it.
@@ -5361,6 +5409,15 @@ export interface UserRetrieveTweetsParams {
    * nothing.
    */
   source?: string;
+
+  /**
+   * Keep only posts about this topic. AI-powered analysis asks "Is this post about
+   * <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+   * photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+   * price, & a post the filter drops costs nothing. limit counts checked posts, & only
+   * kept posts come back. topicFilter states the cutoff & counts.
+   */
+  topic?: string;
 
   /**
    * Filter replies sent to a username.

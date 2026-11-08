@@ -19,6 +19,10 @@
 - Extraction results return `isDeleted` on a post its author deleted after Xquik saw it.
 - `client.x.users.retrieveInsights` & `retrieveShadowban` take `limit`, the recent posts to read.
 - Extraction tool types gain `user_affiliates`.
+- `client.x.tweets.search`, `client.x.users.retrieveTweets`, `retrieveReplies` & `retrieveMedia` take `topic` & `imageShows`. AI-powered analysis keeps only posts about the topic or posts whose photos show it, and each kept post costs 2 credits.
+- A filtered page returns `topicFilter` or `imageFilter` with the cutoff & counts, and each kept post its `topicScore` or `imageScore`. The 3 user reads return `FilterablePaginatedTweets`, which still reads as `PaginatedTweets`.
+- `extractions.run` & `estimateCost` take `topic` & `imageShows`, and `ExtractionJob` returns the `topicFilter` or `imageFilter` it ran.
+- `client.x.media.download` takes `imageShows` and returns `imageFilter`.
 
 ## 0.20.0 (2026-11-04)
 
