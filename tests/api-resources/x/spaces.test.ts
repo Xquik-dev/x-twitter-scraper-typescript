@@ -66,7 +66,7 @@ describe('resource spaces', () => {
   });
 
   test('search: required and optional params', async () => {
-    const response = await client.x.spaces.search({
+    await client.x.spaces.search({
       q: 'from:solana',
       cursor: 'cursor',
       fields: 'id,text,author.username',

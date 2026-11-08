@@ -4,8 +4,25 @@
   // via declaration maps
   "include": ["index.ts"],
   "compilerOptions": {
-    "target": "ES2015",
-    "lib": ["DOM", "DOM.Iterable", "ES2018"],
-    "moduleResolution": "node"
+    "target": "es2020",
+    "lib": ["es2020", "DOM", "DOM.Iterable"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noUncheckedSideEffectImports": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "skipLibCheck": false
   }
 }

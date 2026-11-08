@@ -24,7 +24,7 @@ describe('resource x', () => {
   });
 
   test('autocompleteSearch: required and optional params', async () => {
-    const response = await client.x.autocompleteSearch({
+    await client.x.autocompleteSearch({
       q: 'nasa',
       fields: 'id,text,author.username',
       limit: 1,
@@ -237,7 +237,7 @@ describe('resource x', () => {
   });
 
   test('searchPlaces: required and optional params', async () => {
-    const response = await client.x.searchPlaces({
+    await client.x.searchPlaces({
       q: 'q',
       fields: 'id,text,author.username',
       limit: 1,

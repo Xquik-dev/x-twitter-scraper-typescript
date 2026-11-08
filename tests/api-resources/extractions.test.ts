@@ -88,7 +88,7 @@ describe('resource extractions', () => {
   });
 
   test('estimateCost: required and optional params', async () => {
-    const response = await client.extractions.estimateCost({
+    await client.extractions.estimateCost({
       toolType: 'follower_explorer',
       advancedQuery: 'advancedQuery',
       anyWords: 'anyWords',
@@ -193,7 +193,7 @@ describe('resource extractions', () => {
   });
 
   test('exportResults: required and optional params', async () => {
-    const response = await client.extractions.exportResults('L3NjAbCdEfGh', {
+    await client.extractions.exportResults('L3NjAbCdEfGh', {
       format: 'csv',
       businessEmailOnly: true,
       emailDomains: 'acme.com,stanford.edu',
@@ -231,7 +231,7 @@ describe('resource extractions', () => {
   });
 
   test('run: required and optional params', async () => {
-    const response = await client.extractions.run({
+    await client.extractions.run({
       toolType: 'follower_explorer',
       dry_run: true,
       advancedQuery: 'advancedQuery',

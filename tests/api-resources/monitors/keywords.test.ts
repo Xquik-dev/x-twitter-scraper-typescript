@@ -27,7 +27,7 @@ describe('resource keywords', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.monitors.keywords.create({
+    await client.monitors.keywords.create({
       eventTypes: ['tweet.new'],
       query: 'xquik OR "x api"',
       name: 'Launch mentions',

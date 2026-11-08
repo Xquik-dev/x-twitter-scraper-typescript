@@ -3,43 +3,43 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../core/resource';
-import * as Shared from '../shared';
+import type * as Shared from '../shared';
 import * as PostsAPI from './posts';
 import {
-  PostCreateParams,
-  PostDeleteResponse,
-  PostEventType,
-  PostListParams,
-  MonitorPostDeleted,
-  MonitorPostEdit,
-  MonitorPostMetricChange,
-  PostListResponse,
-  PostMetricPoint,
-  PostMetricReading,
-  PostMetrics,
-  PostMonitor,
-  PostMonitorMetrics,
-  PostMonitorMetricsBucket,
-  PostMonitorMetricsBucketMetrics,
-  PostRetrieveMetricsParams,
-  PostUpdateParams,
+  type PostCreateParams,
+  type PostDeleteResponse,
+  type PostEventType,
+  type PostListParams,
+  type MonitorPostDeleted,
+  type MonitorPostEdit,
+  type MonitorPostMetricChange,
+  type PostListResponse,
+  type PostMetricPoint,
+  type PostMetricReading,
+  type PostMetrics,
+  type PostMonitor,
+  type PostMonitorMetrics,
+  type PostMonitorMetricsBucket,
+  type PostMonitorMetricsBucketMetrics,
+  type PostRetrieveMetricsParams,
+  type PostUpdateParams,
   Posts,
 } from './posts';
 import * as KeywordsAPI from './keywords';
 import {
-  KeywordCreateParams,
-  KeywordCreateResponse,
-  KeywordDeactivateResponse,
-  KeywordListParams,
-  KeywordListResponse,
-  KeywordMonitor,
-  KeywordRetrieveResponse,
-  KeywordUpdateParams,
-  KeywordUpdateResponse,
+  type KeywordCreateParams,
+  type KeywordCreateResponse,
+  type KeywordDeactivateResponse,
+  type KeywordListParams,
+  type KeywordListResponse,
+  type KeywordMonitor,
+  type KeywordRetrieveResponse,
+  type KeywordUpdateParams,
+  type KeywordUpdateResponse,
   Keywords,
 } from './keywords';
-import { APIPromise } from '../../core/api-promise';
-import { RequestOptions } from '../../internal/request-options';
+import type { APIPromise } from '../../core/api-promise';
+import type { RequestOptions } from '../../internal/request-options';
 import { path } from '../../internal/utils/path';
 
 /**

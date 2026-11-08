@@ -35,7 +35,7 @@ describe('resource account', () => {
   });
 
   test('setXUsername: required and optional params', async () => {
-    const response = await client.account.setXUsername({ username: 'elonmusk' });
+    await client.account.setXUsername({ username: 'elonmusk' });
   });
 
   test('updateLocale: only required params', async () => {
@@ -50,7 +50,7 @@ describe('resource account', () => {
   });
 
   test('updateLocale: required and optional params', async () => {
-    const response = await client.account.updateLocale({ locale: 'en' });
+    await client.account.updateLocale({ locale: 'en' });
   });
 
   test('updateLocale: returns the fields the route did not read', async () => {

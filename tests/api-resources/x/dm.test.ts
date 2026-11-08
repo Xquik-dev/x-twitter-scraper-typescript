@@ -27,7 +27,7 @@ describe('resource dm', () => {
   });
 
   test('deleteMessage: required and optional params', async () => {
-    const response = await client.x.dm.deleteMessage('321669910225', {
+    await client.x.dm.deleteMessage('321669910225', {
       userId: 'userId',
       account: 'account',
       'Idempotency-Key': 'Idempotency-Key',
@@ -46,7 +46,7 @@ describe('resource dm', () => {
   });
 
   test('retrieveHistory: required and optional params', async () => {
-    const response = await client.x.dm.retrieveHistory('userId', {
+    await client.x.dm.retrieveHistory('userId', {
       account: 'account',
       cursor: 'cursor',
       maxId: 'maxId',
@@ -69,7 +69,7 @@ describe('resource dm', () => {
   });
 
   test('send: required and optional params', async () => {
-    const response = await client.x.dm.send('userId', {
+    await client.x.dm.send('userId', {
       account: '@elonmusk',
       text: 'Example text content',
       'Idempotency-Key': 'Idempotency-Key',

@@ -24,7 +24,7 @@ describe('resource compose', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.compose.create({
+    await client.compose.create({
       step: 'compose',
       topic: 'PostgreSQL query planning',
       goal: 'engagement',

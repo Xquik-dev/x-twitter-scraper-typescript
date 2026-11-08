@@ -29,7 +29,7 @@ describe('resource accounts', () => {
   });
 
   test('create: required and optional params', async () => {
-    const response = await client.x.accounts.create({
+    await client.x.accounts.create({
       email: 'account@example.invalid',
       password: '<ACCOUNT_PASSWORD>',
       totp_secret: '<TOTP_SECRET>',
@@ -117,7 +117,7 @@ describe('resource accounts', () => {
   });
 
   test('reauth: required and optional params', async () => {
-    const response = await client.x.accounts.reauth('id', {
+    await client.x.accounts.reauth('id', {
       password: '<ACCOUNT_PASSWORD>',
       email: 'account@example.invalid',
       totp_secret: '<TOTP_SECRET>',
