@@ -245,9 +245,21 @@ export interface ExtractionJob {
   errorMessage?: string;
 
   /**
+   * What the image filter asked & how many posts it kept. Present on a job that sent
+   * imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
+
+  /**
    * Requested result limit.
    */
   resultsLimit?: number;
+
+  /**
+   * What the topic filter asked & how many posts it kept. Present on a job that sent
+   * topic.
+   */
+  topicFilter?: Shared.TopicFilterSummary;
 }
 
 export interface ExtractionRetrieveResponse {
@@ -812,6 +824,16 @@ export interface ExtractionEstimateCostParams {
   hasWebsite?: boolean;
 
   /**
+   * Keep only the posts whose photos show this. Use charts, screenshots,
+   * product_photos, memes or people, or describe it in your own words. Each post with
+   * a safe photo is checked, & each stored post costs 2 credits instead of its read
+   * price. Posts without a safe photo aren't checked, billed or stored, & a post the
+   * filter drops costs nothing. resultsLimit caps the posts read. Works with tools
+   * that return posts. Send topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Include the source post in reply results.
    */
   includeOriginalPost?: boolean;
@@ -1150,6 +1172,15 @@ export interface ExtractionEstimateCostParams {
    * link, its card or a quoted post. The author's name and username don't count.
    */
   textOnlyTerms?: string;
+
+  /**
+   * Keep only the posts about this topic, such as "the Rust programming language".
+   * Each post the job reads is checked, only matching posts are stored, & each stored
+   * post costs 2 credits instead of its read price. A post the filter drops costs
+   * nothing. resultsLimit caps the posts read & checked. Works with tools that return
+   * posts. Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Replies to this username (tweet_search_extractor).
@@ -1568,6 +1599,16 @@ export interface ExtractionRunParams {
   hasWebsite?: boolean;
 
   /**
+   * Body param: Keep only the posts whose photos show this. Use charts, screenshots,
+   * product_photos, memes or people, or describe it in your own words. Each post with
+   * a safe photo is checked, & each stored post costs 2 credits instead of its read
+   * price. Posts without a safe photo aren't checked, billed or stored, & a post the
+   * filter drops costs nothing. resultsLimit caps the posts read. Works with tools
+   * that return posts. Send topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Body param: Include the source post in reply results.
    */
   includeOriginalPost?: boolean;
@@ -1912,6 +1953,15 @@ export interface ExtractionRunParams {
    * link, its card or a quoted post. The author's name and username don't count.
    */
   textOnlyTerms?: string;
+
+  /**
+   * Body param: Keep only the posts about this topic, such as "the Rust programming
+   * language". Each post the job reads is checked, only matching posts are stored, &
+   * each stored post costs 2 credits instead of its read price. A post the filter
+   * drops costs nothing. resultsLimit caps the posts read & checked. Works with tools
+   * that return posts. Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Body param: Replies to this username (tweet_search_extractor).

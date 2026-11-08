@@ -15,6 +15,9 @@ Types
 - <code><a href="./src/resources/shared.ts">EmbeddedTweet</a></code>
 - <code><a href="./src/resources/shared.ts">Error</a></code>
 - <code><a href="./src/resources/shared.ts">EventType</a></code>
+- <code><a href="./src/resources/shared.ts">FilterablePaginatedTweets</a></code>
+- <code><a href="./src/resources/shared.ts">ImageFilteredTweets</a></code>
+- <code><a href="./src/resources/shared.ts">ImageFilterSummary</a></code>
 - <code><a href="./src/resources/shared.ts">MonitorFollow</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedLists</a></code>
 - <code><a href="./src/resources/shared.ts">PaginatedTweets</a></code>
@@ -22,6 +25,8 @@ Types
 - <code><a href="./src/resources/shared.ts">PaginatedUsers</a></code>
 - <code><a href="./src/resources/shared.ts">SearchTweet</a></code>
 - <code><a href="./src/resources/shared.ts">SoftIntervention</a></code>
+- <code><a href="./src/resources/shared.ts">TopicFilteredTweets</a></code>
+- <code><a href="./src/resources/shared.ts">TopicFilterSummary</a></code>
 - <code><a href="./src/resources/shared.ts">TweetMedia</a></code>
 - <code><a href="./src/resources/shared.ts">UserListPage</a></code>
 - <code><a href="./src/resources/shared.ts">UserProfile</a></code>
@@ -435,14 +440,14 @@ Methods
 - <code title="get /x/users/{id}/list-memberships">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveListMemberships</a>(id, { ...params }) -> PaginatedLists</code>
 - <code title="get /x/users/{id}/lists">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveLists</a>(id, { ...params }) -> PaginatedLists</code>
 - <code title="get /x/users/{id}/live">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveLive</a>(id, { ...params }) -> UserRetrieveLiveResponse</code>
-- <code title="get /x/users/{id}/media">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveMedia</a>(id, { ...params }) -> PaginatedTweets</code>
+- <code title="get /x/users/{id}/media">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveMedia</a>(id, { ...params }) -> FilterablePaginatedTweets</code>
 - <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveMentions</a>(id, { ...params }) -> PaginatedTweets</code>
-- <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveReplies</a>(id, { ...params }) -> PaginatedTweets</code>
+- <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveReplies</a>(id, { ...params }) -> FilterablePaginatedTweets</code>
 - <code title="get /x/users/search">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSearch</a>({ ...params }) -> PaginatedUsers</code>
 - <code title="get /x/users/{id}/shadowban">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveShadowban</a>(id, { ...params }) -> ShadowbanReport</code>
 - <code title="get /x/users/{id}/similar">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSimilar</a>(id, { ...params }) -> PaginatedUsers</code>
 - <code title="get /x/users/{id}/subscriptions">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveSubscriptions</a>(id, { ...params }) -> PaginatedUsers</code>
-- <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveTweets</a>(id, { ...params }) -> PaginatedTweets</code>
+- <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveTweets</a>(id, { ...params }) -> FilterablePaginatedTweets</code>
 - <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveVerifiedFollowers</a>(id, { ...params }) -> UserRetrieveVerifiedFollowersResponse</code>
 - <code title="get /x/users/{id}/translation">client.x.users.<a href="./src/resources/x/users/users.ts">translateBio</a>(id, { ...params }) -> UserTranslateBioResponse</code>
 

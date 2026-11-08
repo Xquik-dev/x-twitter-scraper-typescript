@@ -1141,6 +1141,86 @@ export type EventType =
   | 'profile.following.changed';
 
 /**
+ * A page of posts from a read that takes the topic and imageShows filters. Without a
+ * filter it is a PaginatedTweets page. With topic it holds topicFilter and each
+ * post's topicScore. With imageShows it holds imageFilter and each post's
+ * imageScore.
+ */
+export type FilterablePaginatedTweets = PaginatedTweets | TopicFilteredTweets | ImageFilteredTweets;
+
+/**
+ * Posts kept by the image filter. Each kept post carries its imageScore. Follow
+ * next_cursor to check the next posts.
+ */
+export interface ImageFilteredTweets extends PaginatedTweets {
+  /**
+   * What the image filter asked & how many posts it kept.
+   */
+  imageFilter: ImageFilterSummary;
+
+  tweets: Array<ImageFilteredTweets.Tweet>;
+}
+
+export namespace ImageFilteredTweets {
+  /**
+   * A post the image filter kept, with its score.
+   */
+  export interface Tweet extends SearchTweet {
+    /**
+     * How likely a photo shows what you asked for, from 0.5 to 1.
+     */
+    imageScore: number;
+  }
+}
+
+/**
+ * What the image filter asked & how many posts it kept.
+ */
+export interface ImageFilterSummary {
+  /**
+   * Posts whose photos were checked. Only kept posts are billed.
+   */
+  checked: number;
+
+  /**
+   * The lowest imageScore a kept post has.
+   */
+  cutoff: 0.5;
+
+  /**
+   * What you asked the photos to show.
+   */
+  imageShows: string;
+
+  /**
+   * Posts whose photos show it, all returned & billed at 2 credits each.
+   */
+  kept: number;
+
+  /**
+   * The question asked of each post's photos.
+   */
+  question: string;
+
+  /**
+   * Posts without a safe photo & posts the check couldn't answer. They aren't
+   * billed or returned.
+   */
+  unchecked: Array<ImageFilterSummary.Unchecked>;
+}
+
+export namespace ImageFilterSummary {
+  /**
+   * A post the image filter left out without a score, with the reason.
+   */
+  export interface Unchecked {
+    id: string;
+
+    reason: string;
+  }
+}
+
+/**
  * The other account of a following or follower event, with the profile fields a
  * user lookup returns. It holds the ID alone when X fails the profile lookup.
  */
@@ -2825,6 +2905,77 @@ export namespace SoftIntervention {
     url?: string;
 
     urlType?: string;
+  }
+}
+
+/**
+ * Posts kept by the topic filter. Each kept post carries its topicScore. Follow
+ * next_cursor to check the next posts.
+ */
+export interface TopicFilteredTweets extends PaginatedTweets {
+  /**
+   * What the topic filter asked & how many posts it kept.
+   */
+  topicFilter: TopicFilterSummary;
+
+  tweets: Array<TopicFilteredTweets.Tweet>;
+}
+
+export namespace TopicFilteredTweets {
+  /**
+   * A post the topic filter kept, with its score.
+   */
+  export interface Tweet extends SearchTweet {
+    /**
+     * How likely the post is about the topic, from 0.5 to 1.
+     */
+    topicScore: number;
+  }
+}
+
+/**
+ * What the topic filter asked & how many posts it kept.
+ */
+export interface TopicFilterSummary {
+  /**
+   * Posts checked. Only kept posts are billed.
+   */
+  checked: number;
+
+  /**
+   * The lowest topicScore a kept post has.
+   */
+  cutoff: 0.5;
+
+  /**
+   * Posts about the topic, all returned & billed at 2 credits each.
+   */
+  kept: number;
+
+  /**
+   * The question asked of each post.
+   */
+  question: string;
+
+  /**
+   * The topic you sent.
+   */
+  topic: string;
+
+  /**
+   * Posts the check couldn't answer. They aren't billed or returned.
+   */
+  unchecked: Array<TopicFilterSummary.Unchecked>;
+}
+
+export namespace TopicFilterSummary {
+  /**
+   * A post the topic filter left out without a score, with the reason.
+   */
+  export interface Unchecked {
+    id: string;
+
+    reason: string;
   }
 }
 

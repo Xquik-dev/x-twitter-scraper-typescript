@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { APIResource } from '../../core/resource';
+import * as Shared from '../shared';
 import { APIPromise } from '../../core/api-promise';
 import { type Uploadable } from '../../core/uploads';
 import { buildHeaders } from '../../internal/headers';
@@ -56,6 +57,12 @@ export interface MediaDownloadResponse {
   cacheHit?: boolean;
 
   galleryUrl?: string;
+
+  /**
+   * What the image filter asked & how many posts it kept. Present when the request
+   * sent imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
 
   /**
    * The post's files saved to your gallery. Single downloads only.
@@ -399,6 +406,15 @@ export namespace MediaUploadResponse {
 }
 
 export interface MediaDownloadParams {
+  /**
+   * Save only posts whose photos show this. Send charts, screenshots, product_photos,
+   * memes or people, or describe it in words, such as a rocket. AI-powered analysis
+   * checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or more.
+   * Each post saved costs 2 credits, the AI analysis price, on top of its save price,
+   * & a post the filter drops costs nothing. imageFilter states the cutoff & counts.
+   */
+  imageShows?: string;
+
   /**
    * Numeric tweet ID alias for tweetInput
    */
