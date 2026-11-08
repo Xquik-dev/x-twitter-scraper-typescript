@@ -408,6 +408,11 @@ Types
 - <code><a href="./src/resources/x/users/users.ts">UserRemoveFollowerResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveBatchResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveBatchTweetsResponse</a></code>
+- <code><a href="./src/resources/x/users/users.ts">UserRetrieveFollowerAuditResponse</a></code>
+- <code><a href="./src/resources/x/users/users.ts">FollowerAudit</a></code>
+- <code><a href="./src/resources/x/users/users.ts">AuditedFollower</a></code>
+- <code><a href="./src/resources/x/users/users.ts">FollowerClass</a></code>
+- <code><a href="./src/resources/x/users/users.ts">FollowerValueCount</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveFollowerIDsResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveFollowersResponse</a></code>
 - <code><a href="./src/resources/x/users/users.ts">UserRetrieveFollowingResponse</a></code>
@@ -429,6 +434,7 @@ Methods
 - <code title="get /x/users/{id}/articles">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveArticles</a>(id, { ...params }) -> PaginatedTweets</code>
 - <code title="get /x/users/batch">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveBatch</a>({ ...params }) -> UserRetrieveBatchResponse</code>
 - <code title="get /x/users/batch/tweets">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveBatchTweets</a>({ ...params }) -> UserRetrieveBatchTweetsResponse</code>
+- <code title="get /x/users/{id}/follower-audit">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowerAudit</a>(id, { ...params }) -> UserRetrieveFollowerAuditResponse</code>
 - <code title="get /x/users/{id}/follower-ids">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowerIds</a>(id, { ...params }) -> PaginatedUserIds</code>
 - <code title="get /x/users/{id}/followers">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowers</a>(id, { ...params }) -> UserRetrieveFollowersResponse</code>
 - <code title="get /x/users/{id}/followers-you-know">client.x.users.<a href="./src/resources/x/users/users.ts">retrieveFollowersYouKnow</a>(id, { ...params }) -> PaginatedUsers</code>
