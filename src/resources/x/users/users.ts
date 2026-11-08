@@ -1475,7 +1475,7 @@ export declare namespace UserRetrieveInsightsResponse {
     postsPrivate: boolean;
 
     /**
-     * The recent posts the averages read.
+     * The recent posts the read covered.
      */
     sample: Insights.Sample;
 
@@ -1537,23 +1537,29 @@ export declare namespace UserRetrieveInsightsResponse {
     }
 
     /**
-     * The recent posts the averages read.
+     * The recent posts the read covered.
      */
     export interface Sample {
       /**
-       * When the newest of them went up.
+       * When the newest post the averages used went up.
        */
       newestAt: string | null;
 
       /**
-       * When the oldest of them went up.
+       * When the oldest post the averages used went up.
        */
       oldestAt: string | null;
 
       /**
-       * Posts read.
+       * Posts the averages used. Reposts and the pinned post stay out, so this can be
+       * lower than `read`.
        */
       posts: number;
+
+      /**
+       * Posts read, reposts and the pinned post included.
+       */
+      read: number;
     }
   }
 }
@@ -3781,8 +3787,8 @@ export interface UserRetrieveInsightsParams {
 
   /**
    * Recent posts to read for the averages and rates. The read stops at this count,
-   * at the end of the timeline or after about 40 seconds, and `sample.posts` says
-   * how many it read.
+   * at the account's oldest post or after about 40 seconds. `sample.read` says how
+   * many it read, and `sample.posts` how many of those the averages used.
    */
   limit?: number;
 
@@ -5168,7 +5174,7 @@ export interface UserRetrieveShadowbanParams {
 
   /**
    * Recent posts to read for the timeline, engagement & reply checks. The read stops
-   * at this count, at the end of the timeline or after about 40 seconds.
+   * at this count, at the account's oldest post or after about 40 seconds.
    */
   limit?: number;
 
