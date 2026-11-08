@@ -1,5 +1,5 @@
 {
   "path": ["src", "tests", "scripts", "examples"],
-  "threshold": 37.81,
+  "threshold": 33.65,
   "reporters": ["silent"]
 }
