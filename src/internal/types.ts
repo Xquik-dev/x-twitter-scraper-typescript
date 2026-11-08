@@ -5,8 +5,6 @@
 export type PromiseOrValue<T> = T | Promise<T>;
 export type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
-export type KeysEnum<T> = { [P in keyof Required<T>]: true };
-
 export type FinalizedRequestInit = RequestInit & { headers: Headers };
 
 type NotAny<T> = [0] extends [1 & T] ? never : T;

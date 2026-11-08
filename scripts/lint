@@ -9,7 +9,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Checking formatting"
-./node_modules/.bin/prettier --check .
+pnpm run --silent lint:format
 
 echo "==> Running eslint"
 ./node_modules/.bin/eslint --max-warnings 0 .
