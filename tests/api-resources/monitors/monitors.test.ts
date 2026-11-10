@@ -127,4 +127,28 @@ describe('resource monitors', () => {
     expect(requests).toEqual(['GET https://xquik.test/api/v1/monitors/42']);
     expect(response).toEqual(example);
   });
+
+  test('upsertByUsername puts the event types and the name at the username path', async () => {
+    const example = {
+      id: '42',
+      created: true,
+      createdAt: '2025-01-15T12:00:00Z',
+      eventTypes: ['tweet.new', 'tweet.reply'],
+      isActive: true,
+      name: 'Launch watch',
+      nextBillingAt: '2025-01-15T13:00:00Z',
+      username: 'elonmusk',
+      xUserId: '44196397',
+    };
+    const { client: fixture, requests, sent } = fixtureClient(example);
+
+    const response: XTwitterScraper.MonitorUpsertByUsernameResponse = await fixture.monitors.upsertByUsername(
+      'elonmusk',
+      { eventTypes: ['tweet.new', 'tweet.reply'], name: 'Launch watch' },
+    );
+
+    expect(requests).toEqual(['PUT https://xquik.test/api/v1/monitors/username/elonmusk']);
+    expect(await sent[0]?.json()).toEqual({ eventTypes: ['tweet.new', 'tweet.reply'], name: 'Launch watch' });
+    expect(response).toEqual(example);
+  });
 });

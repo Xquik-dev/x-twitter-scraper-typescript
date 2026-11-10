@@ -55,6 +55,11 @@ export namespace AccountConnectionAttemptRetrieveResponse {
     object: 'x_account_connection_attempt';
 
     status: 'success';
+
+    /**
+     * The connected account's ID.
+     */
+    accountId?: string;
   }
 
   /**
