@@ -25,6 +25,14 @@
 - `client.x.media.download` takes `imageShows` and returns `imageFilter`.
 - `client.x.users.retrieveFollowerAudit` reads an account's newest followers and returns a `FollowerAudit`. Each follower gets 1 `FollowerClass` with its score & signals, and the report adds coverage, a quality grade, arrival bands, join cohorts, languages, places, top followers & the account's insights. Each follower read costs 1 credit, and the insights add 1.
 - `Error.requiredScope` names the scope an API key needs when the API answers `insufficient_scope`, as `write`, `monitors`, `exports`, `billing` or `full`.
+- `client.monitors.upsertByUsername` creates the monitor of an account or updates it, so the same call twice still leaves 1 monitor. `created` says which one ran.
+- `client.x.accountConnectionLinks.create` makes a link to a page Xquik hosts, where a person connects an X account with no Xquik signup. `retrieve` reads the link & its status, and `delete` revokes it. Treat `url` as a secret, since it holds the token.
+- `client.x.tweets.create` takes `media_ids`, the IDs that `client.x.media.upload` returns. Send `media` or `media_ids`, not both.
+- `client.x.accounts.create` & `reauth` take `connection_attempt_id`, an ID you generate to read the attempt's status even if the response never reaches you. A finished attempt returns `accountId`.
+- `client.x.accounts.reauth` now returns the same 3 answers as `create`. A sign-in still running or waiting on an email code no longer reads as an active account, so check `status` before you read `xUsername`.
+- `client.x.media.download` returns `unprocessedTweetIds`, the posts Xquik had no time to read, at no charge. Send them again.
+- A user insights sample adds `read`, the posts the read covered with reposts & the pinned post included. `posts` counts only those the averages used. Code that builds a sample by hand must set `read`.
+- `Error.code` gains `media_not_uploaded`. A `switch` that handles every code needs a case for it.
 
 ## 0.20.0 (2026-11-04)
 

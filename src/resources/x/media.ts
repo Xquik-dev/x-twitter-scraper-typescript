@@ -74,6 +74,11 @@ export interface MediaDownloadResponse {
   totalTweets?: number;
 
   tweetId?: string;
+
+  /**
+   * Posts Xquik had no time to read, at no charge. Send them again.
+   */
+  unprocessedTweetIds?: Array<string>;
 }
 
 export namespace MediaDownloadResponse {

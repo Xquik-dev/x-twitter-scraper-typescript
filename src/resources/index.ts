@@ -87,9 +87,11 @@ export {
   type MonitorCreateResponse,
   type MonitorListResponse,
   type MonitorDeactivateResponse,
+  type MonitorUpsertByUsernameResponse,
   type MonitorCreateParams,
   type MonitorUpdateParams,
   type MonitorListParams,
+  type MonitorUpsertByUsernameParams,
 } from './monitors/monitors';
 export {
   Radar,
