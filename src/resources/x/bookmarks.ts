@@ -156,6 +156,12 @@ export interface BookmarkListParams {
    * Optional bookmark folder ID. Folders need X Premium.
    */
   folderId?: string;
+
+  /**
+   * Items per page, 1 to 100, default 20. Source, filters or credits can return
+   * fewer. Follow next_cursor for more pages.
+   */
+  pageSize?: number;
 }
 
 export interface BookmarkRetrieveFoldersParams {
