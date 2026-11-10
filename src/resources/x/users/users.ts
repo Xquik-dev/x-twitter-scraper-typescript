@@ -1545,9 +1545,15 @@ export namespace UserRetrieveInsightsResponse {
       oldestAt: string | null;
 
       /**
-       * Posts read.
+       * Posts the averages used. Reposts and the pinned post stay out, so this can be
+       * lower than `read`.
        */
       posts: number;
+
+      /**
+       * Posts read, reposts and the pinned post included.
+       */
+      read: number;
     }
   }
 }

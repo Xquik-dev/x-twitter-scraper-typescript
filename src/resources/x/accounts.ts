@@ -243,21 +243,10 @@ export interface AccountBulkRetryResponse {
 }
 
 /**
- * Sanitized X account summary returned by connect and reauth.
+ * The account once the sign-in finishes. While it still runs or waits on an email
+ * code, the same pending attempt or challenge that `create` returns.
  */
-export interface AccountReauthResponse {
-  id: string;
-
-  createdAt: string;
-
-  health: 'healthy' | 'locked' | 'needsReauth' | 'recovering' | 'suspended' | 'temporaryIssue';
-
-  status: 'active';
-
-  xUserId: string;
-
-  xUsername: string;
-}
+export type AccountReauthResponse = AccountCreateResponse;
 
 export interface AccountCreateParams {
   /**
@@ -279,6 +268,12 @@ export interface AccountCreateParams {
    * X username of the account to connect, with or without @
    */
   username: string;
+
+  /**
+   * An ID you generate to read this attempt's status, even if the response never
+   * reaches you. Leave it out to get one in a pending response.
+   */
+  connection_attempt_id?: string;
 }
 
 export interface AccountListParams {
@@ -309,6 +304,12 @@ export interface AccountReauthParams {
    * Updated account password
    */
   password: string;
+
+  /**
+   * An ID you generate to read this reconnect's status, even if the response never
+   * reaches you. Leave it out to get one in a pending response.
+   */
+  connection_attempt_id?: string;
 
   /**
    * Email for the X account (updates stored email)

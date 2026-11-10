@@ -3484,6 +3484,13 @@ export interface TweetCreateParams {
   media?: Array<string>;
 
   /**
+   * Body param: Media IDs from `client.x.media.upload`, uploaded with this account.
+   * IDs last 24 hours. Send up to 4 image IDs or exactly 1 video ID. Send `media` or
+   * `media_ids`, not both. Media adds 2 credits per started MB across all files.
+   */
+  media_ids?: Array<string>;
+
+  /**
    * Body param: The post to reply to. Any X post ID works, from 1 to 19 digits.
    */
   reply_to_tweet_id?: string;

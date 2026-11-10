@@ -7,6 +7,13 @@ export {
   type AccountConnectionAttemptRetrieveResponse,
 } from './account-connection-attempts';
 export {
+  AccountConnectionLinks,
+  type XAccountConnectionLink,
+  type AccountConnectionLinkCreateResponse,
+  type AccountConnectionLinkDeleteResponse,
+  type AccountConnectionLinkCreateParams,
+} from './account-connection-links';
+export {
   AccountConnectionChallenges,
   type AccountConnectionChallengeSubmitResponse,
   type AccountConnectionChallengeSubmitParams,

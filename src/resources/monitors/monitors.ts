@@ -122,6 +122,29 @@ export class Monitors extends APIResource {
   deactivate(id: string, options?: RequestOptions): APIPromise<MonitorDeactivateResponse> {
     return this._client.delete(path`/monitors/${id}`, options);
   }
+
+  /**
+   * Creates the monitor if it does not exist, or updates it if it does. Send the
+   * same call twice & you still have 1 monitor. `created` says which one ran.
+   * Creating needs the credits of the first hour, then costs 30 credits an hour. A
+   * stopped monitor turns back on & counts as created. Updating is free & replaces
+   * the event types. It changes the name only when you send one.
+   *
+   * @example
+   * ```ts
+   * const monitor = await client.monitors.upsertByUsername(
+   *   'elonmusk',
+   *   { eventTypes: ['tweet.new', 'tweet.reply'] },
+   * );
+   * ```
+   */
+  upsertByUsername(
+    username: string,
+    body: MonitorUpsertByUsernameParams,
+    options?: RequestOptions,
+  ): APIPromise<MonitorUpsertByUsernameResponse> {
+    return this._client.put(path`/monitors/username/${username}`, { body, ...options });
+  }
 }
 
 /**
@@ -213,6 +236,17 @@ export interface MonitorDeactivateResponse {
   success: true;
 }
 
+/**
+ * The account monitor an upsert created or updated.
+ */
+export interface MonitorUpsertByUsernameResponse extends Monitor {
+  /**
+   * True when this call created the monitor or turned it back on. False when it
+   * updated a running monitor.
+   */
+  created: boolean;
+}
+
 export interface MonitorCreateParams {
   /**
    * Array of event types to subscribe to.
@@ -259,6 +293,19 @@ export interface MonitorListParams {
   limit?: number;
 }
 
+export interface MonitorUpsertByUsernameParams {
+  /**
+   * Array of event types to subscribe to.
+   */
+  eventTypes: Array<Shared.EventType>;
+
+  /**
+   * Your label for the monitor. Its events carry it as monitorName. Leave it out to
+   * keep the current label, or send null to remove it.
+   */
+  name?: string | null;
+}
+
 Monitors.Keywords = Keywords;
 Monitors.Posts = Posts;
 
@@ -268,9 +315,11 @@ export declare namespace Monitors {
     type MonitorCreateResponse as MonitorCreateResponse,
     type MonitorListResponse as MonitorListResponse,
     type MonitorDeactivateResponse as MonitorDeactivateResponse,
+    type MonitorUpsertByUsernameResponse as MonitorUpsertByUsernameResponse,
     type MonitorCreateParams as MonitorCreateParams,
     type MonitorUpdateParams as MonitorUpdateParams,
     type MonitorListParams as MonitorListParams,
+    type MonitorUpsertByUsernameParams as MonitorUpsertByUsernameParams,
   };
 
   export {

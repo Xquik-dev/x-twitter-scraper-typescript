@@ -923,6 +923,7 @@ export namespace Error {
     | 'login_cooldown'
     | 'login_failed'
     | 'media_download_failed'
+    | 'media_not_uploaded'
     | 'media_too_large'
     | 'media_unavailable'
     | 'missing_params'

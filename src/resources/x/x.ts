@@ -9,6 +9,14 @@ import {
   AccountConnectionAttemptRetrieveResponse,
   AccountConnectionAttempts,
 } from './account-connection-attempts';
+import * as AccountConnectionLinksAPI from './account-connection-links';
+import {
+  AccountConnectionLinkCreateParams,
+  AccountConnectionLinkCreateResponse,
+  AccountConnectionLinkDeleteResponse,
+  AccountConnectionLinks,
+  XAccountConnectionLink,
+} from './account-connection-links';
 import * as AccountConnectionChallengesAPI from './account-connection-challenges';
 import {
   AccountConnectionChallengeSubmitParams,
@@ -339,6 +347,8 @@ export class X extends APIResource {
     new AccountConnectionChallengesAPI.AccountConnectionChallenges(this._client);
   accountConnectionAttempts: AccountConnectionAttemptsAPI.AccountConnectionAttempts =
     new AccountConnectionAttemptsAPI.AccountConnectionAttempts(this._client);
+  accountConnectionLinks: AccountConnectionLinksAPI.AccountConnectionLinks =
+    new AccountConnectionLinksAPI.AccountConnectionLinks(this._client);
   bookmarks: BookmarksAPI.Bookmarks = new BookmarksAPI.Bookmarks(this._client);
   lists: ListsAPI.Lists = new ListsAPI.Lists(this._client);
   broadcasts: BroadcastsAPI.Broadcasts = new BroadcastsAPI.Broadcasts(this._client);
@@ -1888,6 +1898,7 @@ X.Communities = Communities;
 X.Accounts = Accounts;
 X.AccountConnectionChallenges = AccountConnectionChallenges;
 X.AccountConnectionAttempts = AccountConnectionAttempts;
+X.AccountConnectionLinks = AccountConnectionLinks;
 X.Bookmarks = Bookmarks;
 X.Lists = Lists;
 X.Broadcasts = Broadcasts;
@@ -2119,6 +2130,14 @@ export declare namespace X {
   export {
     AccountConnectionAttempts as AccountConnectionAttempts,
     type AccountConnectionAttemptRetrieveResponse as AccountConnectionAttemptRetrieveResponse,
+  };
+
+  export {
+    AccountConnectionLinks as AccountConnectionLinks,
+    type XAccountConnectionLink as XAccountConnectionLink,
+    type AccountConnectionLinkCreateResponse as AccountConnectionLinkCreateResponse,
+    type AccountConnectionLinkDeleteResponse as AccountConnectionLinkDeleteResponse,
+    type AccountConnectionLinkCreateParams as AccountConnectionLinkCreateParams,
   };
 
   export {
