@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `client.x.bookmarks.list` & `client.x.getHomeTimeline` take `pageSize`, 1 to 100 items per page.
+- `client.x.media.download` returns `noMediaTweetIds`, the posts with no media to save, & `failedTweetIds`, the posts Xquik couldn't read. Neither is charged.
 - The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `false` keeps it to the text.
 - `ContextAvailability.media` returns `'images'` when the AI read the post's images. A `switch` that handles every value needs a case for it.
 - `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.

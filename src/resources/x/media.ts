@@ -56,6 +56,11 @@ export class Media extends APIResource {
 export interface MediaDownloadResponse {
   cacheHit?: boolean;
 
+  /**
+   * Posts Xquik couldn't read, at no charge. Send them again.
+   */
+  failedTweetIds?: Array<string>;
+
   galleryUrl?: string;
 
   /**
@@ -68,6 +73,11 @@ export interface MediaDownloadResponse {
    * The post's files saved to your gallery. Single downloads only.
    */
   items?: Array<MediaDownloadResponse.Item>;
+
+  /**
+   * Posts with no media to save, at no charge.
+   */
+  noMediaTweetIds?: Array<string>;
 
   totalMedia?: number;
 
