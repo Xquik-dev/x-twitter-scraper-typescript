@@ -1656,6 +1656,12 @@ export interface XGetHomeTimelineParams {
    * Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
    */
   seenTweetIds?: string;
+
+  /**
+   * Items per page, 1 to 100, default 20. Source, filters or credits can return
+   * fewer. Follow next_cursor for more pages.
+   */
+  pageSize?: number;
 }
 
 export interface XGetNewsStoryVersionsParams {
