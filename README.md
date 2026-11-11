@@ -173,24 +173,20 @@ import XTwitterScraper, { toFile } from 'x-twitter-scraper';
 
 const client = new XTwitterScraper();
 
+const bytes = new Uint8Array(await (await fetch('https://xquik.com/logo.png')).arrayBuffer());
+fs.writeFileSync('logo.png', bytes);
+
 // Stream a local file with Node fs.
-await client.x.media.upload({ account: '@elonmusk', file: fs.createReadStream('/path/to/file') });
+await client.x.media.upload({ account: '@elonmusk', file: fs.createReadStream('logo.png') });
 
 // Pass a web File.
-await client.x.media.upload({ account: '@elonmusk', file: new File(['my bytes'], 'file') });
+await client.x.media.upload({ account: '@elonmusk', file: new File([bytes], 'logo.png', { type: 'image/png' }) });
 
 // Pass a fetch Response.
-await client.x.media.upload({ account: '@elonmusk', file: await fetch('https://somesite/file') });
+await client.x.media.upload({ account: '@elonmusk', file: await fetch('https://xquik.com/logo.png') });
 
 // Convert bytes with toFile.
-await client.x.media.upload({
-  account: '@elonmusk',
-  file: await toFile(Buffer.from('my bytes'), 'file'),
-});
-await client.x.media.upload({
-  account: '@elonmusk',
-  file: await toFile(new Uint8Array([0, 1, 2]), 'file'),
-});
+await client.x.media.upload({ account: '@elonmusk', file: await toFile(bytes, 'logo.png') });
 ```
 
 ## Handling errors
@@ -353,10 +349,8 @@ Use `client.get`, `client.post`, or another HTTP method for undocumented endpoin
 Client options, including retries, apply to these requests.
 
 ```ts
-await client.post('/some/path', {
-  body: { some_prop: 'foo' },
-  query: { some_query_arg: 'bar' },
-});
+const page = await client.get('/x/tweets/search', { query: { q: 'from:NASA', limit: 1 } });
+console.log(page);
 ```
 
 ### Undocumented request params
@@ -365,8 +359,9 @@ Add `// @ts-expect-error` to an undocumented parameter.
 The SDK sends extra values without runtime type validation.
 
 ```ts
-client.x.tweets.search({
-  // ...
+await client.x.tweets.search({
+  q: 'from:NASA',
+  limit: 10,
   // @ts-expect-error baz is not yet public
   baz: 'undocumented option',
 });
@@ -389,7 +384,7 @@ The SDK uses the global `fetch` function by default.
 Polyfill the global to use another `fetch` implementation.
 
 ```ts
-import fetch from 'my-fetch';
+import { fetch } from 'undici';
 
 globalThis.fetch = fetch;
 ```
@@ -398,7 +393,7 @@ Or pass it to the client.
 
 ```ts
 import XTwitterScraper from 'x-twitter-scraper';
-import fetch from 'my-fetch';
+import { fetch } from 'undici';
 
 const client = new XTwitterScraper({ fetch });
 ```
