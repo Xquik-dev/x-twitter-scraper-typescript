@@ -214,7 +214,7 @@ export interface Community {
    * The creator's public profile, or the ID, username and badge alone when X sends
    * no profile
    */
-  creator?: UserProfile | Community.UnionMember1;
+  creator?: (UserProfile & { verified: boolean }) | Community.UnionMember1;
 
   /**
    * About text for the community
@@ -1298,6 +1298,13 @@ export interface PaginatedTweets {
    * Whole number from 0.
    */
   filtered_count?: number;
+
+  /**
+   * Present on an empty last page when X shows this account's timeline to nobody.
+   * The page is empty because of that, so it doesn't mean the account posted
+   * nothing. A retry returns the same page.
+   */
+  hiddenTimeline?: true;
 
   /**
    * How far back a filtered Latest search has read, in UTC. Every newer post was
@@ -3274,6 +3281,12 @@ export interface UserListPage extends PaginatedUsers {
    * list's last.
    */
   scanLimit?: UserListPage.ScanLimit;
+
+  /**
+   * Present on the last page of an empty list whose profile counts 0 accounts in
+   * it.
+   */
+  windowComplete?: true;
 }
 
 export namespace UserListPage {
