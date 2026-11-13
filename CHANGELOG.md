@@ -4,6 +4,7 @@
 
 - The 6 `x.analysis` methods take `topic` & `imageShows`. AI-powered analysis keeps only posts about the topic or posts whose photos show it, and only kept posts are analyzed, at 2 credits each. Send one of the 2, not both.
 - Each `x.analysis` response returns `topicFilter` or `imageFilter` with the cutoff & counts, present when the request sent that filter.
+- `client.x.users.retrieveMentions` takes `ownThreads`. With `replies: 'exclude'`, `ownThreads: 'exclude'` also leaves out replies to the author's own posts.
 - A tweets page adds `hiddenTimeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
 - Follower, following, verified follower, list member and list follower pages add `windowComplete`, present on the last page of an empty list whose profile counts 0 accounts in it.
 - A community's `creator` always carries `verified`, also when it is a full profile.

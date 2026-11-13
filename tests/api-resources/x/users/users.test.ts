@@ -736,6 +736,7 @@ describe('resource users', () => {
           minViews: 0,
           nativeRetweets: true,
           omit: 'entities,media',
+          ownThreads: 'exclude',
           pageSize: 1,
           quotes: 'include',
           quotesOfTweetId: 'quotesOfTweetId',

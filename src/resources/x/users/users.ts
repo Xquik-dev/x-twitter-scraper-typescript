@@ -4583,6 +4583,12 @@ export interface UserRetrieveMentionsParams {
   omit?: string;
 
   /**
+   * With replies=exclude, also leaves out replies to the author's own posts, so the
+   * search skips every reply.
+   */
+  ownThreads?: 'exclude';
+
+  /**
    * Items per page (1-100, default 20). Source, filters or credits can return fewer.
    * Follow next_cursor for more pages. Aliases: limit, count, max_results, maxItems,
    * max_items & per_page.
