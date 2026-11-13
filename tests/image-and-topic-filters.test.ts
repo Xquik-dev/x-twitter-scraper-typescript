@@ -118,6 +118,51 @@ describe('image and topic filters', () => {
     expect(response.imageFilter?.kept).toBe(4);
   });
 
+  test('the 6 analysis routes send topic and imageShows and return both filters', async () => {
+    const topicFilter = topicPage.topicFilter;
+    const { client, requests, sent } = fixtureClient({
+      results: [],
+      unanalyzed: [],
+      analysisSummary: {},
+      has_next_page: false,
+      next_cursor: '',
+      topicFilter,
+      imageFilter,
+    });
+    const body = { query: 'rust', ...filters };
+
+    const responses = [
+      await client.x.analysis.sentiment(body),
+      await client.x.analysis.brand(body),
+      await client.x.analysis.news(body),
+      await client.x.analysis.marketSignals(body),
+      await client.x.analysis.viralScore(body),
+      await client.x.analysis.classify(body),
+    ];
+
+    expect(requests).toEqual(
+      ['sentiment', 'brand', 'news', 'market-signals', 'viral-score', 'classify'].map(
+        (route) => `POST https://xquik.test/api/v1/x/analysis/${route}`,
+      ),
+    );
+    expect(await Promise.all(sent.map((request) => request.json()))).toEqual(Array(6).fill(body));
+    expect(responses.map((response) => [response.topicFilter?.kept, response.imageFilter?.kept])).toEqual(
+      Array(6).fill([1, 4]),
+    );
+  });
+
+  test('every analysis response types both filters as optional summaries', () => {
+    type Responses =
+      | XTwitterScraper.X.AnalysisSentimentResponse
+      | XTwitterScraper.X.AnalysisBrandResponse
+      | XTwitterScraper.X.AnalysisNewsResponse
+      | XTwitterScraper.X.AnalysisMarketSignalsResponse
+      | XTwitterScraper.X.AnalysisViralScoreResponse
+      | XTwitterScraper.X.AnalysisClassifyResponse;
+    expectTypeOf<Responses['topicFilter']>().toEqualTypeOf<XTwitterScraper.TopicFilterSummary | undefined>();
+    expectTypeOf<Responses['imageFilter']>().toEqualTypeOf<XTwitterScraper.ImageFilterSummary | undefined>();
+  });
+
   test('a filtered page still reads as a plain page', () => {
     expectTypeOf<XTwitterScraper.FilterablePaginatedTweets>().toExtend<XTwitterScraper.PaginatedTweets>();
     expectTypeOf<XTwitterScraper.X.TweetSearchResponse>().toExtend<XTwitterScraper.PaginatedTweets>();

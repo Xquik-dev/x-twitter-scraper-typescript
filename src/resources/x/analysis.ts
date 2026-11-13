@@ -170,6 +170,18 @@ export interface AnalysisBrandResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisBrandResponse.Unanalyzed>;
+
+  /**
+   * What the image filter asked & how many posts it kept. Present when the request
+   * sent imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
+
+  /**
+   * What the topic filter asked & how many posts it kept. Present when the request
+   * sent topic.
+   */
+  topicFilter?: Shared.TopicFilterSummary;
 }
 
 export namespace AnalysisBrandResponse {
@@ -582,6 +594,18 @@ export interface AnalysisClassifyResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisClassifyResponse.Unanalyzed>;
+
+  /**
+   * What the image filter asked & how many posts it kept. Present when the request
+   * sent imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
+
+  /**
+   * What the topic filter asked & how many posts it kept. Present when the request
+   * sent topic.
+   */
+  topicFilter?: Shared.TopicFilterSummary;
 }
 
 export namespace AnalysisClassifyResponse {
@@ -994,6 +1018,18 @@ export interface AnalysisMarketSignalsResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisMarketSignalsResponse.Unanalyzed>;
+
+  /**
+   * What the image filter asked & how many posts it kept. Present when the request
+   * sent imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
+
+  /**
+   * What the topic filter asked & how many posts it kept. Present when the request
+   * sent topic.
+   */
+  topicFilter?: Shared.TopicFilterSummary;
 }
 
 export namespace AnalysisMarketSignalsResponse {
@@ -1406,6 +1442,18 @@ export interface AnalysisNewsResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisNewsResponse.Unanalyzed>;
+
+  /**
+   * What the image filter asked & how many posts it kept. Present when the request
+   * sent imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
+
+  /**
+   * What the topic filter asked & how many posts it kept. Present when the request
+   * sent topic.
+   */
+  topicFilter?: Shared.TopicFilterSummary;
 }
 
 export namespace AnalysisNewsResponse {
@@ -1818,6 +1866,18 @@ export interface AnalysisSentimentResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisSentimentResponse.Unanalyzed>;
+
+  /**
+   * What the image filter asked & how many posts it kept. Present when the request
+   * sent imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
+
+  /**
+   * What the topic filter asked & how many posts it kept. Present when the request
+   * sent topic.
+   */
+  topicFilter?: Shared.TopicFilterSummary;
 }
 
 export namespace AnalysisSentimentResponse {
@@ -2230,6 +2290,18 @@ export interface AnalysisViralScoreResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisViralScoreResponse.Unanalyzed>;
+
+  /**
+   * What the image filter asked & how many posts it kept. Present when the request
+   * sent imageShows.
+   */
+  imageFilter?: Shared.ImageFilterSummary;
+
+  /**
+   * What the topic filter asked & how many posts it kept. Present when the request
+   * sent topic.
+   */
+  topicFilter?: Shared.TopicFilterSummary;
 }
 
 export namespace AnalysisViralScoreResponse {
@@ -2634,6 +2706,16 @@ export interface AnalysisBrandParams {
   cursor?: string;
 
   /**
+   * Keep only posts whose photos show this, the same as the Actors' imageShows
+   * input. Send charts, screenshots, product_photos, memes or people, or describe it
+   * in words, such as a rocket. AI-powered analysis checks posts with photos X
+   * doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+   * analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+   * topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Maximum posts to analyze from the search. Credits can return fewer.
    */
   limit?: number;
@@ -2676,6 +2758,15 @@ export interface AnalysisBrandParams {
    * the same as 1 analyzed post.
    */
   texts?: Array<string>;
+
+  /**
+   * Keep only posts about this topic, the same as the Actors' topic input.
+   * AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+   * scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+   * post the filter drops costs nothing. topicFilter states the cutoff & counts.
+   * Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Post IDs or post URLs to analyze, up to 100.
@@ -2863,6 +2954,16 @@ export interface AnalysisClassifyParams {
   cursor?: string;
 
   /**
+   * Keep only posts whose photos show this, the same as the Actors' imageShows
+   * input. Send charts, screenshots, product_photos, memes or people, or describe it
+   * in words, such as a rocket. AI-powered analysis checks posts with photos X
+   * doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+   * analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+   * topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Maximum posts to analyze from the search. Credits can return fewer.
    */
   limit?: number;
@@ -2905,6 +3006,15 @@ export interface AnalysisClassifyParams {
    * the same as 1 analyzed post.
    */
   texts?: Array<string>;
+
+  /**
+   * Keep only posts about this topic, the same as the Actors' topic input.
+   * AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+   * scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+   * post the filter drops costs nothing. topicFilter states the cutoff & counts.
+   * Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Post IDs or post URLs to analyze, up to 100.
@@ -3092,6 +3202,16 @@ export interface AnalysisMarketSignalsParams {
   cursor?: string;
 
   /**
+   * Keep only posts whose photos show this, the same as the Actors' imageShows
+   * input. Send charts, screenshots, product_photos, memes or people, or describe it
+   * in words, such as a rocket. AI-powered analysis checks posts with photos X
+   * doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+   * analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+   * topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Maximum posts to analyze from the search. Credits can return fewer.
    */
   limit?: number;
@@ -3134,6 +3254,15 @@ export interface AnalysisMarketSignalsParams {
    * the same as 1 analyzed post.
    */
   texts?: Array<string>;
+
+  /**
+   * Keep only posts about this topic, the same as the Actors' topic input.
+   * AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+   * scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+   * post the filter drops costs nothing. topicFilter states the cutoff & counts.
+   * Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Post IDs or post URLs to analyze, up to 100.
@@ -3321,6 +3450,16 @@ export interface AnalysisNewsParams {
   cursor?: string;
 
   /**
+   * Keep only posts whose photos show this, the same as the Actors' imageShows
+   * input. Send charts, screenshots, product_photos, memes or people, or describe it
+   * in words, such as a rocket. AI-powered analysis checks posts with photos X
+   * doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+   * analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+   * topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Maximum posts to analyze from the search. Credits can return fewer.
    */
   limit?: number;
@@ -3363,6 +3502,15 @@ export interface AnalysisNewsParams {
    * the same as 1 analyzed post.
    */
   texts?: Array<string>;
+
+  /**
+   * Keep only posts about this topic, the same as the Actors' topic input.
+   * AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+   * scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+   * post the filter drops costs nothing. topicFilter states the cutoff & counts.
+   * Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Post IDs or post URLs to analyze, up to 100.
@@ -3550,6 +3698,16 @@ export interface AnalysisSentimentParams {
   cursor?: string;
 
   /**
+   * Keep only posts whose photos show this, the same as the Actors' imageShows
+   * input. Send charts, screenshots, product_photos, memes or people, or describe it
+   * in words, such as a rocket. AI-powered analysis checks posts with photos X
+   * doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+   * analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+   * topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Maximum posts to analyze from the search. Credits can return fewer.
    */
   limit?: number;
@@ -3592,6 +3750,15 @@ export interface AnalysisSentimentParams {
    * the same as 1 analyzed post.
    */
   texts?: Array<string>;
+
+  /**
+   * Keep only posts about this topic, the same as the Actors' topic input.
+   * AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+   * scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+   * post the filter drops costs nothing. topicFilter states the cutoff & counts.
+   * Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Post IDs or post URLs to analyze, up to 100.
@@ -3779,6 +3946,16 @@ export interface AnalysisViralScoreParams {
   cursor?: string;
 
   /**
+   * Keep only posts whose photos show this, the same as the Actors' imageShows
+   * input. Send charts, screenshots, product_photos, memes or people, or describe it
+   * in words, such as a rocket. AI-powered analysis checks posts with photos X
+   * doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+   * analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+   * topic or imageShows, not both.
+   */
+  imageShows?: string;
+
+  /**
    * Maximum posts to analyze from the search. Credits can return fewer.
    */
   limit?: number;
@@ -3821,6 +3998,15 @@ export interface AnalysisViralScoreParams {
    * the same as 1 analyzed post.
    */
   texts?: Array<string>;
+
+  /**
+   * Keep only posts about this topic, the same as the Actors' topic input.
+   * AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+   * scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+   * post the filter drops costs nothing. topicFilter states the cutoff & counts.
+   * Send topic or imageShows, not both.
+   */
+  topic?: string;
 
   /**
    * Post IDs or post URLs to analyze, up to 100.
