@@ -1300,6 +1300,13 @@ export interface PaginatedTweets {
   filtered_count?: number;
 
   /**
+   * Present on an empty last page when X shows this account's timeline to nobody.
+   * The page is empty because of that, so it doesn't mean the account posted
+   * nothing. A retry returns the same page.
+   */
+  hiddenTimeline?: true;
+
+  /**
    * How far back a filtered Latest search has read, in UTC. Every newer post was
    * checked, so an empty page still moves this time back.
    */

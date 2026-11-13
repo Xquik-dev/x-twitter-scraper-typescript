@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- A tweets page adds `hiddenTimeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
 - Follower, following, verified follower, list member and list follower pages add `windowComplete`, present on the last page of an empty list whose profile counts 0 accounts in it.
 - A community's `creator` always carries `verified`, also when it is a full profile.
 - Replies diagnostics add the `reported_held` stop reason, which a strategy returns once the read holds every reply X reports.
