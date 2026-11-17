@@ -134,12 +134,12 @@ const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, a
   }
 };
 
-const withRunner = (here: boolean) => {
+const withRunner = (here: boolean, runnerExit = 0) => {
   const { root, command, env } = setUp(sarif({}));
   try {
     const project = join(root, 'project');
     const log = join(root, 'runner.log');
-    writeFileSync(join(root, 'runner'), `#!/bin/sh\nprintf '%s\\n' "$@" >"${log}"\n`);
+    writeFileSync(join(root, 'runner'), `#!/bin/sh\nprintf '%s\\n' "$@" >"${log}"\nexit ${runnerExit}\n`);
     chmodSync(join(root, 'runner'), 0o755);
     spawnSync('git', ['init', '--quiet', project], { env });
     spawnSync('git', ['-C', project, 'config', 'checklocal.runner', join(root, 'runner')], { env });
@@ -161,6 +161,13 @@ describe('bin/check-local with a configured runner', () => {
     expect(result.status).toBe(0);
     expect(result.runnerArguments).toBe(`${result.project}\n--no-status\n`);
     expect(result.stdout).not.toContain('==> API coverage');
+  });
+
+  it('fails with the runner exit status when the runner fails', () => {
+    const result = withRunner(false, 7);
+
+    expect(result.status).toBe(7);
+    expect(result.runnerArguments).toBe(`${result.project}\n--no-status\n`);
   });
 
   it('runs the checks here when CHECK_LOCAL_HERE is 1', () => {
