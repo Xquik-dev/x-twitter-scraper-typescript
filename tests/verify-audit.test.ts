@@ -74,7 +74,8 @@ describe('verify-audit', () => {
     const lock = readFileSync(resolve(root, 'pnpm-lock.yaml'), 'utf8');
     expect(
       exceptions.map((exception) => [
-        Date.parse(exception.expires) - Date.parse(exception.added) <= policy.MAX_EXCEPTION_DAYS * policy.DAY_MS,
+        Date.parse(exception.expires) - Date.parse(exception.added) <=
+          policy.MAX_EXCEPTION_DAYS * policy.DAY_MS,
         workspace.includes(`${exception.package}@${exception.version}: ${exception.patch}`),
         lock.includes(`  ${exception.package}@${exception.version}(patch_hash=`),
       ]),
@@ -126,7 +127,10 @@ process.stdout.write(JSON.stringify(patterns.map((pattern) => {
 })));
 `;
 
-const probe = (patterns: string[], input: string): Array<{ matched: boolean; ms: number; source: string }> => {
+const probe = (
+  patterns: string[],
+  input: string,
+): Array<{ matched: boolean; ms: number; source: string }> => {
   const child = spawnSync(process.execPath, ['-e', PROBE], {
     cwd: root,
     encoding: 'utf8',

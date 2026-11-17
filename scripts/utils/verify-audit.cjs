@@ -47,7 +47,11 @@ const verify = (report, exceptions, now) => {
 const main = () => {
   const root = path.join(__dirname, '..', '..');
   const { exceptions } = JSON.parse(fs.readFileSync(path.join(root, 'audit-exceptions.json'), 'utf8'));
-  const audit = spawnSync('pnpm', ['audit', '--json'], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  const audit = spawnSync('pnpm', ['audit', '--json'], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
   if (audit.status !== 0 && audit.status !== 1) {
     process.stderr.write(`pnpm audit exited ${audit.status}. ${audit.stderr}\n`);
     process.exitCode = 1;
