@@ -7,6 +7,7 @@ import { fixtureClient } from '../../fixture-client';
 const link = {
   id: 'xlink_AAAAAAAAAAAAAAAA',
   accountId: null,
+  apiKeyId: '17',
   completedAt: null,
   createdAt: '2025-01-15T12:00:00Z',
   expiresAt: '2025-01-15T12:30:00Z',
@@ -39,6 +40,7 @@ describe('resource accountConnectionLinks', () => {
       returnUrl: 'https://example.com/connected',
     });
     expect(response.url).toBe('https://example.com/connect#token');
+    expect(response.apiKeyId).toBe('17');
   });
 
   test('retrieve reads the link by its ID', async () => {
