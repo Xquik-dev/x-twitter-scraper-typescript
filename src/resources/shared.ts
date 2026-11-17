@@ -1295,6 +1295,13 @@ export interface PaginatedTweets {
   tweets: Array<SearchTweet>;
 
   /**
+   * Present on a last page that X cut short. `stalled` means X returned no new
+   * results 2 times in a row, 30 s apart. The list may hold more. Read it again
+   * later without cursor.
+   */
+  endReason?: 'stalled';
+
+  /**
    * Whole number from 0.
    */
   filtered_count?: number;
@@ -1390,6 +1397,13 @@ export interface PaginatedUsers {
   next_cursor: string;
 
   users: Array<UserProfile>;
+
+  /**
+   * Present on a last page that X cut short. `stalled` means X returned no new
+   * results 2 times in a row, 30 s apart. The list may hold more. Read it again
+   * later without cursor.
+   */
+  endReason?: 'stalled';
 
   /**
    * Whole number from 0.
