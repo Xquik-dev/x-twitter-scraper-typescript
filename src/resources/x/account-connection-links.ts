@@ -15,8 +15,11 @@ export class AccountConnectionLinks extends APIResource {
    * Creates a link to a page Xquik hosts, where a person connects an X account with
    * no Xquik signup. Your backend never receives their password or 2FA secret, and
    * the account belongs to you. Send `accountId` to reconnect 1 of your accounts
-   * instead. Connecting is free. The link works for 30 minutes, & the response is
-   * the only place its token appears.
+   * instead. Connecting is free. Takes a Full access API key holding
+   * `connectsXAccounts`, or a dashboard session. The link works for 30 minutes, &
+   * the response is the only place its token appears. A link a key made stops while
+   * that key is paused or loses `connectsXAccounts`, & for good once it's revoked,
+   * rotated, expired or deleted.
    *
    * @example
    * ```ts
@@ -36,6 +39,7 @@ export class AccountConnectionLinks extends APIResource {
   /**
    * Reads what happened on a link. `status` reads `connected` once the person
    * finishes, with `xUserId`, `xUsername` & `health`. It never holds the token.
+   * Takes a Full access API key holding `connectsXAccounts`, or a dashboard session.
    *
    * @example
    * ```ts
@@ -50,7 +54,8 @@ export class AccountConnectionLinks extends APIResource {
   }
 
   /**
-   * Stops a link working. An account it already connected stays connected.
+   * Stops a link working. An account it already connected stays connected. Takes a
+   * Full access API key holding `connectsXAccounts`, or a dashboard session.
    *
    * @example
    * ```ts
@@ -72,6 +77,12 @@ export interface XAccountConnectionLink {
   id: string;
 
   accountId: string | null;
+
+  /**
+   * The ID of the API key that made the link, or null when a dashboard session made
+   * it.
+   */
+  apiKeyId: string | null;
 
   completedAt: string | null;
 
@@ -95,7 +106,10 @@ export interface XAccountConnectionLink {
   returnUrl: string | null;
 
   /**
-   * `failed` means 5 logins were refused, so make a new link.
+   * `failed` means 5 logins were refused, so make a new link. `revoked` means you
+   * revoked it, or the key that made it is paused, revoked, expired, no longer Full
+   * access or without `connectsXAccounts`. A link whose key resumes within its 30
+   * minutes reads `pending` again.
    */
   status: 'pending' | 'connecting' | 'requires_email_code' | 'connected' | 'failed' | 'expired' | 'revoked';
 
