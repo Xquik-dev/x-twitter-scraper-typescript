@@ -14,6 +14,8 @@ import {
   AccountConnectionLinkCreateParams,
   AccountConnectionLinkCreateResponse,
   AccountConnectionLinkDeleteResponse,
+  AccountConnectionLinkListParams,
+  AccountConnectionLinkListResponse,
   AccountConnectionLinks,
   XAccountConnectionLink,
 } from './account-connection-links';
@@ -2142,8 +2144,10 @@ export declare namespace X {
     AccountConnectionLinks as AccountConnectionLinks,
     type XAccountConnectionLink as XAccountConnectionLink,
     type AccountConnectionLinkCreateResponse as AccountConnectionLinkCreateResponse,
+    type AccountConnectionLinkListResponse as AccountConnectionLinkListResponse,
     type AccountConnectionLinkDeleteResponse as AccountConnectionLinkDeleteResponse,
     type AccountConnectionLinkCreateParams as AccountConnectionLinkCreateParams,
+    type AccountConnectionLinkListParams as AccountConnectionLinkListParams,
   };
 
   export {

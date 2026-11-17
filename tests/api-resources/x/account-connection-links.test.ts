@@ -54,6 +54,36 @@ describe('resource accountConnectionLinks', () => {
     expect(response).toEqual(link);
   });
 
+  test('list sends the cursor and the limit and reads each link with its key', async () => {
+    const dashboardLink = { ...link, id: 'xlink_BBBBBBBBBBBBBBBB', apiKeyId: null };
+    const { client, requests } = fixtureClient({
+      links: [link, dashboardLink],
+      hasMore: true,
+      nextCursor: 'def456',
+    });
+
+    const page = await client.x.accountConnectionLinks.list({ cursor: 'abc123', limit: 20 });
+
+    expect(requests).toEqual([
+      'GET https://xquik.test/api/v1/x/account-connection-links?cursor=abc123&limit=20',
+    ]);
+    expect(page.links.map(({ id, apiKeyId }) => [id, apiKeyId])).toEqual([
+      ['xlink_AAAAAAAAAAAAAAAA', '17'],
+      ['xlink_BBBBBBBBBBBBBBBB', null],
+    ]);
+    expect(page.hasMore).toBe(true);
+    expect(page.nextCursor).toBe('def456');
+  });
+
+  test('list with no options reads the first page', async () => {
+    const { client, requests } = fixtureClient({ links: [], hasMore: false });
+
+    const page = await client.x.accountConnectionLinks.list();
+
+    expect(requests).toEqual(['GET https://xquik.test/api/v1/x/account-connection-links']);
+    expect(page).toEqual({ links: [], hasMore: false });
+  });
+
   test('delete revokes the link by its ID', async () => {
     const { client, requests } = fixtureClient({ success: true });
 

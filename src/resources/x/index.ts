@@ -10,8 +10,10 @@ export {
   AccountConnectionLinks,
   type XAccountConnectionLink,
   type AccountConnectionLinkCreateResponse,
+  type AccountConnectionLinkListResponse,
   type AccountConnectionLinkDeleteResponse,
   type AccountConnectionLinkCreateParams,
+  type AccountConnectionLinkListParams,
 } from './account-connection-links';
 export {
   AccountConnectionChallenges,

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `client.x.accountConnectionLinks.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `nextCursor` back as `cursor` while `hasMore` is true. Each link's `apiKeyId` shows which key made it, so you can find and revoke the links a leaked key made.
 - `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `apiKeyId`, the API key that made the link, or `null` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
 - The 6 `x.analysis` methods take `topic` & `imageShows`. AI-powered analysis keeps only posts about the topic or posts whose photos show it, and only kept posts are analyzed, at 2 credits each. Send one of the 2, not both.
 - Each `x.analysis` response returns `topicFilter` or `imageFilter` with the cutoff & counts, present when the request sent that filter.
