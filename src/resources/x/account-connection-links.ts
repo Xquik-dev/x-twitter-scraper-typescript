@@ -54,6 +54,25 @@ export class AccountConnectionLinks extends APIResource {
   }
 
   /**
+   * Lists your connect links, newest first, with `apiKeyId` naming the API key that
+   * made each one, or null for a dashboard session. Use it to find and revoke the
+   * links a leaked key made. It never holds a token. Takes a Full access API key
+   * holding `connectsXAccounts`, or a dashboard session.
+   *
+   * @example
+   * ```ts
+   * const accountConnectionLinks =
+   *   await client.x.accountConnectionLinks.list();
+   * ```
+   */
+  list(
+    query: AccountConnectionLinkListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<AccountConnectionLinkListResponse> {
+    return this._client.get('/x/account-connection-links', { query, ...options });
+  }
+
+  /**
    * Stops a link working. An account it already connected stays connected. Takes a
    * Full access API key holding `connectsXAccounts`, or a dashboard session.
    *
@@ -134,6 +153,20 @@ export interface AccountConnectionLinkCreateResponse extends XAccountConnectionL
   url: string;
 }
 
+/**
+ * Your connect links, newest first.
+ */
+export interface AccountConnectionLinkListResponse {
+  hasMore: boolean;
+
+  links: Array<XAccountConnectionLink>;
+
+  /**
+   * Pass unchanged as cursor while hasMore is true.
+   */
+  nextCursor?: string;
+}
+
 export interface AccountConnectionLinkDeleteResponse {
   success: true;
 }
@@ -156,11 +189,27 @@ export interface AccountConnectionLinkCreateParams {
   returnUrl?: string;
 }
 
+export interface AccountConnectionLinkListParams {
+  /**
+   * Previous nextCursor. The after alias also works. Offset pagination is not
+   * supported.
+   */
+  cursor?: string;
+
+  /**
+   * Maximum items per page, from 1 to 10,000. Default 200. Pass nextCursor as cursor
+   * for the next page.
+   */
+  limit?: number;
+}
+
 export declare namespace AccountConnectionLinks {
   export {
     type XAccountConnectionLink as XAccountConnectionLink,
     type AccountConnectionLinkCreateResponse as AccountConnectionLinkCreateResponse,
+    type AccountConnectionLinkListResponse as AccountConnectionLinkListResponse,
     type AccountConnectionLinkDeleteResponse as AccountConnectionLinkDeleteResponse,
     type AccountConnectionLinkCreateParams as AccountConnectionLinkCreateParams,
+    type AccountConnectionLinkListParams as AccountConnectionLinkListParams,
   };
 }
