@@ -9,3 +9,5 @@ overrides:
   'flat-cache>flatted': 3.4.2
   'minimatch': 11.0.4
   'ts-node>diff': 4.0.4
+patchedDependencies:
+  picomatch@4.0.7: patches/picomatch@4.0.7.patch

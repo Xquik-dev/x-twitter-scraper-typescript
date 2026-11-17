@@ -24,3 +24,9 @@ path = ["skills/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Xquik"
 SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["patches/picomatch@4.0.7.patch"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2017-present Jon Schlinkert", "2026 X Twitter Scraper"]
+SPDX-License-Identifier = "MIT"
