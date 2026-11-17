@@ -172,6 +172,12 @@ export interface AnalysisBrandResponse {
   unanalyzed: Array<AnalysisBrandResponse.Unanalyzed>;
 
   /**
+   * IDs of the posts or texts the time ran out for. Send them again in tweetIds, or
+   * those texts in texts. They cost nothing.
+   */
+  unprocessed_ids: Array<string>;
+
+  /**
    * What the image filter asked & how many posts it kept. Present when the request
    * sent imageShows.
    */
@@ -594,6 +600,12 @@ export interface AnalysisClassifyResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisClassifyResponse.Unanalyzed>;
+
+  /**
+   * IDs of the posts or texts the time ran out for. Send them again in tweetIds, or
+   * those texts in texts. They cost nothing.
+   */
+  unprocessed_ids: Array<string>;
 
   /**
    * What the image filter asked & how many posts it kept. Present when the request
@@ -1020,6 +1032,12 @@ export interface AnalysisMarketSignalsResponse {
   unanalyzed: Array<AnalysisMarketSignalsResponse.Unanalyzed>;
 
   /**
+   * IDs of the posts or texts the time ran out for. Send them again in tweetIds, or
+   * those texts in texts. They cost nothing.
+   */
+  unprocessed_ids: Array<string>;
+
+  /**
    * What the image filter asked & how many posts it kept. Present when the request
    * sent imageShows.
    */
@@ -1442,6 +1460,12 @@ export interface AnalysisNewsResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisNewsResponse.Unanalyzed>;
+
+  /**
+   * IDs of the posts or texts the time ran out for. Send them again in tweetIds, or
+   * those texts in texts. They cost nothing.
+   */
+  unprocessed_ids: Array<string>;
 
   /**
    * What the image filter asked & how many posts it kept. Present when the request
@@ -1868,6 +1892,12 @@ export interface AnalysisSentimentResponse {
   unanalyzed: Array<AnalysisSentimentResponse.Unanalyzed>;
 
   /**
+   * IDs of the posts or texts the time ran out for. Send them again in tweetIds, or
+   * those texts in texts. They cost nothing.
+   */
+  unprocessed_ids: Array<string>;
+
+  /**
    * What the image filter asked & how many posts it kept. Present when the request
    * sent imageShows.
    */
@@ -2290,6 +2320,12 @@ export interface AnalysisViralScoreResponse {
    * Each post without an analysis, by ID & reason. These cost nothing.
    */
   unanalyzed: Array<AnalysisViralScoreResponse.Unanalyzed>;
+
+  /**
+   * IDs of the posts or texts the time ran out for. Send them again in tweetIds, or
+   * those texts in texts. They cost nothing.
+   */
+  unprocessed_ids: Array<string>;
 
   /**
    * What the image filter asked & how many posts it kept. Present when the request
@@ -2754,8 +2790,9 @@ export interface AnalysisBrandParams {
   sinceTime?: string | number;
 
   /**
-   * Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
-   * the same as 1 analyzed post.
+   * Your own texts to analyze, such as drafts, as many as the body holds. Reads
+   * nothing from X. Each text costs the same as 1 analyzed post. Texts left when the
+   * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
 
@@ -2769,7 +2806,8 @@ export interface AnalysisBrandParams {
   topic?: string;
 
   /**
-   * Post IDs or post URLs to analyze, up to 100.
+   * Post IDs or post URLs to analyze, as many as the body holds. Posts left when the
+   * time runs out come back in unprocessed_ids.
    */
   tweetIds?: Array<string>;
 
@@ -3002,8 +3040,9 @@ export interface AnalysisClassifyParams {
   sinceTime?: string | number;
 
   /**
-   * Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
-   * the same as 1 analyzed post.
+   * Your own texts to analyze, such as drafts, as many as the body holds. Reads
+   * nothing from X. Each text costs the same as 1 analyzed post. Texts left when the
+   * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
 
@@ -3017,7 +3056,8 @@ export interface AnalysisClassifyParams {
   topic?: string;
 
   /**
-   * Post IDs or post URLs to analyze, up to 100.
+   * Post IDs or post URLs to analyze, as many as the body holds. Posts left when the
+   * time runs out come back in unprocessed_ids.
    */
   tweetIds?: Array<string>;
 
@@ -3250,8 +3290,9 @@ export interface AnalysisMarketSignalsParams {
   sinceTime?: string | number;
 
   /**
-   * Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
-   * the same as 1 analyzed post.
+   * Your own texts to analyze, such as drafts, as many as the body holds. Reads
+   * nothing from X. Each text costs the same as 1 analyzed post. Texts left when the
+   * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
 
@@ -3265,7 +3306,8 @@ export interface AnalysisMarketSignalsParams {
   topic?: string;
 
   /**
-   * Post IDs or post URLs to analyze, up to 100.
+   * Post IDs or post URLs to analyze, as many as the body holds. Posts left when the
+   * time runs out come back in unprocessed_ids.
    */
   tweetIds?: Array<string>;
 
@@ -3498,8 +3540,9 @@ export interface AnalysisNewsParams {
   sinceTime?: string | number;
 
   /**
-   * Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
-   * the same as 1 analyzed post.
+   * Your own texts to analyze, such as drafts, as many as the body holds. Reads
+   * nothing from X. Each text costs the same as 1 analyzed post. Texts left when the
+   * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
 
@@ -3513,7 +3556,8 @@ export interface AnalysisNewsParams {
   topic?: string;
 
   /**
-   * Post IDs or post URLs to analyze, up to 100.
+   * Post IDs or post URLs to analyze, as many as the body holds. Posts left when the
+   * time runs out come back in unprocessed_ids.
    */
   tweetIds?: Array<string>;
 
@@ -3746,8 +3790,9 @@ export interface AnalysisSentimentParams {
   sinceTime?: string | number;
 
   /**
-   * Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
-   * the same as 1 analyzed post.
+   * Your own texts to analyze, such as drafts, as many as the body holds. Reads
+   * nothing from X. Each text costs the same as 1 analyzed post. Texts left when the
+   * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
 
@@ -3761,7 +3806,8 @@ export interface AnalysisSentimentParams {
   topic?: string;
 
   /**
-   * Post IDs or post URLs to analyze, up to 100.
+   * Post IDs or post URLs to analyze, as many as the body holds. Posts left when the
+   * time runs out come back in unprocessed_ids.
    */
   tweetIds?: Array<string>;
 
@@ -3994,8 +4040,9 @@ export interface AnalysisViralScoreParams {
   sinceTime?: string | number;
 
   /**
-   * Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
-   * the same as 1 analyzed post.
+   * Your own texts to analyze, such as drafts, as many as the body holds. Reads
+   * nothing from X. Each text costs the same as 1 analyzed post. Texts left when the
+   * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
 
@@ -4009,7 +4056,8 @@ export interface AnalysisViralScoreParams {
   topic?: string;
 
   /**
-   * Post IDs or post URLs to analyze, up to 100.
+   * Post IDs or post URLs to analyze, as many as the body holds. Posts left when the
+   * time runs out come back in unprocessed_ids.
    */
   tweetIds?: Array<string>;
 
