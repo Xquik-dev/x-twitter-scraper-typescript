@@ -2737,7 +2737,7 @@ export interface AnalysisBrandParams {
   baseline?: Array<AnalysisBrandParams.Baseline>;
 
   /**
-   * The next_cursor of the page before. Send the same search with it.
+   * The next_cursor of the page before. Send the same search or page with it.
    */
   cursor?: string;
 
@@ -2752,7 +2752,16 @@ export interface AnalysisBrandParams {
   imageShows?: string;
 
   /**
-   * Maximum posts to analyze from the search. Credits can return fewer.
+   * Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+   * handle, with or without @, a user ID or a profile URL. Send no other posts or
+   * search with it.
+   */
+  likedBy?: string;
+
+  /**
+   * Maximum posts to analyze from the search or page. A low credit balance can
+   * return fewer. When the time runs out first, send next_cursor as cursor for the
+   * rest.
    */
   limit?: number;
 
@@ -2760,6 +2769,26 @@ export interface AnalysisBrandParams {
    * Analyze a public List's posts. Send its ID or URL.
    */
   listId?: string;
+
+  /**
+   * Analyze the posts of several public Lists in 1 search. Send their IDs or URLs.
+   * listId, when sent, joins them.
+   */
+  listIds?: Array<string>;
+
+  /**
+   * Analyze 1 account's posts with photos or videos, as its Media tab shows them.
+   * /x/users/{id}/media reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  mediaBy?: string;
+
+  /**
+   * X searches to analyze as 1 search. A post matching any of them counts. Each
+   * takes the operators of query. query, when sent, joins them. X searches up to 512
+   * characters, counted with the other search fields.
+   */
+  queries?: Array<string>;
 
   /**
    * X search to analyze, with the operators of /x/tweets/search, such as from:nasa
@@ -2779,6 +2808,13 @@ export interface AnalysisBrandParams {
   quotesOf?: string;
 
   /**
+   * Analyze 1 account's posts & replies, as its Replies tab shows them.
+   * /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  repliesBy?: string;
+
+  /**
    * Analyze the replies in 1 post's conversation. Send its ID or URL.
    */
   repliesTo?: string;
@@ -2795,6 +2831,12 @@ export interface AnalysisBrandParams {
    * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
+
+  /**
+   * Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's ID
+   * or URL. Send no other posts or search with it.
+   */
+  threadOf?: string;
 
   /**
    * Keep only posts about this topic, the same as the Actors' topic input.
@@ -2821,6 +2863,12 @@ export interface AnalysisBrandParams {
    * Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
    */
   username?: string;
+
+  /**
+   * Analyze the posts of several accounts in 1 search. Send handles, with or
+   * without @, or profile URLs. username, when sent, joins them.
+   */
+  usernames?: Array<string>;
 }
 
 export namespace AnalysisBrandParams {
@@ -2987,7 +3035,7 @@ export interface AnalysisClassifyParams {
   baseline?: Array<AnalysisClassifyParams.Baseline>;
 
   /**
-   * The next_cursor of the page before. Send the same search with it.
+   * The next_cursor of the page before. Send the same search or page with it.
    */
   cursor?: string;
 
@@ -3002,7 +3050,16 @@ export interface AnalysisClassifyParams {
   imageShows?: string;
 
   /**
-   * Maximum posts to analyze from the search. Credits can return fewer.
+   * Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+   * handle, with or without @, a user ID or a profile URL. Send no other posts or
+   * search with it.
+   */
+  likedBy?: string;
+
+  /**
+   * Maximum posts to analyze from the search or page. A low credit balance can
+   * return fewer. When the time runs out first, send next_cursor as cursor for the
+   * rest.
    */
   limit?: number;
 
@@ -3010,6 +3067,26 @@ export interface AnalysisClassifyParams {
    * Analyze a public List's posts. Send its ID or URL.
    */
   listId?: string;
+
+  /**
+   * Analyze the posts of several public Lists in 1 search. Send their IDs or URLs.
+   * listId, when sent, joins them.
+   */
+  listIds?: Array<string>;
+
+  /**
+   * Analyze 1 account's posts with photos or videos, as its Media tab shows them.
+   * /x/users/{id}/media reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  mediaBy?: string;
+
+  /**
+   * X searches to analyze as 1 search. A post matching any of them counts. Each
+   * takes the operators of query. query, when sent, joins them. X searches up to 512
+   * characters, counted with the other search fields.
+   */
+  queries?: Array<string>;
 
   /**
    * X search to analyze, with the operators of /x/tweets/search, such as from:nasa
@@ -3029,6 +3106,13 @@ export interface AnalysisClassifyParams {
   quotesOf?: string;
 
   /**
+   * Analyze 1 account's posts & replies, as its Replies tab shows them.
+   * /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  repliesBy?: string;
+
+  /**
    * Analyze the replies in 1 post's conversation. Send its ID or URL.
    */
   repliesTo?: string;
@@ -3045,6 +3129,12 @@ export interface AnalysisClassifyParams {
    * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
+
+  /**
+   * Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's ID
+   * or URL. Send no other posts or search with it.
+   */
+  threadOf?: string;
 
   /**
    * Keep only posts about this topic, the same as the Actors' topic input.
@@ -3071,6 +3161,12 @@ export interface AnalysisClassifyParams {
    * Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
    */
   username?: string;
+
+  /**
+   * Analyze the posts of several accounts in 1 search. Send handles, with or
+   * without @, or profile URLs. username, when sent, joins them.
+   */
+  usernames?: Array<string>;
 }
 
 export namespace AnalysisClassifyParams {
@@ -3237,7 +3333,7 @@ export interface AnalysisMarketSignalsParams {
   baseline?: Array<AnalysisMarketSignalsParams.Baseline>;
 
   /**
-   * The next_cursor of the page before. Send the same search with it.
+   * The next_cursor of the page before. Send the same search or page with it.
    */
   cursor?: string;
 
@@ -3252,7 +3348,16 @@ export interface AnalysisMarketSignalsParams {
   imageShows?: string;
 
   /**
-   * Maximum posts to analyze from the search. Credits can return fewer.
+   * Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+   * handle, with or without @, a user ID or a profile URL. Send no other posts or
+   * search with it.
+   */
+  likedBy?: string;
+
+  /**
+   * Maximum posts to analyze from the search or page. A low credit balance can
+   * return fewer. When the time runs out first, send next_cursor as cursor for the
+   * rest.
    */
   limit?: number;
 
@@ -3260,6 +3365,26 @@ export interface AnalysisMarketSignalsParams {
    * Analyze a public List's posts. Send its ID or URL.
    */
   listId?: string;
+
+  /**
+   * Analyze the posts of several public Lists in 1 search. Send their IDs or URLs.
+   * listId, when sent, joins them.
+   */
+  listIds?: Array<string>;
+
+  /**
+   * Analyze 1 account's posts with photos or videos, as its Media tab shows them.
+   * /x/users/{id}/media reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  mediaBy?: string;
+
+  /**
+   * X searches to analyze as 1 search. A post matching any of them counts. Each
+   * takes the operators of query. query, when sent, joins them. X searches up to 512
+   * characters, counted with the other search fields.
+   */
+  queries?: Array<string>;
 
   /**
    * X search to analyze, with the operators of /x/tweets/search, such as from:nasa
@@ -3279,6 +3404,13 @@ export interface AnalysisMarketSignalsParams {
   quotesOf?: string;
 
   /**
+   * Analyze 1 account's posts & replies, as its Replies tab shows them.
+   * /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  repliesBy?: string;
+
+  /**
    * Analyze the replies in 1 post's conversation. Send its ID or URL.
    */
   repliesTo?: string;
@@ -3295,6 +3427,12 @@ export interface AnalysisMarketSignalsParams {
    * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
+
+  /**
+   * Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's ID
+   * or URL. Send no other posts or search with it.
+   */
+  threadOf?: string;
 
   /**
    * Keep only posts about this topic, the same as the Actors' topic input.
@@ -3321,6 +3459,12 @@ export interface AnalysisMarketSignalsParams {
    * Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
    */
   username?: string;
+
+  /**
+   * Analyze the posts of several accounts in 1 search. Send handles, with or
+   * without @, or profile URLs. username, when sent, joins them.
+   */
+  usernames?: Array<string>;
 }
 
 export namespace AnalysisMarketSignalsParams {
@@ -3487,7 +3631,7 @@ export interface AnalysisNewsParams {
   baseline?: Array<AnalysisNewsParams.Baseline>;
 
   /**
-   * The next_cursor of the page before. Send the same search with it.
+   * The next_cursor of the page before. Send the same search or page with it.
    */
   cursor?: string;
 
@@ -3502,7 +3646,16 @@ export interface AnalysisNewsParams {
   imageShows?: string;
 
   /**
-   * Maximum posts to analyze from the search. Credits can return fewer.
+   * Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+   * handle, with or without @, a user ID or a profile URL. Send no other posts or
+   * search with it.
+   */
+  likedBy?: string;
+
+  /**
+   * Maximum posts to analyze from the search or page. A low credit balance can
+   * return fewer. When the time runs out first, send next_cursor as cursor for the
+   * rest.
    */
   limit?: number;
 
@@ -3510,6 +3663,26 @@ export interface AnalysisNewsParams {
    * Analyze a public List's posts. Send its ID or URL.
    */
   listId?: string;
+
+  /**
+   * Analyze the posts of several public Lists in 1 search. Send their IDs or URLs.
+   * listId, when sent, joins them.
+   */
+  listIds?: Array<string>;
+
+  /**
+   * Analyze 1 account's posts with photos or videos, as its Media tab shows them.
+   * /x/users/{id}/media reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  mediaBy?: string;
+
+  /**
+   * X searches to analyze as 1 search. A post matching any of them counts. Each
+   * takes the operators of query. query, when sent, joins them. X searches up to 512
+   * characters, counted with the other search fields.
+   */
+  queries?: Array<string>;
 
   /**
    * X search to analyze, with the operators of /x/tweets/search, such as from:nasa
@@ -3529,6 +3702,13 @@ export interface AnalysisNewsParams {
   quotesOf?: string;
 
   /**
+   * Analyze 1 account's posts & replies, as its Replies tab shows them.
+   * /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  repliesBy?: string;
+
+  /**
    * Analyze the replies in 1 post's conversation. Send its ID or URL.
    */
   repliesTo?: string;
@@ -3545,6 +3725,12 @@ export interface AnalysisNewsParams {
    * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
+
+  /**
+   * Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's ID
+   * or URL. Send no other posts or search with it.
+   */
+  threadOf?: string;
 
   /**
    * Keep only posts about this topic, the same as the Actors' topic input.
@@ -3571,6 +3757,12 @@ export interface AnalysisNewsParams {
    * Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
    */
   username?: string;
+
+  /**
+   * Analyze the posts of several accounts in 1 search. Send handles, with or
+   * without @, or profile URLs. username, when sent, joins them.
+   */
+  usernames?: Array<string>;
 }
 
 export namespace AnalysisNewsParams {
@@ -3737,7 +3929,7 @@ export interface AnalysisSentimentParams {
   baseline?: Array<AnalysisSentimentParams.Baseline>;
 
   /**
-   * The next_cursor of the page before. Send the same search with it.
+   * The next_cursor of the page before. Send the same search or page with it.
    */
   cursor?: string;
 
@@ -3752,7 +3944,16 @@ export interface AnalysisSentimentParams {
   imageShows?: string;
 
   /**
-   * Maximum posts to analyze from the search. Credits can return fewer.
+   * Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+   * handle, with or without @, a user ID or a profile URL. Send no other posts or
+   * search with it.
+   */
+  likedBy?: string;
+
+  /**
+   * Maximum posts to analyze from the search or page. A low credit balance can
+   * return fewer. When the time runs out first, send next_cursor as cursor for the
+   * rest.
    */
   limit?: number;
 
@@ -3760,6 +3961,26 @@ export interface AnalysisSentimentParams {
    * Analyze a public List's posts. Send its ID or URL.
    */
   listId?: string;
+
+  /**
+   * Analyze the posts of several public Lists in 1 search. Send their IDs or URLs.
+   * listId, when sent, joins them.
+   */
+  listIds?: Array<string>;
+
+  /**
+   * Analyze 1 account's posts with photos or videos, as its Media tab shows them.
+   * /x/users/{id}/media reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  mediaBy?: string;
+
+  /**
+   * X searches to analyze as 1 search. A post matching any of them counts. Each
+   * takes the operators of query. query, when sent, joins them. X searches up to 512
+   * characters, counted with the other search fields.
+   */
+  queries?: Array<string>;
 
   /**
    * X search to analyze, with the operators of /x/tweets/search, such as from:nasa
@@ -3779,6 +4000,13 @@ export interface AnalysisSentimentParams {
   quotesOf?: string;
 
   /**
+   * Analyze 1 account's posts & replies, as its Replies tab shows them.
+   * /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  repliesBy?: string;
+
+  /**
    * Analyze the replies in 1 post's conversation. Send its ID or URL.
    */
   repliesTo?: string;
@@ -3795,6 +4023,12 @@ export interface AnalysisSentimentParams {
    * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
+
+  /**
+   * Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's ID
+   * or URL. Send no other posts or search with it.
+   */
+  threadOf?: string;
 
   /**
    * Keep only posts about this topic, the same as the Actors' topic input.
@@ -3821,6 +4055,12 @@ export interface AnalysisSentimentParams {
    * Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
    */
   username?: string;
+
+  /**
+   * Analyze the posts of several accounts in 1 search. Send handles, with or
+   * without @, or profile URLs. username, when sent, joins them.
+   */
+  usernames?: Array<string>;
 }
 
 export namespace AnalysisSentimentParams {
@@ -3987,7 +4227,7 @@ export interface AnalysisViralScoreParams {
   baseline?: Array<AnalysisViralScoreParams.Baseline>;
 
   /**
-   * The next_cursor of the page before. Send the same search with it.
+   * The next_cursor of the page before. Send the same search or page with it.
    */
   cursor?: string;
 
@@ -4002,7 +4242,16 @@ export interface AnalysisViralScoreParams {
   imageShows?: string;
 
   /**
-   * Maximum posts to analyze from the search. Credits can return fewer.
+   * Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+   * handle, with or without @, a user ID or a profile URL. Send no other posts or
+   * search with it.
+   */
+  likedBy?: string;
+
+  /**
+   * Maximum posts to analyze from the search or page. A low credit balance can
+   * return fewer. When the time runs out first, send next_cursor as cursor for the
+   * rest.
    */
   limit?: number;
 
@@ -4010,6 +4259,26 @@ export interface AnalysisViralScoreParams {
    * Analyze a public List's posts. Send its ID or URL.
    */
   listId?: string;
+
+  /**
+   * Analyze the posts of several public Lists in 1 search. Send their IDs or URLs.
+   * listId, when sent, joins them.
+   */
+  listIds?: Array<string>;
+
+  /**
+   * Analyze 1 account's posts with photos or videos, as its Media tab shows them.
+   * /x/users/{id}/media reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  mediaBy?: string;
+
+  /**
+   * X searches to analyze as 1 search. A post matching any of them counts. Each
+   * takes the operators of query. query, when sent, joins them. X searches up to 512
+   * characters, counted with the other search fields.
+   */
+  queries?: Array<string>;
 
   /**
    * X search to analyze, with the operators of /x/tweets/search, such as from:nasa
@@ -4029,6 +4298,13 @@ export interface AnalysisViralScoreParams {
   quotesOf?: string;
 
   /**
+   * Analyze 1 account's posts & replies, as its Replies tab shows them.
+   * /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+   * user ID or a profile URL. Send no other posts or search with it.
+   */
+  repliesBy?: string;
+
+  /**
    * Analyze the replies in 1 post's conversation. Send its ID or URL.
    */
   repliesTo?: string;
@@ -4045,6 +4321,12 @@ export interface AnalysisViralScoreParams {
    * time runs out come back in unprocessed_ids.
    */
   texts?: Array<string>;
+
+  /**
+   * Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's ID
+   * or URL. Send no other posts or search with it.
+   */
+  threadOf?: string;
 
   /**
    * Keep only posts about this topic, the same as the Actors' topic input.
@@ -4071,6 +4353,12 @@ export interface AnalysisViralScoreParams {
    * Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
    */
   username?: string;
+
+  /**
+   * Analyze the posts of several accounts in 1 search. Send handles, with or
+   * without @, or profile URLs. username, when sent, joins them.
+   */
+  usernames?: Array<string>;
 }
 
 export namespace AnalysisViralScoreParams {
