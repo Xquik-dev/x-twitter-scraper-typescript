@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Each `x.analysis` response returns `unprocessed_ids`, the posts or texts the time ran out for. Send them again in `tweetIds` or `texts`. They cost nothing. `tweetIds` & `texts` take as many items as the body holds.
 - Tweets & users pages add `endReason`, present on a last page that X cut short. `'stalled'` means X returned no new results 2 times in a row, 30 s apart, so the list may hold more. Read it again later without `cursor`.
 - `client.x.accountConnectionLinks.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `nextCursor` back as `cursor` while `hasMore` is true. Each link's `apiKeyId` shows which key made it, so you can find and revoke the links a leaked key made.
 - `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `apiKeyId`, the API key that made the link, or `null` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
