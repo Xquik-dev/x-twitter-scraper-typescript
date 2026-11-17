@@ -5,9 +5,11 @@
 import {
   chmodSync,
   copyFileSync,
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readdirSync,
+  readFileSync,
   realpathSync,
   rmSync,
   writeFileSync,
@@ -145,7 +147,7 @@ const withRunner = (here: boolean) => {
       encoding: 'utf8',
       env: { ...env, CHECK_LOCAL_HERE: here ? '1' : '' },
     });
-    const runnerArguments = spawnSync('cat', [log], { encoding: 'utf8' }).stdout;
+    const runnerArguments = existsSync(log) ? readFileSync(log, 'utf8') : '';
     return { status: result.status, stdout: result.stdout, runnerArguments, project: realpathSync(project) };
   } finally {
     rmSync(root, { recursive: true, force: true });
