@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.21.0 (2026-11-17)
+
+[Full changelog from v0.20.0 to v0.21.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.20.0...v0.21.0)
+
+This release lists your X connect links with the API key that made each one, and adds the analysis sources and filters, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. `client.x.accounts.reauth` now returns the same 3 answers as `create`, so check `status` before you read `xUsername`. The other changes add methods, parameters, fields and enum values.
 
 - The 6 `x.analysis` methods take `threadOf`, `repliesBy`, `mediaBy` & `likedBy` to analyze 1 post's thread or 1 account's replies, media or likes. Send no other posts or search with them. `usernames`, `listIds` & `queries` analyze several accounts, Lists or searches as 1 search.
 - Each `x.analysis` response returns `unprocessed_ids`, the posts or texts the time ran out for. Send them again in `tweetIds` or `texts`. They cost nothing. `tweetIds` & `texts` take as many items as the body holds.
