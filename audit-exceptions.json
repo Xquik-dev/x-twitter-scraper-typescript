@@ -1,0 +1,14 @@
+{
+  "exceptions": [
+    {
+      "added": "2026-11-17T20:00:00Z",
+      "expires": "2026-12-01T20:00:00Z",
+      "exposure": "picomatch is a dev dependency of vitest, vite, tinyglobby and fdir, which compile only this repository's own test and config globs. No path hands it outside input, and the published package doesn't depend on it.",
+      "fix": "micromatch/picomatch#237",
+      "id": "GHSA-fc5q-39xc-vjpf",
+      "package": "picomatch",
+      "patch": "patches/picomatch@4.0.7.patch",
+      "version": "4.0.7"
+    }
+  ]
+}

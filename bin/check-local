@@ -169,8 +169,8 @@ run_check "Check license notices" \
 passed+=("REUSE")
 
 run_check "Audit dependencies" \
-  "Upgrade, override or replace each vulnerable package above." \
-  pnpm audit
+  "Upgrade, override or replace each vulnerable package above, or review audit-exceptions.json." \
+  node scripts/utils/verify-audit.cjs
 passed+=("audit")
 
 run_check "Lint, build & check types" \
