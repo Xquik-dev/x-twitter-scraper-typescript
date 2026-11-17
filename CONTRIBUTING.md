@@ -112,6 +112,10 @@ Next it checks license notices with REUSE.
 REUSE runs at a pinned version through `uv`. Install `uv` with `brew install uv`.
 It audits dependencies, lints, builds, checks types, checks the reproducible build, and runs tests.
 Last, it runs the CodeQL `security-extended` queries for JavaScript and TypeScript.
+
+When `git config checklocal.runner` names a command, `bin/check-local` runs that command with the checkout path and its own arguments instead.
+A maintainer can use it to run the checks on another machine, and `bin/release-local` runs its checks the same way.
+Set `CHECK_LOCAL_HERE=1` to run them here anyway.
 Any result fails the run, and so does any file that CodeQL cannot parse.
 CodeQL is required. Install it with `brew install --cask codeql`.
 It stops at the first failure and says what to fix.

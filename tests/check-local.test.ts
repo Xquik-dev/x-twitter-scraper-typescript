@@ -2,7 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { chmodSync, copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { leftoverStep, runUntilStarted, waitingStep } from './signal-run';
 import { tmpdir } from 'node:os';
@@ -122,6 +131,43 @@ const checkLocal = (codeqlSarif: string, pnpm = passes, apiCoverage = covered, a
     rmSync(root, { recursive: true, force: true });
   }
 };
+
+const withRunner = (here: boolean) => {
+  const { root, command, env } = setUp(sarif({}));
+  try {
+    const project = join(root, 'project');
+    const log = join(root, 'runner.log');
+    writeFileSync(join(root, 'runner'), `#!/bin/sh\nprintf '%s\\n' "$@" >"${log}"\n`);
+    chmodSync(join(root, 'runner'), 0o755);
+    spawnSync('git', ['init', '--quiet', project], { env });
+    spawnSync('git', ['-C', project, 'config', 'checklocal.runner', join(root, 'runner')], { env });
+    const result = spawnSync(command, ['--no-status'], {
+      encoding: 'utf8',
+      env: { ...env, CHECK_LOCAL_HERE: here ? '1' : '' },
+    });
+    const runnerArguments = spawnSync('cat', [log], { encoding: 'utf8' }).stdout;
+    return { status: result.status, stdout: result.stdout, runnerArguments, project: realpathSync(project) };
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+};
+
+describe('bin/check-local with a configured runner', () => {
+  it('hands the runner the checkout and its arguments instead of running the checks', () => {
+    const result = withRunner(false);
+
+    expect(result.status).toBe(0);
+    expect(result.runnerArguments).toBe(`${result.project}\n--no-status\n`);
+    expect(result.stdout).not.toContain('==> API coverage');
+  });
+
+  it('runs the checks here when CHECK_LOCAL_HERE is 1', () => {
+    const result = withRunner(true);
+
+    expect(result.runnerArguments).toBe('');
+    expect(result.stdout).toContain('==> API coverage\n');
+  });
+});
 
 describe('bin/check-local', () => {
   it('passes when CodeQL read every file and found no result', () => {
