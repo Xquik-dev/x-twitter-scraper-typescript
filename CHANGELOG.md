@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The 6 `x.analysis` methods take `threadOf`, `repliesBy`, `mediaBy` & `likedBy` to analyze 1 post's thread or 1 account's replies, media or likes. Send no other posts or search with them. `usernames`, `listIds` & `queries` analyze several accounts, Lists or searches as 1 search.
 - Each `x.analysis` response returns `unprocessed_ids`, the posts or texts the time ran out for. Send them again in `tweetIds` or `texts`. They cost nothing. `tweetIds` & `texts` take as many items as the body holds.
 - Tweets & users pages add `endReason`, present on a last page that X cut short. `'stalled'` means X returned no new results 2 times in a row, 30 s apart, so the list may hold more. Read it again later without `cursor`.
 - `client.x.accountConnectionLinks.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `nextCursor` back as `cursor` while `hasMore` is true. Each link's `apiKeyId` shows which key made it, so you can find and revoke the links a leaked key made.
