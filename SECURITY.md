@@ -6,9 +6,9 @@ Security fixes target the latest published release.
 
 ## Report a vulnerability
 
-Use this repository's private vulnerability reporting option.
+Use [GitHub private vulnerability reporting](https://github.com/Xquik-dev/x-twitter-scraper-typescript/security/advisories/new).
 
-Use [security@xquik.com](mailto:security@xquik.com) when private reporting fails.
+Email [support@xquik.com](mailto:support@xquik.com) with the subject `Security report` when private reporting is unavailable.
 
 Never post exploit details through public channels.
 
