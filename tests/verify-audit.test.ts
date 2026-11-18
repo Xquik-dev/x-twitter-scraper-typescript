@@ -33,7 +33,6 @@ const { exceptions }: { exceptions: Exception[] } = JSON.parse(
   readFileSync(resolve(root, 'audit-exceptions.json'), 'utf8'),
 );
 const ROUND = Date.parse('2026-11-17T21:00:00Z');
-const EXPIRY = Date.parse('2026-12-01T20:00:00Z');
 
 const SEVERITIES = ['info', 'low', 'moderate', 'high', 'critical'] as const;
 type Advisory = {
@@ -80,23 +79,8 @@ const NO_COUNTS = { critical: 0, high: 0, info: 0, low: 0, moderate: 0 };
 const UNREAD = 'The audit report fails, since';
 
 describe('verify-audit', () => {
-  test('passes GHSA-fc5q-39xc-vjpf on picomatch 4.0.7 while its patch holds & no fixed release exists', () => {
-    expect(policy.verify(PICOMATCH, exceptions, ROUND)).toEqual({
-      failures: 0,
-      lines: [
-        'GHSA-fc5q-39xc-vjpf (high) on picomatch 4.0.7 passes until 2026-12-01T20:00:00Z or its first fixed release, since patches/picomatch@4.0.7.patch applies micromatch/picomatch#237.',
-      ],
-    });
-  });
-
-  test.each([
-    ['once its exception expires', PICOMATCH, EXPIRY],
-    ['once a fixed release exists', report('GHSA-fc5q-39xc-vjpf', 'picomatch', '4.0.7', '>=4.0.8'), ROUND],
-    ['on another picomatch version', report('GHSA-fc5q-39xc-vjpf', 'picomatch', '4.0.6', null), ROUND],
-    ['for another advisory on picomatch 4.0.7', report('GHSA-other', 'picomatch', '4.0.7', null), ROUND],
-    ['for another package', report('GHSA-fc5q-39xc-vjpf', 'vite', '4.0.7', null), ROUND],
-  ])('fails %s', (_name, audited, now) => {
-    expect(policy.verify(audited, exceptions, now).failures).toBe(1);
+  test('fails GHSA-fc5q-39xc-vjpf on picomatch 4.0.7, since no exception lists it', () => {
+    expect(policy.verify(PICOMATCH, exceptions, ROUND).failures).toBe(1);
   });
 
   test('passes a report with no advisories', () => {
