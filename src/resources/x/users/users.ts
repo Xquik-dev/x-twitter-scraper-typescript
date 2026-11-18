@@ -837,6 +837,12 @@ export interface UserRetrieveBatchResponse {
   next_cursor: string;
 
   /**
+   * The unavailable IDs no account holds, as X answers for an account that was
+   * deactivated or deleted, in first-seen request order.
+   */
+  not_found_ids: Array<string>;
+
+  /**
    * Number of requested IDs included in the lookup.
    */
   processed_count: number;
@@ -852,7 +858,13 @@ export interface UserRetrieveBatchResponse {
   returned_count: number;
 
   /**
-   * Processed IDs with no profile on X, in first-seen request order.
+   * The unavailable IDs of accounts X suspended, in first-seen request order.
+   */
+  suspended_ids: Array<string>;
+
+  /**
+   * Processed IDs with no profile on X, in first-seen request order. not_found_ids
+   * and suspended_ids split them by X's answer.
    */
   unavailable_ids: Array<string>;
 
@@ -886,11 +898,29 @@ export interface UserRetrieveBatchTweetsResponse {
    */
   next_cursor: string;
 
+  /**
+   * The unavailable users no account holds, as X answers for an account that was
+   * deactivated or deleted, in first-seen request order.
+   */
+  not_found_ids: Array<string>;
+
+  /**
+   * The unavailable users whose posts only approved followers see, in first-seen
+   * request order.
+   */
+  protected_ids: Array<string>;
+
+  /**
+   * The unavailable users X suspended, in first-seen request order.
+   */
+  suspended_ids: Array<string>;
+
   tweets: Array<Shared.SearchTweet>;
 
   /**
    * Users with no account on X or with protected posts, in first-seen request order.
-   * They cost nothing.
+   * They cost nothing. not_found_ids, suspended_ids and protected_ids split them by
+   * X's answer.
    */
   unavailable_ids: Array<string>;
 
