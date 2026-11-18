@@ -1259,11 +1259,18 @@ export interface MonitorFollow {
 
   /**
    * Why the account left the list, on following.removed & follower.removed.
-   * unavailable means X no longer serves the account. unfollowed means X's follow
-   * check says the follow ended. It is missing when X fails the check. Xquik sends no
-   * removal while X still confirms the follow.
+   * unavailable means X shows no account for it, and unavailableReason says why.
+   * unfollowed means the follow ended. It is missing when the cause isn't known.
    */
   reason?: 'unavailable' | 'unfollowed';
+
+  /**
+   * Why X shows no account, when reason is unavailable. not_found means the account
+   * no longer exists, as X answers for a deactivated or deleted account. suspended
+   * means X suspended it. A user lookup of the ID answers user_not_found with the
+   * same reason.
+   */
+  unavailableReason?: 'not_found' | 'suspended';
 
   [k: string]: unknown;
 }
