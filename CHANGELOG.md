@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.21.0 (2026-11-17)
+## 0.21.0 (2026-11-18)
 
 [Full changelog from v0.20.0 to v0.21.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.20.0...v0.21.0)
 
