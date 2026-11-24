@@ -239,6 +239,21 @@ export interface FootballScheduleGameOdds {
 }
 
 /**
+ * A team's rank in X's college football poll.
+ */
+export interface FootballPollRanking {
+  /**
+   * The ranked team, a key of teams.
+   */
+  teamId: string | null;
+
+  /**
+   * The team's rank, where 1 is the top.
+   */
+  rank: number | null;
+}
+
+/**
  * A listed game, with its teams & score.
  */
 export interface FootballScheduleGame {
@@ -301,6 +316,12 @@ export interface FootballScheduleGame {
    * Betting odds for each team, or null when X has none.
    */
   odds: FootballScheduleGameOdds | null;
+
+  /**
+   * Each team X ranks in its college football poll, with its rank. Empty when X
+   * ranks neither team, & for the NFL.
+   */
+  rankings: Array<FootballPollRanking>;
 }
 
 export interface SportsTeamColor {
@@ -2190,6 +2211,7 @@ export declare namespace Sports {
     type FootballSchedulePeriod as FootballSchedulePeriod,
     type FootballOdds as FootballOdds,
     type FootballScheduleGameOdds as FootballScheduleGameOdds,
+    type FootballPollRanking as FootballPollRanking,
     type FootballScheduleGame as FootballScheduleGame,
     type SportsTeamColor as SportsTeamColor,
     type SportsTeamLogos as SportsTeamLogos,

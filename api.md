@@ -10,6 +10,7 @@ Types
 - <code><a href="./src/resources/shared.ts">Community</a></code>
 - <code><a href="./src/resources/shared.ts">CommunityPage</a></code>
 - <code><a href="./src/resources/shared.ts">CommunityTopic</a></code>
+- <code><a href="./src/resources/shared.ts">CommunityUnavailable</a></code>
 - <code><a href="./src/resources/shared.ts">ContentDisclosure</a></code>
 - <code><a href="./src/resources/shared.ts">Currency</a></code>
 - <code><a href="./src/resources/shared.ts">EmbeddedTweet</a></code>
@@ -749,6 +750,7 @@ Types
 - <code><a href="./src/resources/x/sports.ts">FootballSchedulePeriod</a></code>
 - <code><a href="./src/resources/x/sports.ts">FootballOdds</a></code>
 - <code><a href="./src/resources/x/sports.ts">FootballScheduleGameOdds</a></code>
+- <code><a href="./src/resources/x/sports.ts">FootballPollRanking</a></code>
 - <code><a href="./src/resources/x/sports.ts">FootballScheduleGame</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsTeamColor</a></code>
 - <code><a href="./src/resources/x/sports.ts">SportsTeamLogos</a></code>

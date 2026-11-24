@@ -222,6 +222,11 @@ export namespace Event {
     communityName?: string;
 
     /**
+     * Why X shows no Community for the post. Omitted when X names no reason.
+     */
+    communityUnavailable?: Shared.CommunityUnavailable;
+
+    /**
      * Community Note presentation metadata returned by X.
      */
     communityNote?: MonitorPost.CommunityNote;
@@ -1897,6 +1902,11 @@ export namespace EventDetail {
      * Community name. Present when X sends it with the post.
      */
     communityName?: string;
+
+    /**
+     * Why X shows no Community for the post. Omitted when X names no reason.
+     */
+    communityUnavailable?: Shared.CommunityUnavailable;
 
     /**
      * Community Note presentation metadata returned by X.

@@ -4,9 +4,11 @@
 
 [Full changelog from v0.21.0 to v0.22.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.21.0...v0.22.0)
 
-This release gives slow API reads more time to answer. A client built with no `timeout` now waits up to 80 seconds for a response before it throws a timeout error.
+This release gives slow API reads more time to answer and adds 2 fields the API added. A client built with no `timeout` now waits up to 80 seconds for a response before it throws a timeout error. `FootballScheduleGame` gains the required `rankings`, so code that builds a game by hand must set it.
 
 - Requests now time out after 80 seconds by default, up from 60, since some API reads take longer than a minute to answer. A `timeout` you pass works as before.
+- Posts return `communityUnavailable` when X shows no Community for the post and names a reason. Its `reason` holds X's words.
+- `client.x.sports.listGames` returns `rankings` on each game, the teams X ranks in its college football poll as `FootballPollRanking`. It's empty when X ranks neither team, & for the NFL.
 
 ## 0.21.0 (2026-11-18)
 

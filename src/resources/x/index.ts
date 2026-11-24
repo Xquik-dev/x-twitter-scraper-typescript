@@ -268,6 +268,7 @@ export {
   type FootballSchedulePeriod,
   type FootballOdds,
   type FootballScheduleGameOdds,
+  type FootballPollRanking,
   type FootballScheduleGame,
   type SportsTeamColor,
   type SportsTeamLogos,
