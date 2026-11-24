@@ -470,6 +470,16 @@ export namespace CommunityTopic {
 }
 
 /**
+ * Why X shows no Community for the post. Omitted when X names no reason.
+ */
+export interface CommunityUnavailable {
+  /**
+   * X's reason, as X writes it.
+   */
+  reason: string;
+}
+
+/**
  * Content disclosure metadata shown by X when a tweet is labeled as paid
  * partnership content or AI-generated media.
  */
@@ -595,6 +605,11 @@ export interface EmbeddedTweet {
    * Community name. Present when X sends it with the post.
    */
   communityName?: string;
+
+  /**
+   * Why X shows no Community for the post. Omitted when X names no reason.
+   */
+  communityUnavailable?: CommunityUnavailable;
 
   /**
    * Community Note presentation metadata returned by X.
@@ -1475,6 +1490,11 @@ export interface SearchTweet {
    * Community name. Present when X sends it with the post.
    */
   communityName?: string;
+
+  /**
+   * Why X shows no Community for the post. Omitted when X names no reason.
+   */
+  communityUnavailable?: CommunityUnavailable;
 
   /**
    * Community Note presentation metadata returned by X.

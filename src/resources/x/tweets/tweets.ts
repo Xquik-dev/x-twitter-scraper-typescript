@@ -450,6 +450,11 @@ export interface TweetDetail {
   communityName?: string;
 
   /**
+   * Why X shows no Community for the post. Omitted when X names no reason.
+   */
+  communityUnavailable?: Shared.CommunityUnavailable;
+
+  /**
    * Community Note presentation metadata returned by X.
    */
   communityNote?: TweetDetail.CommunityNote;

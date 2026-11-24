@@ -42,6 +42,7 @@ const schedule: XTwitterScraper.X.FootballSchedule = {
           total: 'text',
         },
       },
+      rankings: [],
     },
   ],
   teams: {
