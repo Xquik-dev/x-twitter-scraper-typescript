@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Requests now time out after 80 seconds by default, up from 60, since some API reads take longer than a minute to answer. A `timeout` you pass works as before.
+
 ## 0.21.0 (2026-11-18)
 
 [Full changelog from v0.20.0 to v0.21.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.20.0...v0.21.0)
