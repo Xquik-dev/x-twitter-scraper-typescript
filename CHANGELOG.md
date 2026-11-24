@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.22.0 (2026-11-24)
+
+[Full changelog from v0.21.0 to v0.22.0](https://github.com/Xquik-dev/x-twitter-scraper-typescript/compare/v0.21.0...v0.22.0)
+
+This release gives slow API reads more time to answer. A client built with no `timeout` now waits up to 80 seconds for a response before it throws a timeout error.
 
 - Requests now time out after 80 seconds by default, up from 60, since some API reads take longer than a minute to answer. A `timeout` you pass works as before.
 
