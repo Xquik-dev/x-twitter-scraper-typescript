@@ -244,7 +244,7 @@ await client.x.tweets.search({ q: 'from:elonmusk', limit: 10 }, {
 
 ### Timeouts
 
-Requests time out after 1 minute. Set a custom `timeout` when needed.
+Requests time out after 80 seconds. Set a custom `timeout` when needed.
 
 <!-- prettier-ignore -->
 ```ts

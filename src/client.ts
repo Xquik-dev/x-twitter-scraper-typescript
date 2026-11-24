@@ -290,7 +290,7 @@ export class XTwitterScraper {
    * @param {string | null | undefined} [opts.apiKey=process.env['X_TWITTER_SCRAPER_API_KEY'] ?? null]
    * @param {string | null | undefined} [opts.bearerToken=process.env['X_TWITTER_SCRAPER_BEARER_TOKEN'] ?? null]
    * @param {string} [opts.baseURL=process.env['X_TWITTER_SCRAPER_BASE_URL'] ?? https://xquik.com/api/v1] - Override the default base URL for the API.
-   * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
+   * @param {number} [opts.timeout=80 seconds] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
    * @param {number} [opts.maxRetries=2] - The maximum number of times the client will retry a request.
@@ -870,7 +870,7 @@ export class XTwitterScraper {
   }
 
   static XTwitterScraper = this;
-  static DEFAULT_TIMEOUT = 60000;
+  static DEFAULT_TIMEOUT = 80000;
 
   static XTwitterScraperError = Errors.XTwitterScraperError;
   static APIError = Errors.APIError;
