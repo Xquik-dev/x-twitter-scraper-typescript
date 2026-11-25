@@ -67,6 +67,14 @@ These mitigations are required.
 - Run coverage, CodeQL, audits, and reproducibility checks.
 - Publish only through `bin/release-local` after every local check passes.
 
+Each GitHub release after 0.22.0 carries `<archive>.intoto.jsonl`, an SLSA provenance statement signed with the key in `cosign.pub`.
+Check a downloaded archive with this command.
+
+```sh
+cosign verify-blob-attestation --key cosign.pub --type slsaprovenance1 \
+  --bundle x-twitter-scraper-<version>.tgz.intoto.jsonl x-twitter-scraper-<version>.tgz
+```
+
 ## Response process
 
 Keep exploit details inside GitHub's private vulnerability process.

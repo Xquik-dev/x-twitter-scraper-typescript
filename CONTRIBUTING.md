@@ -235,10 +235,13 @@ It releases only from a clean `main` that matches `origin/main`.
 It refuses a version whose `v<version>` tag already exists.
 It runs `bin/check-local`, repeats the audit, and builds the package with `bin/prepare-npm-release`.
 It publishes the packed archive to npm unless that version is already there.
+Before that, it signs an SLSA provenance statement for the archive with `cosign attest-blob` and checks it with the committed `cosign.pub`.
 It reads the npm token from the macOS Keychain and never writes it to a lasting file.
 Set `NPM_KEYCHAIN_SERVICE` and `NPM_KEYCHAIN_ACCOUNT` to the Keychain item that holds the token.
-The script stops with 1 line when either is unset. A dry run needs neither.
+Set `COSIGN_PRIVATE_KEY` to the release signing key and `COSIGN_PASSWORD` to its password.
+The script stops with 1 line when any of these is unset. A dry run needs none of them.
 When npm asks for 2FA approval, it prints npm's approval URL and waits, with or without a terminal.
-Then it pushes the annotated tag and creates the GitHub release from the `CHANGELOG.md` section.
+Then it pushes the annotated tag and uploads the archive and its `<archive>.intoto.jsonl` provenance to a draft GitHub release with the `CHANGELOG.md` section.
+It publishes the release only after `cosign.pub` verifies the draft's copies, and it leaves the release a draft when signing, uploading or verifying fails.
 
 Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

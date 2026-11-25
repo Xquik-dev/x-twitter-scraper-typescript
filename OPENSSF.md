@@ -23,6 +23,7 @@ The shared Xquik documentation site supports this released project.
 - Package archives build reproducibly through `pnpm run check:reproducible`.
 - `bin/release-local` releases only a clean `main` that matches `origin/main`.
 - `bin/release-local` refuses a version whose release tag already exists.
+- `bin/release-local` attaches a signed SLSA provenance file, `<archive>.intoto.jsonl`, to each GitHub release and publishes the release only after `cosign.pub` verifies it.
 - [SECURITY.md](SECURITY.md) documents the security boundary and threat model.
 - [CONTRIBUTING.md](CONTRIBUTING.md) documents tests, review, and DCO requirements.
 

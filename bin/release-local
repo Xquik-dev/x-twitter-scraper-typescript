@@ -37,12 +37,16 @@ if ((dry_run == 0)); then
     fail "NPM_KEYCHAIN_SERVICE is unset. Set it to the Keychain service that holds the npm token, then run bin/release-local again."
   [[ -n "${NPM_KEYCHAIN_ACCOUNT:-}" ]] ||
     fail "NPM_KEYCHAIN_ACCOUNT is unset. Set it to the Keychain account that holds the npm token, then run bin/release-local again."
+  [[ -n "${COSIGN_PRIVATE_KEY:-}" ]] ||
+    fail "COSIGN_PRIVATE_KEY is unset. Set it to the release signing key that matches cosign.pub, then run bin/release-local again."
+  [[ -n "${COSIGN_PASSWORD:-}" ]] ||
+    fail "COSIGN_PASSWORD is unset. Set it to the password of the release signing key, then run bin/release-local again."
 fi
 
 source scripts/temp-directory.sh xquik-typescript-release
 
 step "Checking the release tools"
-for tool in gh git jq node npm pnpm security; do
+for tool in cosign gh git jq node npm pnpm security; do
   command -v "$tool" >/dev/null 2>&1 || fail "${tool} is missing. Install it, then run bin/release-local again."
 done
 gh auth status >/dev/null 2>&1 || fail "gh is signed out. Run gh auth login, then run bin/release-local again."
@@ -105,6 +109,37 @@ if ((dry_run == 1)); then
   exit 0
 fi
 
+provenance_file="${package_file}.intoto.jsonl"
+
+verify_provenance() {
+  cosign verify-blob-attestation --key cosign.pub --type slsaprovenance1 \
+    --bundle "$1/${provenance_file}" "$1/${package_file}" >/dev/null ||
+    fail "cosign.pub does not verify ${provenance_file}. The GitHub release ${tag} stays unpublished."
+}
+
+step "Attesting the SLSA provenance of ${package_file}"
+commit="$(git rev-parse HEAD)"
+jq -n \
+  --arg repository "https://github.com/${github_repo}" \
+  --arg ref "refs/tags/${tag}" \
+  --arg commit "$commit" \
+  --arg builder "https://github.com/${github_repo}/blob/${commit}/bin/release-local" \
+  '{
+    buildDefinition: {
+      buildType: $builder,
+      externalParameters: {repository: $repository, ref: $ref},
+      resolvedDependencies: [{uri: "git+\($repository)@\($ref)", digest: {gitCommit: $commit}}]
+    },
+    runDetails: {builder: {id: $builder}}
+  }' >"${work_directory}/predicate.json"
+(cd "$work_directory" &&
+  cosign attest-blob --yes --key env://COSIGN_PRIVATE_KEY --type slsaprovenance1 \
+    --predicate predicate.json --bundle "$provenance_file" "$package_file" >/dev/null) ||
+  fail "cosign could not attest ${package_file}. Nothing was published. Fix the error above, then run bin/release-local again."
+
+step "Verifying ${provenance_file} with cosign.pub"
+verify_provenance "$work_directory"
+
 step "Checking npm for ${expected_name}@${version}"
 published_version="$(npm view "${expected_name}@${version}" version --registry "$registry" 2>/dev/null || true)"
 if [[ "$published_version" == "$version" ]]; then
@@ -130,7 +165,19 @@ git tag -a "$tag" -m "$tag"
 step "Pushing ${tag} to origin"
 git push origin "refs/tags/${tag}"
 
-step "Creating the GitHub release ${tag}"
-gh release create "$tag" "$package_path" --repo "$github_repo" --title "$tag" --notes-file "$notes_file" --verify-tag
+step "Uploading ${package_file} and ${provenance_file} to the draft release ${tag}"
+gh release create "$tag" "$package_path" "${work_directory}/${provenance_file}" --repo "$github_repo" \
+  --title "$tag" --notes-file "$notes_file" --verify-tag --draft >/dev/null ||
+  fail "The upload to the draft release ${tag} failed. The GitHub release stays unpublished."
 
-echo "Released ${expected_name}@${version} as ${tag}."
+step "Verifying the draft's assets with cosign.pub"
+draft_directory="${work_directory}/draft"
+mkdir "$draft_directory"
+gh release download "$tag" --repo "$github_repo" --dir "$draft_directory" ||
+  fail "The draft release ${tag} could not be downloaded. The GitHub release stays unpublished."
+verify_provenance "$draft_directory"
+
+step "Publishing the GitHub release ${tag}"
+gh release edit "$tag" --repo "$github_repo" --draft=false >/dev/null
+
+echo "Released ${expected_name}@${version} as ${tag} with ${provenance_file}."
