@@ -14,7 +14,7 @@ import { path } from '../internal/utils/path';
  */
 export class Extractions extends APIResource {
   /**
-   * Returns status and up to 1,000 results. Follow nextCursor when hasMore is true.
+   * Returns status and up to 10,000 results. Follow nextCursor when hasMore is true.
    *
    * @example
    * ```ts
@@ -592,7 +592,7 @@ export interface ExtractionRetrieveParams {
   includeRaw?: boolean;
 
   /**
-   * Maximum results per page (1-1000, default 100).
+   * Maximum results per page (1-10000, default 100).
    */
   limit?: number;
 
